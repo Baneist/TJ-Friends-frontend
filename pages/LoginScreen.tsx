@@ -2,7 +2,6 @@ import * as React from "react";
 import {
   Image,
   ImageStyle,
-  SafeAreaView,
   StatusBar,
   StyleProp,
   Text,
@@ -15,6 +14,7 @@ import {
 import TextInput, {
   IInteractiveTextInputProps,
 } from "react-native-text-input-interactive";
+import { SafeAreaProvider } from "react-native-safe-area-context";
 /**
  * ? Local Imports
  */
@@ -339,7 +339,7 @@ const LoginScreen: React.FC<ILoginScreenProps> = ({
     ) : null;
 
   return (
-    <SafeAreaView style={[styles.container, style]}>
+    <SafeAreaProvider style={[styles.container, style]}>
       {/* <StatusBar barStyle="dark-content" /> */}
       {renderLogo()}
       {renderTextInputContainer()}
@@ -350,7 +350,7 @@ const LoginScreen: React.FC<ILoginScreenProps> = ({
         {customSocialLoginButtons || renderDefaultSocialLoginButtons()}
       </View>
       {children}
-    </SafeAreaView>
+    </SafeAreaProvider>
   );
 };
 
