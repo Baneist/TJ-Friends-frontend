@@ -276,7 +276,7 @@ const LoginScreen: React.FC<ILoginScreenProps> = ({
       <TouchableComponent
         style={[styles.loginButtonStyle, loginButtonStyle]}
         onPress={() => {
-          handleEmailValidation();
+          // handleEmailValidation();
           onLoginPress?.();
         }}
       >
