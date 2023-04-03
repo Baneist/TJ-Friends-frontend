@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "TJFriends",
-    "slug": "TJFriends",
+    "slug": "tjfriends",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -21,10 +21,17 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.vozeo.tjfriends"
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "d468e573-334e-4936-b650-e634208ac481"
+      }
+    },
+    "owner": "vozeo"
   }
 }
