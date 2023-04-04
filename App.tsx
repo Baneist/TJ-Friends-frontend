@@ -1,12 +1,17 @@
-import React from 'react';
+import React, { createRef, useRef, useState } from 'react';
 import { View, StyleSheet, UIManager, Platform } from 'react-native';
-import LoginScreen from "./pages/LoginScreen";
+import LoginScreen, { ITextRef } from "./pages/LoginScreen";
 import MainScreen from './pages/Main';
 import TextInput from 'react-native-text-input-interactive';
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer, StackActions, useNavigationContainerRef } from '@react-navigation/native';
 import { createStackNavigator, StackNavigationProp } from '@react-navigation/stack';
+import Modal from "react-native-modal";
+import { WebView } from "react-native-webview";
+import SocialLoginScreen from './pages/SocialLoginScreen';
 
-
+const GetUrl = "https://1.tongji.edu.cn/api/ssoservice/system/loginIn";
+const TargetUrl = "https://1.tongji.edu.cn/ssologin";
+const PostUrl = "https://1.tongji.edu.cn/api/sessionservice/session/login"
 
 type RootStackParamList = {
   Main: undefined, // undefined because you aren't passing any params to the home screen
@@ -24,60 +29,105 @@ if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  }
-});
-
 const App = () => {
-  const [username, setUsername] = React.useState('');
-  const [password, setPassword] = React.useState('');
-  const [repassword, setRepassword] = React.useState('');
+  // let username = '';
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [repassword, setRepassword] = useState('');
+  const [cookie, setCookie] = useState({});
+
+  const webViewRef = useRef<WebView>(null);
+  const loginRef = createRef<typeof LoginScreen>();
+  const signupRef = createRef<typeof LoginScreen>();
+  const navigationRef = useNavigationContainerRef<RootStackParamList>();
+  const textRef = createRef<ITextRef>();
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const renderWebView = () => {
+    return (
+      <WebView
+        ref={webViewRef}
+        source={{ uri: GetUrl }}
+        onNavigationStateChange={handleWebViewNavigationStateChange}
+      />
+    );
+  };
+
+  const handleWebViewNavigationStateChange = async (newNavState: { url: string }) => {
+    const { url } = newNavState;
+    if (url && url.startsWith(TargetUrl)) {
+      const params: { [index: string]: string } = {};
+      const pairs = url.split("?")[1].split("&");
+      for (const pair of pairs) {
+        const [key, value] = pair.split("=");
+        params[key] = value;
+      }
+      try {
+        let response = await fetch(PostUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(params),
+        });
+        let data = response.json();
+        navigationRef.current?.dispatch(StackActions.replace('Main'));
+        setIsModalVisible(false);
+      } catch (error) {
+        console.log(error);
+      };
+      // response = await fetch(PostUrl, {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify({ username, password, repassword, ...cookie }),
+      // });
+      // data = await response.json();
+
+      // if (data.code && data.code === 0) {
+      //   StackActions.replace('Login')
+      //   setIsModalVisible(false);
+      // } else {
+      //   alert(data.msg);
+      // }
+
+    }
+  };
 
   const RenderSignupScreen = ({ navigation }: Props) => (
     <LoginScreen
+      ref={textRef}
       style={{ flex: 1, justifyContent: 'center' }}
       logoImageSource={require('./assets/logo-example.png')}
-      onLoginPress={() => { navigation.replace('Login') }}
-      onSignupPress={() => { navigation.replace('Login') }}
-      onEmailChange={setUsername}
-      loginButtonText={'Create an account'}
-      disableSignup
-      textInputChildren={
-        <View style={{ marginTop: 16 }}>
-          <TextInput
-            placeholder="Re-Password"
-            secureTextEntry
-            onChangeText={setRepassword}
-          />
-        </View>
-      }
-      onPasswordChange={setPassword}
+      onLoginPress={() => setIsModalVisible(true)}
+      loginButtonText={'Continue with school validation'}
+      enablePasswordValidation={false}
     />
   );
 
   const RenderLoginScreen = ({ navigation }: Props) => (
-    <LoginScreen
-      style={{ flex: 1, justifyContent: 'center' }}
-      logoImageSource={require('./assets/logo-example.png')}
-      onLoginPress={() => { navigation.replace('Main') }}
-      onSignupPress={() => { navigation.replace('Main') }}
-      onEmailChange={setUsername}
-      onPasswordChange={setPassword}
-      enablePasswordValidation
+    <SocialLoginScreen
+      onSignUpPress={() => { navigation.replace('Signup')}}
+      onLoginPress={() => {}}
+      onForgotPasswordPress={() => {}}
+      onUserNameChangeText={(username) => console.log("Username: ", username)}
+      onPasswordChangeText={(password) => console.log("Password: ", password)}
     />
   );
 
-
   return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Signup" component={RenderSignupScreen} />
-        <Stack.Screen name="Login" component={RenderLoginScreen} />
-        <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }} />
-      </Stack.Navigator>
-    </NavigationContainer>
+    // <ValidateWebView/>
+    <View style={{ flex: 1 }}>
+      <NavigationContainer ref={navigationRef} onStateChange={(state) => console.log('Stack:', state?.routes)}>
+        <Stack.Navigator initialRouteName="Login">
+          <Stack.Screen name="Login" component={RenderLoginScreen} options={{ headerShown: false }}/>
+          <Stack.Screen name="Signup" component={RenderSignupScreen} />
+          <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }} />
+        </Stack.Navigator>
+      </NavigationContainer>
+      <Modal isVisible={isModalVisible}>{renderWebView()}</Modal>
+    </View>
   );
 };
 

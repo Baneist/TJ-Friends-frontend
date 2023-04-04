@@ -25,12 +25,12 @@ interface Style {
   eyeIconContainer: ViewStyle;
   eyeIcon: ImageStyle;
   shakeText: TextStyle;
-  emailTextInputContainer: ViewStyle;
-  emailTooltipContainer: ViewStyle;
-  emailTooltipTextStyle: TextStyle;
-  emailTooltipRedTextStyle: TextStyle;
-  emailTooltipContentStyle: ViewStyle;
-  emailTooltipBackgroundStyle: ViewStyle;
+  usernameTextInputContainer: ViewStyle;
+  usernameTooltipContainer: ViewStyle;
+  usernameTooltipTextStyle: TextStyle;
+  usernameTooltipRedTextStyle: TextStyle;
+  usernameTooltipContentStyle: ViewStyle;
+  usernameTooltipBackgroundStyle: ViewStyle;
   passwordTooltipStyle: ViewStyle;
   passwordTooltipContainer: ViewStyle;
   passwordTooltipContentStyle: ViewStyle;
@@ -133,28 +133,28 @@ export default StyleSheet.create<Style>({
     marginLeft: 12,
     marginRight: "auto",
   },
-  emailTextInputContainer: {
+  usernameTextInputContainer: {
     alignItems: "center",
     justifyContent: "center",
   },
-  emailTooltipContainer: {
+  usernameTooltipContainer: {
     padding: 12,
     alignItems: "center",
     justifyContent: "center",
   },
-  emailTooltipTextStyle: {
+  usernameTooltipTextStyle: {
     fontSize: 16,
   },
-  emailTooltipRedTextStyle: {
+  usernameTooltipRedTextStyle: {
     fontWeight: "bold",
     color: "red",
   },
-  emailTooltipContentStyle: {
+  usernameTooltipContentStyle: {
     borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
   },
-  emailTooltipBackgroundStyle: {
+  usernameTooltipBackgroundStyle: {
     backgroundColor: "transparent",
   },
   passwordTooltipStyle: {

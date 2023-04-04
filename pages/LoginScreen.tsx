@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { forwardRef, useImperativeHandle } from "react";
 import {
   Image,
   ImageStyle,
@@ -15,31 +15,38 @@ import {
 import TextInput, {
   IInteractiveTextInputProps,
 } from "react-native-text-input-interactive";
-import { SafeAreaProvider } from "react-native-safe-area-context";
 /**
  * ? Local Imports
  */
-import styles from "./LoginScreen.style";
+import styles from "./Screen.style";
 import SocialButton from "../components/social-button/SocialButton";
 import useStateWithCallback from "../helpers/useStateWithCallback";
-import emailValidator from "../helpers/emailValidator";
 import passwordValidator from "../helpers/passwordValidator";
 import Tooltip from "../components/tooltip/Tooltip";
 
+const usernameValidator = (username: string) => {
+  return /^[A-Za-z0-9]{5,16}$/.test(username);
+};
+
 const dummyFunction = () => { };
+
+export interface ITextRef {
+  getText: () => { username: string, password: string };
+}
+
 export interface ILoginScreenProps {
   signupText?: string;
   disableDivider?: boolean;
   logoImageSource: any;
   disableSocialButtons?: boolean;
-  emailPlaceholder?: string;
+  usernamePlaceholder?: string;
   passwordPlaceholder?: string;
   disableSignup?: boolean;
   disablePasswordInput?: boolean;
   loginButtonText?: string;
-  disableEmailValidation?: boolean;
+  disableUsernameValidation?: boolean;
   enablePasswordValidation?: boolean;
-  disableEmailTooltip?: boolean;
+  disableUsernameTooltip?: boolean;
   disablePasswordTooltip?: boolean;
   style?: StyleProp<ViewStyle>;
   dividerStyle?: StyleProp<ViewStyle>;
@@ -49,12 +56,12 @@ export interface ILoginScreenProps {
   loginTextStyle?: StyleProp<TextStyle>;
   signupStyle?: StyleProp<ViewStyle>;
   signupTextStyle?: StyleProp<TextStyle>;
-  emailTextInputProps?: IInteractiveTextInputProps;
+  usernameTextInputProps?: IInteractiveTextInputProps;
   passwordTextInputProps?: IInteractiveTextInputProps;
   children?: any;
   TouchableComponent?: any;
   passwordContentTooltip?: React.ReactNode;
-  emailContentTooltip?: React.ReactNode;
+  usernameContentTooltip?: React.ReactNode;
   customSocialLoginButtons?: React.ReactNode;
   customLoginButton?: React.ReactNode;
   customSignupButton?: React.ReactNode;
@@ -62,10 +69,10 @@ export interface ILoginScreenProps {
   textInputChildren?: React.ReactNode;
   customLogo?: React.ReactNode;
   customDivider?: React.ReactNode;
-  onLoginPress: () => void;
-  onSignupPress: () => void;
-  onEmailChange: (email: string) => void;
-  onPasswordChange: (password: string) => void;
+  onLoginPress?: () => void;
+  onSignupPress?: () => void;
+  onUsernameChange?: (username: string) => void;
+  onPasswordChange?: (password: string) => void;
   onFacebookPress?: () => void;
   onTwitterPress?: () => void;
   onApplePress?: () => void;
@@ -73,7 +80,7 @@ export interface ILoginScreenProps {
   onEyePress?: () => void;
 }
 
-const LoginScreen: React.FC<ILoginScreenProps> = ({
+const LoginScreen = React.forwardRef<ITextRef, ILoginScreenProps>(({
   style,
   dividerStyle,
   logoImageStyle,
@@ -90,13 +97,13 @@ const LoginScreen: React.FC<ILoginScreenProps> = ({
   disablePasswordInput = false,
   loginButtonText = "Login",
   onSignupPress,
-  onEmailChange,
+  onUsernameChange,
   onPasswordChange,
   onFacebookPress = dummyFunction,
   onTwitterPress = dummyFunction,
   onApplePress = dummyFunction,
   onDiscordPress = dummyFunction,
-  emailPlaceholder = "Email",
+  usernamePlaceholder = "Username",
   passwordPlaceholder = "Password",
   disableSignup = false,
   customSocialLoginButtons,
@@ -106,37 +113,43 @@ const LoginScreen: React.FC<ILoginScreenProps> = ({
   customLoginButton,
   customSignupButton,
   customDivider,
-  emailTextInputProps,
+  usernameTextInputProps,
   passwordTextInputProps,
-  disableEmailValidation = false,
+  disableUsernameValidation = false,
   enablePasswordValidation = false,
-  disableEmailTooltip = false,
+  disableUsernameTooltip = false,
   disablePasswordTooltip = false,
-  emailContentTooltip,
+  usernameContentTooltip,
   passwordContentTooltip,
   TouchableComponent = TouchableOpacity,
   onEyePress,
   children,
-}) => {
+}, ref) => {
   const [isPasswordVisible, setPasswordVisible] = React.useState(false);
-  const [email, setEmail] = React.useState("");
+  const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
 
-  const [isEmailTooltipVisible, setEmailTooltipVisible] =
+  const [isUsernameTooltipVisible, setUsernameTooltipVisible] =
     useStateWithCallback(false);
   const [isPasswordTooltipVisible, setPasswordTooltipVisible] =
     useStateWithCallback(false);
 
-  const handleEmailChange = (text: string) => {
-    isEmailTooltipVisible && setEmailTooltipVisible(false);
-    setEmail(text);
-    onEmailChange?.(text);
+  const handleUsernameChange = (text: string) => {
+    try {
+      // console.log(text);
+      isUsernameTooltipVisible && setUsernameTooltipVisible(false);
+      setUsername(text);
+      // console.log(onUsernameChange)
+      // onUsernameChange?.(text);
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const handlePasswordChange = (text: string) => {
     isPasswordTooltipVisible && setPasswordTooltipVisible(false);
     setPassword(text);
-    onPasswordChange?.(text);
+    // onPasswordChange?.(text);
   };
 
   const handleEyePress = () => {
@@ -144,42 +157,42 @@ const LoginScreen: React.FC<ILoginScreenProps> = ({
     onEyePress?.();
   };
 
-  const handleEmailValidation = () => {
-    if (disableEmailValidation) {
+  const handleUsernameValidation = () => {
+    if (disableUsernameValidation) {
       handlePasswordValidation();
-      onEmailChange(email);
+      onUsernameChange?.(username);
       return;
     }
 
-    if (emailValidator(email)) {
-      !disableEmailTooltip && setEmailTooltipVisible(false);
+    if (usernameValidator(username)) {
+      !disableUsernameTooltip && setUsernameTooltipVisible(false);
       handlePasswordValidation();
-      onEmailChange(email);
+      onUsernameChange?.(username);
       return;
     } else {
       LayoutAnimation.spring();
-      !disableEmailTooltip && setEmailTooltipVisible(true);
-      onEmailChange(email);
+      !disableUsernameTooltip && setUsernameTooltipVisible(true);
+      onUsernameChange?.(username);
     }
   };
 
   const handlePasswordValidation = () => {
-    if (isEmailTooltipVisible) {
+    if (isUsernameTooltipVisible) {
       return;
     }
     if (!enablePasswordValidation) {
-      onPasswordChange(password);
+      onPasswordChange?.(password);
       return;
     }
     if (enablePasswordValidation && passwordValidator(password)) {
       !disablePasswordTooltip && setPasswordTooltipVisible(false);
-      onPasswordChange(password);
+      onPasswordChange?.(password);
       return;
     } else {
       LayoutAnimation.spring();
-      !disableEmailTooltip && setEmailTooltipVisible(false);
+      !disableUsernameTooltip && setUsernameTooltipVisible(false);
       !disablePasswordTooltip && setPasswordTooltipVisible(true);
-      onPasswordChange(password);
+      onPasswordChange?.(password);
     }
   };
 
@@ -192,29 +205,29 @@ const LoginScreen: React.FC<ILoginScreenProps> = ({
       />
     );
 
-  const renderEmailInput = () => {
+  const renderUsernameInput = () => {
     const tooltipContent = () =>
-      emailContentTooltip || (
-        <View style={styles.emailTooltipContainer}>
-          <Text style={styles.emailTooltipTextStyle}>
+      usernameContentTooltip || (
+        <View style={styles.usernameTooltipContainer}>
+          <Text style={styles.usernameTooltipTextStyle}>
             That{" "}
-            <Text style={styles.emailTooltipRedTextStyle}>email address</Text>{" "}
+            <Text style={styles.usernameTooltipRedTextStyle}>username</Text>{" "}
             doesn't look right
           </Text>
         </View>
       );
     return (
-      <View style={styles.emailTextInputContainer}>
+      <View style={styles.usernameTextInputContainer}>
         <>
-          {!disableEmailTooltip && isEmailTooltipVisible && (
+          {!disableUsernameTooltip && isUsernameTooltipVisible && (
             <Tooltip>{tooltipContent()}</Tooltip>
           )}
           <TextInput
-            placeholder={emailPlaceholder}
-            onChangeText={handleEmailChange}
+            placeholder={usernamePlaceholder}
+            onChangeText={handleUsernameChange}
             autoCapitalize="none"
-            onFocus={() => setEmailTooltipVisible(false)}
-            {...emailTextInputProps}
+            onFocus={() => setUsernameTooltipVisible(false)}
+            {...usernameTextInputProps}
           />
         </>
       </View>
@@ -230,8 +243,9 @@ const LoginScreen: React.FC<ILoginScreenProps> = ({
       passwordContentTooltip || (
         <View style={styles.passwordTooltipContainer}>
           <Text style={styles.passwordTooltipTextStyle}>
-            Incorrect{" "}
+            Your{" "}
             <Text style={styles.passwordTooltipRedTextStyle}>password</Text>
+            {" "}is too simple
           </Text>
         </View>
       );
@@ -264,7 +278,7 @@ const LoginScreen: React.FC<ILoginScreenProps> = ({
     return (
       customTextInputs || (
         <View style={[styles.textInputContainer, textInputContainerStyle]}>
-          {renderEmailInput()}
+          {renderUsernameInput()}
           {renderPasswordInput()}
           {textInputChildren}
         </View>
@@ -277,7 +291,7 @@ const LoginScreen: React.FC<ILoginScreenProps> = ({
       <TouchableComponent
         style={[styles.loginButtonStyle, loginButtonStyle]}
         onPress={() => {
-          handleEmailValidation();
+          handleUsernameValidation();
           onLoginPress?.();
         }}
       >
@@ -308,20 +322,6 @@ const LoginScreen: React.FC<ILoginScreenProps> = ({
     !disableSocialButtons ? (
       <>
         <SocialButton
-          text="Continue with Facebook"
-          TouchableComponent={TouchableComponent}
-          textStyle={styles.facebookSocialButtonTextStyle}
-          onPress={onFacebookPress}
-        />
-        <SocialButton
-          text="Continue with Twitter"
-          style={styles.socialButtonStyle}
-          TouchableComponent={TouchableComponent}
-          textStyle={styles.twitterSocialButtonTextStyle}
-          imageSource={require("../assets/twitter.png")}
-          onPress={onTwitterPress}
-        />
-        <SocialButton
           text="Continue with Apple"
           style={styles.socialButtonStyle}
           TouchableComponent={TouchableComponent}
@@ -339,6 +339,10 @@ const LoginScreen: React.FC<ILoginScreenProps> = ({
       </>
     ) : null;
 
+  useImperativeHandle(ref, () => ({
+    getText: () => ({ username, password })
+  }));
+
   return (
     <SafeAreaView style={[styles.container, style]}>
       {/* <StatusBar barStyle="dark-content" /> */}
@@ -353,6 +357,6 @@ const LoginScreen: React.FC<ILoginScreenProps> = ({
       {children}
     </SafeAreaView>
   );
-};
+});
 
 export default LoginScreen;
