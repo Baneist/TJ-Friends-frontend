@@ -11,6 +11,7 @@
   "dependencies": {
     "@babel/plugin-proposal-decorators": "^7.21.0",
     "@babel/preset-env": "^7.21.4",
+    "@expo/ngrok": "^2.5.0",
     "@expo/vector-icons": "^13.0.0",
     "@expo/webpack-config": "^18.0.1",
     "@ionic/core": "^7.0.0",
@@ -29,6 +30,7 @@
     "expo-font": "^11.1.1",
     "expo-status-bar": "~1.4.4",
     "formik": "^2.2.9",
+    "galio-framework": "^0.8.0",
     "i18next": "^22.4.13",
     "lodash": "*",
     "react": "18.2.0",
@@ -45,6 +47,7 @@
     "react-native-element-timer": "^2.1.2",
     "react-native-gesture-handler": "^2.9.0",
     "react-native-modal": "^13.0.1",
+    "react-native-pager-view": "^6.2.0",
     "react-native-paper": "^5.5.2",
     "react-native-popup-menu": "^0.16.1",
     "react-native-reanimated": "~2.14.4",

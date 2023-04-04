@@ -1,11 +1,14 @@
 import React, { useEffect } from 'react';
-import { Text, View, Switch } from 'react-native';
+import {View, Switch, Pressable} from 'react-native';
+import { Provider as PaperProvider, TextInput } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/AntDesign';
-
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-
+import { NavigationContainer } from '@react-navigation/native';
+import {Text, Block} from "galio-framework";
 import { BottomFabBar } from 'rn-wave-bottom-bar';
 import { SettingsScreen } from './ListScreen';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import {Profile} from './Profile'
 
 const generateScreen = (screen: string) => () => {
   return (
@@ -58,6 +61,17 @@ const MainScreen = () => {
       <Switch value={isRtl} onValueChange={() => setIsRtl(!isRtl)} />
     </View>
   );
+
+const renderBackButton = () => {
+  return(
+    <Pressable onPress={() => {
+      // 在这里写你想要返回的页面名字
+      console.log(123)
+    }}>
+      <Icon size={20} name='left'>Back</Icon>
+    </Pressable>
+  )
+};
 
   return (
     <Tab.Navigator
@@ -131,9 +145,9 @@ const MainScreen = () => {
       />
       <Tab.Screen
         options={{
-          /*tabBarStyle: {
-            display: 'none',
-          },*/
+          // tabBarStyle: {
+          //   display: 'none',
+          // },
           tabBarIcon: tabBarIcon('Trophy'),
           tabBarLabel: showLabel ? 'Trophy' : undefined,
         }}
@@ -142,11 +156,13 @@ const MainScreen = () => {
       />
       <Tab.Screen
         options={{
-          tabBarIcon: tabBarIcon('wallet'),
-          tabBarLabel: showLabel ? 'Wallet' : undefined,
+          tabBarIcon: tabBarIcon('user'),
+          tabBarLabel: showLabel ? 'Profile' : undefined,
+          // 在options中指定headerLeft属性
+          headerLeft: renderBackButton,
         }}
-        name="Wallet"
-        component={generateScreen('Wallet')}
+        name="Profile"
+        component={Profile}
       />
     </Tab.Navigator>
   );
