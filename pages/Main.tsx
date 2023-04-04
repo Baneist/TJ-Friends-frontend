@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Text, View, Switch } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 

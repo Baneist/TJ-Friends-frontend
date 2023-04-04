@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { forwardRef, useImperativeHandle, useState } from "react";
 import {
   Text,
   View,
@@ -15,6 +15,7 @@ import {
 import styles from "./SocialLoginScreen.style";
 import TextField from "../components/TextField/TextField";
 import SocialButton from "../components/SocialButton/SocialButton";
+import { ITextRef } from "./LoginScreen";
 
 // ? Assets
 const backArrowImage = require("../assets/left-arrow.png");
@@ -73,54 +74,43 @@ export interface ISocialLoginProps {
   onUserNameChangeText: (text: string) => void;
   onPasswordChangeText: (text: string) => void;
   //? Only Sign Up Screen Props
-  onSignUpPress: (isSignUp: boolean) => void;
+  onSignUpPress: () => void;
   onRepasswordChangeText?: (text: string) => void;
 }
 
-interface IState {
-  isSignUp: boolean;
-}
+const SocialLoginScreen = React.forwardRef<ITextRef, ISocialLoginProps>((props: ISocialLoginProps, ref) => {
+  const [isSignUp, setIsSignUp] = useState(false);
+  const [username, setUsername] = React.useState("");
+  const [password, setPassword] = React.useState("");
 
-export default class SocialLoginScreen extends React.PureComponent<
-  ISocialLoginProps,
-  IState
-> {
-  constructor(props: ISocialLoginProps) {
-    super(props);
-    this.state = {
-      isSignUp: false,
-    };
-  }
-  renderHeader = () => {
+  const renderHeader = () => {
     const {
       signUpText = "SIGN UP",
       disableSignUp,
       signUpTextStyle,
       backArrowImageSource = backArrowImage,
-    } = this.props;
+    } = props;
     return (
       !disableSignUp && (
         <View style={styles.headerContainer}>
           <TouchableOpacity
             style={styles.headerContainerGlue}
             onPress={() => {
-              this.setState({ isSignUp: !this.state.isSignUp }, () => {
-                this.props.onSignUpPress &&
-                  this.props.onSignUpPress(this.state.isSignUp);
-              });
+              setIsSignUp(!isSignUp);
+              props.onSignUpPress && props.onSignUpPress();
             }}
           >
             <Text style={[styles.signUpTextStyle, signUpTextStyle]}>
               {signUpText}
             </Text>
           </TouchableOpacity>
-        </View>
+        </View >
       )
     );
   };
 
-  renderLoginTitle = () => {
-    const { loginTitleText = "Log In", loginTextStyle } = this.props;
+  const renderLoginTitle = () => {
+    const { loginTitleText = "Log In", loginTextStyle } = props;
     return (
       <View style={styles.loginTitleContainer}>
         <Text style={[styles.loginTextStyle, loginTextStyle]}>
@@ -130,7 +120,7 @@ export default class SocialLoginScreen extends React.PureComponent<
     );
   };
 
-  renderTextFieldContainer = () => {
+  const renderTextFieldContainer = () => {
     const {
       usernameTextFieldStyle,
       usernamePlaceholder = "john_doe@example.com",
@@ -138,44 +128,44 @@ export default class SocialLoginScreen extends React.PureComponent<
       passwordPlaceholder = "• • • • • • • •",
       onPasswordChangeText,
       passwordTextFieldStyle,
-    } = this.props;
+    } = props;
     return (
       <View style={styles.textFieldContainer}>
         <TextField
-          {...this.props}
+          {...props}
           placeholder={usernamePlaceholder}
           textFieldStyle={usernameTextFieldStyle}
-          onChangeText={onUserNameChangeText}
+          onChangeText={setUsername}
         />
         <View style={styles.passwordTextFieldContainer}>
           <TextField
             width="70%"
             secureTextEntry
-            {...this.props}
+            {...props}
             placeholder={passwordPlaceholder}
             textFieldStyle={passwordTextFieldStyle}
-            onChangeText={onPasswordChangeText}
+            onChangeText={setPassword}
           />
         </View>
-        {this.state.isSignUp
-          ? this.renderRepasswordContainer()
-          : this.renderForgotPassword()}
+        {isSignUp
+          ? renderRepasswordContainer()
+          : renderForgotPassword()}
       </View>
     );
   };
 
-  renderRepasswordContainer = () => {
+  const renderRepasswordContainer = () => {
     const {
       passwordPlaceholder = "• • • • • • • •",
       onRepasswordChangeText,
       passwordTextFieldStyle,
-    } = this.props;
+    } = props;
     return (
       <View style={styles.passwordTextFieldContainer}>
         <TextField
           width="70%"
           secureTextEntry
-          {...this.props}
+          {...props}
           placeholder={passwordPlaceholder}
           textFieldStyle={passwordTextFieldStyle}
           onChangeText={onRepasswordChangeText}
@@ -184,13 +174,13 @@ export default class SocialLoginScreen extends React.PureComponent<
     );
   };
 
-  renderForgotPassword = () => {
+  const renderForgotPassword = () => {
     const {
       forgotPasswordText = "Forgot Password?",
       forgotPasswordTextStyle,
       onForgotPasswordPress,
       disableForgotButton,
-    } = this.props;
+    } = props;
     return (
       !disableForgotButton && (
         <TouchableOpacity
@@ -207,7 +197,7 @@ export default class SocialLoginScreen extends React.PureComponent<
     );
   };
 
-  renderClassicLoginButton = () => {
+  const renderClassicLoginButton = () => {
     const {
       loginText = "Let's cook!",
       loginButtonBackgroundColor,
@@ -217,10 +207,10 @@ export default class SocialLoginScreen extends React.PureComponent<
       spinnerType,
       loginButtonSpinnerColor,
       onLoginPress,
-    } = this.props;
+    } = props;
     return (
       <SocialButton
-        {...this.props}
+        {...props}
         text={loginText}
         onPress={onLoginPress}
         shadowColor={loginButtonShadowColor}
@@ -233,14 +223,14 @@ export default class SocialLoginScreen extends React.PureComponent<
     );
   };
 
-  renderFacebookLoginButton = () => {
+  const renderFacebookLoginButton = () => {
     const {
       onFacebookLoginPress,
       facebookSpinnerVisibility,
       spinnerSize,
       spinnerType,
       facebookSpinnerColor,
-    } = this.props;
+    } = props;
     return (
       <View style={styles.socialLoginButtonContainer}>
         <SocialButton
@@ -261,14 +251,14 @@ export default class SocialLoginScreen extends React.PureComponent<
     );
   };
 
-  renderAppleLoginButton = () => {
+  const renderAppleLoginButton = () => {
     const {
       spinnerSize,
       spinnerType,
       appleSpinnerColor,
       onAppleLoginPress,
       appleSpinnerVisibility,
-    } = this.props;
+    } = props;
     return (
       <View style={styles.socialLoginButtonContainer}>
         <SocialButton
@@ -289,14 +279,14 @@ export default class SocialLoginScreen extends React.PureComponent<
     );
   };
 
-  renderTwitterLoginButton = () => {
+  const renderTwitterLoginButton = () => {
     const {
       onTwitterLoginPress,
       twitterSpinnerVisibility,
       spinnerSize,
       spinnerType,
       twitterSpinnerColor,
-    } = this.props;
+    } = props;
     return (
       <View style={styles.socialLoginButtonContainer}>
         <SocialButton
@@ -320,14 +310,14 @@ export default class SocialLoginScreen extends React.PureComponent<
     );
   };
 
-  renderGoogleLoginButton = () => {
+  const renderGoogleLoginButton = () => {
     const {
       onGoogleLoginPress,
       googleSpinnerVisibility,
       spinnerSize,
       spinnerType,
       googleSpinnerColor,
-    } = this.props;
+    } = props;
     return (
       <View style={styles.socialLoginButtonContainer}>
         <SocialButton
@@ -350,14 +340,14 @@ export default class SocialLoginScreen extends React.PureComponent<
     );
   };
 
-  renderDiscordLoginButton = () => {
+  const renderDiscordLoginButton = () => {
     const {
       spinnerSize,
       spinnerType,
       discordSpinnerColor,
       onDiscordLoginPress,
       discordSpinnerVisibility,
-    } = this.props;
+    } = props;
     return (
       <View style={styles.socialLoginButtonContainer}>
         <SocialButton
@@ -381,33 +371,29 @@ export default class SocialLoginScreen extends React.PureComponent<
     );
   };
 
-  renderSocialButtons = () => {
+  const renderSocialButtons = () => {
     const {
       enableFacebookLogin,
       enableTwitterLogin,
       enableGoogleLogin,
       enableDiscordLogin,
       enableAppleLogin,
-    } = this.props;
+    } = props;
     return (
       <View style={styles.socialButtonsContainer}>
-        {this.renderClassicLoginButton()}
-        <ScrollView
-          style={styles.socialButtonsContainerGlue}
-          contentInset={styles.socialLoginButtonsContentInset}
-        >
-          {enableFacebookLogin && this.renderFacebookLoginButton()}
-          {enableTwitterLogin && this.renderTwitterLoginButton()}
-          {enableAppleLogin && this.renderAppleLoginButton()}
-          {enableGoogleLogin && this.renderGoogleLoginButton()}
-          {enableDiscordLogin && this.renderDiscordLoginButton()}
-        </ScrollView>
+        {renderClassicLoginButton()}
+        {enableFacebookLogin && renderFacebookLoginButton()}
+        {enableTwitterLogin && renderTwitterLoginButton()}
+        {enableAppleLogin && renderAppleLoginButton()}
+        {enableGoogleLogin && renderGoogleLoginButton()}
+        {enableDiscordLogin && renderDiscordLoginButton()}
+
       </View>
     );
   };
 
-  renderRightTopAsset = () => {
-    const { rightTopAssetImageSource } = this.props;
+  const renderRightTopAsset = () => {
+    const { rightTopAssetImageSource } = props;
     return (
       <View style={styles.rightTopAssetContainer}>
         <Image
@@ -419,8 +405,8 @@ export default class SocialLoginScreen extends React.PureComponent<
     );
   };
 
-  renderLeftBottomAsset = () => {
-    const { leftBottomAssetImageSource } = this.props;
+  const renderLeftBottomAsset = () => {
+    const { leftBottomAssetImageSource } = props;
     return (
       <View style={styles.leftBottomAssetContainer}>
         <Image
@@ -432,18 +418,22 @@ export default class SocialLoginScreen extends React.PureComponent<
     );
   };
 
-  render() {
-    return (
-      <SafeAreaView style={styles.container}>
-        {this.renderRightTopAsset()}
-        <View style={styles.contentContainer}>
-          {this.renderLoginTitle()}
-          {this.renderTextFieldContainer()}
-          {this.renderHeader()}
-          {this.renderSocialButtons()}
-        </View>
-        {this.renderLeftBottomAsset()}
-      </SafeAreaView>
-    );
-  }
-}
+  useImperativeHandle(ref, () => ({
+    getParams: () => ({username, password})
+  }));
+
+  return (
+    <SafeAreaView style={styles.container}>
+      {renderRightTopAsset()}
+      <View style={styles.contentContainer}>
+        {renderLoginTitle()}
+        {renderTextFieldContainer()}
+        {renderHeader()}
+        {renderSocialButtons()}
+      </View>
+      {renderLeftBottomAsset()}
+    </SafeAreaView>
+  );
+});
+
+export default SocialLoginScreen;

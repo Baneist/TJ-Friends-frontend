@@ -37,10 +37,9 @@ const App = () => {
   const [cookie, setCookie] = useState({});
 
   const webViewRef = useRef<WebView>(null);
-  const loginRef = createRef<typeof LoginScreen>();
-  const signupRef = createRef<typeof LoginScreen>();
   const navigationRef = useNavigationContainerRef<RootStackParamList>();
-  const textRef = createRef<ITextRef>();
+  const loginRef = createRef<ITextRef>();
+  const signupRef = createRef<ITextRef>();
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const renderWebView = () => {
@@ -95,9 +94,26 @@ const App = () => {
     }
   };
 
+  const handleLogin = async () => {
+    const params = loginRef.current?.getParams();
+    try {
+      let response = await fetch(PostUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(params),
+      });
+      let data = response.json();
+      navigationRef.current?.dispatch(StackActions.replace('Main'));
+    } catch (error) {
+      console.log(error);
+    };
+  }
+
   const RenderSignupScreen = ({ navigation }: Props) => (
     <LoginScreen
-      ref={textRef}
+      ref={signupRef}
       style={{ flex: 1, justifyContent: 'center' }}
       logoImageSource={require('./assets/logo-example.png')}
       onLoginPress={() => setIsModalVisible(true)}
@@ -108,20 +124,23 @@ const App = () => {
 
   const RenderLoginScreen = ({ navigation }: Props) => (
     <SocialLoginScreen
-      onSignUpPress={() => { navigation.replace('Signup')}}
-      onLoginPress={() => {}}
-      onForgotPasswordPress={() => {}}
-      onUserNameChangeText={(username) => console.log("Username: ", username)}
-      onPasswordChangeText={(password) => console.log("Password: ", password)}
+      ref={loginRef}
+      onSignUpPress={() => { navigation.replace('Signup') }}
+      onLoginPress={handleLogin}
+      onForgotPasswordPress={() => { }}
+      onUserNameChangeText={username => setUsername(username)}
+      onPasswordChangeText={password => setPassword(password)}
+      enableFacebookLogin
+      enableGoogleLogin
     />
   );
 
   return (
     // <ValidateWebView/>
     <View style={{ flex: 1 }}>
-      <NavigationContainer ref={navigationRef} onStateChange={(state) => console.log('Stack:', state?.routes)}>
+      <NavigationContainer ref={navigationRef}>
         <Stack.Navigator initialRouteName="Login">
-          <Stack.Screen name="Login" component={RenderLoginScreen} options={{ headerShown: false }}/>
+          <Stack.Screen name="Login" component={RenderLoginScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Signup" component={RenderSignupScreen} />
           <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }} />
         </Stack.Navigator>
