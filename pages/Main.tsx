@@ -134,9 +134,9 @@ const MainScreen = () => {
       />
       <Tab.Screen
         options={{
-          tabBarStyle: {
-            display: 'none',
-          },
+          // tabBarStyle: {
+          //   display: 'none',
+          // },
           tabBarIcon: tabBarIcon('Trophy'),
           tabBarLabel: showLabel ? 'Trophy' : undefined,
         }}
