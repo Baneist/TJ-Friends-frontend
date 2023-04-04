@@ -3,7 +3,7 @@ import { View, StyleSheet, UIManager, Platform } from 'react-native';
 import LoginScreen, { ITextRef } from "./pages/LoginScreen";
 import MainScreen from './pages/Main';
 import TextInput from 'react-native-text-input-interactive';
-import { NavigationContainer, StackActions, createNavigationContainerRef } from '@react-navigation/native';
+import { NavigationContainer, StackActions, useNavigationContainerRef } from '@react-navigation/native';
 import { createStackNavigator, StackNavigationProp } from '@react-navigation/stack';
 import Modal from "react-native-modal";
 import { WebView } from "react-native-webview";
@@ -38,7 +38,7 @@ const App = () => {
   const webViewRef = useRef<WebView>(null);
   const loginRef = createRef<typeof LoginScreen>();
   const signupRef = createRef<typeof LoginScreen>();
-  const navigationRef = createNavigationContainerRef<RootStackParamList>();
+  const navigationRef = useNavigationContainerRef<RootStackParamList>();
   const textRef = createRef<ITextRef>();
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -52,7 +52,7 @@ const App = () => {
     );
   };
 
-  const handleWebViewNavigationStateChange = (newNavState: { url: string }) => {
+  const handleWebViewNavigationStateChange = async (newNavState: { url: string }) => {
     const { url } = newNavState;
     if (url && url.startsWith(TargetUrl)) {
       const params: { [index: string]: string } = {};
@@ -61,26 +61,20 @@ const App = () => {
         const [key, value] = pair.split("=");
         params[key] = value;
       }
-
-      fetch(PostUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(params),
-      }).then((response) => {
-        response
-        .json()
-        .then((data) => {
-          console.log(data);
-          setCookie({ sessionid: data.data.sessionid, id: data.data.uid });
-          console.log(cookie);
-          navigationRef.current?.navigate('Main');
-          setIsModalVisible(false);
+      try {
+        let response = await fetch(PostUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(params),
         });
-      }).catch((error) => {
-        console.error(error);
-      });
+        let data = response.json();
+        navigationRef.current?.dispatch(StackActions.replace('Main'));
+        setIsModalVisible(false);
+      } catch (error) {
+        console.log(error);
+      };
       // response = await fetch(PostUrl, {
       //   method: "POST",
       //   headers: {
@@ -115,7 +109,7 @@ const App = () => {
     <LoginScreen
       style={{ flex: 1, justifyContent: 'center' }}
       logoImageSource={require('./assets/logo-example.png')}
-      onLoginPress={() => {  }}
+      onLoginPress={() => { console.log(textRef.current?.getText()); }}
       onSignupPress={() => { navigation.replace('Signup') }}
       enablePasswordValidation={true}
     />
@@ -124,12 +118,11 @@ const App = () => {
   return (
     // <ValidateWebView/>
     <View style={{ flex: 1 }}>
-      <NavigationContainer ref={navigationRef}>
+      <NavigationContainer ref={navigationRef} onStateChange={(state) => console.log('Stack:', state?.routes)}>
         <Stack.Navigator initialRouteName="Login">
           <Stack.Screen name="Login" component={RenderLoginScreen} />
           <Stack.Screen name="Signup" component={RenderSignupScreen} />
           <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }} />
-        
         </Stack.Navigator>
       </NavigationContainer>
       <Modal isVisible={isModalVisible}>{renderWebView()}</Modal>
