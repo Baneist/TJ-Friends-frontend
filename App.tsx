@@ -38,7 +38,7 @@ const App = () => {
   const webViewRef = useRef<WebView>(null);
   const loginRef = createRef<typeof LoginScreen>();
   const signupRef = createRef<typeof LoginScreen>();
-  const navigationRef = createNavigationContainerRef();
+  const navigationRef = createNavigationContainerRef<RootStackParamList>();
   const textRef = createRef<ITextRef>();
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -75,7 +75,7 @@ const App = () => {
           console.log(data);
           setCookie({ sessionid: data.data.sessionid, id: data.data.uid });
           console.log(cookie);
-          navigationRef.current?.dispatch(StackActions.replace('Main'));
+          navigationRef.current?.navigate('Main');
           setIsModalVisible(false);
         });
       }).catch((error) => {
