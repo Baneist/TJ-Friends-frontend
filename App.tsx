@@ -7,6 +7,7 @@ import { NavigationContainer, StackActions, useNavigationContainerRef } from '@r
 import { createStackNavigator, StackNavigationProp } from '@react-navigation/stack';
 import Modal from "react-native-modal";
 import { WebView } from "react-native-webview";
+import SocialLoginScreen from './pages/SocialLoginScreen';
 
 const GetUrl = "https://1.tongji.edu.cn/api/ssoservice/system/loginIn";
 const TargetUrl = "https://1.tongji.edu.cn/ssologin";
@@ -106,12 +107,12 @@ const App = () => {
   );
 
   const RenderLoginScreen = ({ navigation }: Props) => (
-    <LoginScreen
-      style={{ flex: 1, justifyContent: 'center' }}
-      logoImageSource={require('./assets/logo-example.png')}
-      onLoginPress={() => { console.log(textRef.current?.getText()); }}
-      onSignupPress={() => { navigation.replace('Signup') }}
-      enablePasswordValidation={true}
+    <SocialLoginScreen
+      onSignUpPress={() => { navigation.replace('Signup')}}
+      onLoginPress={() => {}}
+      onForgotPasswordPress={() => {}}
+      onUserNameChangeText={(username) => console.log("Username: ", username)}
+      onPasswordChangeText={(password) => console.log("Password: ", password)}
     />
   );
 
@@ -120,7 +121,7 @@ const App = () => {
     <View style={{ flex: 1 }}>
       <NavigationContainer ref={navigationRef} onStateChange={(state) => console.log('Stack:', state?.routes)}>
         <Stack.Navigator initialRouteName="Login">
-          <Stack.Screen name="Login" component={RenderLoginScreen} />
+          <Stack.Screen name="Login" component={RenderLoginScreen} options={{ headerShown: false }}/>
           <Stack.Screen name="Signup" component={RenderSignupScreen} />
           <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }} />
         </Stack.Navigator>
