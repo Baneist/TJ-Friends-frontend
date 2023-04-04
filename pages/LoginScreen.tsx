@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { forwardRef, useImperativeHandle } from "react";
 import {
   Image,
   ImageStyle,
@@ -29,6 +29,11 @@ const usernameValidator = (username: string) => {
 };
 
 const dummyFunction = () => { };
+
+export interface ITextRef {
+  getText: () => { username: string, password: string };
+}
+
 export interface ILoginScreenProps {
   signupText?: string;
   disableDivider?: boolean;
@@ -64,10 +69,10 @@ export interface ILoginScreenProps {
   textInputChildren?: React.ReactNode;
   customLogo?: React.ReactNode;
   customDivider?: React.ReactNode;
-  onLoginPress: () => void;
-  onSignupPress: () => void;
-  onUsernameChange: (username: string) => void;
-  onPasswordChange: (password: string) => void;
+  onLoginPress?: () => void;
+  onSignupPress?: () => void;
+  onUsernameChange?: (username: string) => void;
+  onPasswordChange?: (password: string) => void;
   onFacebookPress?: () => void;
   onTwitterPress?: () => void;
   onApplePress?: () => void;
@@ -75,7 +80,7 @@ export interface ILoginScreenProps {
   onEyePress?: () => void;
 }
 
-const LoginScreen: React.FC<ILoginScreenProps> = ({
+const LoginScreen = React.forwardRef<ITextRef, ILoginScreenProps>(({
   style,
   dividerStyle,
   logoImageStyle,
@@ -119,7 +124,7 @@ const LoginScreen: React.FC<ILoginScreenProps> = ({
   TouchableComponent = TouchableOpacity,
   onEyePress,
   children,
-}) => {
+}, ref) => {
   const [isPasswordVisible, setPasswordVisible] = React.useState(false);
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -130,15 +135,21 @@ const LoginScreen: React.FC<ILoginScreenProps> = ({
     useStateWithCallback(false);
 
   const handleUsernameChange = (text: string) => {
-    isUsernameTooltipVisible && setUsernameTooltipVisible(false);
-    setUsername(text);
-    onUsernameChange?.(text);
+    try {
+      // console.log(text);
+      isUsernameTooltipVisible && setUsernameTooltipVisible(false);
+      setUsername(text);
+      // console.log(onUsernameChange)
+      // onUsernameChange?.(text);
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   const handlePasswordChange = (text: string) => {
     isPasswordTooltipVisible && setPasswordTooltipVisible(false);
     setPassword(text);
-    onPasswordChange?.(text);
+    // onPasswordChange?.(text);
   };
 
   const handleEyePress = () => {
@@ -149,19 +160,19 @@ const LoginScreen: React.FC<ILoginScreenProps> = ({
   const handleUsernameValidation = () => {
     if (disableUsernameValidation) {
       handlePasswordValidation();
-      onUsernameChange(username);
+      onUsernameChange?.(username);
       return;
     }
 
     if (usernameValidator(username)) {
       !disableUsernameTooltip && setUsernameTooltipVisible(false);
       handlePasswordValidation();
-      onUsernameChange(username);
+      onUsernameChange?.(username);
       return;
     } else {
       LayoutAnimation.spring();
       !disableUsernameTooltip && setUsernameTooltipVisible(true);
-      onUsernameChange(username);
+      onUsernameChange?.(username);
     }
   };
 
@@ -170,18 +181,18 @@ const LoginScreen: React.FC<ILoginScreenProps> = ({
       return;
     }
     if (!enablePasswordValidation) {
-      onPasswordChange(password);
+      onPasswordChange?.(password);
       return;
     }
     if (enablePasswordValidation && passwordValidator(password)) {
       !disablePasswordTooltip && setPasswordTooltipVisible(false);
-      onPasswordChange(password);
+      onPasswordChange?.(password);
       return;
     } else {
       LayoutAnimation.spring();
       !disableUsernameTooltip && setUsernameTooltipVisible(false);
       !disablePasswordTooltip && setPasswordTooltipVisible(true);
-      onPasswordChange(password);
+      onPasswordChange?.(password);
     }
   };
 
@@ -232,8 +243,9 @@ const LoginScreen: React.FC<ILoginScreenProps> = ({
       passwordContentTooltip || (
         <View style={styles.passwordTooltipContainer}>
           <Text style={styles.passwordTooltipTextStyle}>
-            Incorrect{" "}
+            Your{" "}
             <Text style={styles.passwordTooltipRedTextStyle}>password</Text>
+            {" "}is too simple
           </Text>
         </View>
       );
@@ -279,7 +291,7 @@ const LoginScreen: React.FC<ILoginScreenProps> = ({
       <TouchableComponent
         style={[styles.loginButtonStyle, loginButtonStyle]}
         onPress={() => {
-          // handleUsernameValidation();
+          handleUsernameValidation();
           onLoginPress?.();
         }}
       >
@@ -327,6 +339,10 @@ const LoginScreen: React.FC<ILoginScreenProps> = ({
       </>
     ) : null;
 
+  useImperativeHandle(ref, () => ({
+    getText: () => ({ username, password })
+  }));
+
   return (
     <SafeAreaView style={[styles.container, style]}>
       {/* <StatusBar barStyle="dark-content" /> */}
@@ -341,6 +357,6 @@ const LoginScreen: React.FC<ILoginScreenProps> = ({
       {children}
     </SafeAreaView>
   );
-};
+});
 
 export default LoginScreen;
