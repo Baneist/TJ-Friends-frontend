@@ -103,7 +103,7 @@ export function MomentsList({avatar_pre} : {avatar_pre: boolean}){
     <Block>
       <Block>
         {Viewed.map((img, imgIndex) => (
-          <Card elevation={5} style={{ margin: 5 }}>
+          <Card elevation={5} style={{ margin: 5 }} key={imgIndex}>
              <Card.Title
                 title="UserName"
                 subtitle="PostTime"

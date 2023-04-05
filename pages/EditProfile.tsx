@@ -1,4 +1,4 @@
-import React from "react";
+import React , {useState}from "react";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   View,
@@ -7,12 +7,12 @@ import {
   ScrollView,
   Image,
   ImageBackground,
-  Pressable
-} from "react-native";
-import {Button, Card, Avatar, IconButton} from 'react-native-paper';
-import { Block, theme, Text } from "galio-framework";
-import Icon from 'react-native-vector-icons/AntDesign';
-import { MomentsList } from "../components/MomentsList/MomentsList";
+  Pressable,
+  Platform
+} from "react-native"
+import {Button, Card, TextInput, IconButton} from 'react-native-paper';
+import { Block, Text, Input } from "galio-framework";
+import DateTimePicker from '@react-native-community/datetimepicker';
 
 //获取屏幕宽高
 const { width, height } = Dimensions.get("screen");
@@ -54,12 +54,19 @@ function UserPhoto({pressable} : {pressable: boolean}) {
 }
 
 //资料页面
-export function Profile({navigation}:{navigation:any}){
+export function EditProfile(){
   const { bottom } = useSafeAreaInsets();
   //编辑个人资料
   function editProfile(){
-    navigation.navigate('EditProfile')
+    console.log('跳转编辑个人资料')
   }
+  //选择日期
+  const [date, setDate] = useState(new Date(1598051730000));
+  const [show, setShow] = useState(false);  //初始为false
+
+  const showDatepicker = () => {
+    setShow(true);
+  };
   return (
     <Block flex style={{marginBottom: bottom}}>
       <Block flex>
@@ -81,71 +88,60 @@ export function Profile({navigation}:{navigation:any}){
                     style={styles.avatar}
                   />
                 </Block>
-                <Block style={styles.info}>
-                  {/* 粉丝量信息 */}
-                  <Block row space="between">
+              {/*输入框等 */}
+                <Block flex>
+                    {/* 先显示学号 姓名 */}
                     <Block middle>
-                      <Text bold size={18} color="#525F7F" style={{ marginBottom: 4}}>
-                        2K
-                      </Text>
-                      <Text size={12}>Followers</Text>
+                        <Text bold size={28} color="#32325D">
+                        吉尔伽美什
+                        </Text>
+                        <Text size={16} color="#32325D" style={{ marginTop: 10 }}>
+                        2052123
+                        </Text>
+                    </Block>
+                    <Block middle row  style={{ marginTop: 10 }}>
+                        <Text size={16} color="#32325D">
+                        2020届
+                        </Text>
+                        <Text size={16} color="#32325D">
+                        愉悦专业
+                        </Text>
                     </Block>
                     <Block middle>
-                      <Text bold  color="#525F7F" size={18} style={{ marginBottom: 4 }}>
-                        10
-                      </Text>
-                      <Text size={12}>Following</Text>
+                        <TextInput  
+                          mode="outlined"
+                          label="昵称"
+                          placeholder="Gilgamesh"
+                          maxLength={32}
+                          multiline
+                          numberOfLines={2}
+                          right={<TextInput.Affix text="/32" />}
+                          style={styles.inputBox}
+                        />
+                        <TextInput  
+                          mode="outlined"
+                          label="个性签名"
+                          placeholder="愉悦"
+                          maxLength={32}
+                          multiline
+                          numberOfLines={16}
+                          right={<TextInput.Affix text="/256" />}
+                          style={styles.inputBox}
+                        />
+                        <TextInput  
+                          mode="outlined"
+                          label="兴趣爱好"
+                          placeholder="喜欢钱和一切金闪闪的东西，还有哈哈哈哈哈哈（是个快乐的男人！）"
+                          maxLength={32}
+                          multiline
+                          numberOfLines={16}
+                          right={<TextInput.Affix text="/256" />}
+                          style={styles.inputBox}
+                        />
+                        <Button onPress={showDatepicker} mode="elevated" icon="calendar">生日设置</Button>
                     </Block>
-                    <Block middle>
-                      <Text bold size={18} color="#525F7F" style={{ marginBottom: 4 }}>
-                        89
-                      </Text>
-                      <Text size={12}>Comments</Text>
-                    </Block>
-                  </Block>
                 </Block>
-              {/* 用户ID 简介等 */}
-              <Block flex>
-                  {/* 用户ID */}
-                  <Block middle style={styles.nameInfo}>
-                    <Text bold size={28} color="#32325D">
-                      Gilgamesh
-                    </Text>
-                    <Text size={16} color="#32325D" style={{ marginTop: 10 }}>
-                      Uruk
-                    </Text>
-                    {/* 改资料 */}
-                    <Block middle>
-                      <Button
-                        buttonColor="transparent"
-                        textColor="#3B5998"
-                        onPress={editProfile}
-                      >
-                        <Icon size={16} name="edit">edit your profile</Icon>
-                      </Button>
-                    </Block>
-                  </Block>
-                  {/* 分割线 */}
-                  <Block middle style={{ marginTop: 16, marginBottom: 16 }}>
-                    <Block style={styles.divider} />
-                  </Block>
-                  {/* 简介 */}
-                  <Block middle>
-                    <Text
-                      size={16}
-                      color="#525F7F"
-                      style={{ textAlign: "center" }}
-                    >
-                      Enuma Elish !!
-                    </Text>
-                  </Block>
-                  {/* 动态列表 */}
-                  <Text bold size={16} color="#525F7F" style={{marginTop: 12, marginLeft: 12}}>
-                    Moments
-                  </Text>
-                  <MomentsList avatar_pre={false}/>
-                </Block>
-              </Block>
+            </Block>
               {/* eslint-disable-next-line max-len */}
             {/* -> Set bottom view to allow scrolling to top if you set bottom-bar position absolute */}
             <View style={{ height: 190 }} />
@@ -212,5 +208,8 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     width: thumbMeasure,
     height: thumbMeasure
+  },
+  inputBox:{
+    width: width / 1.2
   }
 });

@@ -7,6 +7,7 @@ import { NavigationContainer, StackActions, createNavigationContainerRef } from 
 import { createStackNavigator, StackNavigationProp } from '@react-navigation/stack';
 import Modal from "react-native-modal";
 import { WebView } from "react-native-webview";
+import { EditProfile } from './pages/EditProfile';
 
 const GetUrl = "https://1.tongji.edu.cn/api/ssoservice/system/loginIn";
 const TargetUrl = "https://1.tongji.edu.cn/ssologin";
@@ -16,7 +17,8 @@ type RootStackParamList = {
   Main: undefined, // undefined because you aren't passing any params to the home screen
   Login: undefined,
   Signup: undefined,
-  Profile: { name: string };
+  EditProfile: { name: string };
+
 };
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -129,7 +131,7 @@ const App = () => {
           <Stack.Screen name="Login" component={RenderLoginScreen} />
           <Stack.Screen name="Signup" component={RenderSignupScreen} />
           <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }} />
-        
+          <Stack.Screen name="EditProfile" component={EditProfile} />
         </Stack.Navigator>
       </NavigationContainer>
       <Modal isVisible={isModalVisible}>{renderWebView()}</Modal>

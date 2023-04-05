@@ -1,14 +1,14 @@
-import React from 'react';
+import React, {useRef} from 'react';
 import {View, Switch, Pressable} from 'react-native';
 import { Provider as PaperProvider, TextInput } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { NavigationContainer } from '@react-navigation/native';
 import {Text, Block} from "galio-framework";
 import { BottomFabBar } from 'rn-wave-bottom-bar';
 import { SettingsScreen } from './ListScreen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {Profile} from './Profile'
+
 
 const generateScreen = (screen: string) => () => {
   return (
@@ -26,7 +26,6 @@ const generateScreen = (screen: string) => () => {
 };
 
 const Tab = createBottomTabNavigator();
-
 const tabBarIcon =
   (name: string) =>
     ({
@@ -40,7 +39,7 @@ const tabBarIcon =
     }) =>
       <Icon name={name} size={28} color={focused ? 'white' : 'white'} />;
 
-const MainScreen = () => {
+const MainScreen = ({navigation}:{navigation:any}) => {
   const [showLabel, setShowLabel] = React.useState(false);
   const [enableSquare, setEnableSquare] = React.useState(false);
   const [isRtl, setIsRtl] = React.useState(false);
@@ -62,13 +61,12 @@ const MainScreen = () => {
     </View>
   );
 
-const renderBackButton = () => {
+const backButton = () => {
   return(
     <Pressable onPress={() => {
-      // 在这里写你想要返回的页面名字
-      console.log(123)
+      navigation.goBack()
     }}>
-      <Icon size={20} name='left'>Back</Icon>
+      <Icon size={20} name='left'></Icon>
     </Pressable>
   )
 };
@@ -159,7 +157,7 @@ const renderBackButton = () => {
           tabBarIcon: tabBarIcon('user'),
           tabBarLabel: showLabel ? 'Profile' : undefined,
           // 在options中指定headerLeft属性
-          headerLeft: renderBackButton,
+          headerLeft:backButton
         }}
         name="Profile"
         component={Profile}
