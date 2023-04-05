@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import React, {useRef} from 'react';
+=======
+import React, { useEffect } from 'react';
+>>>>>>> 6ad944c3306e4d8f3f860b4860f92af78f308611
 import {View, Switch, Pressable} from 'react-native';
 import { Provider as PaperProvider, TextInput } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/AntDesign';

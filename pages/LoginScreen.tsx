@@ -31,7 +31,7 @@ const usernameValidator = (username: string) => {
 const dummyFunction = () => { };
 
 export interface ITextRef {
-  getText: () => { username: string, password: string };
+  getParams: () => { username: string, password: string };
 }
 
 export interface ILoginScreenProps {
@@ -136,11 +136,8 @@ const LoginScreen = React.forwardRef<ITextRef, ILoginScreenProps>(({
 
   const handleUsernameChange = (text: string) => {
     try {
-      // console.log(text);
       isUsernameTooltipVisible && setUsernameTooltipVisible(false);
       setUsername(text);
-      // console.log(onUsernameChange)
-      // onUsernameChange?.(text);
     } catch (e) {
       console.log(e);
     }
@@ -149,7 +146,6 @@ const LoginScreen = React.forwardRef<ITextRef, ILoginScreenProps>(({
   const handlePasswordChange = (text: string) => {
     isPasswordTooltipVisible && setPasswordTooltipVisible(false);
     setPassword(text);
-    // onPasswordChange?.(text);
   };
 
   const handleEyePress = () => {
@@ -340,7 +336,7 @@ const LoginScreen = React.forwardRef<ITextRef, ILoginScreenProps>(({
     ) : null;
 
   useImperativeHandle(ref, () => ({
-    getText: () => ({ username, password })
+    getParams: () => ({ username, password })
   }));
 
   return (

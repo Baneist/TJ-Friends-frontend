@@ -3,11 +3,15 @@ import { View, StyleSheet, UIManager, Platform } from 'react-native';
 import LoginScreen, { ITextRef } from "./pages/LoginScreen";
 import MainScreen from './pages/Main';
 import TextInput from 'react-native-text-input-interactive';
-import { NavigationContainer, StackActions, createNavigationContainerRef } from '@react-navigation/native';
+import { NavigationContainer, StackActions, useNavigationContainerRef } from '@react-navigation/native';
 import { createStackNavigator, StackNavigationProp } from '@react-navigation/stack';
 import Modal from "react-native-modal";
 import { WebView } from "react-native-webview";
+<<<<<<< HEAD
 import { EditProfile } from './pages/EditProfile';
+=======
+import SocialLoginScreen from './pages/SocialLoginScreen';
+>>>>>>> 6ad944c3306e4d8f3f860b4860f92af78f308611
 
 const GetUrl = "https://1.tongji.edu.cn/api/ssoservice/system/loginIn";
 const TargetUrl = "https://1.tongji.edu.cn/ssologin";
@@ -38,10 +42,9 @@ const App = () => {
   const [cookie, setCookie] = useState({});
 
   const webViewRef = useRef<WebView>(null);
-  const loginRef = createRef<typeof LoginScreen>();
-  const signupRef = createRef<typeof LoginScreen>();
-  const navigationRef = createNavigationContainerRef<RootStackParamList>();
-  const textRef = createRef<ITextRef>();
+  const navigationRef = useNavigationContainerRef<RootStackParamList>();
+  const loginRef = createRef<ITextRef>();
+  const signupRef = createRef<ITextRef>();
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const renderWebView = () => {
@@ -54,7 +57,7 @@ const App = () => {
     );
   };
 
-  const handleWebViewNavigationStateChange = (newNavState: { url: string }) => {
+  const handleWebViewNavigationStateChange = async (newNavState: { url: string }) => {
     const { url } = newNavState;
     if (url && url.startsWith(TargetUrl)) {
       const params: { [index: string]: string } = {};
@@ -63,26 +66,20 @@ const App = () => {
         const [key, value] = pair.split("=");
         params[key] = value;
       }
-
-      fetch(PostUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(params),
-      }).then((response) => {
-        response
-        .json()
-        .then((data) => {
-          console.log(data);
-          setCookie({ sessionid: data.data.sessionid, id: data.data.uid });
-          console.log(cookie);
-          navigationRef.current?.navigate('Main');
-          setIsModalVisible(false);
+      try {
+        let response = await fetch(PostUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(params),
         });
-      }).catch((error) => {
-        console.error(error);
-      });
+        let data = response.json();
+        navigationRef.current?.dispatch(StackActions.replace('Main'));
+        setIsModalVisible(false);
+      } catch (error) {
+        console.log(error);
+      };
       // response = await fetch(PostUrl, {
       //   method: "POST",
       //   headers: {
@@ -102,9 +99,26 @@ const App = () => {
     }
   };
 
+  const handleLogin = async () => {
+    const params = loginRef.current?.getParams();
+    try {
+      let response = await fetch(PostUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(params),
+      });
+      let data = response.json();
+      navigationRef.current?.dispatch(StackActions.replace('Main'));
+    } catch (error) {
+      console.log(error);
+    };
+  }
+
   const RenderSignupScreen = ({ navigation }: Props) => (
     <LoginScreen
-      ref={textRef}
+      ref={signupRef}
       style={{ flex: 1, justifyContent: 'center' }}
       logoImageSource={require('./assets/logo-example.png')}
       onLoginPress={() => setIsModalVisible(true)}
@@ -114,12 +128,15 @@ const App = () => {
   );
 
   const RenderLoginScreen = ({ navigation }: Props) => (
-    <LoginScreen
-      style={{ flex: 1, justifyContent: 'center' }}
-      logoImageSource={require('./assets/logo-example.png')}
-      onLoginPress={() => {  }}
-      onSignupPress={() => { navigation.replace('Signup') }}
-      enablePasswordValidation={true}
+    <SocialLoginScreen
+      ref={loginRef}
+      onSignUpPress={() => { navigation.replace('Signup') }}
+      onLoginPress={handleLogin}
+      onForgotPasswordPress={() => { }}
+      onUserNameChangeText={username => setUsername(username)}
+      onPasswordChangeText={password => setPassword(password)}
+      enableFacebookLogin
+      enableGoogleLogin
     />
   );
 
@@ -127,11 +144,14 @@ const App = () => {
     // <ValidateWebView/>
     <View style={{ flex: 1 }}>
       <NavigationContainer ref={navigationRef}>
-        <Stack.Navigator initialRouteName="Main">
-          <Stack.Screen name="Login" component={RenderLoginScreen} />
+        <Stack.Navigator initialRouteName="Login">
+          <Stack.Screen name="Login" component={RenderLoginScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Signup" component={RenderSignupScreen} />
           <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }} />
+<<<<<<< HEAD
           <Stack.Screen name="EditProfile" component={EditProfile} />
+=======
+>>>>>>> 6ad944c3306e4d8f3f860b4860f92af78f308611
         </Stack.Navigator>
       </NavigationContainer>
       <Modal isVisible={isModalVisible}>{renderWebView()}</Modal>
