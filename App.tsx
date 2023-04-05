@@ -7,11 +7,8 @@ import { NavigationContainer, StackActions, useNavigationContainerRef } from '@r
 import { createStackNavigator, StackNavigationProp } from '@react-navigation/stack';
 import Modal from "react-native-modal";
 import { WebView } from "react-native-webview";
-<<<<<<< HEAD
 import { EditProfile } from './pages/EditProfile';
-=======
 import SocialLoginScreen from './pages/SocialLoginScreen';
->>>>>>> 6ad944c3306e4d8f3f860b4860f92af78f308611
 
 const GetUrl = "https://1.tongji.edu.cn/api/ssoservice/system/loginIn";
 const TargetUrl = "https://1.tongji.edu.cn/ssologin";
@@ -148,10 +145,7 @@ const App = () => {
           <Stack.Screen name="Login" component={RenderLoginScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Signup" component={RenderSignupScreen} />
           <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }} />
-<<<<<<< HEAD
           <Stack.Screen name="EditProfile" component={EditProfile} />
-=======
->>>>>>> 6ad944c3306e4d8f3f860b4860f92af78f308611
         </Stack.Navigator>
       </NavigationContainer>
       <Modal isVisible={isModalVisible}>{renderWebView()}</Modal>

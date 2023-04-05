@@ -1,124 +1,163 @@
-import React from "react";
+import React from 'react';
+import { Pressable, ScrollView, View, Image, StyleSheet } from 'react-native';
+import { Button, Card, IconButton, Divider, FAB } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import {
-  View,
-  StyleSheet,
-  Dimensions,
-  ScrollView,
-  Image,
-  ImageBackground,
-  Pressable
-} from "react-native";
-import { useState } from "react";
-import {Button, Card, Avatar, IconButton} from 'react-native-paper';
-import { Block, theme, Text } from "galio-framework";
 import Icon from 'react-native-vector-icons/AntDesign';
+import { useState } from 'react';
 
-//图片
-const profileImage = {
-    ProfileBackground : require("../../assets/imgs/profile-screen-bg.png"),
-    ProfilePicture: 'https://picsum.photos/700'
+import Modal from 'react-native-modal';
+
+const styles = StyleSheet.create({
+  userphoto: {
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+  },
+  fab: {
+    position: 'absolute',
+    margin: 16,
+    right: 10,
+    bottom: 80,
+  },
+  modal: {
+    justifyContent: 'flex-end',
+    margin: 0,
+  },
+  menu: {
+    backgroundColor: '#fff',
+    padding: 20,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
+  },
+});
+
+function UserPhoto() {
+  function handleClick() {
+    console.log('pressed');
   }
-  
-  const Viewed = [
-    'https://images.unsplash.com/photo-1501601983405-7c7cabaa1581?fit=crop&w=240&q=80',
-    'https://images.unsplash.com/photo-1543747579-795b9c2c3ada?fit=crop&w=240&q=80',
-    'https://images.unsplash.com/photo-1551798507-629020c81463?fit=crop&w=240&q=80',
-    'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?fit=crop&w=240&q=80',
-    'https://images.unsplash.com/photo-1503642551022-c011aafb3c88?fit=crop&w=240&q=80',
-    'https://images.unsplash.com/photo-1482686115713-0fbcaced6e28?fit=crop&w=240&q=80',
-  ];
+  return (
+    <Pressable onPress={handleClick}>
+      <Image source={{ uri: 'https://picsum.photos/700' }} style={styles.userphoto} />
+    </Pressable>
+  );
+}
 
-//用户头像
-function UserPhoto({pressable} : {pressable: boolean}) {
-    const styles = StyleSheet.create({
-      userphoto: {
-        width:42,
-        height:42,
-        borderRadius:21,
-      },
-    });
-    function handleClick() {
-      console.log('pressed');
-    }
-    if(pressable){
-      return (
-        <Pressable onPress={handleClick}>
-          <Image source={{ uri: profileImage.ProfilePicture }} style={styles.userphoto}/>
-        </Pressable>
-      );
-    }
-    else{
-      return (
-        <Image source={{ uri: profileImage.ProfilePicture }} style={styles.userphoto}/>
-      )
-    }
-  }
-
-//转发 点赞 评论
 function Like() {
-    const [focused,setFocused]=useState(0);
-    const clickHeart = <Icon size={20} name={focused ? 'heart' : 'hearto'} />;
-    function handleClick() {
-      setFocused(1-focused);
-      console.log('pressed');
-    }
-  
-    return (
-      <Button onPress={handleClick}>
-        {clickHeart}
-      </Button>
-    );
+  const [focused, setFocused] = useState(0);
+  const clickHeart = <Icon size={20} name={focused ? 'heart' : 'hearto'} />;
+  function handleClick() {
+    setFocused(1 - focused);
+    console.log('pressed');
   }
-  
-  function Comment() {
-    const clickComment = <Icon size={20} name='message1' />;
-    function handleClick() {
-      console.log('pressed');
-    }
-    return (
-      <Button onPress={handleClick}>
-        {clickComment}
-      </Button>
-    );
+
+  return (
+    <Button onPress={handleClick}>
+      {clickHeart}
+    </Button>
+  );
+}
+
+function Comment() {
+  const clickComment = <Icon size={20} name='message1' />;
+  function handleClick() {
+    console.log('pressed');
   }
-  
-  function Share() {
-    const clickShare = <Icon size={20} name='retweet' />;
-    function handleClick() {
-      console.log('pressed');
-    }
-  
-    return (
-      <Button onPress={handleClick}>
+  return (
+    <Button onPress={handleClick}>
+      {clickComment}
+    </Button>
+  );
+}
+
+function Share() {
+  const clickShare = <Icon size={20} name='retweet' />;
+
+  const [ShareVisible, setShareVisible] = useState(false);
+
+  const toggleShare = () => {
+    setShareVisible(!ShareVisible);
+  };
+
+  return (
+    <View>
+      <Button onPress={toggleShare}>
         {clickShare}
       </Button>
-    );
-  }
+      <Modal
+        isVisible={ShareVisible}
+        onBackdropPress={toggleShare}
+        style={styles.modal}
+      >
+        <View style={styles.menu}>
+          <Card.Title style={{ marginTop: -5 }} title='分享动态' right={(props) => <Button onPress={() => { console.log('pressed'); }}>分享</Button>} />
+          <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', height: 70 }}>
+            <IconButton icon='qqchat' size={40} onPress={() => { }} />
+            <IconButton icon='wechat' size={40} onPress={() => { }} />
+            <IconButton icon='sina-weibo' size={40} onPress={() => { }} />
+          </View>
+          <Button style={{ height: 50, paddingTop: 10 }} onPress={() => { }} >取消</Button>
+        </View>
+      </Modal>
+    </View>
+  );
+}
 
 
-//动态列表
-export function MomentsList({avatar_pre} : {avatar_pre: boolean}){
-    return (
-    <Block>
-      <Block>
-        {Viewed.map((img, imgIndex) => (
-          <Card elevation={5} style={{ margin: 5 }} key={imgIndex}>
-             <Card.Title
-                title="UserName"
-                subtitle="PostTime"
-                left={(props) =><UserPhoto pressable={avatar_pre}/>}
-                right={(props) =><IconButton icon='dots-vertical' />}
-              />
-              <Card.Cover source={{ uri: img }} />
-              <Card.Actions>
-                <Like />
-                <Comment />
-                <Share />
-            </Card.Actions>
-          </Card>
-        ))}
-    </Block>
-  </Block>
-  )
+const CardwithButtons = () => {
+  const [MenuVisible, setMenuVisible] = useState(false);
+
+  const toggleMenu = () => {
+    setMenuVisible(!MenuVisible);
+  };
+
+  return (
+    <View>
+      <Card elevation={5} style={{ margin: 5 }}>
+        <Card.Title
+          title="UserName"
+          subtitle="PostTime"
+          left={UserPhoto}
+          right={(props) => <IconButton icon='dots-vertical' onPress={toggleMenu} />}
+        />
+        <Card.Cover source={{ uri: 'https://picsum.photos/700' }} />
+        <Card.Actions>
+          <Like />
+          <Comment />
+          <Share />
+        </Card.Actions>
+      </Card>
+      <Modal
+        isVisible={MenuVisible}
+        onBackdropPress={toggleMenu}
+        style={styles.modal}
+      >
+        <View style={styles.menu}>
+          <Button style={{ height: 50 }} onPress={() => { }} >收藏</Button>
+          <Divider />
+          <Button style={{ height: 50, paddingTop: 5 }} onPress={() => { }} >举报</Button>
+          <Divider />
+          <Button style={{ height: 50, paddingTop: 10 }} onPress={() => { }} >删除</Button>
+        </View>
+      </Modal>
+
+    </View>
+  );
+};
+
+
+export function MomentsList() {
+  const { bottom } = useSafeAreaInsets();
+  const array = [1,2,3,4,5]; 
+  return (
+    <View style={{ flex: 1, marginBottom: bottom }}>
+      <ScrollView>
+        <View>
+         {array.map((item, idx) => <CardwithButtons key={idx}/>)}
+        </View>
+        {/* eslint-disable-next-line max-len */}
+        {/* -> Set bottom view to allow scrolling to top if you set bottom-bar position absolute */}
+        <View style={{ height: 90 }} />
+      </ScrollView>
+    </View>
+  );
 }

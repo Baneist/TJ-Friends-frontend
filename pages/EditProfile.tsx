@@ -10,9 +10,10 @@ import {
   Pressable,
   Platform
 } from "react-native"
-import {Button, Card, TextInput, IconButton} from 'react-native-paper';
-import { Block, Text, Input } from "galio-framework";
-import DateTimePicker from '@react-native-community/datetimepicker';
+import {Button, Card, TextInput, Dialog, Portal, Provider,Snackbar,IconButton } from 'react-native-paper';
+import { Block, Text, Checkbox,Toast } from "galio-framework";
+import Icon from 'react-native-vector-icons/AntDesign';
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 
 //获取屏幕宽高
 const { width, height } = Dimensions.get("screen");
@@ -25,14 +26,18 @@ const profileImage = {
   ProfilePicture: 'https://picsum.photos/700'
 }
 
-const Viewed = [
-  'https://images.unsplash.com/photo-1501601983405-7c7cabaa1581?fit=crop&w=240&q=80',
-  'https://images.unsplash.com/photo-1543747579-795b9c2c3ada?fit=crop&w=240&q=80',
-  'https://images.unsplash.com/photo-1551798507-629020c81463?fit=crop&w=240&q=80',
-  'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?fit=crop&w=240&q=80',
-  'https://images.unsplash.com/photo-1503642551022-c011aafb3c88?fit=crop&w=240&q=80',
-  'https://images.unsplash.com/photo-1482686115713-0fbcaced6e28?fit=crop&w=240&q=80',
-];
+//个人信息
+const userInfo = {
+  userId:'2052123',
+  userName:'吉尔伽美什',
+  userNickName: 'Gilgamesh',
+  userGender: 'Male',
+  userBirthDate:'2002-08-07',
+  userStatus:'Enuma Elish!',
+  userMajor:'愉悦',
+  userYear:'2020',
+  userInterest:'喜欢钱和一切金闪闪的东西，还有哈哈哈哈哈哈（是个快乐的男人！）'
+}
 
 //用户头像 动态中
 function UserPhoto({pressable} : {pressable: boolean}) {
@@ -52,21 +57,69 @@ function UserPhoto({pressable} : {pressable: boolean}) {
     )
   }
 }
+//性别
+function Gender(){
+  if(userInfo.userGender=='Male')
+    return (<Icon name="man" size={16} color="#32325D" style={{ marginTop: 10 }}>Male</Icon>)
+  else
+    return (<Icon name="woman" size={16} color="#32325D" style={{ marginTop: 10 }}>Female</Icon>)
+}
+
 
 //资料页面
 export function EditProfile(){
   const { bottom } = useSafeAreaInsets();
-  //编辑个人资料
-  function editProfile(){
-    console.log('跳转编辑个人资料')
-  }
   //选择日期
   const [date, setDate] = useState(new Date(1598051730000));
-  const [show, setShow] = useState(false);  //初始为false
 
-  const showDatepicker = () => {
-    setShow(true);
-  };
+  //生日权限
+  const [birthChecked, setBirthChecked] = useState(false);
+
+  //解绑手机提示对话框
+  const [unbindVisibel, setUnbindVisible]=useState(false);
+  const [pwdInput, setpwdInput] = useState(false);
+  const [pwdVisible, setpwdVisible]=useState(false);
+  const [submitted, setsubmitted]=useState(false);
+  const [password, setPassword] = useState('');
+  function UnbindPhoneDialog(){
+    const handlePasswordChange = (value:string) => {
+      setPassword(value);
+    };
+    return (
+      <Portal>
+        <Dialog visible={unbindVisibel} dismissable={false}>
+        <Dialog.Icon icon="alert" />
+          <Dialog.Title>解绑手机</Dialog.Title>
+          <Dialog.Content>
+            <Text variant="bodyMedium">您确定要解绑手机吗？</Text>
+            {pwdInput&&
+             <TextInput
+             label="Password"
+             secureTextEntry={!pwdVisible}
+             right={<TextInput.Icon icon="eye" onPress={()=>{
+              setpwdVisible(!pwdVisible)
+             }}/>}
+           />
+            }
+          </Dialog.Content>
+          <Dialog.Actions>
+          {!pwdInput&&<Button mode='outlined' onPress={() =>{
+              setpwdInput(true);
+            }}>确定</Button>}
+          {pwdInput&&<Button mode='outlined' onPress={() =>{
+              setpwdInput(false);
+              setUnbindVisible(false);
+              setsubmitted(true);
+            }}>提交</Button>}
+            <Button mode='outlined' onPress={() =>{
+              setUnbindVisible(false);
+            }}>取消</Button>
+          </Dialog.Actions>
+        </Dialog>
+      </Portal>
+    )
+  }
+
   return (
     <Block flex style={{marginBottom: bottom}}>
       <Block flex>
@@ -80,6 +133,7 @@ export function EditProfile(){
               showsVerticalScrollIndicator={false}
               style={{ width}}
             >
+            <Provider>
             <Block flex style={styles.profileCard}>
               {/* 头像 */}
                 <Block middle style={styles.avatarContainer}>
@@ -88,30 +142,32 @@ export function EditProfile(){
                     style={styles.avatar}
                   />
                 </Block>
-              {/*输入框等 */}
                 <Block flex>
-                    {/* 先显示学号 姓名 */}
+                    {/* 先显示学号 姓名等不可修改信息 */}
                     <Block middle>
                         <Text bold size={28} color="#32325D">
-                        吉尔伽美什
+                          {userInfo.userName}
                         </Text>
                         <Text size={16} color="#32325D" style={{ marginTop: 10 }}>
-                        2052123
+                          {userInfo.userId}
+                        </Text>
+                        <Gender />
+                        <Text size={16} color="#32325D" style={{ marginTop: 10 }}>
+                          {userInfo.userYear + '/' + userInfo.userMajor}
                         </Text>
                     </Block>
-                    <Block middle row  style={{ marginTop: 10 }}>
-                        <Text size={16} color="#32325D">
-                        2020届
-                        </Text>
-                        <Text size={16} color="#32325D">
-                        愉悦专业
-                        </Text>
-                    </Block>
-                    <Block middle>
-                        <TextInput  
+                    {/* 修改信息 */}
+                    <Card elevation={5} style={{ margin: 10 }}>
+                      <Card.Title 
+                      title='个性信息'
+                      subtitle='Personal Information'
+                      left={(props) => <IconButton icon='emoticon-outline'/>}
+                      />
+                      <Card.Content>
+                      <TextInput  
                           mode="outlined"
                           label="昵称"
-                          placeholder="Gilgamesh"
+                          placeholder={userInfo.userNickName}
                           maxLength={32}
                           multiline
                           numberOfLines={2}
@@ -121,7 +177,7 @@ export function EditProfile(){
                         <TextInput  
                           mode="outlined"
                           label="个性签名"
-                          placeholder="愉悦"
+                          placeholder={userInfo.userStatus}
                           maxLength={32}
                           multiline
                           numberOfLines={16}
@@ -131,26 +187,152 @@ export function EditProfile(){
                         <TextInput  
                           mode="outlined"
                           label="兴趣爱好"
-                          placeholder="喜欢钱和一切金闪闪的东西，还有哈哈哈哈哈哈（是个快乐的男人！）"
+                          placeholder={userInfo.userInterest}
                           maxLength={32}
                           multiline
                           numberOfLines={16}
                           right={<TextInput.Affix text="/256" />}
                           style={styles.inputBox}
                         />
-                        <Button onPress={showDatepicker} mode="elevated" icon="calendar">生日设置</Button>
-                    </Block>
+                      </Card.Content>
+                    </Card>
+                    {/* 手机号码 */}
+                    <Card elevation={5} style={{ margin: 10 }}>
+                    <Card.Title 
+                      title='手机号码'
+                      subtitle='Phone Number'
+                      left={(props) => <IconButton icon='cellphone'/>}
+                      />
+                    <Card.Content>
+                      <Block row space='between'>
+                        <Text size={16} style={{marginTop:15,marginLeft:10}}
+                        >+86 12332112345</Text>
+                        <Button icon='cellphone-remove'
+                        mode= 'outlined'
+                        style={{marginTop:10}}
+                        onPress={() =>{
+                          setUnbindVisible(true)
+                        }}
+                        >解绑</Button>
+                        {/* 解绑对话框 */}
+                        <UnbindPhoneDialog />
+                        <Snackbar
+                            visible={submitted}
+                            duration={1000}
+                            onDismiss={()=>{setsubmitted(false)}}
+                          >
+                          <Icon name="check" color={'white'} size={15}> Submit successful!</Icon>
+                      </Snackbar>
+                      </Block>
+                    </Card.Content>
+                    </Card>
+                    {/* 有权限的 */}
+                    <Card elevation={5} style={{ margin: 10 }}>
+                      <Card.Title 
+                      title='隐私信息&权限设置'
+                      subtitle='Private Information'
+                      left={(props) => <IconButton icon='lock'/>}
+                      />
+                      <Card.Content>
+                      <Block row space="between" style = {{marginTop:10}}>
+                        <Button icon="cake-variant">
+                          生日
+                        </Button>
+                          <DateTimePicker
+                            value={date}
+                            mode='date'
+                          />
+                          <Checkbox
+                          label="他人可见" 
+                          status={birthChecked?'checked':'unchecked'}
+                          color='#5F0B65'
+                          onPress={() =>{
+                            setBirthChecked(!birthChecked)
+                          }}
+                          />
+                        </Block>
+                        <Block row space='between'>
+                        <Button icon="school">
+                          专业
+                        </Button>
+                        <Text size={15} style={{marginTop:10}}>{userInfo.userMajor}</Text>
+                        <Checkbox
+                          label="他人可见" 
+                          status={birthChecked?'checked':'unchecked'}
+                          color='#5F0B65'
+                          onPress={() =>{
+                            setBirthChecked(!birthChecked)
+                          }}
+                          />
+                        </Block>
+                        <Block row space='between'>
+                        <Button icon="alpha-y-circle-outline">
+                          学年
+                        </Button>
+                        <Text size={15} style={{marginTop:10}}>{userInfo.userYear}</Text>
+                        <Checkbox
+                          label="他人可见" 
+                          status={birthChecked?'checked':'unchecked'}
+                          color='#5F0B65'
+                          onPress={() =>{
+                            setBirthChecked(!birthChecked)
+                          }}
+                          />
+                        </Block>
+                        <Block row space='between'>
+                        <Button icon="heart">
+                          兴趣爱好
+                        </Button>
+                        <Checkbox
+                          label="他人可见" 
+                          status={birthChecked?'checked':'unchecked'}
+                          color='#5F0B65'
+                          onPress={() =>{
+                            setBirthChecked(!birthChecked)
+                          }}
+                          />
+                        </Block>
+                        <Block row space='between'>
+                        <Button icon="butterfly">
+                          关注列表
+                        </Button>
+                        <Checkbox
+                          label="他人可见" 
+                          status={birthChecked?'checked':'unchecked'}
+                          color='#5F0B65'
+                          onPress={() =>{
+                            setBirthChecked(!birthChecked)
+                          }}
+                          />
+                        </Block>
+                        <Block row space='between'>
+                        <Button icon="candy">
+                          粉丝列表
+                        </Button>
+                        <Checkbox
+                          label="他人可见" 
+                          status={birthChecked?'checked':'unchecked'}
+                          color='#5F0B65'
+                          onPress={() =>{
+                            setBirthChecked(!birthChecked)
+                          }}
+                          />
+                        </Block>
+                      </Card.Content>
+                    </Card>
                 </Block>
             </Block>
               {/* eslint-disable-next-line max-len */}
             {/* -> Set bottom view to allow scrolling to top if you set bottom-bar position absolute */}
             <View style={{ height: 190 }} />
+            </Provider>
             </ScrollView>
         </ImageBackground>
       </Block>
     </Block>
   )
 }
+
 
 
 const styles = StyleSheet.create({
@@ -211,5 +393,13 @@ const styles = StyleSheet.create({
   },
   inputBox:{
     width: width / 1.2
-  }
+  },
+  surface: {
+    marginTop:10,
+    padding: 8,
+    height: 60,
+    width: width / 1.2,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
 });

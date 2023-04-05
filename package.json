@@ -23,7 +23,6 @@
     "galio-framework": "^0.8.0",
     "react": "18.2.0",
     "react-native": "^0.71.6",
-<<<<<<< HEAD
     "react-native-background-timer": "*",
     "react-native-checkbox-tree": "^2.1.0",
     "react-native-curved-bottom-bar": "^3.2.4",
@@ -33,8 +32,6 @@
     "react-native-element-image": "^1.1.1",
     "react-native-element-textinput": "^2.2.0",
     "react-native-element-timer": "^2.1.2",
-=======
->>>>>>> 6ad944c3306e4d8f3f860b4860f92af78f308611
     "react-native-gesture-handler": "^2.9.0",
     "react-native-modal": "^13.0.1",
     "react-native-paper": "^5.5.2",

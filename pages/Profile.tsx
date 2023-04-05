@@ -1,4 +1,4 @@
-import React from "react";
+import React , {useState}from "react";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   View,
@@ -9,8 +9,8 @@ import {
   ImageBackground,
   Pressable
 } from "react-native";
-import {Button, Card, Avatar, IconButton} from 'react-native-paper';
-import { Block, theme, Text } from "galio-framework";
+import {Button, List, Avatar, IconButton} from 'react-native-paper';
+import { Block, Text } from "galio-framework";
 import Icon from 'react-native-vector-icons/AntDesign';
 import { MomentsList } from "../components/MomentsList/MomentsList";
 
@@ -25,14 +25,18 @@ const profileImage = {
   ProfilePicture: 'https://picsum.photos/700'
 }
 
-const Viewed = [
-  'https://images.unsplash.com/photo-1501601983405-7c7cabaa1581?fit=crop&w=240&q=80',
-  'https://images.unsplash.com/photo-1543747579-795b9c2c3ada?fit=crop&w=240&q=80',
-  'https://images.unsplash.com/photo-1551798507-629020c81463?fit=crop&w=240&q=80',
-  'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?fit=crop&w=240&q=80',
-  'https://images.unsplash.com/photo-1503642551022-c011aafb3c88?fit=crop&w=240&q=80',
-  'https://images.unsplash.com/photo-1482686115713-0fbcaced6e28?fit=crop&w=240&q=80',
-];
+//个人信息
+const userInfo = {
+  userId:'2052123',
+  userName:'吉尔伽美什',
+  userNickName: 'Gilgamesh',
+  userGender: 'Male',
+  userBirthDate:'2002-08-07',
+  userStatus:'愉悦！',
+  userMajor:'金融',
+  userYear:'2020',
+  userInterest:'喜欢钱和一切金闪闪的东西，还有哈哈哈哈哈哈（是个快乐的男人！）'
+}
 
 //用户头像 动态中
 function UserPhoto({pressable} : {pressable: boolean}) {
@@ -53,12 +57,35 @@ function UserPhoto({pressable} : {pressable: boolean}) {
   }
 }
 
+//性别
+function Gender(){
+  if(userInfo.userGender=='Male')
+    return (<Icon name="man" size={16} color="#32325D" style={{ marginTop: 10 }}>Male</Icon>)
+  else
+    return (<Icon name="woman" size={16} color="#32325D" style={{ marginTop: 10 }}>Female</Icon>)
+}
+//更多信息
+
 //资料页面
 export function Profile({navigation}:{navigation:any}){
+  //显示个人信息
+  const [showInfo, setShowInfo] = useState(false);
   const { bottom } = useSafeAreaInsets();
   //编辑个人资料
   function editProfile(){
     navigation.navigate('EditProfile')
+  }
+  //查看关注列表
+  function viewFollowing(){
+    console.log('viewFollowing')
+  }
+  //查看粉丝列表
+  function viewFollower(){
+    console.log('viewFollower')
+  }
+  //查看更多信息
+  function viewMore(){
+    setShowInfo(true);
   }
   return (
     <Block flex style={{marginBottom: bottom}}>
@@ -84,36 +111,37 @@ export function Profile({navigation}:{navigation:any}){
                 <Block style={styles.info}>
                   {/* 粉丝量信息 */}
                   <Block row space="between">
+                  <Button mode='text' onPress={viewFollower}>
                     <Block middle>
-                      <Text bold size={18} color="#525F7F" style={{ marginBottom: 4}}>
-                        2K
-                      </Text>
+                        <Text bold size={18} color="#525F7F" style={{ marginBottom: 4}}>
+                          2K
+                        </Text>
                       <Text size={12}>Followers</Text>
                     </Block>
+                    </Button>
+                    <Button mode='text' onPress={viewFollowing}>
                     <Block middle>
                       <Text bold  color="#525F7F" size={18} style={{ marginBottom: 4 }}>
                         10
                       </Text>
                       <Text size={12}>Following</Text>
                     </Block>
-                    <Block middle>
-                      <Text bold size={18} color="#525F7F" style={{ marginBottom: 4 }}>
-                        89
-                      </Text>
-                      <Text size={12}>Comments</Text>
-                    </Block>
+                    </Button>
                   </Block>
                 </Block>
+                {/* 分割线 */}
+                <Block middle style={{ marginTop: 16, marginBottom: 16 }}>
+                    <Block style={styles.divider} />
+                  </Block>
               {/* 用户ID 简介等 */}
               <Block flex>
-                  {/* 用户ID */}
+                  {/* 用户昵称 */}
                   <Block middle style={styles.nameInfo}>
                     <Text bold size={28} color="#32325D">
-                      Gilgamesh
+                    {userInfo.userNickName}
                     </Text>
-                    <Text size={16} color="#32325D" style={{ marginTop: 10 }}>
-                      Uruk
-                    </Text>
+                    {/* 性别 */}
+                    <Gender />
                     {/* 改资料 */}
                     <Block middle>
                       <Button
@@ -125,25 +153,50 @@ export function Profile({navigation}:{navigation:any}){
                       </Button>
                     </Block>
                   </Block>
+                  <Block middle>
+                    {/* 查看更多信息 */}
+                    <List.Section style={{width: width / 1.2}}>
+                      <List.Accordion
+                        title="view more"
+                        left={props => <List.Icon {...props} icon="balloon" />}>
+                        <List.Item title="学号/姓名"
+                        description={userInfo.userId + '/' + userInfo.userName}
+                        left={props => <List.Icon {...props} icon="emoticon-outline" />}
+                        />
+                        <List.Item title="生日" 
+                        description={userInfo.userBirthDate}
+                        left={props => <List.Icon {...props} icon="cake-variant" />}
+                        />
+                        <List.Item title="学年/专业"
+                        description={userInfo.userYear+'/'+userInfo.userMajor}
+                        left={props => <List.Icon {...props} icon="school" />}
+                        />
+                        <List.Item title="兴趣爱好" 
+                        description={userInfo.userInterest}
+                        left={props => <List.Icon {...props} icon="heart" />}
+                        />
+                      </List.Accordion>
+                    </List.Section>
+                  </Block>
                   {/* 分割线 */}
                   <Block middle style={{ marginTop: 16, marginBottom: 16 }}>
                     <Block style={styles.divider} />
                   </Block>
-                  {/* 简介 */}
+                  {/* 个性签名 */}
                   <Block middle>
                     <Text
                       size={16}
                       color="#525F7F"
                       style={{ textAlign: "center" }}
                     >
-                      Enuma Elish !!
+                      {userInfo.userStatus}
                     </Text>
                   </Block>
                   {/* 动态列表 */}
                   <Text bold size={16} color="#525F7F" style={{marginTop: 12, marginLeft: 12}}>
                     Moments
                   </Text>
-                  <MomentsList avatar_pre={false}/>
+                  <MomentsList/>
                 </Block>
               </Block>
               {/* eslint-disable-next-line max-len */}
