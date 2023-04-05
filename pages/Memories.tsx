@@ -1,12 +1,15 @@
 import React from 'react';
-import { Pressable, ScrollView, View, Image, StyleSheet } from 'react-native';
+import { Pressable, ScrollView, View, Image, StyleSheet, Text } from 'react-native';
 import { Button, Card, IconButton, Divider, FAB } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/AntDesign';
-import { useState } from 'react';
-
+import { useState, useRef } from 'react';
 import Modal from 'react-native-modal';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
+  
 const styles = StyleSheet.create({
   userphoto: {
     width: 42,
@@ -57,15 +60,13 @@ function Like() {
   );
 }
 
-function Comment() {
+function Comment({onCommentPress}:{onCommentPress?:()=>void}) {
+  
   const clickComment = <Icon size={20} name='message1' />;
-  function handleClick() {
-    console.log('pressed');
-  }
   return (
-    <Button onPress={handleClick}>
-      {clickComment}
-    </Button>
+      <Button onPress={onCommentPress}>
+        {clickComment}
+      </Button>
   );
 }
 
@@ -95,7 +96,7 @@ function Share() {
             <IconButton icon='wechat' size={40} onPress={() => { }} />
             <IconButton icon='sina-weibo' size={40} onPress={() => { }} />
           </View>
-          <Button style={{ height: 50, paddingTop: 10 }} onPress={() => { }} >取消</Button>
+          <Button style={{ height: 50, paddingTop: 10 }} onPress={toggleShare} >取消</Button>
         </View>
       </Modal>
     </View>
@@ -111,7 +112,7 @@ const FloatButton = () => (
   />
 );
 
-const CardwithButtons = () => {
+const CardwithButtons = ({onCommentPress}:{onCommentPress?:()=>void}) => {
   const [MenuVisible, setMenuVisible] = useState(false);
 
   const toggleMenu = () => {
@@ -130,7 +131,7 @@ const CardwithButtons = () => {
         <Card.Cover source={{ uri: 'https://picsum.photos/700' }} />
         <Card.Actions>
           <Like />
-          <Comment />
+          <Comment onCommentPress={onCommentPress}/>
           <Share />
         </Card.Actions>
       </Card>
@@ -152,15 +153,14 @@ const CardwithButtons = () => {
   );
 };
 
-
-export function SettingsScreen() {
+const memoriesScreen=({onCommentPress}:{onCommentPress?:()=>void})=>()=> {
   const { bottom } = useSafeAreaInsets();
-  const array = [1,2,3,4,5]; 
-  return (
+  const array = [1, 2, 3, 4, 5];
+  return(
     <View style={{ flex: 1, marginBottom: bottom }}>
       <ScrollView>
         <View>
-         {array.map((item) => <CardwithButtons />)}
+          {array.map((item) => <CardwithButtons onCommentPress={onCommentPress}/>)}
         </View>
         {/* eslint-disable-next-line max-len */}
         {/* -> Set bottom view to allow scrolling to top if you set bottom-bar position absolute */}
@@ -170,3 +170,4 @@ export function SettingsScreen() {
     </View>
   );
 }
+export default memoriesScreen;

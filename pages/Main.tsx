@@ -6,7 +6,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { NavigationContainer } from '@react-navigation/native';
 import {Text, Block} from "galio-framework";
 import { BottomFabBar } from 'rn-wave-bottom-bar';
-import { SettingsScreen } from './ListScreen';
+import  memoriesScreen  from './Memories';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {Profile} from './Profile'
 
@@ -40,7 +40,7 @@ const tabBarIcon =
     }) =>
       <Icon name={name} size={28} color={focused ? 'white' : 'white'} />;
 
-const MainScreen = () => {
+const MainScreen = ({onCommentPress}:{onCommentPress?:()=>void}) => {
   const [showLabel, setShowLabel] = React.useState(false);
   const [enableSquare, setEnableSquare] = React.useState(false);
   const [isRtl, setIsRtl] = React.useState(false);
@@ -135,13 +135,13 @@ const renderBackButton = () => {
       />
       <Tab.Screen
         options={{
-          tabBarIcon: tabBarIcon('rocket1'),
+          tabBarIcon: tabBarIcon('instagram'),
           tabBarActiveBackgroundColor: '#45014A',
           tabBarActiveTintColor: 'purple',
-          tabBarLabel: showLabel ? 'Rocket' : undefined,
+          tabBarLabel: showLabel ? 'Memories' : undefined,
         }}
-        name="Settings"
-        component={SettingsScreen}
+        name="Memories"
+        component={memoriesScreen({onCommentPress})}//传值
       />
       <Tab.Screen
         options={{

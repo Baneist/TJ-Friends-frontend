@@ -2,6 +2,7 @@ import React, { createRef, useRef, useState } from 'react';
 import { View, StyleSheet, UIManager, Platform } from 'react-native';
 import LoginScreen, { ITextRef } from "./pages/LoginScreen";
 import MainScreen from './pages/Main';
+import CommentScreen from './pages/Comments';
 import TextInput from 'react-native-text-input-interactive';
 import { NavigationContainer, StackActions, useNavigationContainerRef } from '@react-navigation/native';
 import { createStackNavigator, StackNavigationProp } from '@react-navigation/stack';
@@ -17,7 +18,8 @@ type RootStackParamList = {
   Main: undefined, // undefined because you aren't passing any params to the home screen
   Login: undefined,
   Signup: undefined,
-  Profile: { name: string };
+  Profile: { name: string },
+  Comment:undefined;
 };
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -135,14 +137,27 @@ const App = () => {
     />
   );
 
+  const RenderMainScreen = ({ navigation }: Props) => (
+    <MainScreen
+      onCommentPress={() => { navigation.navigate('Comment')}}
+    />
+  );
+  
+  const RenderCommentScreen = ({ navigation }: Props) => (
+    <CommentScreen
+      onBackPress={() => navigation.goBack()}
+    />
+  );
+  
   return (
     // <ValidateWebView/>
     <View style={{ flex: 1 }}>
       <NavigationContainer ref={navigationRef}>
-        <Stack.Navigator initialRouteName="Login">
+        <Stack.Navigator initialRouteName="Main">
           <Stack.Screen name="Login" component={RenderLoginScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Signup" component={RenderSignupScreen} />
-          <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="Main" component={RenderMainScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="Comment" component={RenderCommentScreen} options={{ headerShown: false }} />
         </Stack.Navigator>
       </NavigationContainer>
       <Modal isVisible={isModalVisible}>{renderWebView()}</Modal>
