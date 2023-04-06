@@ -7,7 +7,7 @@ import { useState } from 'react';
 import Modal from 'react-native-modal';
 
   
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   userphoto: {
     width: 42,
     height: 42,
@@ -28,6 +28,13 @@ const styles = StyleSheet.create({
     padding: 20,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
+  },
+  commentcard: {
+    backgroundColor: '#fff',
+    borderColor: 'transparent',
+    margin: 0,
+    elevation: 0,
+    borderRadius: 0
   },
 });
 

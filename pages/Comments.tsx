@@ -1,18 +1,9 @@
 import React, { useState } from 'react';
-import { Button, Pressable, ScrollView, View, Image, StyleSheet, Text } from 'react-native';
-import { Card, IconButton, Divider, FAB } from 'react-native-paper';
-import { UserPhoto } from './Memories'
+import { Pressable, ScrollView, View, Image, Text, KeyboardAvoidingView,Platform } from 'react-native';
+import { Card, TextInput, Button } from 'react-native-paper';
+import { UserPhoto, styles } from './Memories'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-
-const styles = StyleSheet.create({
-  comment: {
-    backgroundColor: '#fff',
-    borderColor: 'transparent',
-    margin: 0,
-    elevation: 0,
-    borderRadius: 0
-  }
-});
+import Modal from 'react-native-modal';
 
 function Thumb() {
   const [focused, setFocused] = useState(0);
@@ -35,17 +26,17 @@ function Thumb() {
 
 function CommentCard() {
   return (
-    <Card mode='outlined' style={styles.comment}>
+    <Card mode='outlined' style={styles.commentcard}>
       <Card.Title
         title="UserName"
         subtitle={
-        <Text 
-        style={{
-          color:'grey',
-          fontSize:12.5
-          }}>
-          PostTime
-        </Text>}
+          <Text
+            style={{
+              color: 'grey',
+              fontSize: 12.5
+            }}>
+            PostTime
+          </Text>}
         left={UserPhoto}
         right={Thumb}
       />
@@ -58,8 +49,38 @@ function CommentCard() {
 
 function CommentScreen({ onBackPress }: { onBackPress: () => void }) {
   const array = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  const [text, setText] = React.useState("");
   return (
-    <View>
+<View>
+      <Modal
+        isVisible={true}
+        style={styles.modal}
+        coverScreen={false}
+        hasBackdrop={false}
+      >
+    <KeyboardAvoidingView behavior={Platform.OS == 'ios' ? 'padding' : 'height'} keyboardVerticalOffset={80}>
+
+        <View style={{
+          flexDirection: 'row',
+          justifyContent: 'space-evenly',
+          height: 80,
+          backgroundColor: '#fff',
+          alignItems: 'center',
+          paddingBottom: 15
+        }}>
+          <Image source={{ uri: 'https://picsum.photos/700' }} style={styles.userphoto} />
+          <TextInput
+            label={<Text style={{ color: 'lightgrey' }}>Add a comment</Text>}
+            value={text}
+            onChangeText={text => setText(text)}
+            mode='outlined'
+            outlineStyle={{ backgroundColor: '#fff', borderColor: 'lightgrey', borderRadius: 21 }}
+            style={{ width: 245, height: 42 }}
+          />
+          <Button style={{ marginLeft: -15 ,borderWidth:5}} onPress={()=>{}}>Send</Button>
+        </View>
+    </KeyboardAvoidingView>
+      </Modal>
       <ScrollView>
         {array.map((item) => <CommentCard />)}
         <Text
