@@ -49,7 +49,7 @@ export function UserPhoto() {
   );
 }
 
-function Like() {
+export function Like() {
   const [focused, setFocused] = useState(0);
   const clickHeart = <Icon size={20} name={focused ? 'heart' : 'hearto'} />;
   function handleClick() {
@@ -74,7 +74,7 @@ function Comment({onCommentPress}:{onCommentPress?:()=>void}) {
   );
 }
 
-function Share() {
+export function Share() {
   const clickShare = <Icon size={20} name='retweet' />;
 
   const [ShareVisible, setShareVisible] = useState(false);
@@ -116,7 +116,7 @@ const FloatButton = () => (
   />
 );
 
-const CardwithButtons = ({onCommentPress}:{onCommentPress?:()=>void}) => {
+export const CardwithButtons = ({onCommentPress}:{onCommentPress?:()=>void}) => {
   const [MenuVisible, setMenuVisible] = useState(false);
 
   const toggleMenu = () => {
@@ -130,7 +130,7 @@ const CardwithButtons = ({onCommentPress}:{onCommentPress?:()=>void}) => {
           title="UserName"
           subtitle="PostTime"
           left={UserPhoto}
-          right={(props) => <IconButton icon='dots-vertical' onPress={toggleMenu} />}
+          right={(props) => <IconButton icon='dots-horizontal' onPress={toggleMenu} />}
         />
         <Card.Cover source={{ uri: 'https://picsum.photos/700' }} />
         <Card.Actions>

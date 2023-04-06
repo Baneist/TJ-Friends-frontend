@@ -144,9 +144,7 @@ const App = () => {
   );
   
   const RenderCommentScreen = ({ navigation }: Props) => (
-    <CommentScreen
-      onBackPress={() => navigation.goBack()}
-    />
+    <CommentScreen />
   );
   
   return (
