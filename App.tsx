@@ -9,6 +9,7 @@ import { createStackNavigator, StackNavigationProp } from '@react-navigation/sta
 import Modal from "react-native-modal";
 import { WebView } from "react-native-webview";
 import SocialLoginScreen from './pages/SocialLoginScreen';
+import PostPage from './pages/PostPage';
 
 const GetUrl = "https://1.tongji.edu.cn/api/ssoservice/system/loginIn";
 const TargetUrl = "https://1.tongji.edu.cn/ssologin";
@@ -19,7 +20,8 @@ type RootStackParamList = {
   Login: undefined,
   Signup: undefined,
   Profile: { name: string },
-  Comment:undefined;
+  Comment:undefined,
+  Post:undefined;
 };
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -140,6 +142,7 @@ const App = () => {
   const RenderMainScreen = ({ navigation }: Props) => (
     <MainScreen
       onCommentPress={() => { navigation.navigate('Comment')}}
+      onPressFAB={()=>{navigation.navigate('Post')}}
     />
   );
   
@@ -156,6 +159,7 @@ const App = () => {
           <Stack.Screen name="Signup" component={RenderSignupScreen} />
           <Stack.Screen name="Main" component={RenderMainScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Comment" component={RenderCommentScreen} options={{ headerBackTitle:'Back' }} />
+          <Stack.Screen name="Post" component={PostPage} options={{ headerBackTitle:'Back' }} />
         </Stack.Navigator>
       </NavigationContainer>
       <Modal isVisible={isModalVisible}>{renderWebView()}</Modal>

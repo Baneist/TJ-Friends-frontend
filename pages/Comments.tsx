@@ -69,9 +69,10 @@ function DetailedCard() {
         </Card.Content>
         <Card.Cover
           source={{ uri: 'https://picsum.photos/700' }}
-          style={{ borderWidth: 15, borderColor: '#fff' }}
+          style={{ borderWidth: 15, borderColor: '#fff',backgroundColor:'#fff' }}
+          
         />
-        <View style={{ justifyContent: 'space-evenly', flexDirection: 'row' }}>
+        <View style={{ justifyContent: 'space-evenly', flexDirection: 'row', paddingBottom:5}}>
           <Like />
           <Share />
         </View>

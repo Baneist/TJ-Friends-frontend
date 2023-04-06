@@ -40,7 +40,11 @@ const tabBarIcon =
     }) =>
       <Icon name={name} size={28} color={focused ? 'white' : 'white'} />;
 
-const MainScreen = ({onCommentPress}:{onCommentPress?:()=>void}) => {
+      export interface IMainProps {
+        onCommentPress:()=>void;
+        onPressFAB:()=>void;
+      }
+const MainScreen = (props:IMainProps) => {
   const [showLabel, setShowLabel] = React.useState(false);
   const [enableSquare, setEnableSquare] = React.useState(false);
   const [isRtl, setIsRtl] = React.useState(false);
@@ -141,7 +145,7 @@ const renderBackButton = () => {
           tabBarLabel: showLabel ? 'Memories' : undefined,
         }}
         name="Memories"
-        component={memoriesScreen({onCommentPress})}//传值
+        component={memoriesScreen(props)}
       />
       <Tab.Screen
         options={{

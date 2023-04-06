@@ -107,16 +107,16 @@ export function Share() {
   );
 }
 
-const FloatButton = () => (
+const FloatButton = ({onPressFAB}:{onPressFAB:()=>void}) => (
   <FAB
     icon="plus"
     style={styles.fab}
     customSize={50}
-    onPress={() => console.log('Pressed')}
+    onPress={onPressFAB}
   />
 );
 
-export const CardwithButtons = ({onCommentPress}:{onCommentPress?:()=>void}) => {
+const CardwithButtons = ({onCommentPress}:{onCommentPress?:()=>void}) => {
   const [MenuVisible, setMenuVisible] = useState(false);
 
   const toggleMenu = () => {
@@ -157,7 +157,7 @@ export const CardwithButtons = ({onCommentPress}:{onCommentPress?:()=>void}) => 
   );
 };
 
-const memoriesScreen=({onCommentPress}:{onCommentPress?:()=>void})=>()=> {
+const memoriesScreen=({onCommentPress,onPressFAB}:{onCommentPress:()=>void,onPressFAB:()=>void})=>()=> {
   const { bottom } = useSafeAreaInsets();
   const array = [1, 2, 3, 4, 5];
   return(
@@ -170,7 +170,7 @@ const memoriesScreen=({onCommentPress}:{onCommentPress?:()=>void})=>()=> {
         {/* -> Set bottom view to allow scrolling to top if you set bottom-bar position absolute */}
         <View style={{ height: 90 }} />
       </ScrollView>
-      <FloatButton />
+      <FloatButton onPressFAB={onPressFAB}/>
     </View>
   );
 }

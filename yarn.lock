@@ -7431,6 +7431,11 @@ react-native-gradle-plugin@^0.71.17:
   resolved "https://registry.npmmirror.com/react-native-gradle-plugin/-/react-native-gradle-plugin-0.71.17.tgz#cf780a27270f0a32dca8184eff91555d7627dd00"
   integrity sha512-OXXYgpISEqERwjSlaCiaQY6cTY5CH6j73gdkWpK0hedxtiWMWgH+i5TOi4hIGYitm9kQBeyDu+wim9fA8ROFJA==
 
+react-native-image-picker@^5.3.1:
+  version "5.3.1"
+  resolved "https://registry.yarnpkg.com/react-native-image-picker/-/react-native-image-picker-5.3.1.tgz#836ab13c228174728a0bd68293b27dc5e1affa0f"
+  integrity sha512-zRCjtlE3KOeaWDM8gXzTwXfvo3ZeF2XMkHceU7CVCtKRleKxna/E4XWIPu/lXO2qlMdnSx1WvfPSbqzAX0qxpA==
+
 react-native-modal@^13.0.1:
   version "13.0.1"
   resolved "https://registry.npmmirror.com/react-native-modal/-/react-native-modal-13.0.1.tgz#691f1e646abb96fa82c1788bf18a16d585da37cd"
@@ -7493,11 +7498,6 @@ react-native-text-input-interactive@^0.1.4:
   version "0.1.4"
   resolved "https://registry.npmmirror.com/react-native-text-input-interactive/-/react-native-text-input-interactive-0.1.4.tgz#e1c30a6ea125e9c2415ef9c7ab0d07272e878305"
   integrity sha512-Y8oCZkfZ03EiSXcSV9AWns2Zr5XVNRMRQRFMFXBS5vpYvpfvR3fp9MSP4uNZ3aNi6i27qLQQOCoVXf8vZiMngg==
-
-react-native-use-keyboard-height@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/react-native-use-keyboard-height/-/react-native-use-keyboard-height-0.1.1.tgz#d6da2a475a0328d2212a801950566a85d4ba3204"
-  integrity sha512-Sof2fk4YmuIuU7NYq2btaAmtQYVI67xtP5EZDsvrEq+58t4mwRoKCLcjbf1xqiY1vmd9+8ckzwpO5z5dmcokOA==
 
 react-native-vector-icons@^9.2.0:
   version "9.2.0"
