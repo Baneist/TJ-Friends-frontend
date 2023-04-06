@@ -157,7 +157,7 @@ const App = () => {
           <Stack.Screen name="Login" component={RenderLoginScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Signup" component={RenderSignupScreen} />
           <Stack.Screen name="Main" component={RenderMainScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="Comment" component={RenderCommentScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="Comment" component={RenderCommentScreen} options={{headerBackTitle:'Back'}} />
         </Stack.Navigator>
       </NavigationContainer>
       <Modal isVisible={isModalVisible}>{renderWebView()}</Modal>

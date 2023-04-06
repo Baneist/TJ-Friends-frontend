@@ -1,13 +1,10 @@
 import React from 'react';
-import { Pressable, ScrollView, View, Image, StyleSheet, Text } from 'react-native';
+import { Pressable, ScrollView, View, Image, StyleSheet } from 'react-native';
 import { Button, Card, IconButton, Divider, FAB } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/AntDesign';
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import Modal from 'react-native-modal';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
   
 const styles = StyleSheet.create({
@@ -34,7 +31,7 @@ const styles = StyleSheet.create({
   },
 });
 
-function UserPhoto() {
+export function UserPhoto() {
   function handleClick() {
     console.log('pressed');
   }
