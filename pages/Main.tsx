@@ -7,7 +7,8 @@ import {Text, Block} from "galio-framework";
 import { BottomFabBar } from 'rn-wave-bottom-bar';
 import { SettingsScreen } from './ListScreen';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import {Profile} from './Profile'
+import Profile from './Profile'
+import {Props} from '../App'
 
 
 const generateScreen = (screen: string) => () => {
@@ -39,7 +40,7 @@ const tabBarIcon =
     }) =>
       <Icon name={name} size={28} color={focused ? 'white' : 'white'} />;
 
-const MainScreen = ({navigation}:{navigation:any}) => {
+const MainScreen = ({route, navigation}:Props) => {
   const [showLabel, setShowLabel] = React.useState(false);
   const [enableSquare, setEnableSquare] = React.useState(false);
   const [isRtl, setIsRtl] = React.useState(false);
@@ -156,8 +157,6 @@ const backButton = () => {
         options={{
           tabBarIcon: tabBarIcon('user'),
           tabBarLabel: showLabel ? 'Profile' : undefined,
-          // 在options中指定headerLeft属性
-          headerLeft:backButton
         }}
         name="Profile"
         component={Profile}

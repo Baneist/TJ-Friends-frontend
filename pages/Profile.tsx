@@ -9,10 +9,11 @@ import {
   ImageBackground,
   Pressable
 } from "react-native";
-import {Button, List, Avatar, IconButton} from 'react-native-paper';
+import {Button, List, Chip, IconButton} from 'react-native-paper';
 import { Block, Text } from "galio-framework";
 import Icon from 'react-native-vector-icons/AntDesign';
 import { MomentsList } from "../components/MomentsList/MomentsList";
+import {Props} from '../App'
 
 //获取屏幕宽高
 const { width, height } = Dimensions.get("screen");
@@ -38,24 +39,11 @@ const userInfo = {
   userInterest:'喜欢钱和一切金闪闪的东西，还有哈哈哈哈哈哈（是个快乐的男人！）'
 }
 
-//用户头像 动态中
-function UserPhoto({pressable} : {pressable: boolean}) {
-  function handleClick() {
-    console.log('pressed');
-  }
-  if(pressable){
-    return (
-      <Pressable onPress={handleClick}>
-        <Image source={{ uri: profileImage.ProfilePicture }} style={styles.moment_avatar}/>
-      </Pressable>
-    );
-  }
-  else{
-    return (
-      <Image source={{ uri: profileImage.ProfilePicture }} style={styles.moment_avatar}/>
-    )
-  }
-}
+//用户标签
+const userLabel = [
+  '金闪闪','帅','金发','红瞳','AUO','愉悦教主','强','黄金三靶'
+]
+
 
 //性别
 function Gender(){
@@ -67,7 +55,7 @@ function Gender(){
 //更多信息
 
 //资料页面
-export function Profile({navigation}:{navigation:any}){
+const Profile = ({route, navigation}:Props) =>{
   //显示个人信息
   const [showInfo, setShowInfo] = useState(false);
   const { bottom } = useSafeAreaInsets();
@@ -83,13 +71,9 @@ export function Profile({navigation}:{navigation:any}){
   function viewFollower(){
     console.log('viewFollower')
   }
-  //查看更多信息
-  function viewMore(){
-    setShowInfo(true);
-  }
   return (
-    <Block flex style={{marginBottom: bottom}}>
-      <Block flex>
+    <View style={{flex:1,  marginBottom: bottom}}>
+      <View style={{flex:1}}>
         {/* 资料卡片 */}
         <ImageBackground
           source={profileImage.ProfileBackground}
@@ -127,12 +111,16 @@ export function Profile({navigation}:{navigation:any}){
                       <Text size={12}>Following</Text>
                     </Block>
                     </Button>
+                    <Button mode='text' onPress={viewFollower}>
+                    <Block middle>
+                        <Text bold size={18} color="#525F7F" style={{ marginBottom: 4}}>
+                          188
+                        </Text>
+                      <Text size={12}>Likes</Text>
+                    </Block>
+                    </Button>
                   </Block>
                 </Block>
-                {/* 分割线 */}
-                <Block middle style={{ marginTop: 16, marginBottom: 16 }}>
-                    <Block style={styles.divider} />
-                  </Block>
               {/* 用户ID 简介等 */}
               <Block flex>
                   {/* 用户昵称 */}
@@ -154,8 +142,20 @@ export function Profile({navigation}:{navigation:any}){
                     </Block>
                   </Block>
                   <Block middle>
+                    {/* 标签 */}
+                  <List.Section style={{width: width / 1.1}}>
+                    <List.Accordion
+                        title="标签"
+                        left={props => <List.Icon {...props} icon="label-multiple" />}>
+                      <View style={{flex:1,flexDirection:"row",flexWrap:'wrap'}}>
+                          {userLabel.map((label, idx)=>
+                          <Chip key={idx} style={{marginRight:10,marginBottom:10}} mode='outlined' >{label}</Chip>
+                          )}
+                        </View>
+                    </List.Accordion>
+                  </List.Section>
                     {/* 查看更多信息 */}
-                    <List.Section style={{width: width / 1.2}}>
+                    <List.Section style={{width: width / 1.1}}>
                       <List.Accordion
                         title="view more"
                         left={props => <List.Icon {...props} icon="balloon" />}>
@@ -204,8 +204,8 @@ export function Profile({navigation}:{navigation:any}){
             <View style={{ height: 190 }} />
             </ScrollView>
         </ImageBackground>
-      </Block>
-    </Block>
+      </View>
+    </View>
   )
 }
 
@@ -267,3 +267,5 @@ const styles = StyleSheet.create({
     height: thumbMeasure
   }
 });
+
+export default Profile;
