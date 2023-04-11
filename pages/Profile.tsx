@@ -15,6 +15,7 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import { MomentsList } from "../components/MomentsList/MomentsList";
 import {Props} from '../App'
 import request from "../utils/request";
+import axios from "axios";
 
 //获取屏幕宽高
 const { width, height } = Dimensions.get("screen");
@@ -64,10 +65,6 @@ const Profile = ({route, navigation}:Props) =>{
   const { bottom } = useSafeAreaInsets();
   //编辑个人资料
   function editProfile(){
-    const res = request.get('./getUserInfo',{
-      userID:1
-    })
-    console.log(res);
     navigation.navigate('EditProfile')
   }
   //查看关注列表

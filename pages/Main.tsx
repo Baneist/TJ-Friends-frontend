@@ -5,10 +5,9 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import {Text, Block} from "galio-framework";
 import { BottomFabBar } from 'rn-wave-bottom-bar';
-import  memoriesScreen  from './Memories';
+import  MemoriesScreen  from './Memories';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import Profile from './Profile'
-import {Props} from '../App'
 
 
 const generateScreen = (screen: string) => () => {
@@ -44,7 +43,7 @@ const tabBarIcon =
         onCommentPress:()=>void;
         onPressFAB:()=>void;
       }
-const MainScreen = (props:Props) => {
+const MainScreen = () => {
   const [showLabel, setShowLabel] = React.useState(false);
   const [enableSquare, setEnableSquare] = React.useState(false);
   const [isRtl, setIsRtl] = React.useState(false);
@@ -135,7 +134,7 @@ const MainScreen = (props:Props) => {
           tabBarLabel: showLabel ? 'Memories' : undefined,
         }}
         name="Memories"
-        component={memoriesScreen(props)}
+        component={MemoriesScreen}
       />
       <Tab.Screen
         options={{
