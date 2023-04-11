@@ -172,7 +172,6 @@ const App = () => {
         <Stack.Navigator initialRouteName="Main">
           <Stack.Screen name="Login" component={RenderLoginScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Signup" component={RenderSignupScreen} />
-          <Stack.Screen name="Main" component={RenderMainScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Comment" component={RenderCommentScreen} options={{ headerBackTitle:'Back' }} />
           <Stack.Screen name="Post" component={PostPage} options={{ headerBackTitle:'Back' }} />
           <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }} />

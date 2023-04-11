@@ -44,7 +44,7 @@ const tabBarIcon =
         onCommentPress:()=>void;
         onPressFAB:()=>void;
       }
-const MainScreen = (props:IMainProps) => {
+const MainScreen = (props:Props) => {
   const [showLabel, setShowLabel] = React.useState(false);
   const [enableSquare, setEnableSquare] = React.useState(false);
   const [isRtl, setIsRtl] = React.useState(false);
@@ -66,15 +66,6 @@ const MainScreen = (props:IMainProps) => {
     </View>
   );
 
-const backButton = () => {
-  return(
-    <Pressable onPress={() => {
-      navigation.goBack()
-    }}>
-      <Icon size={20} name='left'></Icon>
-    </Pressable>
-  )
-};
 
   return (
     <Tab.Navigator
