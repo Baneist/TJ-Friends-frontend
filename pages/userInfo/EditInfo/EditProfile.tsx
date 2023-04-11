@@ -16,10 +16,10 @@ import { Block, Text, Checkbox,Toast } from "galio-framework";
 import DateTimePicker from '@react-native-community/datetimepicker';
 //不知道为啥报错。。但是明明就是叫这个名字TT
 import Icon from 'react-native-vector-icons/AntDesign';
-import {Props} from '../../App'
+import {Props} from '../../../App'
 import Modal from 'react-native-modal';
 import styles from './EditProfile.Style'
-import AvatarPicker from "../../components/AvatarPicker/AvatarPicker";
+import AvatarPicker from "../../../components/AvatarPicker/AvatarPicker";
 
 //获取屏幕宽高
 const { width, height } = Dimensions.get("screen");
@@ -28,7 +28,7 @@ const thumbMeasure = (width - 48 - 32) / 3;
 
 //图片
 const profileImage = {
-  ProfileBackground : require('../../assets/imgs/profile-screen-bg.png'),
+  ProfileBackground : require('../../../assets/imgs/profile-screen-bg.png'),
   ProfilePicture: 'https://picsum.photos/700'
 }
 

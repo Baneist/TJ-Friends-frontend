@@ -2,22 +2,24 @@ import React , {useState}from "react";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {Button, Card, TextInput, Dialog, Surface,
     Portal, Provider,Snackbar,IconButton, List,Divider } from 'react-native-paper';
-import {Props} from '../../App'
+import {Props} from '../../../App'
 
-const EditeNickName = ({route, navigation}:Props) =>{
+const EditInterest = ({route, navigation}:Props) =>{
     function submit(){
         console.log(submit);
         navigation.goBack()
     }
     return(
         <Card mode='outlined' style={{borderRadius:0}}>
-            <Card.Title title="昵称" subtitle="Your Nickname" />
+            <Card.Title title="兴趣爱好" subtitle="Your Interst" />
             <Card.Content>
             <TextInput 
             mode="outlined"
-            maxLength={32}
+            maxLength={256}
             autoFocus
-            right={<TextInput.Affix text="/32" />}
+            multiline
+            numberOfLines={15}
+            right={<TextInput.Affix text="/256" />}
             />
             </Card.Content>
             <Card.Actions>
@@ -27,4 +29,4 @@ const EditeNickName = ({route, navigation}:Props) =>{
         </Card>
     )
 }
-export default EditeNickName;
+export default EditInterest;

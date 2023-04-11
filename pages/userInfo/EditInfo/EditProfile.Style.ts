@@ -49,4 +49,9 @@ export default StyleSheet.create({
       justifyContent: 'flex-end',
       margin: 0,
     },
+    infoName:{
+       marginBottom: 4,
+       color:'#525F7F',
+       fontSize:20
+    }
   });
