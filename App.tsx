@@ -153,17 +153,6 @@ const App = () => {
       enableGoogleLogin
     />
   );
-
-  const RenderMainScreen = ({ navigation }: Props) => (
-    <MainScreen
-      onCommentPress={() => { navigation.navigate('Comment')}}
-      onPressFAB={()=>{navigation.navigate('Post')}}
-    />
-  );
-  
-  const RenderCommentScreen = ({ navigation }: Props) => (
-    <CommentScreen />
-  );
   
   return (
     // <ValidateWebView/>
@@ -172,7 +161,7 @@ const App = () => {
         <Stack.Navigator initialRouteName="Main">
           <Stack.Screen name="Login" component={RenderLoginScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Signup" component={RenderSignupScreen} />
-          <Stack.Screen name="Comment" component={RenderCommentScreen} options={{ headerBackTitle:'Back' }} />
+          <Stack.Screen name="Comment" component={CommentScreen} options={{ headerBackTitle:'Back' }} />
           <Stack.Screen name="Post" component={PostPage} options={{ headerBackTitle:'Back' }} />
           <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }} />
           <Stack.Screen name="EditProfile" component={EditProfile} options={{ headerBackTitle:'Back' }}/>

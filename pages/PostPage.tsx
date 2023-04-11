@@ -1,53 +1,20 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Image } from 'react-native';
-import { launchCamera, launchImageLibrary } from 'react-native-image-picker';
 import { Button, IconButton, Divider } from 'react-native-paper';
-import Modal from 'react-native-modal';
+import AvatarPicker from "../components/AvatarPicker/PostPicker";
 
 const PostPage = () => {
-  const [MenuVisible, setMenuVisible] = useState(false);
-
-  const toggleMenu = () => {
-    setMenuVisible(!MenuVisible);
-  };
+  const [showAvatarOption, setShowAvatarOption] = useState(false);
   const [text, setText] = useState('');
   const [image, setImage] = useState(null);
-  const handleChoosePhoto = () => {
-    launchImageLibrary({
-      mediaType: 'photo',
-      maxWidth: 1000,// 设置选择照片的大小，设置小的话会相应的进行压缩
-      maxHeight: 1000,
-      quality: 0.8,
-      // videoQuality: 'low',
-      // includeBase64: true
-    }, res => {
-      if (res.didCancel) {
-        return false;
-      }
-      // 对获取的图片进行处理
-    })
-  };
-  const handleTakePhoto = () => {
-    launchCamera({
-      mediaType: 'photo',
-      maxWidth: 1000,// 设置选择照片的大小，设置小的话会相应的进行压缩
-      maxHeight: 1000,
-      quality: 0.8,
-      // videoQuality: 'low',
-      // includeBase64: true
-    }, res => {
-      if (res.didCancel) {
-        return false;
-      }
-      // 对获取的图片进行处理
-    })
-  };
 
   const handlePost = () => {
     // 发送text和image到服务器
     console.log('发布');
   };
-
+  function cancelAvatarOption(){
+    setShowAvatarOption(false);
+  }
   return (
     <View>
       <View style={styles.container}>
@@ -66,25 +33,13 @@ const PostPage = () => {
           mode='contained'
           style={{ borderRadius: 0, margin: 10, width: 110, height: 110 }}
           size={50}
-          onPress={toggleMenu}
+          onPress={()=>setShowAvatarOption(true)}
         />
         <View style={styles.buttonContainer}>
           <Button onPress={handlePost} style={{ width: '97%' }} mode='contained'>发布</Button>
         </View>
       </View>
-      <Modal
-        isVisible={MenuVisible}
-        onBackdropPress={toggleMenu}
-        style={styles.modal}
-      >
-        <View style={styles.menu}>
-          <Button style={{ height: 50 }} onPress={handleTakePhoto} >拍摄</Button>
-          <Divider />
-          <Button style={{ height: 50, paddingTop: 5 }} onPress={handleChoosePhoto} >从手机相册选择</Button>
-          <View style={{ margin: 5 }} />
-          <Button style={{ height: 50, paddingTop: 10 }} onPress={toggleMenu} >取消</Button>
-        </View>
-      </Modal>
+      <AvatarPicker showAvatarOption={showAvatarOption} onBackdropPress={cancelAvatarOption}/>
     </View>
   );
 };

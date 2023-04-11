@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useState } from 'react';
 import Modal from 'react-native-modal';
-
+import { Props } from '../App';
   
 export const styles = StyleSheet.create({
   userphoto: {
@@ -157,20 +157,20 @@ const CardwithButtons = ({onCommentPress}:{onCommentPress?:()=>void}) => {
   );
 };
 
-const memoriesScreen=({onCommentPress,onPressFAB}:{onCommentPress:()=>void,onPressFAB:()=>void})=>()=> {
+const memoriesScreen=({route,navigation}:Props)=> {
   const { bottom } = useSafeAreaInsets();
   const array = [1, 2, 3, 4, 5];
   return(
     <View style={{ flex: 1, marginBottom: bottom }}>
       <ScrollView>
         <View>
-          {array.map((item) => <CardwithButtons onCommentPress={onCommentPress}/>)}
+          {array.map((item) => <CardwithButtons onCommentPress={()=>navigation.navigate('Comment')}/>)}
         </View>
         {/* eslint-disable-next-line max-len */}
         {/* -> Set bottom view to allow scrolling to top if you set bottom-bar position absolute */}
         <View style={{ height: 90 }} />
       </ScrollView>
-      <FloatButton onPressFAB={onPressFAB}/>
+      <FloatButton onPressFAB={()=>navigation.navigate('Post')}/>
     </View>
   );
 }
