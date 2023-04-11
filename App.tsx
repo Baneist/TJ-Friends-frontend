@@ -4,30 +4,45 @@ import LoginScreen, { ITextRef } from "./pages/LoginScreen";
 import MainScreen from './pages/Main';
 import CommentScreen from './pages/Comments';
 import TextInput from 'react-native-text-input-interactive';
-import { NavigationContainer, StackActions, useNavigationContainerRef } from '@react-navigation/native';
-import { createStackNavigator, StackNavigationProp } from '@react-navigation/stack';
+import { NavigationContainer, StackActions, useNavigationContainerRef, RouteProp  } from '@react-navigation/native';
+import { createStackNavigator, StackNavigationProp, NativeStackScreenProps  } from '@react-navigation/stack';
+//不知道为啥这里报错TT但是其实是有NativeStackScreenProps的（毕竟是官网抄来的代码啊！）
 import Modal from "react-native-modal";
 import { WebView } from "react-native-webview";
+//编辑资料相关
+import { EditProfile } from './pages/EditInfo/EditProfile';
+import EditNickName from './pages/EditInfo/EditNickName'
+import EditInterest from './pages/EditInfo/EditInterest';
+import EditStatus from './pages/EditInfo/EditStatus';
 import SocialLoginScreen from './pages/SocialLoginScreen';
 import PostPage from './pages/PostPage';
+import EditLabel from './pages/EditInfo/EditLabel';
 
 const GetUrl = "https://1.tongji.edu.cn/api/ssoservice/system/loginIn";
 const TargetUrl = "https://1.tongji.edu.cn/ssologin";
 const PostUrl = "https://1.tongji.edu.cn/api/sessionservice/session/login"
 
 type RootStackParamList = {
-  Main: undefined, // undefined because you aren't passing any params to the home screen
+  Main: undefined,
   Login: undefined,
   Signup: undefined,
   Profile: { name: string },
   Comment:undefined,
   Post:undefined;
+  EditProfile: undefined,
+  EditNickName:undefined,
+  EditInterest:undefined,
+  EditStatus:undefined,
+  EditLabel:undefined,
 };
 const Stack = createStackNavigator<RootStackParamList>();
 
 type ProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Main'>;
+type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'Main'>;
 
-type Props = { navigation: ProfileScreenNavigationProp; };
+//type Props = {navigation: ProfileScreenNavigationProp;};
+//typescript需要指定{route, navigation}的参数类型
+export type Props = NativeStackScreenProps<RootStackParamList, 'Main'>;
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -126,7 +141,7 @@ const App = () => {
     />
   );
 
-  const RenderLoginScreen = ({ navigation }: Props) => (
+  const RenderLoginScreen = ({navigation }: Props) => (
     <SocialLoginScreen
       ref={loginRef}
       onSignUpPress={() => { navigation.replace('Signup') }}
@@ -160,6 +175,12 @@ const App = () => {
           <Stack.Screen name="Main" component={RenderMainScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Comment" component={RenderCommentScreen} options={{ headerBackTitle:'Back' }} />
           <Stack.Screen name="Post" component={PostPage} options={{ headerBackTitle:'Back' }} />
+          <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="EditProfile" component={EditProfile} options={{ headerBackTitle:'Back' }}/>
+          <Stack.Screen name="EditNickName" component={EditNickName} options={{ headerBackTitle:'Back' }}/>
+          <Stack.Screen name="EditInterest" component={EditInterest} options={{ headerBackTitle:'Back' }}/>
+          <Stack.Screen name="EditStatus" component={EditStatus} options={{ headerBackTitle:'Back' }}/>
+          <Stack.Screen name="EditLabel" component={EditLabel} options={{ headerBackTitle:'Back' }}/>
         </Stack.Navigator>
       </NavigationContainer>
       <Modal isVisible={isModalVisible}>{renderWebView()}</Modal>
