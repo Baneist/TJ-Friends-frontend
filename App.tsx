@@ -4,8 +4,8 @@ import LoginScreen, { ITextRef } from "./pages/LoginScreen";
 import MainScreen from './pages/Main';
 import CommentScreen from './pages/Comments';
 import TextInput from 'react-native-text-input-interactive';
-import { NavigationContainer, StackActions, useNavigationContainerRef, RouteProp  } from '@react-navigation/native';
-import { createStackNavigator, StackNavigationProp, NativeStackScreenProps  } from '@react-navigation/stack';
+import { NavigationContainer, StackActions, useNavigationContainerRef, RouteProp } from '@react-navigation/native';
+import { createStackNavigator, StackNavigationProp, NativeStackScreenProps } from '@react-navigation/stack';
 //不知道为啥这里报错TT但是其实是有NativeStackScreenProps的（毕竟是官网抄来的代码啊！）
 import Modal from "react-native-modal";
 import { WebView } from "react-native-webview";
@@ -17,23 +17,25 @@ import EditStatus from './pages/EditInfo/EditStatus';
 import SocialLoginScreen from './pages/SocialLoginScreen';
 import PostPage from './pages/PostPage';
 import EditLabel from './pages/EditInfo/EditLabel';
+import instance from './utils/request';
 
 const GetUrl = "https://1.tongji.edu.cn/api/ssoservice/system/loginIn";
 const TargetUrl = "https://1.tongji.edu.cn/ssologin";
-const PostUrl = "https://1.tongji.edu.cn/api/sessionservice/session/login"
+const PostUrl = "https://1.tongji.edu.cn/api/sessionservice/session/login";
+const GetSessionUserUrl = 'https://1.tongji.edu.cn/api/sessionservice/session/getSessionUser';
 
 type RootStackParamList = {
   Main: undefined,
   Login: undefined,
   Signup: undefined,
   Profile: { name: string },
-  Comment:undefined,
-  Post:undefined;
+  Comment: undefined,
+  Post: undefined;
   EditProfile: undefined,
-  EditNickName:undefined,
-  EditInterest:undefined,
-  EditStatus:undefined,
-  EditLabel:undefined,
+  EditNickName: undefined,
+  EditInterest: undefined,
+  EditStatus: undefined,
+  EditLabel: undefined,
 };
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -49,16 +51,10 @@ if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental
 }
 
 const App = () => {
-  // let username = '';
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [repassword, setRepassword] = useState('');
-  const [cookie, setCookie] = useState({});
-
   const webViewRef = useRef<WebView>(null);
   const navigationRef = useNavigationContainerRef<RootStackParamList>();
-  const loginRef = createRef<ITextRef>();
-  const signupRef = createRef<ITextRef>();
+  const loginRef = useRef<ITextRef>(null);
+  const signupRef = useRef<{ username: string, password: string }>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const renderWebView = () => {
@@ -74,26 +70,37 @@ const App = () => {
   const handleWebViewNavigationStateChange = async (newNavState: { url: string }) => {
     const { url } = newNavState;
     if (url && url.startsWith(TargetUrl)) {
-      const params: { [index: string]: string } = {};
-      const pairs = url.split("?")[1].split("&");
-      for (const pair of pairs) {
-        const [key, value] = pair.split("=");
-        params[key] = value;
+      let response = await fetch(GetSessionUserUrl);
+      let data = await response.json();
+      if (!data.data) {
+        const params: { [index: string]: string } = {};
+        const pairs = url.split("?")[1].split("&");
+        for (const pair of pairs) {
+          const [key, value] = pair.split("=");
+          params[key] = value;
+        }
+        try {
+          response = await fetch(PostUrl, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(params),
+          });
+          data = await response.json();
+        } catch (error) {
+          console.log(error);
+        };
       }
-      try {
-        let response = await fetch(PostUrl, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(params),
-        });
-        let data = response.json();
-        navigationRef.current?.dispatch(StackActions.replace('Main'));
-        setIsModalVisible(false);
-      } catch (error) {
-        console.log(error);
-      };
+      setIsModalVisible(false);
+      navigationRef.current?.dispatch(StackActions.replace('Signup'));
+      console.log({ username: signupRef.current?.username, password: signupRef.current?.password, id: data.data.uid, sessionid: data.data.sessionid })
+      response = await instance.post('/register', { username: 'fff', password: 'fff222', id: data.data.uid, sessionid: data.data.sessionid });
+      console.log(response);
+      navigationRef.current?.dispatch(StackActions.replace('Signup'));
+
+
+
       // response = await fetch(PostUrl, {
       //   method: "POST",
       //   headers: {
@@ -124,7 +131,7 @@ const App = () => {
         body: JSON.stringify(params),
       });
       let data = response.json();
-      navigationRef.current?.dispatch(StackActions.replace('Main'));
+      navigationRef.current?.dispatch(StackActions.replace('Signup'));
     } catch (error) {
       console.log(error);
     };
@@ -141,34 +148,33 @@ const App = () => {
     />
   );
 
-  const RenderLoginScreen = ({navigation }: Props) => (
+  const RenderLoginScreen = ({ navigation }: Props) => (
     <SocialLoginScreen
       ref={loginRef}
       onSignUpPress={() => { navigation.replace('Signup') }}
       onLoginPress={handleLogin}
       onForgotPasswordPress={() => { }}
-      onUserNameChangeText={username => setUsername(username)}
-      onPasswordChangeText={password => setPassword(password)}
+      onUserNameChangeText={() => { }}
+      onPasswordChangeText={() => { }}
       enableFacebookLogin
       enableGoogleLogin
     />
   );
-  
+
   return (
-    // <ValidateWebView/>
     <View style={{ flex: 1 }}>
       <NavigationContainer ref={navigationRef}>
-        <Stack.Navigator initialRouteName="Main">
+        <Stack.Navigator initialRouteName="Login">
           <Stack.Screen name="Login" component={RenderLoginScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Signup" component={RenderSignupScreen} />
-          <Stack.Screen name="Comment" component={CommentScreen} options={{ headerBackTitle:'Back' }} />
-          <Stack.Screen name="Post" component={PostPage} options={{ headerBackTitle:'Back' }} />
+          <Stack.Screen name="Comment" component={CommentScreen} options={{ headerBackTitle: 'Back' }} />
+          <Stack.Screen name="Post" component={PostPage} options={{ headerBackTitle: 'Back' }} />
           <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="EditProfile" component={EditProfile} options={{ headerBackTitle:'Back' }}/>
-          <Stack.Screen name="EditNickName" component={EditNickName} options={{ headerBackTitle:'Back' }}/>
-          <Stack.Screen name="EditInterest" component={EditInterest} options={{ headerBackTitle:'Back' }}/>
-          <Stack.Screen name="EditStatus" component={EditStatus} options={{ headerBackTitle:'Back' }}/>
-          <Stack.Screen name="EditLabel" component={EditLabel} options={{ headerBackTitle:'Back' }}/>
+          <Stack.Screen name="EditProfile" component={EditProfile} options={{ headerBackTitle: 'Back' }} />
+          <Stack.Screen name="EditNickName" component={EditNickName} options={{ headerBackTitle: 'Back' }} />
+          <Stack.Screen name="EditInterest" component={EditInterest} options={{ headerBackTitle: 'Back' }} />
+          <Stack.Screen name="EditStatus" component={EditStatus} options={{ headerBackTitle: 'Back' }} />
+          <Stack.Screen name="EditLabel" component={EditLabel} options={{ headerBackTitle: 'Back' }} />
         </Stack.Navigator>
       </NavigationContainer>
       <Modal isVisible={isModalVisible}>{renderWebView()}</Modal>

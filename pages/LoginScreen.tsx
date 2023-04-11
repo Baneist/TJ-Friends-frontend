@@ -80,7 +80,7 @@ export interface ILoginScreenProps {
   onEyePress?: () => void;
 }
 
-const LoginScreen = React.forwardRef<ITextRef, ILoginScreenProps>(({
+const LoginScreen = React.forwardRef<{ username: string, password: string } | undefined, ILoginScreenProps>(({
   style,
   dividerStyle,
   logoImageStyle,
@@ -134,18 +134,21 @@ const LoginScreen = React.forwardRef<ITextRef, ILoginScreenProps>(({
   const [isPasswordTooltipVisible, setPasswordTooltipVisible] =
     useStateWithCallback(false);
 
+  useImperativeHandle(ref, () => {
+      console.log(username, password);
+      return { username, password };
+  }, [username, password]);
+
   const handleUsernameChange = (text: string) => {
-    try {
-      isUsernameTooltipVisible && setUsernameTooltipVisible(false);
-      setUsername(text);
-    } catch (e) {
-      console.log(e);
-    }
+    isUsernameTooltipVisible && setUsernameTooltipVisible(false);
+    setUsername(text);
+    console.log(username);
   };
 
   const handlePasswordChange = (text: string) => {
     isPasswordTooltipVisible && setPasswordTooltipVisible(false);
     setPassword(text);
+    console.log(password);
   };
 
   const handleEyePress = () => {
@@ -334,10 +337,6 @@ const LoginScreen = React.forwardRef<ITextRef, ILoginScreenProps>(({
         />
       </>
     ) : null;
-
-  useImperativeHandle(ref, () => ({
-    getParams: () => ({ username, password })
-  }));
 
   return (
     <SafeAreaView style={[styles.container, style]}>

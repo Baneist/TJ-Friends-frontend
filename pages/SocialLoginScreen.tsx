@@ -78,7 +78,7 @@ export interface ISocialLoginProps {
   onRepasswordChangeText?: (text: string) => void;
 }
 
-const SocialLoginScreen = React.forwardRef<ITextRef, ISocialLoginProps>((props: ISocialLoginProps, ref) => {
+const SocialLoginScreen = React.forwardRef<ITextRef| undefined, ISocialLoginProps>((props: ISocialLoginProps, ref) => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -420,7 +420,7 @@ const SocialLoginScreen = React.forwardRef<ITextRef, ISocialLoginProps>((props: 
 
   useImperativeHandle(ref, () => ({
     getParams: () => ({username, password})
-  }));
+  }), [username, password]);
 
   return (
     <SafeAreaView style={styles.container}>
