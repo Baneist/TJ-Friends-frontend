@@ -9,14 +9,17 @@ import { createStackNavigator, StackNavigationProp, NativeStackScreenProps  } fr
 //不知道为啥这里报错TT但是其实是有NativeStackScreenProps的（毕竟是官网抄来的代码啊！）
 import Modal from "react-native-modal";
 import { WebView } from "react-native-webview";
-//编辑资料相关
-import { EditProfile } from './pages/EditInfo/EditProfile';
-import EditNickName from './pages/EditInfo/EditNickName'
-import EditInterest from './pages/EditInfo/EditInterest';
-import EditStatus from './pages/EditInfo/EditStatus';
+//查看关注列表和粉丝列表
+import FollowingList from './pages/userInfo/FollowersList';
+import FollowersList from './pages/userInfo/FollowersList';
+//编辑资料相关路由
+import { EditProfile } from './pages/userInfo/EditInfo/EditProfile';
+import EditNickName from './pages/userInfo/EditInfo/EditNickName'
+import EditInterest from './pages/userInfo/EditInfo/EditInterest';
+import EditStatus from './pages/userInfo/EditInfo/EditStatus';
 import SocialLoginScreen from './pages/SocialLoginScreen';
 import PostPage from './pages/PostPage';
-import EditLabel from './pages/EditInfo/EditLabel';
+import EditLabel from './pages/userInfo/EditInfo/EditLabel';
 
 const GetUrl = "https://1.tongji.edu.cn/api/ssoservice/system/loginIn";
 const TargetUrl = "https://1.tongji.edu.cn/ssologin";
@@ -34,6 +37,8 @@ type RootStackParamList = {
   EditInterest:undefined,
   EditStatus:undefined,
   EditLabel:undefined,
+  FollowingList:undefined,
+  FollowersList:undefined
 };
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -169,6 +174,8 @@ const App = () => {
           <Stack.Screen name="EditInterest" component={EditInterest} options={{ headerBackTitle:'Back' }}/>
           <Stack.Screen name="EditStatus" component={EditStatus} options={{ headerBackTitle:'Back' }}/>
           <Stack.Screen name="EditLabel" component={EditLabel} options={{ headerBackTitle:'Back' }}/>
+          <Stack.Screen name="FollowersList" component={FollowersList} options={{ headerBackTitle:'Back' }}/>
+          <Stack.Screen name="FollowingList" component={FollowingList} options={{ headerBackTitle:'Back' }}/>
         </Stack.Navigator>
       </NavigationContainer>
       <Modal isVisible={isModalVisible}>{renderWebView()}</Modal>

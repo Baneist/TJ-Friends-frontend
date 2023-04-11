@@ -7,7 +7,7 @@ import {Text, Block} from "galio-framework";
 import { BottomFabBar } from 'rn-wave-bottom-bar';
 import  MemoriesScreen  from './Memories';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import Profile from './Profile'
+import Profile from './userInfo/Profile'
 
 
 const generateScreen = (screen: string) => () => {

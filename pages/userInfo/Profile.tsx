@@ -9,12 +9,13 @@ import {
   ImageBackground,
   Pressable
 } from "react-native";
-import {Button, List, Chip, IconButton} from 'react-native-paper';
-import { Block, Text } from "galio-framework";
+import {Button, List, Chip} from 'react-native-paper';
+import { Block,Text} from "galio-framework";
 import Icon from 'react-native-vector-icons/AntDesign';
-import { MomentsList } from "../components/MomentsList/MomentsList";
-import {Props} from '../App'
-import request from "../utils/request";
+import { MomentsList } from "../../components/MomentsList/MomentsList";
+import {Props} from '../../App'
+import CardwithButtons from "../Memories";
+import request from "../../utils/request";
 import axios from "axios";
 
 //获取屏幕宽高
@@ -24,7 +25,7 @@ const thumbMeasure = (width - 48 - 32) / 3;
 
 //图片
 const profileImage = {
-  ProfileBackground : require("../assets/imgs/profile-screen-bg.png"),
+  ProfileBackground : require("../../assets/imgs/profile-screen-bg.png"),
   ProfilePicture: 'https://picsum.photos/700'
 }
 
@@ -45,7 +46,7 @@ const userInfo = {
 const userLabel = [
   '金闪闪','帅','金发','红瞳','AUO','愉悦教主','强','黄金三靶'
 ]
-
+const array = [1, 2, 3, 4, 5];
 
 //性别
 function Gender(){
@@ -69,11 +70,14 @@ const Profile = ({route, navigation}:Props) =>{
   }
   //查看关注列表
   function viewFollowing(){
-    console.log('viewFollowing')
+    navigation.navigate('FollowingList')
   }
   //查看粉丝列表
   function viewFollower(){
-    console.log('viewFollower')
+    navigation.navigate('FollowersList')
+  }
+  function onCommentPress(){
+    navigation.navigate('Comment')
   }
   return (
     <View style={{flex:1,  marginBottom: bottom}}>
@@ -99,30 +103,30 @@ const Profile = ({route, navigation}:Props) =>{
                 <Block style={styles.info}>
                   {/* 粉丝量信息 */}
                   <Block row space="between">
-                  <Button mode='text' onPress={viewFollower}>
+                  <Pressable onPress={viewFollower}>
                     <Block middle>
-                        <Text bold size={18} color="#525F7F" style={{ marginBottom: 4}}>
+                        <Text style={styles.infoNum}>
                           2K
                         </Text>
-                      <Text size={12}>Followers</Text>
+                      <Text style={styles.infoName}>Followers</Text>
                     </Block>
-                    </Button>
-                    <Button mode='text' onPress={viewFollowing}>
+                    </Pressable>
+                    <Pressable onPress={viewFollowing}>
                     <Block middle>
-                      <Text bold  color="#525F7F" size={18} style={{ marginBottom: 4 }}>
+                      <Text style={styles.infoNum}>
                         10
                       </Text>
-                      <Text size={12}>Following</Text>
+                      <Text style={styles.infoName}>Following</Text>
                     </Block>
-                    </Button>
-                    <Button mode='text' onPress={viewFollower}>
+                    </Pressable>
+                    <Pressable onPress={viewFollower}>
                     <Block middle>
-                        <Text bold size={18} color="#525F7F" style={{ marginBottom: 4}}>
+                        <Text style={styles.infoNum}>
                           188
                         </Text>
-                      <Text size={12}>Likes</Text>
-                    </Block>
-                    </Button>
+                      <Text style={styles.infoName}>Likes</Text>
+                      </Block>
+                    </Pressable>
                   </Block>
                 </Block>
               {/* 用户ID 简介等 */}
@@ -200,7 +204,7 @@ const Profile = ({route, navigation}:Props) =>{
                   <Text bold size={16} color="#525F7F" style={{marginTop: 12, marginLeft: 12}}>
                     Moments
                   </Text>
-                  <MomentsList/>
+                  <MomentsList onCommentPress={onCommentPress}/>
                 </Block>
               </Block>
               {/* eslint-disable-next-line max-len */}
@@ -269,7 +273,16 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     width: thumbMeasure,
     height: thumbMeasure
-  }
+  },
+  infoNum:{
+    marginBottom: 4,
+    color:'#525F7F',
+    fontSize:20,
+    fontWeight:'bold'
+ },
+  infoName:{
+  fontSize:12
+},
 });
 
 export default Profile;

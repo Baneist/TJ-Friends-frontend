@@ -116,7 +116,7 @@ const FloatButton = ({onPressFAB}:{onPressFAB:()=>void}) => (
   />
 );
 
-const CardwithButtons = ({onCommentPress}:{onCommentPress?:()=>void}) => {
+export const CardwithButtons = ({onCommentPress}:{onCommentPress?:()=>void}) => {
   const [MenuVisible, setMenuVisible] = useState(false);
 
   const toggleMenu = () => {

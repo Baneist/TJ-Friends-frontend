@@ -2,24 +2,24 @@ import React , {useState}from "react";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {Button, Card, TextInput, Dialog, Surface,
     Portal, Provider,Snackbar,IconButton, List,Divider } from 'react-native-paper';
-import {Props} from '../../App'
+import {Props} from '../../../App'
 
-const EditInterest = ({route, navigation}:Props) =>{
+const EditStatus = ({route, navigation}:Props) =>{
     function submit(){
         console.log(submit);
         navigation.goBack()
     }
     return(
         <Card mode='outlined' style={{borderRadius:0}}>
-            <Card.Title title="兴趣爱好" subtitle="Your Interst" />
+            <Card.Title title="个性签名" subtitle="Your Status" />
             <Card.Content>
             <TextInput 
             mode="outlined"
-            maxLength={256}
+            maxLength={128}
             autoFocus
             multiline
-            numberOfLines={15}
-            right={<TextInput.Affix text="/256" />}
+            numberOfLines={10}
+            right={<TextInput.Affix text="/128" />}
             />
             </Card.Content>
             <Card.Actions>
@@ -29,4 +29,4 @@ const EditInterest = ({route, navigation}:Props) =>{
         </Card>
     )
 }
-export default EditInterest;
+export default EditStatus;
