@@ -175,7 +175,7 @@ const MemoriesScreen = ({ route, navigation }: Props) => {
     <View style={{ flex: 1, marginBottom: bottom }}>
       <ScrollView>
         <View>
-          {array.map(() => <CardwithButtons onCommentPress={() => navigation.navigate('Comment')} />)}
+          {array.map((item,index) => <CardwithButtons onCommentPress={() => navigation.navigate('Comment')} />)}
         </View>
         {/* eslint-disable-next-line max-len */}
         {/* -> Set bottom view to allow scrolling to top if you set bottom-bar position absolute */}

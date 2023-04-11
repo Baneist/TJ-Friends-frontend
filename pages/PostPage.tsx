@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
-import { View,  TextInput, StyleSheet, Image, Pressable } from 'react-native';
+import { View,  TextInput, StyleSheet, Image, Pressable,ScrollView, Keyboard } from 'react-native';
 import { Button, IconButton } from 'react-native-paper';
 import AvatarPicker from "../components/AvatarPicker/PostPicker";
 import Icon from 'react-native-vector-icons/Feather';
-
 const PostPage = () => {
   const [showAvatarOption, setShowAvatarOption] = useState(false);
   const [text, setText] = useState('');
@@ -27,7 +26,7 @@ const PostPage = () => {
     );
   }
   return (
-    <View>
+    <ScrollView scrollEventThrottle={100} onScroll={Keyboard.dismiss}>
       <View style={styles.container}>
         <TextInput
           style={styles.input}
@@ -55,12 +54,9 @@ const PostPage = () => {
             onPress={() => setShowAvatarOption(true)}
           />}
         </View>
-        <View style={styles.buttonContainer}>
-          <Button onPress={handlePost} style={{ width: '97%' }} mode='contained'>发布</Button>
-        </View>
       </View>
       <AvatarPicker showAvatarOption={showAvatarOption} onBackdropPress={cancelAvatarOption} setImage={changeImage} />
-    </View>
+    </ScrollView>
   );
 };
 
@@ -68,15 +64,11 @@ const styles = StyleSheet.create({
   container: {
     padding: 10,
     backgroundColor: '#fff',
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginVertical: 10,
+    paddingBottom:30
   },
   input: {
-    height: 140,
+    minHeight:140,
+    maxHeight:420,
     borderColor: 'transparent',
     borderWidth: 1,
     padding: 10,
@@ -87,21 +79,6 @@ const styles = StyleSheet.create({
     margin: 5,
     width: 112,
     height: 112
-  },
-  buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    marginVertical: 10,
-  },
-  modal: {
-    justifyContent: 'flex-end',
-    margin: 0,
-  },
-  menu: {
-    backgroundColor: '#fff',
-    padding: 20,
-    borderTopLeftRadius: 10,
-    borderTopRightRadius: 10,
   },
 });
 
