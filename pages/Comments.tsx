@@ -7,7 +7,12 @@ import Modal from 'react-native-modal';
 
 function Thumb() {
   const [focused, setFocused] = useState(0);
-  const thumb = <Icon size={17} name={focused ? 'thumb-up' : 'thumb-up-outline'} />;
+  const [likes, setLikes] = useState('4');
+  const thumb = 
+  <View style={{ flexDirection: 'row' }}>
+      <Icon size={17} name={focused ? 'thumb-up' : 'thumb-up-outline'} />
+      {likes != '0' && <Text style={{ paddingLeft: 5 }}>{likes}</Text>}
+    </View>;
   function handleClick() {
     setFocused(1 - focused);
     console.log('pressed');
