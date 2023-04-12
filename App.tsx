@@ -10,8 +10,10 @@ import { createStackNavigator, StackNavigationProp, NativeStackScreenProps  } fr
 import Modal from "react-native-modal";
 import { WebView } from "react-native-webview";
 //查看关注列表和粉丝列表
-import FollowingList from './pages/userInfo/FollowersList';
+import FollowingList from './pages/userInfo/FollowingList';
 import FollowersList from './pages/userInfo/FollowersList';
+//查看他人主页
+import OthersPage from './pages/userInfo/OthersPage';
 //编辑资料相关路由
 import { EditProfile } from './pages/userInfo/EditInfo/EditProfile';
 import EditNickName from './pages/userInfo/EditInfo/EditNickName'
@@ -40,7 +42,8 @@ type RootStackParamList = {
   EditStatus:undefined,
   EditLabel:undefined,
   FollowingList:undefined,
-  FollowersList:undefined
+  FollowersList:undefined,
+  OthersPage:undefined
 };
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -180,6 +183,7 @@ const App = () => {
           <Stack.Screen name="EditLabel" component={EditLabel} options={{ headerBackTitle:'Back' }}/>
           <Stack.Screen name="FollowersList" component={FollowersList} options={{ headerBackTitle:'Back' }}/>
           <Stack.Screen name="FollowingList" component={FollowingList} options={{ headerBackTitle:'Back' }}/>
+          <Stack.Screen name="OthersPage" component={OthersPage} options={{ headerBackTitle:'Back' }}/>
         </Stack.Navigator>
       </NavigationContainer>
       <Modal isVisible={isModalVisible}>{renderWebView()}</Modal>

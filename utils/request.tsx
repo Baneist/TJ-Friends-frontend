@@ -1,7 +1,7 @@
 import axios from 'axios'
-const BASE_URL= 'http://119.3.178.68:8000';
+const BASE_URL= 'https://mock.apifox.cn/m1/2581834-0-default';
 const instance = axios.create({
-    baseURL: BASE_URL
+    baseURL: BASE_URL,
 }as const);
 
 export default {

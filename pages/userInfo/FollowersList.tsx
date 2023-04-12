@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useState} from 'react';
 import { View, StyleSheet, Dimensions, ScrollView, Image, Pressable } from 'react-native';
 import { Block, Text } from 'galio-framework';
 import { Avatar, Button } from 'react-native-paper';
@@ -41,6 +41,7 @@ const users = [
 
 // 关注列表页面
 const FollowersList = ({ navigation }: Props) => {
+  const [followerlist, setlist]=useState(users);
 // 返回个人主页
 function goBack() {
 navigation.goBack();
@@ -48,10 +49,17 @@ navigation.goBack();
 
 // 关注/取消关注用户
 function toggleFollow(id: string) {
-const user = users.find((u) => u.id === id);
-if (user) {
-user.isFollowing = !user.isFollowing;
-}
+  console.log(id);
+  const newList = followerlist.map((item,idx) =>{
+    if(item.id===id){
+      item.isFollowing=!item.isFollowing;
+      return item;
+    }
+    else{
+      return item;
+    }
+  })
+  setlist(newList)
 }
 
 return (

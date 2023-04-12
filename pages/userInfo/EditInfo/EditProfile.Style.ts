@@ -18,7 +18,7 @@ export default StyleSheet.create({
     },
     profileCard: {
       flex: 1,
-      marginTop: 90,
+      marginTop: 130,
       borderTopLeftRadius: 6,
       borderTopRightRadius: 6,
       backgroundColor: '#FFFFFF',

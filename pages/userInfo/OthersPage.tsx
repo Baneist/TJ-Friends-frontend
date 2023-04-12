@@ -1,4 +1,4 @@
-import React , {useState,useEffect}from "react";
+import React , {useState}from "react";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   View,
@@ -9,7 +9,7 @@ import {
   ImageBackground,
   Pressable
 } from "react-native";
-import {Button, List, Chip} from 'react-native-paper';
+import {Button, List, Chip, IconButton} from 'react-native-paper';
 import { Block,Text} from "galio-framework";
 import Icon from 'react-native-vector-icons/AntDesign';
 import { MomentsList } from "../../components/MomentsList/MomentsList";
@@ -30,99 +30,61 @@ const profileImage = {
 }
 
 //个人信息
-interface infoProp{
-  info:string,
-  pms:boolean
-}
-interface labelProp{
-  info:string[],
-  pms:boolean
-}
-interface userProp{
-  userId:infoProp,
-  userName:infoProp,
-  userNickName:infoProp,
-  userGender:infoProp,
-  userAvatar:infoProp
-  userBirthDate:infoProp,
-  userStatus:infoProp,
-  userMajor:infoProp,
-  userPhone:infoProp,
-  userYear:infoProp,
-  userInterest:infoProp,
-  userLabel:labelProp,
-  followerPms:boolean,
-  followingPms:boolean
-}
-const defaultUserInfo = {
-  userId:{info:'2052123',pms:true},
-  userName:{info:'梅林',pms:true},
-  userNickName: {info:'Merlin',pms:true},
-  userGender: {info:'Male',pms:true},
-  userAvatar:{info:'https://picsum.photos/700',pms:true},
-  userBirthDate:{info:'2002-08-07',pms:false},
-  userStatus:{info:'想听听王的故事吗!',pms:true},
-  userMajor:{info:'吃梦',pms:true},
-  userPhone:{info:'123',pms:true},
-  userYear:{info:'2020',pms:true},
-  userInterest:{info:'喜欢钱和一切金闪闪的东西，还有哈哈哈哈哈哈（是个快乐的男人！）',pms:true},
-  userLabel : {info:[
+const userInfo = {
+  userId:{"info":'2052123',"permission":true},
+  userName:{"info":'吉尔伽美什',"permission":true},
+  userNickName: {"info":'Gilgamesh',"permission":true},
+  userGender: {"info":'Male',"permission":true},
+  userBirthDate:{"info":'2002-08-07',"permission":false},
+  userStatus:{"info":'Enuma Elish!',"permission":true},
+  userMajor:{"info":'愉悦',"permission":true},
+  userPhone:{"info":'123',"permission":true},
+  userYear:{"info":'2020',"permission":true},
+  userInterest:{"info":'喜欢钱和一切金闪闪的东西，还有哈哈哈哈哈哈（是个快乐的男人！）',"permission":true},
+  userLabel : {"info":[
     '金闪闪','帅','金发','红瞳','AUO','愉悦教主','强','黄金三靶'
-  ],pms:true},
-  followerPms:true,
+  ],"permission":true},
+  followerPms:false,
   followingPms:true
 }
+
+//用户标签
+const userLabel = [
+  '金闪闪','帅','金发','红瞳','AUO','愉悦教主','强','黄金三靶'
+]
 const array = [1, 2, 3, 4, 5];
 
+//性别
+function Gender(){
+  if(userInfo.userGender.info=='Male')
+    return (
+    <Icon name="man" size={16} color="#32325D" style={{ marginTop: 10 }}>Male</Icon>
+    )
+  else
+    return (<Icon name="woman" size={16} color="#32325D" style={{ marginTop: 10 }}>Female</Icon>)
+}
 //更多信息
 
 //资料页面
 
-//想改成类！但是太麻烦了遂终止（
-const Profile = ({route, navigation}:Props) =>{
-  //state声明
-  const [userInfo, setUserInfo] = useState<userProp>(defaultUserInfo);
-  const [code, setcode]=useState(0);
+
+const OthersPage = ({route, navigation}:Props) =>{
   //显示个人信息
   const [showInfo, setShowInfo] = useState(false);
   const { bottom } = useSafeAreaInsets();
-
-  //fetch data
-  async function fetchData(){
-    const res = await request.get('/profile',{
-      params:{
-        stuid:'2052123'
-      }
-    })
-    console.log(res.data.data)
-    setUserInfo(res.data.data)
-  }
-  useEffect(() =>{
-    fetchData();
-  },[]);  //传空数组，只调用一次
-  //编辑个人资料
-  function editProfile(){
-    navigation.navigate('EditProfile')
-  }
   //查看关注列表
   function viewFollowing(){
-    navigation.navigate('FollowingList')
+    if(userInfo.followingPms)
+        navigation.navigate('FollowingList')
   }
   //查看粉丝列表
   function viewFollower(){
-    navigation.navigate('FollowersList')
+    if(userInfo.followerPms)
+        navigation.navigate('FollowersList')
   }
   function onCommentPress(){
     navigation.navigate('Comment')
   }
-  //性别
-function Gender(){
-  if(userInfo.userGender.info=='Male')
-    return (<Icon name="man" size={16} color="#32325D" style={{ marginTop: 10 }}>Male</Icon>)
-  else
-    return (<Icon name="woman" size={16} color="#32325D" style={{ marginTop: 10 }}>Female</Icon>)
-  }
-  
   return (
     <View style={{flex:1,  marginBottom: bottom}}>
       <View style={{flex:1}}>
@@ -145,6 +107,22 @@ function Gender(){
                   />
                 </Block>
                 <Block style={styles.info}>
+                    {/* 发私信之类的 */}
+                    <Block
+                    middle
+                    row
+                    space="evenly"
+                    style={{ marginTop: 20, paddingBottom: 24 }}
+                  >
+                    <Button mode='contained'
+                    >
+                      关注
+                    </Button>
+                    <Button mode='contained-tonal'
+                    >
+                      发私信
+                    </Button>
+                  </Block>
                   {/* 粉丝量信息 */}
                   <Block row space="between">
                   <Pressable onPress={viewFollower}>
@@ -182,16 +160,6 @@ function Gender(){
                     </Text>
                     {/* 性别 */}
                     <Gender />
-                    {/* 改资料 */}
-                    <Block middle>
-                      <Button
-                        buttonColor="transparent"
-                        textColor="#3B5998"
-                        onPress={editProfile}
-                      >
-                        <Icon size={16} name="edit">edit your profile</Icon>
-                      </Button>
-                    </Block>
                   </Block>
                   <Block middle>
                     {/* 标签 */}
@@ -217,16 +185,25 @@ function Gender(){
                         />
                         <List.Item title="生日" 
                         description={
-                          userInfo.userBirthDate.info
+                          userInfo.userBirthDate.permission?
+                          userInfo.userBirthDate.info:'暂不可见'
                         }
                         left={props => <List.Icon {...props} icon="cake-variant" />}
                         />
                         <List.Item title="学年/专业"
-                        description={userInfo.userYear.info+'/'+userInfo.userMajor.info}
+                        description={
+                            userInfo.userYear.permission?
+                            userInfo.userYear.info:'暂不可见'+
+                            '/'+
+                            userInfo.userMajor.permission?
+                            userInfo.userMajor.info:'暂不可见'}
                         left={props => <List.Icon {...props} icon="school" />}
                         />
                         <List.Item title="兴趣爱好" 
-                        description={userInfo.userInterest.info}
+                        description={
+                            userInfo.userInterest.permission?
+                            userInfo.userInterest.info:'暂不可见'
+                        }
                         left={props => <List.Icon {...props} icon="heart" />}
                         />
                       </List.Accordion>
@@ -331,4 +308,4 @@ const styles = StyleSheet.create({
 },
 });
 
-export default Profile;
+export default OthersPage;

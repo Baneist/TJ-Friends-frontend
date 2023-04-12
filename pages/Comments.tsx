@@ -4,6 +4,7 @@ import { Card, TextInput, Button, Divider, IconButton } from 'react-native-paper
 import { UserPhoto, styles, Like, Share } from './Memories'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Modal from 'react-native-modal';
+import { Props } from '../App';
 
 function Thumb() {
   const [focused, setFocused] = useState(0);
@@ -28,8 +29,10 @@ function Thumb() {
     </Pressable>
   );
 }
-
-function CommentCard() {
+interface CardProps{
+  clickAvatar:() => void
+}
+function CommentCard(props:CardProps) {
   return (
     <Card mode='outlined' style={styles.commentcard}>
       <Card.Title
@@ -42,7 +45,7 @@ function CommentCard() {
             }}>
             PostTime
           </Text>}
-        left={UserPhoto}
+        left={(prps)=> <UserPhoto clickAvatar = {props.clickAvatar}/>}
         right={Thumb}
       />
       <Card.Content style={{ marginLeft: 55 }}>
@@ -52,7 +55,7 @@ function CommentCard() {
   );
 }
 
-function DetailedCard() {
+function DetailedCard(props:CardProps) {
   const [MenuVisible, setMenuVisible] = useState(false);
 
   const toggleMenu = () => {
@@ -64,7 +67,7 @@ function DetailedCard() {
         <Card.Title
           title="UserName"
           subtitle="PostTime"
-          left={UserPhoto}
+          left={(prps)=> <UserPhoto clickAvatar = {props.clickAvatar}/>}
           right={(props) => <IconButton icon='dots-horizontal' onPress={toggleMenu} />}
         />
         <Card.Content >
@@ -99,9 +102,12 @@ function DetailedCard() {
   );
 }
 
-function CommentScreen() {
+function CommentScreen({ route, navigation }: Props) {
   const array = [1, 2, 3, 4, 5, 6, 7, 8, 9];
   const [text, setText] = React.useState("");
+  function clickAvatar(){
+    navigation.navigate('OthersPage');
+  }
   return (
     <View>
       <Modal
@@ -136,9 +142,9 @@ function CommentScreen() {
         </KeyboardAvoidingView>
       </Modal>
       <ScrollView>
-        <DetailedCard />
+        <DetailedCard clickAvatar={clickAvatar}/>
         <View style={{ margin: 5 }} />
-        {array.map((item) => <CommentCard />)}
+        {array.map((item) => <CommentCard clickAvatar={clickAvatar}/>)}
         <Text
           style={{
             fontSize: 13,
