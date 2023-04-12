@@ -14,10 +14,10 @@ import { Alert } from "react-native";
 /**
  * ? Local Imports
  */
-import styles from "./SocialLoginScreen.style";
+import styles from "./Login.style";
 import TextField from "../components/TextField/TextField";
 import SocialButton from "../components/SocialButton/SocialButton";
-import { ITextRef } from "./LoginScreen";
+import { ITextRef } from "./Signin";
 import api from "../utils/request";
 
 // ? Assets
@@ -85,7 +85,7 @@ export interface ISocialLoginProps {
   navigation?: any;
 }
 
-const SocialLoginScreen = (props: ISocialLoginProps) => {
+const Login = (props: ISocialLoginProps) => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
@@ -173,8 +173,7 @@ const SocialLoginScreen = (props: ISocialLoginProps) => {
 
   const onHandleLoginPress = async () => {
     try {
-      console.log({ id: username, password })
-      const data = (await api.post('/login', JSON.stringify({ id: username, password }))).data;
+      const data = (await api.post('/login', { id: username, password })).data;
       console.log(data)
       if (data.code) {
         Alert.alert('登录失败', data.msg);
@@ -192,7 +191,7 @@ const SocialLoginScreen = (props: ISocialLoginProps) => {
       } else {
         console.log('Error', error.message);
       }
-    };
+    }
   }
 
   const renderClassicLoginButton = () => {
@@ -428,4 +427,4 @@ const SocialLoginScreen = (props: ISocialLoginProps) => {
   );
 };
 
-export default SocialLoginScreen;
+export default Login;

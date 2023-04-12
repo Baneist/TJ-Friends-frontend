@@ -1,11 +1,10 @@
-import React, { createRef, useRef, useState } from 'react';
-import { View, StyleSheet, UIManager, Platform, Alert } from 'react-native';
-import LoginScreen, { ITextRef } from "./pages/LoginScreen";
+import React, { useRef, useState } from 'react';
+import { View, UIManager, Platform, Alert } from 'react-native';
+import Signin from "./pages/Signin";
 import MainScreen from './pages/Main';
 import CommentScreen from './pages/Comments';
-import TextInput from 'react-native-text-input-interactive';
-import { NavigationContainer, StackActions, useNavigationContainerRef, RouteProp } from '@react-navigation/native';
-import { createStackNavigator, StackNavigationProp, NativeStackScreenProps } from '@react-navigation/stack';
+import { NavigationContainer, StackActions, useNavigationContainerRef } from '@react-navigation/native';
+import { createStackNavigator, StackScreenProps } from '@react-navigation/stack';
 //不知道为啥这里报错TT但是其实是有NativeStackScreenProps的（毕竟是官网抄来的代码啊！）
 import Modal from "react-native-modal";
 import { WebView } from "react-native-webview";
@@ -17,12 +16,11 @@ import { EditProfile } from './pages/userInfo/EditInfo/EditProfile';
 import EditNickName from './pages/userInfo/EditInfo/EditNickName'
 import EditInterest from './pages/userInfo/EditInfo/EditInterest';
 import EditStatus from './pages/userInfo/EditInfo/EditStatus';
-import SocialLoginScreen from './pages/SocialLoginScreen';
+import Login from './pages/Login';
 import PostPage from './pages/PostPage';
 import EditLabel from './pages/userInfo/EditInfo/EditLabel';
 import api from './utils/request';
 import axios from 'axios';
-import { Toast } from 'galio-framework';
 
 const GetUrl = "https://1.tongji.edu.cn/api/ssoservice/system/loginIn";
 const TargetUrl = "https://1.tongji.edu.cn/ssologin";
@@ -46,12 +44,9 @@ type RootStackParamList = {
 };
 const Stack = createStackNavigator<RootStackParamList>();
 
-type ProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Main'>;
-type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'Main'>;
-
 //type Props = {navigation: ProfileScreenNavigationProp;};
 //typescript需要指定{route, navigation}的参数类型
-export type NavigationProps = NativeStackScreenProps<RootStackParamList, 'Main'>;
+export type NavigationProps = StackScreenProps<RootStackParamList, keyof RootStackParamList>;
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -63,8 +58,6 @@ const App = () => {
 
   const webViewRef = useRef<WebView>(null);
   const navigationRef = useNavigationContainerRef<RootStackParamList>();
-  const loginRef = useRef<ITextRef>(null);
-  const signupRef = useRef<{ username: string, password: string }>(null);
   const [isModalVisible, setIsModalVisible] = useState(false);
 
   const renderWebView = () => {
@@ -108,7 +101,7 @@ const App = () => {
 
 
   const RenderSignupScreen = ({ navigation }: NavigationProps) => (
-    <LoginScreen
+    <Signin
       style={{ flex: 1, justifyContent: 'center' }}
       logoImageSource={require('./assets/logo-example.png')}
       onLoginPress={() => setIsModalVisible(true)}
@@ -122,7 +115,7 @@ const App = () => {
   );
 
   const RenderLoginScreen = ({ navigation }: NavigationProps) => (
-    <SocialLoginScreen
+    <Login
       onSignUpPress={() => navigation.replace('Signup')}
       onLoginPress={() => { }}
       onForgotPasswordPress={() => { }}

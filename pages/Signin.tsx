@@ -16,7 +16,7 @@ import TextInput, {
   IInteractiveTextInputProps,
 } from "react-native-text-input-interactive";
 
-import styles from "./Screen.style";
+import styles from "./Signin.style";
 import SocialButton from "../components/social-button/SocialButton";
 import useStateWithCallback from "../helpers/useStateWithCallback";
 import passwordValidator from "../helpers/passwordValidator";
@@ -78,7 +78,7 @@ export interface ILoginScreenProps {
   onEyePress?: () => void;
 }
 
-const LoginScreen = ({
+const Signin = ({
   style,
   dividerStyle,
   logoImageStyle,
@@ -337,4 +337,4 @@ const LoginScreen = ({
   );
 };
 
-export default LoginScreen;
+export default Signin;
