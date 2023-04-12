@@ -5,8 +5,9 @@ import {Button, Card, TextInput, Dialog, Surface,
 import {Props} from '../../../App'
 
 const EditInterest = ({route, navigation}:Props) =>{
+    const [userInterst,setInterst] = useState('');
     function submit(){
-        console.log(submit);
+        console.log(userInterst);
         navigation.goBack()
     }
     return(
@@ -15,6 +16,8 @@ const EditInterest = ({route, navigation}:Props) =>{
             <Card.Content>
             <TextInput 
             mode="outlined"
+            value={userInterst}
+            onChangeText={(Text)=>setInterst(Text)}
             maxLength={256}
             autoFocus
             multiline

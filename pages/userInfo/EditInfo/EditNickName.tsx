@@ -1,10 +1,12 @@
-import React , {useState}from "react";
+import React , {useState,useEffect,Component}from "react";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {Button, Card, TextInput, Dialog, Surface,
     Portal, Provider,Snackbar,IconButton, List,Divider } from 'react-native-paper';
 import {Props} from '../../../App'
 
+
 const EditeNickName = ({route, navigation}:Props) =>{
+    const [nickName,setNickName] = useState('');
     function submit(){
         console.log(submit);
         navigation.goBack()
@@ -17,6 +19,8 @@ const EditeNickName = ({route, navigation}:Props) =>{
             mode="outlined"
             maxLength={32}
             autoFocus
+            value={nickName}
+            onChangeText={(text)=>setNickName(text)}
             right={<TextInput.Affix text="/32" />}
             />
             </Card.Content>

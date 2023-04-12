@@ -53,5 +53,9 @@ export default StyleSheet.create({
        marginBottom: 4,
        color:'#525F7F',
        fontSize:20
+    },
+    otherVisable:{
+      marginTop:6,
+      marginRight:6
     }
   });

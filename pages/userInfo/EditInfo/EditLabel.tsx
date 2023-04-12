@@ -29,7 +29,16 @@ const EditLabel = ({route, navigation}:Props) =>{
     }
     function addLabel(label:string){
         //添加回显
-        addItem.push(label);
+        //除掉重复的
+        if(userLabel.filter(item => item == label).length!=0) {//有重复
+            console.log('有重复')
+        }
+        else if(addItem.filter(item => item == label).length!=0){
+            console.log('有重复')
+        }
+        else{//都没有重复的，再加进去
+            addItem.push(label);
+        }
     }
     function addAllChosen(){
         console.log(addItem)

@@ -5,8 +5,9 @@ import {Button, Card, TextInput, Dialog, Surface,
 import {Props} from '../../../App'
 
 const EditStatus = ({route, navigation}:Props) =>{
+    const [userStatus,setStatus] = useState('');
     function submit(){
-        console.log(submit);
+        console.log(userStatus);
         navigation.goBack()
     }
     return(
@@ -17,6 +18,8 @@ const EditStatus = ({route, navigation}:Props) =>{
             mode="outlined"
             maxLength={128}
             autoFocus
+            value={userStatus}
+            onChangeText={(text)=>setStatus(text)}
             multiline
             numberOfLines={10}
             right={<TextInput.Affix text="/128" />}

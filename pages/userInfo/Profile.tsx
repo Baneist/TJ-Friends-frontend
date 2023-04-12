@@ -31,15 +31,21 @@ const profileImage = {
 
 //个人信息
 const userInfo = {
-  userId:'2052123',
-  userName:'吉尔伽美什',
-  userNickName: 'Gilgamesh',
-  userGender: 'Male',
-  userBirthDate:'2002-08-07',
-  userStatus:'愉悦！',
-  userMajor:'金融',
-  userYear:'2020',
-  userInterest:'喜欢钱和一切金闪闪的东西，还有哈哈哈哈哈哈（是个快乐的男人！）'
+  userId:{"info":'2052123',"permission":true},
+  userName:{"info":'吉尔伽美什',"permission":true},
+  userNickName: {"info":'Gilgamesh',"permission":true},
+  userGender: {"info":'Male',"permission":true},
+  userBirthDate:{"info":'2002-08-07',"permission":false},
+  userStatus:{"info":'Enuma Elish!',"permission":true},
+  userMajor:{"info":'愉悦',"permission":true},
+  userPhone:{"info":'123',"permission":true},
+  userYear:{"info":'2020',"permission":true},
+  userInterest:{"info":'喜欢钱和一切金闪闪的东西，还有哈哈哈哈哈哈（是个快乐的男人！）',"permission":true},
+  userLabel : {"info":[
+    '金闪闪','帅','金发','红瞳','AUO','愉悦教主','强','黄金三靶'
+  ],"permission":true},
+  followerPms:true,
+  followingPms:true
 }
 
 //用户标签
@@ -50,7 +56,7 @@ const array = [1, 2, 3, 4, 5];
 
 //性别
 function Gender(){
-  if(userInfo.userGender=='Male')
+  if(userInfo.userGender.info=='Male')
     return (<Icon name="man" size={16} color="#32325D" style={{ marginTop: 10 }}>Male</Icon>)
   else
     return (<Icon name="woman" size={16} color="#32325D" style={{ marginTop: 10 }}>Female</Icon>)
@@ -134,7 +140,7 @@ const Profile = ({route, navigation}:Props) =>{
                   {/* 用户昵称 */}
                   <Block middle style={styles.nameInfo}>
                     <Text bold size={28} color="#32325D">
-                    {userInfo.userNickName}
+                    {userInfo.userNickName.info}
                     </Text>
                     {/* 性别 */}
                     <Gender />
@@ -156,7 +162,7 @@ const Profile = ({route, navigation}:Props) =>{
                         title="标签"
                         left={props => <List.Icon {...props} icon="label-multiple" />}>
                       <View style={{flex:1,flexDirection:"row",flexWrap:'wrap'}}>
-                          {userLabel.map((label, idx)=>
+                          {userInfo.userLabel.info.map((label, idx)=>
                           <Chip key={idx} style={{marginRight:10,marginBottom:10}} mode='outlined' >{label}</Chip>
                           )}
                         </View>
@@ -168,19 +174,21 @@ const Profile = ({route, navigation}:Props) =>{
                         title="view more"
                         left={props => <List.Icon {...props} icon="balloon" />}>
                         <List.Item title="学号/姓名"
-                        description={userInfo.userId + '/' + userInfo.userName}
+                        description={userInfo.userId.info + '/' + userInfo.userName.info}
                         left={props => <List.Icon {...props} icon="emoticon-outline" />}
                         />
                         <List.Item title="生日" 
-                        description={userInfo.userBirthDate}
+                        description={
+                          userInfo.userBirthDate.info
+                        }
                         left={props => <List.Icon {...props} icon="cake-variant" />}
                         />
                         <List.Item title="学年/专业"
-                        description={userInfo.userYear+'/'+userInfo.userMajor}
+                        description={userInfo.userYear.info+'/'+userInfo.userMajor.info}
                         left={props => <List.Icon {...props} icon="school" />}
                         />
                         <List.Item title="兴趣爱好" 
-                        description={userInfo.userInterest}
+                        description={userInfo.userInterest.info}
                         left={props => <List.Icon {...props} icon="heart" />}
                         />
                       </List.Accordion>
@@ -197,7 +205,7 @@ const Profile = ({route, navigation}:Props) =>{
                       color="#525F7F"
                       style={{ textAlign: "center" }}
                     >
-                      {userInfo.userStatus}
+                      {userInfo.userStatus.info}
                     </Text>
                   </Block>
                   {/* 动态列表 */}
