@@ -1,10 +1,8 @@
 import React , {useState}from "react";
 import { StyleSheet, View, Image, Alert } from "react-native";
 import * as ImagePicker from "expo-image-picker";
-import { ImageEditor } from "expo-image-editor";
 import Modal from 'react-native-modal';
-import {Button, Card, TextInput, Dialog, Surface,
-    Portal, Provider,Snackbar,IconButton, List, Divider } from 'react-native-paper';
+import {Button, Divider } from 'react-native-paper';
 
 const styles = StyleSheet.create({
     modalFromBottom: {
@@ -25,8 +23,8 @@ const styles = StyleSheet.create({
 interface AvatarPickerProps{
     showAvatarOption:boolean,
     onBackdropPress:()=>void,
+    setImage:(uri:string[])=>void
 }
-
 
 export default function AvatarPicker(props:AvatarPickerProps) {
   const [imageUri, setImageUri] = useState('');
@@ -39,10 +37,11 @@ export default function AvatarPicker(props:AvatarPickerProps) {
     const response = await ImagePicker.requestCameraPermissionsAsync();
     // If they said yes then launch the image picker
     if (response.granted) {
-      const pickerResult = await ImagePicker.launchImageLibraryAsync();
+      const pickerResult = await ImagePicker.launchImageLibraryAsync({allowsMultipleSelection:true});
       // Check they didn't cancel the picking
       if (!pickerResult.canceled) {
-        console.log(pickerResult.assets[0].uri)
+        {pickerResult.assets.map((item)=>props.setImage([item.uri]))}
+        props.onBackdropPress()
       }
     } else {
       // If not then alert the user they need to enable it
@@ -60,7 +59,8 @@ export default function AvatarPicker(props:AvatarPickerProps) {
       const pickerResult = await ImagePicker.launchCameraAsync();
       // Check they didn't cancel the picking
       if (!pickerResult.canceled) {
-        console.log(pickerResult.assets[0].uri)
+        props.setImage([pickerResult.assets[0].uri])
+        props.onBackdropPress()
       }
     } else {
       // If not then alert the user they need to enable it
@@ -69,12 +69,7 @@ export default function AvatarPicker(props:AvatarPickerProps) {
       );
     }
   };
-  const launchEditor = (uri: string) => {
-    // Then set the image uri
-    setImageUri(uri);
-    // And set the image editor to be visible
-    setEditorVisible(true);
-  };
+
   return(
       <Modal
       isVisible={props.showAvatarOption}

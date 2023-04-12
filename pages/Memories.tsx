@@ -1,12 +1,12 @@
 import React from 'react';
-import { Pressable, ScrollView, View, Image, StyleSheet } from 'react-native';
+import { Pressable, ScrollView, View, Image, StyleSheet, Text } from 'react-native';
 import { Button, Card, IconButton, Divider, FAB } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useState } from 'react';
 import Modal from 'react-native-modal';
 import { Props } from '../App';
-  
+
 export const styles = StyleSheet.create({
   userphoto: {
     width: 42,
@@ -51,31 +51,39 @@ export function UserPhoto() {
 
 export function Like() {
   const [focused, setFocused] = useState(0);
-  const clickHeart = <Icon size={20} name={focused ? 'heart' : 'hearto'} />;
+  const [likes, setLikes] = useState('1');
+
+  const clickHeart =
+      <Icon size={18} name={focused ? 'heart' : 'hearto'} />;
   function handleClick() {
     setFocused(1 - focused);
     console.log('pressed');
   }
 
   return (
-    <Button onPress={handleClick}>
+    <Button onPress={handleClick} style={{flexDirection:'row'}}>
       {clickHeart}
+      {likes!='0'&&<Text style={{fontSize:17,fontWeight:'400'}}> {likes}</Text>}
     </Button>
   );
 }
 
-function Comment({onCommentPress}:{onCommentPress?:()=>void}) {
-  
-  const clickComment = <Icon size={20} name='message1' />;
+function Comment({ onCommentPress }: { onCommentPress?: () => void }) {
+  const [comments, setComments] = useState('2');
+  const clickComment =
+      <Icon size={18} name='message1' />
   return (
-      <Button onPress={onCommentPress}>
-        {clickComment}
-      </Button>
+    <Button onPress={onCommentPress}  style={{flexDirection:'row'}}>
+      {clickComment}
+      {comments != '0' && <Text style={{fontSize:17,fontWeight:'400'}}> {comments}</Text>}
+    </Button>
   );
 }
 
 export function Share() {
-  const clickShare = <Icon size={20} name='retweet' />;
+  const [repos, setRepos] = useState('3');
+  const clickShare =
+      <Icon size={18} name='retweet' />
 
   const [ShareVisible, setShareVisible] = useState(false);
 
@@ -85,8 +93,9 @@ export function Share() {
 
   return (
     <View>
-      <Button onPress={toggleShare}>
+      <Button onPress={toggleShare}  style={{flexDirection:'row'}}>
         {clickShare}
+        {repos!='0'&& <Text style={{fontSize:17,fontWeight:'400'}}> {repos}</Text>}
       </Button>
       <Modal
         isVisible={ShareVisible}
@@ -107,7 +116,7 @@ export function Share() {
   );
 }
 
-const FloatButton = ({onPressFAB}:{onPressFAB:()=>void}) => (
+const FloatButton = ({ onPressFAB }: { onPressFAB: () => void }) => (
   <FAB
     icon="plus"
     style={styles.fab}
@@ -116,7 +125,7 @@ const FloatButton = ({onPressFAB}:{onPressFAB:()=>void}) => (
   />
 );
 
-export const CardwithButtons = ({onCommentPress}:{onCommentPress?:()=>void}) => {
+export const CardwithButtons = ({ onCommentPress }: { onCommentPress?: () => void }) => {
   const [MenuVisible, setMenuVisible] = useState(false);
 
   const toggleMenu = () => {
@@ -132,10 +141,12 @@ export const CardwithButtons = ({onCommentPress}:{onCommentPress?:()=>void}) => 
           left={UserPhoto}
           right={(props) => <IconButton icon='dots-horizontal' onPress={toggleMenu} />}
         />
-        <Card.Cover source={{ uri: 'https://picsum.photos/700' }} />
+        <Pressable onPress={onCommentPress}>
+          <Card.Cover source={{ uri: 'https://picsum.photos/700' }} />
+        </Pressable>
         <Card.Actions>
           <Like />
-          <Comment onCommentPress={onCommentPress}/>
+          <Comment onCommentPress={onCommentPress} />
           <Share />
         </Card.Actions>
       </Card>
@@ -157,20 +168,20 @@ export const CardwithButtons = ({onCommentPress}:{onCommentPress?:()=>void}) => 
   );
 };
 
-const MemoriesScreen=({route,navigation}:Props)=> {
+const MemoriesScreen = ({ route, navigation }: Props) => {
   const { bottom } = useSafeAreaInsets();
   const array = [1, 2, 3, 4, 5];
-  return(
+  return (
     <View style={{ flex: 1, marginBottom: bottom }}>
       <ScrollView>
         <View>
-          {array.map((item) => <CardwithButtons onCommentPress={()=>navigation.navigate('Comment')}/>)}
+          {array.map((item,index) => <CardwithButtons onCommentPress={() => navigation.navigate('Comment')} />)}
         </View>
         {/* eslint-disable-next-line max-len */}
         {/* -> Set bottom view to allow scrolling to top if you set bottom-bar position absolute */}
         <View style={{ height: 90 }} />
       </ScrollView>
-      <FloatButton onPressFAB={()=>navigation.navigate('Post')}/>
+      <FloatButton onPressFAB={() => navigation.navigate('Post')} />
     </View>
   );
 }

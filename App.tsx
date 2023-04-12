@@ -1,5 +1,5 @@
 import React, { createRef, useRef, useState } from 'react';
-import { View, StyleSheet, UIManager, Platform } from 'react-native';
+import { View, StyleSheet, UIManager, Platform,Text } from 'react-native';
 import LoginScreen, { ITextRef } from "./pages/LoginScreen";
 import MainScreen from './pages/Main';
 import CommentScreen from './pages/Comments';
@@ -20,6 +20,8 @@ import EditStatus from './pages/userInfo/EditInfo/EditStatus';
 import SocialLoginScreen from './pages/SocialLoginScreen';
 import PostPage from './pages/PostPage';
 import EditLabel from './pages/userInfo/EditInfo/EditLabel';
+import { Button } from 'react-native-paper';
+import Icon from 'react-native-vector-icons/Feather';
 
 const GetUrl = "https://1.tongji.edu.cn/api/ssoservice/system/loginIn";
 const TargetUrl = "https://1.tongji.edu.cn/ssologin";
@@ -167,7 +169,9 @@ const App = () => {
           <Stack.Screen name="Login" component={RenderLoginScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Signup" component={RenderSignupScreen} />
           <Stack.Screen name="Comment" component={CommentScreen} options={{ headerBackTitle:'Back' }} />
-          <Stack.Screen name="Post" component={PostPage} options={{ headerBackTitle:'Back' }} />
+          <Stack.Screen name="Post" component={PostPage}  
+          options={{ headerBackTitle:'Back',
+          headerRight:()=><Button style={{paddingRight:15,borderRadius:10}} onPress={()=>{console.log('send')}}><Icon name='send' size={20}/></Button>}} />
           <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }} />
           <Stack.Screen name="EditProfile" component={EditProfile} options={{ headerBackTitle:'Back' }}/>
           <Stack.Screen name="EditNickName" component={EditNickName} options={{ headerBackTitle:'Back' }}/>
