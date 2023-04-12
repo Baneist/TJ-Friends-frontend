@@ -1,4 +1,5 @@
-import React, { forwardRef, useImperativeHandle, useState } from "react";
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
+import flushSync from 'react-dom'
 import {
   Text,
   View,
@@ -9,6 +10,7 @@ import {
   TouchableOpacity,
   ViewStyle,
 } from "react-native";
+import { Alert } from "react-native";
 /**
  * ? Local Imports
  */
@@ -16,6 +18,7 @@ import styles from "./SocialLoginScreen.style";
 import TextField from "../components/TextField/TextField";
 import SocialButton from "../components/SocialButton/SocialButton";
 import { ITextRef } from "./LoginScreen";
+import api from "../utils/request";
 
 // ? Assets
 const backArrowImage = require("../assets/left-arrow.png");
@@ -24,6 +27,10 @@ const twitterLogo = require("../assets/twitter-logo.png");
 const googleLogo = require("../assets/google-logo.png");
 const discordLogo = require("../assets/discord-logo.png");
 const appleLogo = require("../assets/apple-logo.png");
+
+const usernameValidator = (username: string) => {
+  return /^[A-Za-z0-9]{5,16}$/.test(username);
+};
 
 export interface ISocialLoginProps {
   loginText?: string;
@@ -73,22 +80,21 @@ export interface ISocialLoginProps {
   onDiscordLoginPress?: () => void;
   onUserNameChangeText: (text: string) => void;
   onPasswordChangeText: (text: string) => void;
-  //? Only Sign Up Screen Props
   onSignUpPress: () => void;
   onRepasswordChangeText?: (text: string) => void;
+  navigation?: any;
 }
 
-const SocialLoginScreen = React.forwardRef<ITextRef| undefined, ISocialLoginProps>((props: ISocialLoginProps, ref) => {
+const SocialLoginScreen = (props: ISocialLoginProps) => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
 
   const renderHeader = () => {
     const {
-      signUpText = "SIGN UP",
+      signUpText = "Sign Up",
       disableSignUp,
       signUpTextStyle,
-      backArrowImageSource = backArrowImage,
     } = props;
     return (
       !disableSignUp && (
@@ -121,55 +127,23 @@ const SocialLoginScreen = React.forwardRef<ITextRef| undefined, ISocialLoginProp
   };
 
   const renderTextFieldContainer = () => {
-    const {
-      usernameTextFieldStyle,
-      usernamePlaceholder = "john_doe@example.com",
-      onUserNameChangeText,
-      passwordPlaceholder = "• • • • • • • •",
-      onPasswordChangeText,
-      passwordTextFieldStyle,
-    } = props;
     return (
       <View style={styles.textFieldContainer}>
         <TextField
-          {...props}
-          placeholder={usernamePlaceholder}
-          textFieldStyle={usernameTextFieldStyle}
+          placeholder="Student ID"
+          textFieldStyle={props.usernameTextFieldStyle}
           onChangeText={setUsername}
         />
         <View style={styles.passwordTextFieldContainer}>
           <TextField
             width="70%"
             secureTextEntry
-            {...props}
-            placeholder={passwordPlaceholder}
-            textFieldStyle={passwordTextFieldStyle}
+            placeholder='Password'
+            textFieldStyle={props.passwordTextFieldStyle}
             onChangeText={setPassword}
           />
         </View>
-        {isSignUp
-          ? renderRepasswordContainer()
-          : renderForgotPassword()}
-      </View>
-    );
-  };
-
-  const renderRepasswordContainer = () => {
-    const {
-      passwordPlaceholder = "• • • • • • • •",
-      onRepasswordChangeText,
-      passwordTextFieldStyle,
-    } = props;
-    return (
-      <View style={styles.passwordTextFieldContainer}>
-        <TextField
-          width="70%"
-          secureTextEntry
-          {...props}
-          placeholder={passwordPlaceholder}
-          textFieldStyle={passwordTextFieldStyle}
-          onChangeText={onRepasswordChangeText}
-        />
+        {renderForgotPassword()}
       </View>
     );
   };
@@ -197,6 +171,30 @@ const SocialLoginScreen = React.forwardRef<ITextRef| undefined, ISocialLoginProp
     );
   };
 
+  const onHandleLoginPress = async () => {
+    try {
+      console.log({ id: username, password })
+      const data = (await api.post('/login', JSON.stringify({ id: username, password }))).data;
+      console.log(data)
+      if (data.code) {
+        Alert.alert('登录失败', data.msg);
+        props.navigation.replace('Login');
+      } else {
+        props.navigation.replace('Main');
+      }
+    } catch (error: any) {
+      if (error.response) {
+        console.log(error.response.data);
+        console.log(error.response.status);
+        console.log(error.response.headers);
+      } else if (error.request) {
+        console.log(error.request);
+      } else {
+        console.log('Error', error.message);
+      }
+    };
+  }
+
   const renderClassicLoginButton = () => {
     const {
       loginText = "Let's cook!",
@@ -210,9 +208,8 @@ const SocialLoginScreen = React.forwardRef<ITextRef| undefined, ISocialLoginProp
     } = props;
     return (
       <SocialButton
-        {...props}
         text={loginText}
-        onPress={onLoginPress}
+        onPress={onHandleLoginPress}
         shadowColor={loginButtonShadowColor}
         backgroundColor={loginButtonBackgroundColor}
         isSpinner={loginButtonSpinnerVisibility}
@@ -387,7 +384,6 @@ const SocialLoginScreen = React.forwardRef<ITextRef| undefined, ISocialLoginProp
         {enableAppleLogin && renderAppleLoginButton()}
         {enableGoogleLogin && renderGoogleLoginButton()}
         {enableDiscordLogin && renderDiscordLoginButton()}
-
       </View>
     );
   };
@@ -418,10 +414,6 @@ const SocialLoginScreen = React.forwardRef<ITextRef| undefined, ISocialLoginProp
     );
   };
 
-  useImperativeHandle(ref, () => ({
-    getParams: () => ({username, password})
-  }), [username, password]);
-
   return (
     <SafeAreaView style={styles.container}>
       {renderRightTopAsset()}
@@ -434,6 +426,6 @@ const SocialLoginScreen = React.forwardRef<ITextRef| undefined, ISocialLoginProp
       {renderLeftBottomAsset()}
     </SafeAreaView>
   );
-});
+};
 
 export default SocialLoginScreen;

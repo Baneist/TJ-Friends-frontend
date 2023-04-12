@@ -13,7 +13,7 @@ import {Button, List, Chip} from 'react-native-paper';
 import { Block,Text} from "galio-framework";
 import Icon from 'react-native-vector-icons/AntDesign';
 import { MomentsList } from "../../components/MomentsList/MomentsList";
-import {Props} from '../../App'
+import {NavigationProps} from '../../App'
 import CardwithButtons from "../Memories";
 import request from "../../utils/request";
 import axios from "axios";
@@ -60,7 +60,7 @@ function Gender(){
 //资料页面
 
 
-const Profile = ({route, navigation}:Props) =>{
+const Profile = ({route, navigation}:NavigationProps) =>{
   //显示个人信息
   const [showInfo, setShowInfo] = useState(false);
   const { bottom } = useSafeAreaInsets();

@@ -2,9 +2,9 @@ import React , {useState}from "react";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {Button, Card, TextInput, Dialog, Surface,
     Portal, Provider,Snackbar,IconButton, List,Divider } from 'react-native-paper';
-import {Props} from '../../../App'
+import {NavigationProps} from '../../../App'
 
-const EditInterest = ({route, navigation}:Props) =>{
+const EditInterest = ({route, navigation}:NavigationProps) =>{
     function submit(){
         console.log(submit);
         navigation.goBack()

@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet, Dimensions, ScrollView, Image, Pressable } from 'react-native';
 import { Block, Text } from 'galio-framework';
 import { Avatar, Button } from 'react-native-paper';
-import { Props } from '../../App';
+import { NavigationProps } from '../../App';
 
 // 获取屏幕宽高
 const { width, height } = Dimensions.get('screen');
@@ -40,7 +40,7 @@ const users = [
 ];
 
 // 关注列表页面
-const FollowingList = ({ navigation }: Props) => {
+const FollowingList = ({ navigation }: NavigationProps) => {
 // 返回个人主页
 function goBack() {
 navigation.goBack();

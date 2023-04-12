@@ -1,5 +1,5 @@
 import React, { createRef, useRef, useState } from 'react';
-import { View, StyleSheet, UIManager, Platform } from 'react-native';
+import { View, StyleSheet, UIManager, Platform, Alert } from 'react-native';
 import LoginScreen, { ITextRef } from "./pages/LoginScreen";
 import MainScreen from './pages/Main';
 import CommentScreen from './pages/Comments';
@@ -20,7 +20,9 @@ import EditStatus from './pages/userInfo/EditInfo/EditStatus';
 import SocialLoginScreen from './pages/SocialLoginScreen';
 import PostPage from './pages/PostPage';
 import EditLabel from './pages/userInfo/EditInfo/EditLabel';
-import instance from './utils/request';
+import api from './utils/request';
+import axios from 'axios';
+import { Toast } from 'galio-framework';
 
 const GetUrl = "https://1.tongji.edu.cn/api/ssoservice/system/loginIn";
 const TargetUrl = "https://1.tongji.edu.cn/ssologin";
@@ -35,12 +37,12 @@ type RootStackParamList = {
   Comment: undefined,
   Post: undefined;
   EditProfile: undefined,
-  EditNickName:undefined,
-  EditInterest:undefined,
-  EditStatus:undefined,
-  EditLabel:undefined,
-  FollowingList:undefined,
-  FollowersList:undefined
+  EditNickName: undefined,
+  EditInterest: undefined,
+  EditStatus: undefined,
+  EditLabel: undefined,
+  FollowingList: undefined,
+  FollowersList: undefined
 };
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -49,13 +51,16 @@ type ProfileScreenRouteProp = RouteProp<RootStackParamList, 'Main'>;
 
 //type Props = {navigation: ProfileScreenNavigationProp;};
 //typescript需要指定{route, navigation}的参数类型
-export type Props = NativeStackScreenProps<RootStackParamList, 'Main'>;
+export type NavigationProps = NativeStackScreenProps<RootStackParamList, 'Main'>;
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
 const App = () => {
+  const [username, setUsername] = React.useState("");
+  const [password, setPassword] = React.useState("");
+
   const webViewRef = useRef<WebView>(null);
   const navigationRef = useNavigationContainerRef<RootStackParamList>();
   const loginRef = useRef<ITextRef>(null);
@@ -74,93 +79,56 @@ const App = () => {
 
   const handleWebViewNavigationStateChange = async (newNavState: { url: string }) => {
     const { url } = newNavState;
-    if (url && url.startsWith(TargetUrl)) {
-      let response = await fetch(GetSessionUserUrl);
-      let data = await response.json();
-      if (!data.data) {
-        const params: { [index: string]: string } = {};
-        const pairs = url.split("?")[1].split("&");
-        for (const pair of pairs) {
-          const [key, value] = pair.split("=");
-          params[key] = value;
+    if (url?.startsWith(TargetUrl)) {
+      try {
+        let data = (await axios.get(GetSessionUserUrl)).data;
+        if (!data?.data) {
+          const params = Object.fromEntries(new URLSearchParams(url.split("?")[1]).entries());
+          data = (await axios.post(PostUrl, params)).data;
         }
-        try {
-          response = await fetch(PostUrl, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(params),
-          });
-          data = await response.json();
-        } catch (error) {
-          console.log(error);
-        };
+        console.log(data);
+        setIsModalVisible(false);
+        data = (await api.post('/register', {
+          username,
+          password,
+          id: data.data?.uid,
+          sessionid: data.data?.sessionid
+        })).data;
+        if (data.code) {
+          Alert.alert('注册失败', data.msg);
+        } else {
+          navigationRef.current?.dispatch(StackActions.replace('Main'));
+        }
+      } catch (error) {
+        console.log(error);
       }
-      setIsModalVisible(false);
-      navigationRef.current?.dispatch(StackActions.replace('Signup'));
-      console.log({ username: signupRef.current?.username, password: signupRef.current?.password, id: data.data.uid, sessionid: data.data.sessionid })
-      response = await instance.post('/register', { username: 'fff', password: 'fff222', id: data.data.uid, sessionid: data.data.sessionid });
-      console.log(response);
-      navigationRef.current?.dispatch(StackActions.replace('Signup'));
-
-
-
-      // response = await fetch(PostUrl, {
-      //   method: "POST",
-      //   headers: {
-      //     "Content-Type": "application/json",
-      //   },
-      //   body: JSON.stringify({ username, password, repassword, ...cookie }),
-      // });
-      // data = await response.json();
-
-      // if (data.code && data.code === 0) {
-      //   StackActions.replace('Login')
-      //   setIsModalVisible(false);
-      // } else {
-      //   alert(data.msg);
-      // }
-
     }
   };
 
-  const handleLogin = async () => {
-    const params = loginRef.current?.getParams();
-    try {
-      let response = await fetch(PostUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(params),
-      });
-      let data = response.json();
-      navigationRef.current?.dispatch(StackActions.replace('Signup'));
-    } catch (error) {
-      console.log(error);
-    };
-  }
 
-  const RenderSignupScreen = ({ navigation }: Props) => (
+
+  const RenderSignupScreen = ({ navigation }: NavigationProps) => (
     <LoginScreen
-      ref={signupRef}
       style={{ flex: 1, justifyContent: 'center' }}
       logoImageSource={require('./assets/logo-example.png')}
       onLoginPress={() => setIsModalVisible(true)}
+      onUsernameChange={setUsername}
+      onPasswordChange={setPassword}
       loginButtonText={'Continue with school validation'}
+      signupText='Already have an account?'
+      onSignupPress={() => navigation.replace('Login')}
       enablePasswordValidation={false}
     />
   );
 
-  const RenderLoginScreen = ({ navigation }: Props) => (
+  const RenderLoginScreen = ({ navigation }: NavigationProps) => (
     <SocialLoginScreen
-      ref={loginRef}
-      onSignUpPress={() => { navigation.replace('Signup') }}
-      onLoginPress={handleLogin}
+      onSignUpPress={() => navigation.replace('Signup')}
+      onLoginPress={() => { }}
       onForgotPasswordPress={() => { }}
-      onUserNameChangeText={() => { }}
-      onPasswordChangeText={() => { }}
+      onUserNameChangeText={setUsername}
+      onPasswordChangeText={setPassword}
+      navigation={navigation}
       enableFacebookLogin
       enableGoogleLogin
     />
@@ -175,16 +143,21 @@ const App = () => {
           <Stack.Screen name="Comment" component={CommentScreen} options={{ headerBackTitle: 'Back' }} />
           <Stack.Screen name="Post" component={PostPage} options={{ headerBackTitle: 'Back' }} />
           <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="EditProfile" component={EditProfile} options={{ headerBackTitle:'Back' }}/>
-          <Stack.Screen name="EditNickName" component={EditNickName} options={{ headerBackTitle:'Back' }}/>
-          <Stack.Screen name="EditInterest" component={EditInterest} options={{ headerBackTitle:'Back' }}/>
-          <Stack.Screen name="EditStatus" component={EditStatus} options={{ headerBackTitle:'Back' }}/>
-          <Stack.Screen name="EditLabel" component={EditLabel} options={{ headerBackTitle:'Back' }}/>
-          <Stack.Screen name="FollowersList" component={FollowersList} options={{ headerBackTitle:'Back' }}/>
-          <Stack.Screen name="FollowingList" component={FollowingList} options={{ headerBackTitle:'Back' }}/>
+          <Stack.Screen name="EditProfile" component={EditProfile} options={{ headerBackTitle: 'Back' }} />
+          <Stack.Screen name="EditNickName" component={EditNickName} options={{ headerBackTitle: 'Back' }} />
+          <Stack.Screen name="EditInterest" component={EditInterest} options={{ headerBackTitle: 'Back' }} />
+          <Stack.Screen name="EditStatus" component={EditStatus} options={{ headerBackTitle: 'Back' }} />
+          <Stack.Screen name="EditLabel" component={EditLabel} options={{ headerBackTitle: 'Back' }} />
+          <Stack.Screen name="FollowersList" component={FollowersList} options={{ headerBackTitle: 'Back' }} />
+          <Stack.Screen name="FollowingList" component={FollowingList} options={{ headerBackTitle: 'Back' }} />
         </Stack.Navigator>
       </NavigationContainer>
-      <Modal isVisible={isModalVisible}>{renderWebView()}</Modal>
+      <Modal
+        children={renderWebView()}
+        isVisible={isModalVisible}
+        onBackdropPress={() => setIsModalVisible(false)}
+        onBackButtonPress={() => setIsModalVisible(false)}
+      />
     </View>
   );
 };

@@ -16,7 +16,7 @@ import { Block, Text, Checkbox,Toast } from "galio-framework";
 import DateTimePicker from '@react-native-community/datetimepicker';
 //不知道为啥报错。。但是明明就是叫这个名字TT
 import Icon from 'react-native-vector-icons/AntDesign';
-import {Props} from '../../../App'
+import {NavigationProps} from '../../../App'
 import Modal from 'react-native-modal';
 import styles from './EditProfile.Style'
 import AvatarPicker from "../../../components/AvatarPicker/AvatarPicker";
@@ -61,7 +61,7 @@ function Gender(){
 
 
 //资料页面
-export function EditProfile({route, navigation}:Props){
+export function EditProfile({route, navigation}:NavigationProps){
   const { bottom } = useSafeAreaInsets();
   //选择生日
   const [showDatePicker, setShowDatePicker] = useState(false);

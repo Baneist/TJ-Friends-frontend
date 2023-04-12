@@ -15,9 +15,7 @@ import {
 import TextInput, {
   IInteractiveTextInputProps,
 } from "react-native-text-input-interactive";
-/**
- * ? Local Imports
- */
+
 import styles from "./Screen.style";
 import SocialButton from "../components/social-button/SocialButton";
 import useStateWithCallback from "../helpers/useStateWithCallback";
@@ -80,7 +78,7 @@ export interface ILoginScreenProps {
   onEyePress?: () => void;
 }
 
-const LoginScreen = React.forwardRef<{ username: string, password: string } | undefined, ILoginScreenProps>(({
+const LoginScreen = ({
   style,
   dividerStyle,
   logoImageStyle,
@@ -124,31 +122,22 @@ const LoginScreen = React.forwardRef<{ username: string, password: string } | un
   TouchableComponent = TouchableOpacity,
   onEyePress,
   children,
-}, ref) => {
+}: ILoginScreenProps) => {
   const [isPasswordVisible, setPasswordVisible] = React.useState(false);
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
 
-  const [isUsernameTooltipVisible, setUsernameTooltipVisible] =
-    useStateWithCallback(false);
-  const [isPasswordTooltipVisible, setPasswordTooltipVisible] =
-    useStateWithCallback(false);
-
-  useImperativeHandle(ref, () => {
-      console.log(username, password);
-      return { username, password };
-  }, [username, password]);
+  const [isUsernameTooltipVisible, setUsernameTooltipVisible] = useStateWithCallback(false);
+  const [isPasswordTooltipVisible, setPasswordTooltipVisible] = useStateWithCallback(false);
 
   const handleUsernameChange = (text: string) => {
     isUsernameTooltipVisible && setUsernameTooltipVisible(false);
     setUsername(text);
-    console.log(username);
   };
 
   const handlePasswordChange = (text: string) => {
     isPasswordTooltipVisible && setPasswordTooltipVisible(false);
     setPassword(text);
-    console.log(password);
   };
 
   const handleEyePress = () => {
@@ -162,17 +151,14 @@ const LoginScreen = React.forwardRef<{ username: string, password: string } | un
       onUsernameChange?.(username);
       return;
     }
-
     if (usernameValidator(username)) {
       !disableUsernameTooltip && setUsernameTooltipVisible(false);
       handlePasswordValidation();
-      onUsernameChange?.(username);
-      return;
     } else {
       LayoutAnimation.spring();
       !disableUsernameTooltip && setUsernameTooltipVisible(true);
-      onUsernameChange?.(username);
     }
+    onUsernameChange?.(username);
   };
 
   const handlePasswordValidation = () => {
@@ -185,14 +171,12 @@ const LoginScreen = React.forwardRef<{ username: string, password: string } | un
     }
     if (enablePasswordValidation && passwordValidator(password)) {
       !disablePasswordTooltip && setPasswordTooltipVisible(false);
-      onPasswordChange?.(password);
-      return;
     } else {
       LayoutAnimation.spring();
       !disableUsernameTooltip && setUsernameTooltipVisible(false);
       !disablePasswordTooltip && setPasswordTooltipVisible(true);
-      onPasswordChange?.(password);
     }
+    onPasswordChange?.(password);
   };
 
   const renderLogo = () =>
@@ -340,7 +324,6 @@ const LoginScreen = React.forwardRef<{ username: string, password: string } | un
 
   return (
     <SafeAreaView style={[styles.container, style]}>
-      {/* <StatusBar barStyle="dark-content" /> */}
       {renderLogo()}
       {renderTextInputContainer()}
       {renderLoginButton()}
@@ -352,6 +335,6 @@ const LoginScreen = React.forwardRef<{ username: string, password: string } | un
       {children}
     </SafeAreaView>
   );
-});
+};
 
 export default LoginScreen;
