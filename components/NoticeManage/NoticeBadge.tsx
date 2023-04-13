@@ -15,6 +15,16 @@ const Badge = ( {count} :BadgeProps ) => {
   );
 };
 
+export const DialogBadge = ( {count} :BadgeProps ) => {
+    return (
+      <View style={styles.container}>
+        <View style={styles.dialogbadge}>
+          <Text style={styles.text}>{count}</Text>
+        </View>
+      </View>
+    );
+  };
+
 const styles = StyleSheet.create({
   container: {
     position: 'relative',
@@ -49,6 +59,18 @@ const styles = StyleSheet.create({
     left: Dimensions.get('window').width - 50,
     margin: 10,
   },
+  dialogbadge: {
+    backgroundColor: 'red',
+    borderRadius: 12,
+    minWidth: 24,
+    height: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'absolute',
+    bottom: -30,
+    left: -2,
+    margin: 10,
+  }
 });
 
 export default Badge;

@@ -6,7 +6,7 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import { useState } from 'react';
 import Modal from 'react-native-modal';
 import { NavigationProps } from '../App';
-import { NotionMainBadge } from '../components/NoticeBadge/NoticeBadge';
+import { NotionMainBadge } from '../components/NoticeManage/NoticeBadge';
 
 export const styles = StyleSheet.create({
   userphoto: {
