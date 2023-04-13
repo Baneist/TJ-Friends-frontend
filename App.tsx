@@ -18,6 +18,7 @@ import EditInterest from './pages/userInfo/EditInfo/EditInterest';
 import EditStatus from './pages/userInfo/EditInfo/EditStatus';
 import Login from './pages/Login';
 import PostPage from './pages/PostPage';
+import NoticeManageScreen from './pages/noticeManage/NoticeManage';
 import EditLabel from './pages/userInfo/EditInfo/EditLabel';
 import api from './utils/request';
 import axios from 'axios';
@@ -34,6 +35,7 @@ type RootStackParamList = {
   Profile: { name: string },
   Comment: undefined,
   Post: undefined;
+  NoticeManageScreen: undefined;
   EditProfile: undefined,
   EditNickName: undefined,
   EditInterest: undefined,
@@ -130,7 +132,7 @@ const App = () => {
   return (
     <View style={{ flex: 1 }}>
       <NavigationContainer ref={navigationRef}>
-        <Stack.Navigator initialRouteName="Login">
+        <Stack.Navigator initialRouteName="Main">
           <Stack.Screen name="Login" component={RenderLoginScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Signup" component={RenderSignupScreen} />
           <Stack.Screen name="Comment" component={CommentScreen} options={{ headerBackTitle: 'Back' }} />
@@ -141,6 +143,7 @@ const App = () => {
           <Stack.Screen name="EditInterest" component={EditInterest} options={{ headerBackTitle: 'Back' }} />
           <Stack.Screen name="EditStatus" component={EditStatus} options={{ headerBackTitle: 'Back' }} />
           <Stack.Screen name="EditLabel" component={EditLabel} options={{ headerBackTitle: 'Back' }} />
+          <Stack.Screen name="NoticeManageScreen" component={NoticeManageScreen} options={{ headerBackTitle: 'Back' }} />
           <Stack.Screen name="FollowersList" component={FollowersList} options={{ headerBackTitle: 'Back' }} />
           <Stack.Screen name="FollowingList" component={FollowingList} options={{ headerBackTitle: 'Back' }} />
         </Stack.Navigator>

@@ -6,6 +6,7 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import { useState } from 'react';
 import Modal from 'react-native-modal';
 import { NavigationProps } from '../App';
+import { NotionMainBadge } from '../components/NoticeBadge/NoticeBadge';
 
 export const styles = StyleSheet.create({
   userphoto: {
@@ -18,6 +19,12 @@ export const styles = StyleSheet.create({
     margin: 16,
     right: 10,
     bottom: 80,
+  },
+  nmb: {
+    position: 'absolute',
+    margin: 16,
+    right: 10,
+    bottom: 160,
   },
   modal: {
     justifyContent: 'flex-end',
@@ -125,6 +132,18 @@ const FloatButton = ({ onPressFAB }: { onPressFAB: () => void }) => (
   />
 );
 
+const NoticeManageButton = ({ onPressFAB }: { onPressFAB: () => void }) => (
+  <View style={{position:"relative"}}>
+    <FAB
+    icon="bell"
+    style={styles.nmb}
+    customSize={50}
+    onPress={onPressFAB}
+    />
+    <NotionMainBadge />
+  </View>
+);
+
 export const CardwithButtons = ({ onCommentPress }: { onCommentPress?: () => void }) => {
   const [MenuVisible, setMenuVisible] = useState(false);
 
@@ -178,10 +197,11 @@ const MemoriesScreen = ({ route, navigation }: NavigationProps) => {
           {array.map((item,index) => <CardwithButtons onCommentPress={() => navigation.navigate('Comment')} />)}
         </View>
         {/* eslint-disable-next-line max-len */}
-        {/* -> Set bottom view to allow scrolling to top if you set bottom-bar position absolute */}
+        {/* -> Set bottom view to allow scrolling 2to top if you set bottom-bar position absolute */}
         <View style={{ height: 90 }} />
       </ScrollView>
       <FloatButton onPressFAB={() => navigation.navigate('Post')} />
+      <NoticeManageButton onPressFAB={() => navigation.navigate('NoticeManageScreen')} />
     </View>
   );
 }
