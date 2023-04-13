@@ -6,5 +6,7 @@ const instance = axios.create({
 
 export default {
     get:instance.get,
-    post:instance.post
+    post:instance.post,
+    put:instance.put,
+    del:instance.delete
 }

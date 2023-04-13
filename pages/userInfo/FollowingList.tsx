@@ -1,61 +1,81 @@
-import React,{useState} from 'react';
+import React,{useState,useEffect} from 'react';
 import { View, StyleSheet, Dimensions, ScrollView, Image, Pressable } from 'react-native';
 import { Block, Text } from 'galio-framework';
 import { Avatar, Button } from 'react-native-paper';
 import { Props } from '../../App';
+import request from '../../utils/request';
+import { userProp, defaultInfo } from './Profile';
+import { AxiosResponse } from 'axios';
 
 // 获取屏幕宽高
 const { width, height } = Dimensions.get('screen');
 
 // 用户信息
-const users = [
-{
-    id: '1',
-    name: '张三',
-    avatar: 'https://picsum.photos/700',
-    status: '计算机科学与技术',
-    isFollowing: true,
-},
-{
-    id: '2',
-    name: '李四',
-    avatar: 'https://picsum.photos/700',
-    status: '信息安全',
-    isFollowing: false,
-},
-{
-    id: '3',
-    name: '王五',
-    avatar: 'https://picsum.photos/700',
-    status: '软件工程',
-    isFollowing: true,
-},
-{
-    id: '4',
-    name: '赵六',
-    avatar: 'https://picsum.photos/700',
-    status: '人工智能',
-    isFollowing: false,
-},
-];
-
+export interface followProp{
+  userID:string,
+  isfollowing:boolean
+}
 // 关注列表页面
 const FollowingList = ({ navigation }: Props) => {
-  const [followlist, setlist]=useState(users);
-
-// 关注/取消关注用户
-function toggleFollow(id: string) {
-  console.log(id);
-  const newList = followlist.map((item,idx) =>{
-    if(item.id===id){
-      item.isFollowing=!item.isFollowing;
-      return item;
+  //关注的用户信息
+  const [followlist, setlist]=useState([] as userProp []);
+  //是否在关注
+  const [statusList, setstatusList] = useState([] as followProp[])
+  //初始化
+  let idlist = [] as string [];
+  async function fetchData(){
+    const res = await request.get('/profile/2052123/following')
+    if(res.data.code==200){
+      idlist = idlist.concat(res.data.data);
+      let reqList:Promise<AxiosResponse>[]=[];
+      for(let i=0;i<idlist.length;++i){
+        reqList.push(new Promise((resolve, reject)=>{
+          resolve(request.get('/profile',{
+            params:{
+              stuid:idlist[i]
+            }
+          }))
+        }))
+      }
+      Promise.all(reqList).then((values)=>{
+        for(let i=0;i<values.length;++i){
+          statusList.push({userID:idlist[i], isfollowing:true})
+          //setstatusList([...statusList, {userID:idlist[i], isfollowing:true}]);
+          setlist(current => current.concat(values[i].data.data))
+        }
+      })
     }
     else{
-      return item;
+      console.log('code err',res.data.code)
+    }
+}
+  useEffect(()=>{
+      fetchData()
+  },[])
+
+// 关注/取消关注用户
+async function toggleFollow(id: string) {
+  const res = await request.del('/profile/2052123/following',{
+    params:{
+      stuid:id
     }
   })
-  setlist(newList)
+  if(res.status==200){
+    const newList = statusList.map((item,idx) =>{
+      if(item.userID === id){
+          item.isfollowing=!item.isfollowing;
+        return item;
+      }
+      else{
+        return item;
+      }
+    })
+    setstatusList(newList)
+  }
+  else{
+    console.log('err')
+  }
+  
 }
 
 return (
@@ -70,25 +90,25 @@ return (
 </Block>*/ }
   {/* 关注列表 */}
   <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
-    {users.map((user) => (
-      <Pressable key={user.id}>
+    {followlist.map((user, idx) => (
+      <Pressable key={idx}>
         <Block style={styles.userContainer}>
           {/* 头像 */}
-          <Avatar.Image size={64} source={{ uri: user.avatar }} />
+          <Avatar.Image size={64} source={{ uri: user.userAvatar.info }} />
 
           {/* 用户信息 */}
           <Block style={styles.userInfo}>
-            <Text style={styles.userName}>{user.name}</Text>
-            <Text style={styles.userStatus}>{user.status}</Text>
+            <Text style={styles.userName}>{user.userNickName.info}</Text>
+            <Text style={styles.userStatus}>{user.userStatus.info}</Text>
           </Block>
 
           {/* 关注/取消关注按钮 */}
           <Button
             style={styles.followButton}
-            mode={user.isFollowing ? 'outlined' : 'contained'}
-            onPress={() => toggleFollow(user.id)}
+            mode={statusList[idx].isfollowing ? 'outlined' : 'contained'}
+            onPress={() => toggleFollow(statusList[idx].userID)}
           >
-            {user.isFollowing ? '取消关注' : '关注'}
+            {statusList[idx].isfollowing ? '取消关注' : '关注'}
           </Button>
         </Block>
       </Pressable>

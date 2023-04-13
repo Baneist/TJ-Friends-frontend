@@ -1,4 +1,4 @@
-import React , {useState}from "react";
+import React , {useState,useEffect}from "react";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   View,
@@ -19,7 +19,10 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import {Props} from '../../../App'
 import Modal from 'react-native-modal';
 import styles from './EditProfile.Style'
+import request from "../../../utils/request";
 import AvatarPicker from "../../../components/AvatarPicker/AvatarPicker";
+import { userProp,defaultInfo } from "../Profile";
+import { useFocusEffect } from '@react-navigation/native';
 
 //获取屏幕宽高
 const { width, height } = Dimensions.get("screen");
@@ -32,37 +35,46 @@ const profileImage = {
   ProfilePicture: 'https://picsum.photos/700'
 }
 
-//个人信息
-const userInfo = {
-  userId:{"info":'2052123',"permission":true},
-  userName:{"info":'吉尔伽美什',"permission":true},
-  userNickName: {"info":'Gilgamesh',"permission":true},
-  userGender: {"info":'Male',"permission":true},
-  userBirthDate:{"info":'2002-08-07',"permission":false},
-  userStatus:{"info":'Enuma Elish!',"permission":true},
-  userMajor:{"info":'愉悦',"permission":true},
-  userPhone:{"info":'123',"permission":true},
-  userYear:{"info":'2020',"permission":true},
-  userInterest:{"info":'喜欢钱和一切金闪闪的东西，还有哈哈哈哈哈哈（是个快乐的男人！）',"permission":true},
-  userLabel : {"info":[
-    '金闪闪','帅','金发','红瞳','AUO','愉悦教主','强','黄金三靶'
-  ],"permission":true},
-  followerPms:true,
-  followingPms:true
-}
-
-//性别
-function Gender(){
-  if(userInfo.userGender.info=='Male')
-    return (<Icon name="man" size={16} color="#32325D" style={{ marginTop: 10 }}>Male</Icon>)
-  else
-    return (<Icon name="woman" size={16} color="#32325D" style={{ marginTop: 10 }}>Female</Icon>)
-}
-
-
 //资料页面
 export function EditProfile({route, navigation}:Props){
+  //state
+  //个人信息
+  const [userInfo, setUserInfo] = useState<userProp>(defaultInfo);
   const { bottom } = useSafeAreaInsets();
+  //初始化
+  //初始化
+  async function fetchData(){
+    const res = await request.get('/profile',{
+      params:{
+        stuid:'2052123'
+      }
+    })
+    if(res.data.code==200){
+      setUserInfo(res.data.data);
+    }
+    else{
+      console.log('code err',res.data.code)
+    }
+  }
+  //先用FocusEffect代替Effect了，不知道为什么从其他路由返回时不触发Effect
+  // useEffect(()=>{
+  //   fetchData()
+  // },[])
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchData()
+      console.log(userInfo)
+      return () => {
+      };
+    }, [])
+  );
+  //性别
+  function Gender(){
+    if(userInfo.userGender.info=='Male')
+      return (<Icon name="man" size={16} color="#32325D" style={{ marginTop: 10 }}>Male</Icon>)
+    else
+      return (<Icon name="woman" size={16} color="#32325D" style={{ marginTop: 10 }}>Female</Icon>)
+  }
   //选择生日
   const [showDatePicker, setShowDatePicker] = useState(false);
   function ChooseBirthDay(){
@@ -99,14 +111,6 @@ export function EditProfile({route, navigation}:Props){
     setShowAvatarOption(false);
   }
   const [showAvatarOption, setShowAvatarOption] = useState(false);
-
-  //权限
-  const [birthPms, setBirthPms] = useState(userInfo.userBirthDate.permission);
-  const [majorPms, setMajorPms] = useState(userInfo.userMajor.permission);
-  const [yearPms, setYearPms] = useState(userInfo.userYear.permission)
-  const [interstPms,setInterestPms] = useState(userInfo.userInterest.permission)
-  const [followersPms,setFollowersPms] = useState(userInfo.followerPms)
-  const [followingPms,setFollowingPms] = useState(userInfo.followingPms)
 
   const UnbindPhone = () =>{
       //解绑手机
@@ -266,6 +270,37 @@ export function EditProfile({route, navigation}:Props){
   function toEditLabel(){
     navigation.navigate('EditLabel');
   }
+  //隐私变更
+  function updateBitrthPms(){
+    let newuser = {...userInfo};
+    newuser.userBirthDate.pms = !newuser.userBirthDate.pms;
+    setUserInfo(newuser)
+  }
+  function updateMajorPms(){
+    let newuser = {...userInfo};
+    newuser.userMajor.pms = !newuser.userMajor.pms;
+    setUserInfo(newuser)
+  }
+  function updateYearPms(){
+    let newuser = {...userInfo};
+    newuser.userYear.pms = !newuser.userYear.pms;
+    setUserInfo(newuser)
+  }
+  function updateInterestPms(){
+    let newuser = {...userInfo};
+    newuser.userInterest.pms = !newuser.userInterest.pms;
+    setUserInfo(newuser)
+  }
+  function updateFollowingPms(){
+    let newuser = {...userInfo};
+    newuser.followingPms = !newuser.followingPms;
+    setUserInfo(newuser)
+  }
+  function updateFollowerPms(){
+    let newuser = {...userInfo};
+    newuser.followerPms = !newuser.followerPms;
+    setUserInfo(newuser)
+  }
 
   return (
     <View style={{flex:1,  marginBottom: bottom}}>
@@ -396,58 +431,57 @@ export function EditProfile({route, navigation}:Props){
                         >保存</Button>}
                       />
                         <List.Section style={{marginBottom:0}}>
-                        <Pressable onPress={()=>{setBirthPms(!birthPms)}}>
+                        <Pressable onPress={updateBitrthPms}>
                         <Surface elevation={1}>
                           <List.Item style={{marginLeft:25}}
                           left={() => <><Text size={16} style={{marginTop:2}}>生日</Text></>}
                           title='' 
                           right={() => <><Text style={styles.otherVisable}>他人可见</Text>
-                          <Switch value={birthPms}/>
+                          <Switch 
+                          value={userInfo.userBirthDate.pms} 
+                          onValueChange={updateBitrthPms}/>
                           </>} /></Surface></Pressable>
-                          <Pressable onPress={() =>{
-                            setMajorPms(!majorPms)
-                          }}>
+                          <Pressable onPress={updateMajorPms}>
                           <Surface elevation={1}>
                           <List.Item style={{marginLeft:25}}
                           left={() => <><Text size={16} style={{marginTop:2}}>专业</Text></>}
                           title=''
                           right={() => <><Text style={styles.otherVisable}>他人可见</Text>
-                          <Switch value={majorPms}/></>} />
+                          <Switch value={userInfo.userMajor.pms} onValueChange={updateMajorPms}/></>} />
                         </Surface></Pressable>
-                        <Pressable onPress={() =>{
-                            setYearPms(!yearPms)
-                          }}>
+                        <Pressable onPress={updateYearPms}>
                           <Surface elevation={1}>
                           <List.Item style={{marginLeft:25}}
                           left={() => <><Text size={16} style={{marginTop:2}}>学年</Text></>}
                           title=''
                           right={() => <><Text style={styles.otherVisable}>他人可见</Text>
-                          <Switch value={yearPms}/></>} />
+                          <Switch value={userInfo.userYear.pms} onValueChange={updateYearPms}/></>} />
                         </Surface></Pressable>
-                        <Pressable onPress={()=>{setInterestPms(!interstPms)}}>
+                        <Pressable onPress={updateInterestPms}>
                           <Surface elevation={1}>
                           <List.Item style={{marginLeft:25}}
                           left={() => <><Text size={16} style={{marginTop:2}}>兴趣爱好</Text></>}
                           title=''
                           right={() => <><Text style={styles.otherVisable}>他人可见</Text>
-                          <Switch value={interstPms}/></>} />
+                          <Switch value={userInfo.userInterest.pms} onValueChange={updateInterestPms}/></>} />
                         </Surface></Pressable>
-                        <Pressable onPress={()=>{setFollowingPms(!followingPms)}}>
+                        <Pressable onPress={updateFollowingPms}>
                           <Surface elevation={1}>
                           <List.Item style={{marginLeft:25}}
                           left={() => <><Text size={16} style={{marginTop:2}}>关注列表</Text></>}
                           title=''
                           right={() => <><Text style={styles.otherVisable}>他人可见</Text>
-                          <Switch value={followingPms}/></>} />
+                          <Switch value={userInfo.followingPms} onValueChange={updateFollowingPms}/></>} />
                         </Surface></Pressable>
-                        <Pressable onPress={()=>{setFollowersPms(!followersPms)}}>
+                        <Pressable onPress={updateFollowerPms}>
                           <Surface elevation={1}>
                           <List.Item style={{marginLeft:25}}
                           left={() => <><Text size={16} style={{marginTop:2}}>粉丝列表</Text></>}
                           title=''
                           right={() => <><Text style={styles.otherVisable}>他人可见</Text>
-                          <Switch value={followersPms}/></>} />
-                        </Surface></Pressable>
+                          <Switch value={userInfo.followerPms} onValueChange={updateFollowerPms}/></>} />
+                        </Surface>
+                        </Pressable>
                         </List.Section>
                       </Block>
                       </Surface>

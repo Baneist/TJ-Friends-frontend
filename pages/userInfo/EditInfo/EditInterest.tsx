@@ -1,14 +1,44 @@
-import React , {useState}from "react";
+import React , {useState,useEffect}from "react";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {Button, Card, TextInput, Dialog, Surface,
     Portal, Provider,Snackbar,IconButton, List,Divider } from 'react-native-paper';
 import {Props} from '../../../App'
+import { defaultInfo } from "../Profile";
+import request from "../../../utils/request";
 
 const EditInterest = ({route, navigation}:Props) =>{
-    const [userInterst,setInterst] = useState('');
-    function submit(){
-        console.log(userInterst);
-        navigation.goBack()
+    const [userInterest,setInterest] = useState('');
+    let userInfo = defaultInfo;
+    //初始化
+    async function fetchData(){
+        const res = await request.get('/profile',{
+            params:{
+              stuid:'2052123'
+            }
+          })
+        if(res.data.code==200){
+            userInfo = res.data.data;
+            setInterest(userInfo.userInterest.info);
+        }
+        else{
+        console.log('code err',res.data.code)
+        }
+    }
+    useEffect(()=>{
+        fetchData()
+    },[])
+    async function submit(){
+        userInfo.userInterest.info=userInterest;
+        const res = await request.put('/updateUserInfo',{
+            data:userInfo
+        })
+        if(res.status==200){
+            //发送事件，传递更新的userInfo
+            navigation.goBack()
+        }
+        else{
+            console.log('err',res.status)
+        }
     }
     return(
         <Card mode='outlined' style={{borderRadius:0}}>
@@ -16,8 +46,8 @@ const EditInterest = ({route, navigation}:Props) =>{
             <Card.Content>
             <TextInput 
             mode="outlined"
-            value={userInterst}
-            onChangeText={(Text)=>setInterst(Text)}
+            value={userInterest}
+            onChangeText={(Text)=>setInterest(Text)}
             maxLength={256}
             autoFocus
             multiline

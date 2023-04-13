@@ -16,7 +16,6 @@ import { MomentsList } from "../../components/MomentsList/MomentsList";
 import {Props} from '../../App'
 import CardwithButtons from "../Memories";
 import request from "../../utils/request";
-import axios from "axios";
 
 //获取屏幕宽高
 const { width, height } = Dimensions.get("screen");
@@ -28,49 +27,51 @@ const profileImage = {
   ProfileBackground : require("../../assets/imgs/profile-screen-bg.png"),
   ProfilePicture: 'https://picsum.photos/700'
 }
-
-//个人信息
-interface infoProp{
-  info:string,
-  pms:boolean
-}
 interface labelProp{
   info:string[],
   pms:boolean
 }
-interface userProp{
+interface infoProp{
+  info:string,
+  pms:boolean
+}
+export interface userProp{
   userId:infoProp,
   userName:infoProp,
   userNickName:infoProp,
+  userAvatar:infoProp,
   userGender:infoProp,
-  userAvatar:infoProp
   userBirthDate:infoProp,
   userStatus:infoProp,
   userMajor:infoProp,
-  userPhone:infoProp,
   userYear:infoProp,
+  userPhone:infoProp,
   userInterest:infoProp,
   userLabel:labelProp,
   followerPms:boolean,
   followingPms:boolean
 }
-const defaultUserInfo = {
+export const defaultInfo = {
   userId:{info:'2052123',pms:true},
-  userName:{info:'梅林',pms:true},
-  userNickName: {info:'Merlin',pms:true},
+  userName:{info:'吉尔伽美什',pms:true},
+  userNickName: {info:'Gilgamesh',pms:true},
   userGender: {info:'Male',pms:true},
-  userAvatar:{info:'https://picsum.photos/700',pms:true},
-  userBirthDate:{info:'2002-08-07',pms:false},
-  userStatus:{info:'想听听王的故事吗!',pms:true},
-  userMajor:{info:'吃梦',pms:true},
-  userPhone:{info:'123',pms:true},
+  userBirthDate:{info:'2002-08-07',pms:true},
+  userStatus:{info:'愉悦！',pms:true},
+  userMajor:{info:'金融',pms:true},
   userYear:{info:'2020',pms:true},
+  userPhone:{info:'',pms:true},
   userInterest:{info:'喜欢钱和一切金闪闪的东西，还有哈哈哈哈哈哈（是个快乐的男人！）',pms:true},
-  userLabel : {info:[
-    '金闪闪','帅','金发','红瞳','AUO','愉悦教主','强','黄金三靶'
-  ],pms:true},
+  userAvatar:{info:'https://picsum.photos/700',pms:true},
+  userLabel:{
+    info:[
+      '金闪闪','帅','金发','红瞳','AUO','愉悦教主','强','黄金三靶'
+    ],
+    pms:true,
+  },
   followerPms:true,
   followingPms:true
+
 }
 const array = [1, 2, 3, 4, 5];
 
@@ -78,28 +79,41 @@ const array = [1, 2, 3, 4, 5];
 
 //资料页面
 
-//想改成类！但是太麻烦了遂终止（
+
 const Profile = ({route, navigation}:Props) =>{
-  //state声明
-  const [userInfo, setUserInfo] = useState<userProp>(defaultUserInfo);
-  const [code, setcode]=useState(0);
+  //state
+  //个人信息
+  const [userInfo, setUserInfo] = useState<userProp>(defaultInfo);
   //显示个人信息
   const [showInfo, setShowInfo] = useState(false);
   const { bottom } = useSafeAreaInsets();
 
-  //fetch data
+  //初始化
   async function fetchData(){
     const res = await request.get('/profile',{
       params:{
         stuid:'2052123'
       }
     })
-    console.log(res.data.data)
-    setUserInfo(res.data.data)
+    if(res.data.code==200){
+      setUserInfo(res.data.data);
+    }
+    else{
+      console.log('code err',res.data.code)
+    }
   }
-  useEffect(() =>{
-    fetchData();
-  },[]);  //传空数组，只调用一次
+  useEffect(()=>{
+    //获取数据
+    fetchData()
+    //监听事件
+    const nickeNameListener = navigation.addListener('updateNickeName',(userInfo:userProp) =>{
+      setUserInfo(userInfo)
+    })
+    //组件卸载时取消监听
+    return ()=>{
+      nickeNameListener.remove();
+    };
+  },[])
   //编辑个人资料
   function editProfile(){
     navigation.navigate('EditProfile')
@@ -116,13 +130,12 @@ const Profile = ({route, navigation}:Props) =>{
     navigation.navigate('Comment')
   }
   //性别
-function Gender(){
-  if(userInfo.userGender.info=='Male')
-    return (<Icon name="man" size={16} color="#32325D" style={{ marginTop: 10 }}>Male</Icon>)
-  else
-    return (<Icon name="woman" size={16} color="#32325D" style={{ marginTop: 10 }}>Female</Icon>)
+  function Gender(){
+    if(userInfo.userGender.info=='Male')
+      return (<Icon name="man" size={16} color="#32325D" style={{ marginTop: 10 }}>Male</Icon>)
+    else
+      return (<Icon name="woman" size={16} color="#32325D" style={{ marginTop: 10 }}>Female</Icon>)
   }
-  
   return (
     <View style={{flex:1,  marginBottom: bottom}}>
       <View style={{flex:1}}>
@@ -216,9 +229,7 @@ function Gender(){
                         left={props => <List.Icon {...props} icon="emoticon-outline" />}
                         />
                         <List.Item title="生日" 
-                        description={
-                          userInfo.userBirthDate.info
-                        }
+                        description={userInfo.userBirthDate.info}
                         left={props => <List.Icon {...props} icon="cake-variant" />}
                         />
                         <List.Item title="学年/专业"
@@ -277,7 +288,7 @@ const styles = StyleSheet.create({
   },
   profileCard: {
     flex: 1,
-    marginTop: 130,
+    marginTop: 90,
     borderTopLeftRadius: 6,
     borderTopRightRadius: 6,
     backgroundColor: '#FFFFFF',

@@ -1,4 +1,4 @@
-import React , {useState}from "react";
+import React , {useState,useEffect}from "react";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {Button, Card, Text, Chip,
     Searchbar, Provider,Snackbar,IconButton, List,Divider } from 'react-native-paper';
@@ -7,38 +7,54 @@ import Modal from 'react-native-modal';
 import {
     View
   } from "react-native"
+import request from "../../../utils/request";
+import { defaultInfo } from "../Profile";
 
+//所有标签
+const allLabel = [
+    '猫派','狗派','二次元','现充','舟批','原批','Switch玩家','体育生','篮球',
+]
 
 const EditLabel = ({route, navigation}:Props) =>{
-    const [allLabel, setAllLabel] = useState([
-        '猫派','狗派','二次元','现充','舟批','原批','Switch玩家','体育生','篮球'
-    ])
-    const [userLabel, setUserLabel] = useState([
-        '金闪闪','帅','金发','红瞳','AUO','愉悦教主','强','黄金三靶'
-    ])
+    const [userLabel, setUserLabel] = useState([] as string [])
+    let userInfo = defaultInfo;
+    //初始化
+    async function fetchData(){
+        const res = await request.get('/profile',{
+            params:{
+              stuid:'2052123'
+            }
+          })
+        if(res.data.code==200){
+            userInfo = res.data.data;
+            setUserLabel(userInfo.userLabel.info);
+        }
+        else{
+        console.log('code err',res.data.code)
+        }
+    }
+    useEffect(()=>{
+        fetchData()
+    },[])
+    async function submit(){
+        userInfo.userLabel.info=userLabel;
+        console.log(userLabel)
+        const res = await request.put('/updateUserInfo',{
+            data:userInfo
+        })
+        if(res.status==200){
+            //发送事件，传递更新的userInfo
+            navigation.goBack()
+        }
+        else{
+            console.log('err',res.status)
+        }
+    }
     //记录加了哪些，直接setUserLabel会重新渲染从而对话框消失
     let addItem = [] as string [];
-    //const [addItem, setAddItem] = useState([] as string [])
-    function submit(){
-        console.log('submit');
-        navigation.goBack()
-    }
     function delLabel(idx:number){
         //删除回显
         setUserLabel((userLabel) => userLabel.filter(item => userLabel.indexOf(item)!== idx))
-    }
-    function addLabel(label:string){
-        //添加回显
-        //除掉重复的
-        if(userLabel.filter(item => item == label).length!=0) {//有重复
-            console.log('有重复')
-        }
-        else if(addItem.filter(item => item == label).length!=0){
-            console.log('有重复')
-        }
-        else{//都没有重复的，再加进去
-            addItem.push(label);
-        }
     }
     function addAllChosen(){
         console.log(addItem)
@@ -51,6 +67,13 @@ const EditLabel = ({route, navigation}:Props) =>{
     const [showDialog, setShowDialog] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const NewLabelDialog = () => {
+        const [allItem, setallItem] = useState(allLabel.filter(item => userLabel.indexOf(item) ==-1))
+        function addLabel(label:string){
+            //添加回显
+            console.log(allItem)
+            setallItem(allItem.filter((item)=>item!=label));
+            addItem.push(label);
+        }
         return(
             <View>
             <Modal
@@ -71,7 +94,7 @@ const EditLabel = ({route, navigation}:Props) =>{
                     style={{marginBottom:15}}
                   />
                   <View style={{flexDirection:"row",flexWrap:'wrap'}}>
-                    {allLabel.map((label, idx)=>
+                    {allItem.map((label, idx)=>
                     <Chip key={idx} style={{marginRight:10,marginBottom:10}} 
                     mode='outlined' 
                     closeIcon={() =>(
