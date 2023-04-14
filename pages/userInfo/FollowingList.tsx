@@ -2,10 +2,10 @@ import React,{useState,useEffect} from 'react';
 import { View, StyleSheet, Dimensions, ScrollView, Image, Pressable } from 'react-native';
 import { Block, Text } from 'galio-framework';
 import { Avatar, Button } from 'react-native-paper';
-import { Props } from '../../App';
 import request from '../../utils/request';
 import { userProp, defaultInfo } from './Profile';
 import { AxiosResponse } from 'axios';
+import { NavigationProps } from '../../App';
 
 // 获取屏幕宽高
 const { width, height } = Dimensions.get('screen');
@@ -16,7 +16,7 @@ export interface followProp{
   isfollowing:boolean
 }
 // 关注列表页面
-const FollowingList = ({ navigation }: Props) => {
+const FollowingList = ({ navigation }: NavigationProps) => {
   const stuid = '2052123';
   //关注的用户信息
   const [followlist, setlist]=useState([] as userProp []);

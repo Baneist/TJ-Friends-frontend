@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useState } from 'react';
 import Modal from 'react-native-modal';
-import { Props } from '../App';
+import { NavigationProps } from '../App';
 
 export const styles = StyleSheet.create({
   userphoto: {
@@ -170,7 +170,7 @@ export const CardwithButtons = (props: CardProps) => {
   );
 };
 
-const MemoriesScreen = ({ route, navigation }: Props) => {
+const MemoriesScreen = ({ route, navigation }: NavigationProps) => {
   const { bottom } = useSafeAreaInsets();
   const array = [1, 2, 3, 4, 5];
   function onCommentPress(){

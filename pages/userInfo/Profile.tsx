@@ -13,7 +13,7 @@ import {Button, List, Chip} from 'react-native-paper';
 import { Block,Text} from "galio-framework";
 import Icon from 'react-native-vector-icons/AntDesign';
 import { MomentsList } from "../../components/MomentsList/MomentsList";
-import {Props} from '../../App'
+import {NavigationProps} from '../../App'
 import CardwithButtons from "../Memories";
 import request from "../../utils/request";
 
@@ -79,7 +79,7 @@ export const defaultInfo = {
 //资料页面
 
 
-const Profile = ({route, navigation}:Props) =>{
+const Profile = ({route, navigation}:NavigationProps) =>{
   //state
   const stuid = '2053186';
   //个人信息

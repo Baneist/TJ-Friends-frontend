@@ -16,7 +16,7 @@ import { Block, Text } from "galio-framework";
 import DateTimePicker from '@react-native-community/datetimepicker';
 //不知道为啥报错。。但是明明就是叫这个名字TT
 import Icon from 'react-native-vector-icons/AntDesign';
-import {Props} from '../../../App'
+import {NavigationProps} from '../../../App'
 import Modal from 'react-native-modal';
 import styles from './EditProfile.Style'
 import request from "../../../utils/request";
@@ -36,7 +36,7 @@ const profileImage = {
 }
 
 //资料页面
-export function EditProfile({route, navigation}:Props){
+export function EditProfile({route, navigation}:NavigationProps){
   //state
   const userID = '2052909';
   //个人信息

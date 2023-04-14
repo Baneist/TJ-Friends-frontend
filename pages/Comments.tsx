@@ -9,8 +9,8 @@ import { Props } from '../App';
 function Thumb() {
   const [focused, setFocused] = useState(0);
   const [likes, setLikes] = useState('4');
-  const thumb = 
-  <View style={{ flexDirection: 'row' }}>
+  const thumb =
+    <View style={{ flexDirection: 'row' }}>
       <Icon size={17} name={focused ? 'thumb-up' : 'thumb-up-outline'} />
       {likes != '0' && <Text style={{ paddingLeft: 5 }}>{likes}</Text>}
     </View>;
@@ -77,10 +77,10 @@ function DetailedCard(props:CardProps) {
         </Card.Content>
         <Card.Cover
           source={{ uri: 'https://picsum.photos/700' }}
-          style={{ borderWidth: 15, borderColor: '#fff',backgroundColor:'#fff' }}
-          
+          style={{ borderWidth: 15, borderColor: '#fff', backgroundColor: '#fff' }}
+
         />
-        <View style={{ justifyContent: 'space-evenly', flexDirection: 'row', paddingBottom:5}}>
+        <View style={{ justifyContent: 'space-evenly', flexDirection: 'row', paddingBottom: 5 }}>
           <Like />
           <Share />
         </View>

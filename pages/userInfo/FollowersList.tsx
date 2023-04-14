@@ -2,17 +2,17 @@ import React,{useState,useEffect} from 'react';
 import { View, StyleSheet, Dimensions, ScrollView, Image, Pressable } from 'react-native';
 import { Block, Text } from 'galio-framework';
 import { Avatar, Button } from 'react-native-paper';
-import { Props } from '../../App';
 import request from '../../utils/request';
 import { userProp, defaultInfo } from './Profile';
 import { AxiosResponse } from 'axios';
 import { followProp } from './FollowingList';
+import { NavigationProps } from '../../App';
 
 // 获取屏幕宽高
 const { width, height } = Dimensions.get('screen');
 
 // 关注列表页面
-const FollowersList = ({ route, navigation }: Props) => {
+const FollowersList = ({ route, navigation }: NavigationProps) => {
   //正在查看的是谁
   const pageUser = '2052909';
   //当前用户

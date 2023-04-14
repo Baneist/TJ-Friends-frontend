@@ -1,8 +1,7 @@
-import React, { forwardRef, useImperativeHandle } from "react";
+import React from "react";
 import {
   Image,
   ImageStyle,
-  StatusBar,
   SafeAreaView,
   StyleProp,
   Text,
@@ -15,11 +14,9 @@ import {
 import TextInput, {
   IInteractiveTextInputProps,
 } from "react-native-text-input-interactive";
-/**
- * ? Local Imports
- */
-import styles from "./Screen.style";
-import SocialButton from "../components/social-button/SocialButton";
+
+import styles from "./Signin.style";
+import SocialButton from "../components/SignInSocialButton/SocialButton";
 import useStateWithCallback from "../helpers/useStateWithCallback";
 import passwordValidator from "../helpers/passwordValidator";
 import Tooltip from "../components/tooltip/Tooltip";
@@ -29,11 +26,6 @@ const usernameValidator = (username: string) => {
 };
 
 const dummyFunction = () => { };
-
-export interface ITextRef {
-  getParams: () => { username: string, password: string };
-}
-
 export interface ILoginScreenProps {
   signupText?: string;
   disableDivider?: boolean;
@@ -76,11 +68,11 @@ export interface ILoginScreenProps {
   onFacebookPress?: () => void;
   onTwitterPress?: () => void;
   onApplePress?: () => void;
-  onDiscordPress?: () => void;
+  onGooglePress?: () => void;
   onEyePress?: () => void;
 }
 
-const LoginScreen = React.forwardRef<ITextRef, ILoginScreenProps>(({
+const Signin = ({
   style,
   dividerStyle,
   logoImageStyle,
@@ -99,10 +91,8 @@ const LoginScreen = React.forwardRef<ITextRef, ILoginScreenProps>(({
   onSignupPress,
   onUsernameChange,
   onPasswordChange,
-  onFacebookPress = dummyFunction,
-  onTwitterPress = dummyFunction,
   onApplePress = dummyFunction,
-  onDiscordPress = dummyFunction,
+  onGooglePress = dummyFunction,
   usernamePlaceholder = "Username",
   passwordPlaceholder = "Password",
   disableSignup = false,
@@ -124,23 +114,17 @@ const LoginScreen = React.forwardRef<ITextRef, ILoginScreenProps>(({
   TouchableComponent = TouchableOpacity,
   onEyePress,
   children,
-}, ref) => {
+}: ILoginScreenProps) => {
   const [isPasswordVisible, setPasswordVisible] = React.useState(false);
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
 
-  const [isUsernameTooltipVisible, setUsernameTooltipVisible] =
-    useStateWithCallback(false);
-  const [isPasswordTooltipVisible, setPasswordTooltipVisible] =
-    useStateWithCallback(false);
+  const [isUsernameTooltipVisible, setUsernameTooltipVisible] = useStateWithCallback(false);
+  const [isPasswordTooltipVisible, setPasswordTooltipVisible] = useStateWithCallback(false);
 
   const handleUsernameChange = (text: string) => {
-    try {
-      isUsernameTooltipVisible && setUsernameTooltipVisible(false);
-      setUsername(text);
-    } catch (e) {
-      console.log(e);
-    }
+    isUsernameTooltipVisible && setUsernameTooltipVisible(false);
+    setUsername(text);
   };
 
   const handlePasswordChange = (text: string) => {
@@ -159,17 +143,14 @@ const LoginScreen = React.forwardRef<ITextRef, ILoginScreenProps>(({
       onUsernameChange?.(username);
       return;
     }
-
     if (usernameValidator(username)) {
       !disableUsernameTooltip && setUsernameTooltipVisible(false);
       handlePasswordValidation();
-      onUsernameChange?.(username);
-      return;
     } else {
       LayoutAnimation.spring();
       !disableUsernameTooltip && setUsernameTooltipVisible(true);
-      onUsernameChange?.(username);
     }
+    onUsernameChange?.(username);
   };
 
   const handlePasswordValidation = () => {
@@ -182,14 +163,12 @@ const LoginScreen = React.forwardRef<ITextRef, ILoginScreenProps>(({
     }
     if (enablePasswordValidation && passwordValidator(password)) {
       !disablePasswordTooltip && setPasswordTooltipVisible(false);
-      onPasswordChange?.(password);
-      return;
     } else {
       LayoutAnimation.spring();
       !disableUsernameTooltip && setUsernameTooltipVisible(false);
       !disablePasswordTooltip && setPasswordTooltipVisible(true);
-      onPasswordChange?.(password);
     }
+    onPasswordChange?.(password);
   };
 
   const renderLogo = () =>
@@ -325,23 +304,18 @@ const LoginScreen = React.forwardRef<ITextRef, ILoginScreenProps>(({
           onPress={onApplePress}
         />
         <SocialButton
-          text="Continue with Discord"
+          text="Continue with Google"
           style={styles.socialButtonStyle}
           TouchableComponent={TouchableComponent}
           textStyle={styles.discordSocialButtonTextStyle}
-          imageSource={require("../assets/discord.png")}
-          onPress={onDiscordPress}
+          imageSource={require("../assets/google-logo.png")}
+          onPress={onGooglePress}
         />
       </>
     ) : null;
 
-  useImperativeHandle(ref, () => ({
-    getParams: () => ({ username, password })
-  }));
-
   return (
     <SafeAreaView style={[styles.container, style]}>
-      {/* <StatusBar barStyle="dark-content" /> */}
       {renderLogo()}
       {renderTextInputContainer()}
       {renderLoginButton()}
@@ -353,6 +327,6 @@ const LoginScreen = React.forwardRef<ITextRef, ILoginScreenProps>(({
       {children}
     </SafeAreaView>
   );
-});
+};
 
-export default LoginScreen;
+export default Signin;

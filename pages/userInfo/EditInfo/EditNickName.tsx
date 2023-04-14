@@ -2,11 +2,11 @@ import React , {useState,useEffect}from "react";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {Button, Card, TextInput, Dialog, Surface,
     Portal, Provider,Snackbar,IconButton, List,Divider } from 'react-native-paper';
-import {Props} from '../../../App'
+import {NavigationProps} from '../../../App'
 import { userProp,defaultInfo } from "../Profile";
 import request from "../../../utils/request";
 
-const EditeNickName = ({route, navigation}:Props) =>{
+const EditeNickName = ({route, navigation}:NavigationProps) =>{
     //state
     const [nickName,setNickName] = useState('1');
     let userInfo = defaultInfo;
