@@ -168,7 +168,7 @@ const App = () => {
     // <ValidateWebView/>
     <View style={{ flex: 1 }}>
       <NavigationContainer ref={navigationRef}>
-        <Stack.Navigator initialRouteName="Main">
+        <Stack.Navigator initialRouteName="Login">
           <Stack.Screen name="Login" component={RenderLoginScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Signup" component={RenderSignupScreen} />
           <Stack.Screen name="Comment" component={CommentScreen} options={{ headerBackTitle:'Back' }} />

@@ -17,6 +17,7 @@ export interface followProp{
 }
 // 关注列表页面
 const FollowingList = ({ navigation }: Props) => {
+  const stuid = '2052123';
   //关注的用户信息
   const [followlist, setlist]=useState([] as userProp []);
   //是否在关注
@@ -24,17 +25,13 @@ const FollowingList = ({ navigation }: Props) => {
   //初始化
   let idlist = [] as string [];
   async function fetchData(){
-    const res = await request.get('/profile/2052123/following')
-    if(res.data.code==200){
-      idlist = idlist.concat(res.data.data);
+    const res = await request.get(`/profile/${stuid}/followings`)
+    if(res.data.code==0){
+      idlist = idlist.concat(res.data.data.followings);
       let reqList:Promise<AxiosResponse>[]=[];
       for(let i=0;i<idlist.length;++i){
         reqList.push(new Promise((resolve, reject)=>{
-          resolve(request.get('/profile',{
-            params:{
-              stuid:idlist[i]
-            }
-          }))
+          resolve(request.get(`/profile/${idlist[i]}`))
         }))
       }
       Promise.all(reqList).then((values)=>{
@@ -54,15 +51,23 @@ const FollowingList = ({ navigation }: Props) => {
   },[])
 
 // 关注/取消关注用户
-async function toggleFollow(id: string) {
-  const res = await request.del('/profile/2052123/following',{
-    params:{
-      stuid:id
-    }
-  })
+async function toggleFollow(user: followProp) {
+  let res:AxiosResponse;
+  if(user.isfollowing){ //取关
+    res = await request.post('/unfollow',{
+      params:{
+        stuid:user.userID
+      }
+    })
+  }
+  else{ //关注
+    res = await request.post('/follow',{
+      param:user.userID
+    })
+  }
   if(res.status==200){
     const newList = statusList.map((item,idx) =>{
-      if(item.userID === id){
+      if(item.userID === user.userID){
           item.isfollowing=!item.isfollowing;
         return item;
       }
@@ -71,23 +76,15 @@ async function toggleFollow(id: string) {
       }
     })
     setstatusList(newList)
+    //粉丝列表的回粉信息交给后端修改
   }
   else{
-    console.log('err')
+    console.log('res.status')
   }
-  
 }
 
 return (
 <View style={{ flex: 1 }}>
-{/* 页面标题 */}
-{/* <Block style={styles.titleBar}>
-<Button icon="arrow-left" mode="text" onPress={goBack}>
-返回
-</Button>
-<Text style={styles.title}>关注列表</Text>
-<Button mode="text" children=""/>
-</Block>*/ }
   {/* 关注列表 */}
   <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
     {followlist.map((user, idx) => (
@@ -106,7 +103,7 @@ return (
           <Button
             style={styles.followButton}
             mode={statusList[idx].isfollowing ? 'outlined' : 'contained'}
-            onPress={() => toggleFollow(statusList[idx].userID)}
+            onPress={() => toggleFollow(statusList[idx])}
           >
             {statusList[idx].isfollowing ? '取消关注' : '关注'}
           </Button>

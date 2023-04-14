@@ -13,24 +13,27 @@ const { width, height } = Dimensions.get('screen');
 
 // 关注列表页面
 const FollowersList = ({ route, navigation }: Props) => {
+  //正在查看的是谁
+  const pageUser = '2052909';
+  //当前用户
+  const curUser = '2052123';
   //关注的用户信息
   const [followerlist, setlist]=useState([] as userProp []);
   //是否在关注
   const [statusList, setstatusList] = useState([] as followProp[])
+  //查看的是否是自己的粉丝
+  const [isMine, setMine] = useState(false);
   //初始化
   let idlist = [] as followProp [];
   async function fetchData(){
-    const res = await request.get('/profile/2052123/follower')
-    if(res.data.code==200){
+    const res = await request.get(`/profile/${pageUser}/followers`)
+    if(res.data.code==0){
       idlist = res.data.data.followers;
+      setMine(res.data.is_current_user);
       let reqList:Promise<AxiosResponse>[]=[];
       for(let i=0;i<idlist.length;++i){
         reqList.push(new Promise((resolve, reject)=>{
-          resolve(request.get('/profile',{
-            params:{
-              stuid:idlist[i].userID
-            }
-          }))
+          resolve(request.get(`/profile/${pageUser}`))
         }))
       }
       Promise.all(reqList).then((values)=>{
@@ -50,17 +53,36 @@ const FollowersList = ({ route, navigation }: Props) => {
   },[])
 
 // 关注/取消关注用户
-function toggleFollow(id: string) {
-  const newList = statusList.map((item,idx) =>{
-    if(item.userID === id){
-        item.isfollowing=!item.isfollowing;
-      return item;
-    }
-    else{
-      return item;
-    }
-  })
-  setstatusList(newList)
+async function toggleFollow(user: followProp) {
+  let res:AxiosResponse;
+  if(user.isfollowing){ //取关
+    res = await request.post('/unfollow',{
+      params:{
+        stuid:user.userID
+      }
+    })
+  }
+  else{ //关注
+    res = await request.post('/follow',{
+      param:user.userID
+    })
+  }
+  if(res.status==200){
+    const newList = statusList.map((item,idx) =>{
+      if(item.userID === user.userID){
+          item.isfollowing=!item.isfollowing;
+        return item;
+      }
+      else{
+        return item;
+      }
+    })
+    setstatusList(newList)
+    //粉丝列表的回粉信息交给后端修改
+  }
+  else{
+    console.log('res.status')
+  }
 }
 
 return (
@@ -83,9 +105,11 @@ return (
           <Button
             style={styles.followButton}
             mode={statusList[idx].isfollowing ? 'outlined' : 'contained'}
-            onPress={() => toggleFollow(statusList[idx].userID)}
+            onPress={() => toggleFollow(statusList[idx])}
           >
-            {statusList[idx].isfollowing ? '互相关注' : '回粉'}
+            {isMine?
+            (statusList[idx].isfollowing?'互相关注' :'回粉')
+            :(statusList[idx].isfollowing?'关注' :'取消关注')}
           </Button>
         </Block>
       </Pressable>

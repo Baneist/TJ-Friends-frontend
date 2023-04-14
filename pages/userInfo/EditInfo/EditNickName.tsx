@@ -10,14 +10,11 @@ const EditeNickName = ({route, navigation}:Props) =>{
     //state
     const [nickName,setNickName] = useState('1');
     let userInfo = defaultInfo;
+    const curUser = '2052123';
     //初始化
     async function fetchData(){
-        const res = await request.get('/profile',{
-            params:{
-              stuid:'2052123'
-            }
-          })
-        if(res.data.code==200){
+        const res = await request.get(`/profile/${curUser}`)
+        if(res.data.code==0){
             userInfo = res.data.data;
             setNickName(userInfo.userNickName.info);
         }

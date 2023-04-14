@@ -38,18 +38,15 @@ const profileImage = {
 //资料页面
 export function EditProfile({route, navigation}:Props){
   //state
+  const userID = '2052909';
   //个人信息
   const [userInfo, setUserInfo] = useState<userProp>(defaultInfo);
   const { bottom } = useSafeAreaInsets();
   //初始化
   //初始化
   async function fetchData(){
-    const res = await request.get('/profile',{
-      params:{
-        stuid:'2052123'
-      }
-    })
-    if(res.data.code==200){
+    const res = await request.get(`/profile/${userID}`)
+    if(res.data.code==0){
       setUserInfo(res.data.data);
     }
     else{
@@ -77,10 +74,38 @@ export function EditProfile({route, navigation}:Props){
   }
   //选择生日
   const [showDatePicker, setShowDatePicker] = useState(false);
+  
   function ChooseBirthDay(){
-    const [birthday, setbirthday] = useState(new Date());
-    function submitBirthDay(){
+    function formatDate(date:Date) {
+      var d = new Date(date),
+          month = '' + (d.getMonth() + 1),
+          day = '' + d.getDate(),
+          year = d.getFullYear();
+  
+      if (month.length < 2) 
+          month = '0' + month;
+      if (day.length < 2) 
+          day = '0' + day;
+  
+      return [year, month, day].join('-');
+    }
+    const [birthday, setbirthday] = useState(new Date(userInfo.userBirthDate.info));
+    async function submitBirthDay(){
       setShowDatePicker(false);
+      let newuser = {...userInfo};
+      let formatBirthDate = formatDate(birthday)
+      newuser.userBirthDate.info = formatBirthDate;
+        const res = await request.put('/updateUserInfo',{
+          data:newuser
+      })
+      if(res.status==200){
+        setUserInfo(newuser)
+          //发送事件，传递更新的userInfo
+          //navigation.goBack()
+      }
+      else{
+          console.log('err',res.status)
+    }
     }
     return(
       <Modal
@@ -98,6 +123,7 @@ export function EditProfile({route, navigation}:Props){
         <View style={styles.contentContainer}>
           <DateTimePicker
             value={birthday}
+            onChange={(event, date)=>setbirthday(date||new Date())}
             mode='date'
             display="spinner"
             themeVariant="light"

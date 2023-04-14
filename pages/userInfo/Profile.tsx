@@ -73,7 +73,6 @@ export const defaultInfo = {
   followingPms:true
 
 }
-const array = [1, 2, 3, 4, 5];
 
 //更多信息
 
@@ -82,37 +81,45 @@ const array = [1, 2, 3, 4, 5];
 
 const Profile = ({route, navigation}:Props) =>{
   //state
+  const stuid = '2053186';
   //个人信息
   const [userInfo, setUserInfo] = useState<userProp>(defaultInfo);
+  //粉丝 关注列表
+  const [followerNum, setFollowerNum] = useState(0);
+  const [followingNum, setFollowingNum] = useState(0);
   //显示个人信息
-  const [showInfo, setShowInfo] = useState(false);
   const { bottom } = useSafeAreaInsets();
 
   //初始化
   async function fetchData(){
-    const res = await request.get('/profile',{
-      params:{
-        stuid:'2052123'
-      }
-    })
-    if(res.data.code==200){
-      setUserInfo(res.data.data);
+    //获取资料
+    const resInfo = await request.get(`/profile/${stuid}`)
+    if(resInfo.data.code==0){
+      setUserInfo(resInfo.data.data);
     }
     else{
-      console.log('code err',res.data.code)
+      console.log('code err',resInfo.data.code)
+    }
+    //获取关注列表
+    const resFollowing = await request.get(`/profile/${stuid}/followings`)
+    if(resFollowing.data.code == 0){
+      setFollowingNum(resFollowing.data.data.followings.length);
+    }
+    else{
+      console.log('code err', resFollowing.data.code)
+    }
+    //获取粉丝列表
+    const resFollower = await request.get(`/profile/${stuid}/followers`)
+    if(resFollower.data.code == 0){
+      setFollowerNum(resFollower.data.data.followers.length);
+    }
+    else{
+      console.log('code err',resFollower.data.code)
     }
   }
   useEffect(()=>{
     //获取数据
     fetchData()
-    //监听事件
-    const nickeNameListener = navigation.addListener('updateNickeName',(userInfo:userProp) =>{
-      setUserInfo(userInfo)
-    })
-    //组件卸载时取消监听
-    return ()=>{
-      nickeNameListener.remove();
-    };
   },[])
   //编辑个人资料
   function editProfile(){
@@ -153,17 +160,17 @@ const Profile = ({route, navigation}:Props) =>{
               {/* 头像 */}
                 <Block middle style={styles.avatarContainer}>
                   <Image 
-                    source={{ uri: profileImage.ProfilePicture }}
+                    source={{ uri: userInfo.userAvatar.info }}
                     style={styles.avatar}
                   />
                 </Block>
                 <Block style={styles.info}>
                   {/* 粉丝量信息 */}
-                  <Block row space="between">
+                  <Block row space="around">
                   <Pressable onPress={viewFollower}>
                     <Block middle>
                         <Text style={styles.infoNum}>
-                          2K
+                          {followerNum}
                         </Text>
                       <Text style={styles.infoName}>Followers</Text>
                     </Block>
@@ -171,19 +178,19 @@ const Profile = ({route, navigation}:Props) =>{
                     <Pressable onPress={viewFollowing}>
                     <Block middle>
                       <Text style={styles.infoNum}>
-                        10
+                        {followingNum}
                       </Text>
                       <Text style={styles.infoName}>Following</Text>
                     </Block>
                     </Pressable>
-                    <Pressable onPress={viewFollower}>
+                    {/* <Pressable onPress={viewFollower}>
                     <Block middle>
                         <Text style={styles.infoNum}>
                           188
                         </Text>
                       <Text style={styles.infoName}>Likes</Text>
                       </Block>
-                    </Pressable>
+                    </Pressable> */}
                   </Block>
                 </Block>
               {/* 用户ID 简介等 */}
