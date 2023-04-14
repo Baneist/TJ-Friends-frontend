@@ -17,7 +17,7 @@ import TextInput, {
 } from "react-native-text-input-interactive";
 
 import styles from "./Signin.style";
-import SocialButton from "../components/social-button/SocialButton";
+import SocialButton from "../components/SignInSocialButton/SocialButton";
 import useStateWithCallback from "../helpers/useStateWithCallback";
 import passwordValidator from "../helpers/passwordValidator";
 import Tooltip from "../components/tooltip/Tooltip";
@@ -74,7 +74,7 @@ export interface ILoginScreenProps {
   onFacebookPress?: () => void;
   onTwitterPress?: () => void;
   onApplePress?: () => void;
-  onDiscordPress?: () => void;
+  onGooglePress?: () => void;
   onEyePress?: () => void;
 }
 
@@ -100,7 +100,7 @@ const Signin = ({
   onFacebookPress = dummyFunction,
   onTwitterPress = dummyFunction,
   onApplePress = dummyFunction,
-  onDiscordPress = dummyFunction,
+  onGooglePress = dummyFunction,
   usernamePlaceholder = "Username",
   passwordPlaceholder = "Password",
   disableSignup = false,
@@ -312,12 +312,12 @@ const Signin = ({
           onPress={onApplePress}
         />
         <SocialButton
-          text="Continue with Discord"
+          text="Continue with Google"
           style={styles.socialButtonStyle}
           TouchableComponent={TouchableComponent}
           textStyle={styles.discordSocialButtonTextStyle}
-          imageSource={require("../assets/discord.png")}
-          onPress={onDiscordPress}
+          imageSource={require("../assets/google-logo.png")}
+          onPress={onGooglePress}
         />
       </>
     ) : null;

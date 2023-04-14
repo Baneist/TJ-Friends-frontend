@@ -4,10 +4,8 @@ import {
   View,
   Image,
   TextStyle,
-  ScrollView,
   SafeAreaView,
   TouchableOpacity,
-  ViewStyle,
 } from "react-native";
 import { Alert } from "react-native";
 /**
@@ -17,6 +15,7 @@ import styles from "./Login.style";
 import TextField from "../components/TextField/TextField";
 import SocialButton from "../components/LoginSocialButton/SocialButton";
 import api from "../utils/request";
+import {NavigationProps} from "../App";
 
 // ? Assets
 const googleLogo = require("../assets/google-logo.png");
@@ -31,11 +30,6 @@ export interface ISocialLoginProps {
   loginButtonBackgroundColor?: string;
   usernamePlaceholder?: string;
   passwordPlaceholder?: string;
-  enableAppleLogin?: boolean;
-  enableFacebookLogin?: boolean;
-  enableTwitterLogin?: boolean;
-  enableGoogleLogin?: boolean;
-  enableDiscordLogin?: boolean;
   backArrowImageSource?: any;
   loginButtonTextStyle?: any;
   usernameTextFieldStyle?: any;
@@ -68,11 +62,9 @@ export interface ISocialLoginProps {
   onTwitterLoginPress?: () => void;
   onGoogleLoginPress?: () => void;
   onDiscordLoginPress?: () => void;
-  onUserNameChangeText: (text: string) => void;
-  onPasswordChangeText: (text: string) => void;
   onSignUpPress: () => void;
   onRepasswordChangeText?: (text: string) => void;
-  navigation?: any;
+  navigation: NavigationProps["navigation"];
 }
 
 const Login = (props: ISocialLoginProps) => {
@@ -184,7 +176,7 @@ const Login = (props: ISocialLoginProps) => {
 
   const renderClassicLoginButton = () => {
     const {
-      loginText = "Let's go!",
+      loginText = "Let's Go!",
       loginButtonBackgroundColor,
       loginButtonShadowColor = "#58a13f",
       loginButtonSpinnerVisibility,
@@ -265,15 +257,11 @@ const Login = (props: ISocialLoginProps) => {
   };
 
   const renderSocialButtons = () => {
-    const {
-      enableGoogleLogin,
-      enableAppleLogin,
-    } = props;
     return (
       <View style={styles.socialButtonsContainer}>
         {renderClassicLoginButton()}
-        {enableAppleLogin && renderAppleLoginButton()}
-        {enableGoogleLogin && renderGoogleLoginButton()}
+        {renderAppleLoginButton()}
+        {renderGoogleLoginButton()}
       </View>
     );
   };

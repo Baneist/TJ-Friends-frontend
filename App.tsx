@@ -82,7 +82,6 @@ const App = () => {
           const params = Object.fromEntries(new URLSearchParams(url.split("?")[1]).entries());
           data = (await axios.post(PostUrl, params)).data;
         }
-        console.log(data);
         setIsModalVisible(false);
         data = (await api.post('/register', {
           username,
@@ -111,7 +110,7 @@ const App = () => {
       onUsernameChange={setUsername}
       onPasswordChange={setPassword}
       loginButtonText={'Continue with school validation'}
-      signupText='Already have an account?'
+      signupText={'Already have an account?'}
       onSignupPress={() => navigation.replace('Login')}
       enablePasswordValidation={false}
     />
@@ -122,11 +121,7 @@ const App = () => {
       onSignUpPress={() => navigation.replace('Signup')}
       onLoginPress={() => { }}
       onForgotPasswordPress={() => { }}
-      onUserNameChangeText={setUsername}
-      onPasswordChangeText={setPassword}
       navigation={navigation}
-      enableAppleLogin
-      enableGoogleLogin
     />
   );
 
