@@ -162,7 +162,7 @@ const Login = (props: ISocialLoginProps) => {
 
   const onHandleLoginPress = async () => {
     try {
-      const data = (await requestApi('post', '/login', { username, password }, false)).data;
+      const data = (await requestApi('post', '/login', null, { username, password }, false)).data;
       if (data.code === 0) {
         props.navigation.replace('Main');
       } else {
@@ -200,7 +200,7 @@ const Login = (props: ISocialLoginProps) => {
 
   const onAppleLoginPress = async () => {
     try {
-      const res = await requestApi('get', '/profile/2053186', null, true);
+      const res = await requestApi('get', '/profile/2053186',null, null, true);
       Alert.alert('用户信息', JSON.stringify(res.data));
     } catch (error) {
       handleAxiosError(error);

@@ -13,11 +13,12 @@ import {Button, List, Chip} from 'react-native-paper';
 import { Block,Text} from "galio-framework";
 import Icon from 'react-native-vector-icons/AntDesign';
 import { MomentsList } from "../../components/MomentsList/MomentsList";
-import {Props} from '../../App'
+import {NavigationProps} from '../../App'
 import CardwithButtons from "../Memories";
 import { followProp } from "./FollowingList";
 import { userProp, defaultInfo } from "./Profile";
-import request from "../../utils/request";
+import requestApi from "../../utils/request";
+import handleAxiosError from "../../utils/handleError";
 import axios, { AxiosResponse } from "axios";
 
 //获取屏幕宽高
@@ -36,10 +37,10 @@ const profileImage = {
 //资料页面
 
 
-const Profile = ({route, navigation}:Props) =>{
+const Profile = ({route, navigation}:NavigationProps) =>{
   //state
-  const curUser = '2053186'; //当前用户
-  const pageid = '2052123'; //查看主页的用户
+  const curUser = '2053302'; //当前用户
+  const pageid = '2053186'; //所查看主页的用户
   //个人信息
   const [userInfo, setUserInfo] = useState<userProp>(defaultInfo);
   //粉丝 关注列表
@@ -53,31 +54,44 @@ const Profile = ({route, navigation}:Props) =>{
   //初始化
   async function fetchData(){
     //获取资料
-    const resInfo = await request.get(`/profile/${pageid}`)
-    if(resInfo.data.code==0){
-      setUserInfo(resInfo.data.data);
+    //获取资料
+    try {
+      const resInfo = await requestApi('get', `/profile/${pageid}`,null, null, true);
+      if(resInfo.data.code==0){
+        setUserInfo(resInfo.data.data);
+      }
+      else{
+        console.log('code err',resInfo.data.code)
+      }
+      //获取关注列表
+      try{
+        const resFollowing = await requestApi('get', `/profile/${pageid}/followings`,null, null, true);
+        if(resFollowing.data.code == 0){
+          console.log(resFollowing.data.data)
+          setFollowingNum(resFollowing.data.data.followings.length);
+        }
+        else{
+          console.log('code err', resFollowing.data.code)
+        }
+      } catch (error) {
+      handleAxiosError(error);
+      }
+      //获取粉丝列表
+      try{
+        const resFollower = await requestApi('get', `/profile/${pageid}/followers`,null, null, true);
+        if(resFollower.data.code == 0){
+          setFollowerNum(resFollower.data.data.followers.length);
+          setFollowing(resFollower.data.data.followers.indexOf(curUser)!=-1);
+        }
+        else{
+          console.log('code err',resFollower.data.code)
+        }
+      } catch (error) {
+      handleAxiosError(error);
+      }
+    } catch (error) {
+      handleAxiosError(error);
     }
-    else{
-      console.log('code err',resInfo.data.code)
-    }
-    //获取关注列表
-    const resFollowing = await request.get(`/profile/${pageid}/followings`)
-    if(resFollowing.data.code == 0){
-      setFollowingNum(resFollowing.data.data.followings.length);
-    }
-    else{
-      console.log('code err', resFollowing.data.code)
-    }
-    //获取粉丝列表
-    const resFollower = await request.get(`/profile/${pageid}/followers`)
-    if(resFollower.data.code == 0){
-      setFollowerNum(resFollower.data.data.followers.length);
-      setFollowing(resFollower.data.data.followers.indexOf(curUser)!=-1);
-    }
-    else{
-      console.log('code err',resFollower.data.code)
-    }
-
   }
   useEffect(()=>{
     //获取数据
@@ -106,26 +120,31 @@ const Profile = ({route, navigation}:Props) =>{
   //关注/取关
   // 关注/取消关注用户
 async function toggleFollow() {
-  let res:AxiosResponse;
   if(isfollowing){ //取关
-    res = await request.post('/unfollow',{
-      params:{
-        stuid:pageid
+    try{
+      const res = await requestApi('post', '/unfollow',{stuid:pageid},null,true)
+      if(res.status==200){
+        setFollowing(!isfollowing)
       }
-    })
+      else{
+        console.log('res.status')
+      }
+    } catch (error) {
+      handleAxiosError(error);
+    }
   }
   else{ //关注
-    res = await request.post('/follow',{
-      param:{
-        stuid:pageid
+    try{
+      const res = await requestApi('post', '/follow',{stuid:pageid},null,true)
+      if(res.status==200){
+        setFollowing(!isfollowing)
       }
-    })
-  }
-  if(res.status==200){
-    setFollowing(!isfollowing)
-  }
-  else{
-    console.log('res.status')
+      else{
+        console.log('res.status')
+      }
+    } catch (error) {
+      handleAxiosError(error);
+    }
   }
 }
   function onCommentPress(){
@@ -302,7 +321,7 @@ const styles = StyleSheet.create({
   },
   profileCard: {
     flex: 1,
-    marginTop: 90,
+    marginTop: 130,
     borderTopLeftRadius: 6,
     borderTopRightRadius: 6,
     backgroundColor: '#FFFFFF',

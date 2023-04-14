@@ -4,22 +4,28 @@ import {Button, Card, TextInput, Dialog, Surface,
     Portal, Provider,Snackbar,IconButton, List,Divider } from 'react-native-paper';
 import {NavigationProps} from '../../../App'
 import { userProp,defaultInfo } from "../Profile";
-import request from "../../../utils/request";
+
+import requestApi from "../../../utils/request";
+import handleAxiosError from "../../../utils/handleError";
 
 const EditeNickName = ({route, navigation}:NavigationProps) =>{
     //state
     const [nickName,setNickName] = useState('1');
     let userInfo = defaultInfo;
-    const curUser = '2052123';
+    const userID = '2052123'
     //初始化
     async function fetchData(){
-        const res = await request.get(`/profile/${curUser}`)
-        if(res.data.code==0){
-            userInfo = res.data.data;
-            setNickName(userInfo.userNickName.info);
-        }
-        else{
-        console.log('code err',res.data.code)
+        try{
+            const res = await requestApi('get', `/profile/${userID}`, null,null, true);
+            if(res.data.code==0){
+                userInfo = res.data.data;
+                setNickName(userInfo.userNickName.info);
+            }
+            else{
+              console.log('code err',res.data.code)
+            }
+          } catch(err){
+            handleAxiosError(err);
         }
     }
     useEffect(()=>{
@@ -28,15 +34,16 @@ const EditeNickName = ({route, navigation}:NavigationProps) =>{
     //提交修改
     async function submit(){
         userInfo.userNickName.info=nickName;
-        const res = await request.put('/updateUserInfo',{
-            data:userInfo
-        })
-        if(res.status==200){
-            //发送事件，传递更新的userInfo
-            navigation.goBack()
-        }
-        else{
-            console.log('err',res.status)
+        try{
+            const res = await requestApi('put', '/updateUserInfo',null, userInfo, true);
+            if(res.status==200){
+              navigation.goBack()
+            }
+            else{
+              console.log('err',res.status)
+            }
+          } catch(err){
+            handleAxiosError(err);
         }
     }
     return(

@@ -88,7 +88,7 @@ const App = () => {
           data = (await axios.post(PostUrl, params)).data;
         }
         setIsModalVisible(false);
-        data = (await requestApi('post', '/register', {
+        data = (await requestApi('post', '/register',null, {
           username,
           password,
           id: data.data?.uid,
@@ -144,6 +144,7 @@ const App = () => {
           <Stack.Screen name="EditLabel" component={EditLabel} options={{ headerBackTitle:'Back' }}/>
           <Stack.Screen name="FollowersList" component={FollowersList} options={{ headerBackTitle:'Back' }}/>
           <Stack.Screen name="FollowingList" component={FollowingList} options={{ headerBackTitle:'Back' }}/>
+          <Stack.Screen name="OthersPage" component={OthersPage} options={{ headerBackTitle:'Back' }}/>
         </Stack.Navigator>
       </NavigationContainer>
       <Modal

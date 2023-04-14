@@ -25,7 +25,7 @@ const getToken = async () => {
   }
 };
 
-const requestApi = async (method: string, url: string, data: any, withToken: boolean) => {
+const requestApi = async (method: string, url: string, params:any, data: any, withToken: boolean) => {
   if (withToken) {
     const token = await getToken();
     if (token) {
@@ -39,7 +39,7 @@ const requestApi = async (method: string, url: string, data: any, withToken: boo
   }
 
   const response = await instance.request({
-    url, method, data, headers: {
+    url, method,params,data, headers: {
       'Content-Type': contentType,
     }
   });

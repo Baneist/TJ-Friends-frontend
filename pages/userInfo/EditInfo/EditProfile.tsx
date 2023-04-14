@@ -14,12 +14,12 @@ import {Button, Card, TextInput, Switch, Surface,
   Portal, Provider,IconButton, List, Chip } from 'react-native-paper';
 import { Block, Text } from "galio-framework";
 import DateTimePicker from '@react-native-community/datetimepicker';
-//不知道为啥报错。。但是明明就是叫这个名字TT
 import Icon from 'react-native-vector-icons/AntDesign';
 import {NavigationProps} from '../../../App'
 import Modal from 'react-native-modal';
 import styles from './EditProfile.Style'
-import request from "../../../utils/request";
+import requestApi from "../../../utils/request";
+import handleAxiosError from "../../../utils/handleError";
 import AvatarPicker from "../../../components/AvatarPicker/AvatarPicker";
 import { userProp,defaultInfo } from "../Profile";
 import { useFocusEffect } from '@react-navigation/native';
@@ -38,19 +38,23 @@ const profileImage = {
 //资料页面
 export function EditProfile({route, navigation}:NavigationProps){
   //state
-  const userID = '2052909';
+  const userID = '2053302';
   //个人信息
   const [userInfo, setUserInfo] = useState<userProp>(defaultInfo);
   const { bottom } = useSafeAreaInsets();
   //初始化
   //初始化
   async function fetchData(){
-    const res = await request.get(`/profile/${userID}`)
-    if(res.data.code==0){
-      setUserInfo(res.data.data);
-    }
-    else{
-      console.log('code err',res.data.code)
+    try{
+      const resInfo = await requestApi('get', `/profile/${userID}`, null,null, true);
+      if(resInfo.data.code==0){
+        setUserInfo(resInfo.data.data);
+      }
+      else{
+        console.log('code err',resInfo.data.code)
+      }
+    } catch(err){
+      handleAxiosError(err);
     }
   }
   //先用FocusEffect代替Effect了，不知道为什么从其他路由返回时不触发Effect
@@ -95,17 +99,19 @@ export function EditProfile({route, navigation}:NavigationProps){
       let newuser = {...userInfo};
       let formatBirthDate = formatDate(birthday)
       newuser.userBirthDate.info = formatBirthDate;
-        const res = await request.put('/updateUserInfo',{
-          data:newuser
-      })
-      if(res.status==200){
-        setUserInfo(newuser)
-          //发送事件，传递更新的userInfo
-          //navigation.goBack()
+      try{
+        const res = await requestApi('put', '/updateUserInfo',null, newuser, true);
+        if(res.status==200){
+          setUserInfo(newuser)
+            //发送事件，传递更新的userInfo
+            //navigation.goBack()
+        }
+        else{
+            console.log('err',res.status)
       }
-      else{
-          console.log('err',res.status)
-    }
+      } catch(err){
+        handleAxiosError(err);
+      }
     }
     return(
       <Modal
@@ -327,6 +333,19 @@ export function EditProfile({route, navigation}:NavigationProps){
     newuser.followerPms = !newuser.followerPms;
     setUserInfo(newuser)
   }
+  async function updatePmsSetting(){
+    try{
+      const res = await requestApi('put', '/updateUserInfo',null, userInfo, true);
+      if(res.status==200){
+        console.log('ohyes')
+      }
+      else{
+          console.log('err',res.status)
+    }
+    } catch(err){
+      handleAxiosError(err);
+    }
+  }
 
   return (
     <View style={{flex:1,  marginBottom: bottom}}>
@@ -453,7 +472,7 @@ export function EditProfile({route, navigation}:NavigationProps){
                         left={(props) => <IconButton {...props} size={25} icon="lock" />}
                         right = {(props) => 
                         <Button mode='outlined' icon='check'
-                        style={{marginRight:25}} onPress={() =>{console.log('submit')}}
+                        style={{marginRight:25}} onPress={updatePmsSetting}
                         >保存</Button>}
                       />
                         <List.Section style={{marginBottom:0}}>
