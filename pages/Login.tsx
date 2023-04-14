@@ -57,7 +57,6 @@ export interface ISocialLoginProps {
   signUpTextStyle?: TextStyle;
   forgotPasswordTextStyle?: TextStyle;
   onLoginPress: () => void;
-  onAppleLoginPress?: () => void;
   onForgotPasswordPress: () => void;
   onFacebookLoginPress?: () => void;
   onTwitterLoginPress?: () => void;
@@ -199,12 +198,20 @@ const Login = (props: ISocialLoginProps) => {
     );
   };
 
+  const onAppleLoginPress = async () => {
+    try {
+      const res = await requestApi('get', '/profile/2053186', null, true);
+      Alert.alert('用户信息', JSON.stringify(res.data));
+    } catch (error) {
+      handleAxiosError(error);
+    }
+  }
+
   const renderAppleLoginButton = () => {
     const {
       spinnerSize,
       spinnerType,
       appleSpinnerColor,
-      onAppleLoginPress,
       appleSpinnerVisibility,
     } = props;
     return (

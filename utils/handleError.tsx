@@ -6,7 +6,7 @@ const handleAxiosError = (error: any, title: string = '') => {
         console.log(response.data);
         console.log(response.status);
         console.log(response.headers);
-        Alert.alert(title, response.data.msg as string)
+        Alert.alert(title, response.data.message ?? JSON.stringify(response.data))
     } else if (error.request) {
         console.log(error.request);
     } else {

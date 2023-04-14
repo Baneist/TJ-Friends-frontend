@@ -91,7 +91,7 @@ const App = () => {
           id: data.data?.uid,
           sessionid: data.data?.sessionid
         }, false)).data;
-        if (data.code === 0) {
+        if (data.code && data.code === 0) {
           navigationRef.current?.dispatch(StackActions.replace('Main'));
         } else {
           Alert.alert('注册失败', data.msg);

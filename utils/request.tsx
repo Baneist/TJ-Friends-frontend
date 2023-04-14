@@ -1,7 +1,8 @@
 import axios from 'axios'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import qs from 'qs';
 
-const BASE_URL = 'http://119.3.178.68:8000';
+const BASE_URL = 'http://119.3.178.68:8888';
 let contentType = 'application/json';
 // const BASE_URL = 'https://mock.apifox.cn/m1/2539601-0-default';
 const instance = axios.create({
@@ -28,33 +29,24 @@ const requestApi = async (method: string, url: string, data: any, withToken: boo
   if (withToken) {
     const token = await getToken();
     if (token) {
-      instance.defaults.headers.common['auth'] = token;
+      instance.defaults.headers.common['Authorization'] = "Bearer " + token;
     }
   }
 
   if (url === '/login') {
     contentType = 'application/x-www-form-urlencoded';
-    data = new URLSearchParams(data);
+    data = qs.stringify(data);
   }
-  console.log(data)
+
   const response = await instance.request({
     url, method, data, headers: {
       'Content-Type': contentType,
     }
   });
 
-  // const response = (await fetch(BASE_URL + url, {
-  //   method: method,
-  //   headers: {
-  //     'content-type': contentType,
-  //   },
-  //   body: JSON.stringify(data)
-  // })).json();
-
-  console.log(response)
-  // if (response.data.code && response.data.code === 0 && url === '/login') {
-  //   await setToken(response.data.data.access_token)
-  // }
+  if (response.data.code === 0 && url === '/login') {
+    await setToken(response.data.data.access_token)
+  }
   return response;
 };
 
