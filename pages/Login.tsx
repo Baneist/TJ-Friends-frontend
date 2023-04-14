@@ -14,8 +14,9 @@ import { Alert } from "react-native";
 import styles from "./Login.style";
 import TextField from "../components/TextField/TextField";
 import SocialButton from "../components/LoginSocialButton/SocialButton";
-import api from "../utils/request";
+import requestApi from "../utils/request";
 import {NavigationProps} from "../App";
+import handleAxiosError from "../utils/handleError";
 
 // ? Assets
 const googleLogo = require("../assets/google-logo.png");
@@ -162,15 +163,15 @@ const Login = (props: ISocialLoginProps) => {
 
   const onHandleLoginPress = async () => {
     try {
-      const data = (await api.post('/login', { id: username, password })).data;
-      if (data.code) {
+      const data = (await requestApi('post', '/login', { username, password }, false)).data;
+      if (data.code === 0) {
+        props.navigation.replace('Main');
+      } else {
         props.navigation.replace('Login');
         Alert.alert('登录失败', data.msg);
-      } else {
-        props.navigation.replace('Main');
       }
     } catch (error) {
-      console.log(error);
+      handleAxiosError(error, '登录失败');
     }
   }
 

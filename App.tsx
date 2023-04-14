@@ -1,13 +1,16 @@
 import React, { useRef, useState } from 'react';
 import { View, UIManager, Platform, Alert } from 'react-native';
-import Signin from "./pages/Signin";
-import MainScreen from './pages/Main';
-import CommentScreen from './pages/Comments';
 import { NavigationContainer, StackActions, useNavigationContainerRef } from '@react-navigation/native';
 import { createStackNavigator, StackScreenProps } from '@react-navigation/stack';
 import Modal from "react-native-modal";
 import { WebView } from "react-native-webview";
-import axios from 'axios';
+import axios, {AxiosError} from 'axios';
+
+import handleAxiosError from './utils/handleError'
+
+import Signin from "./pages/Signin";
+import MainScreen from './pages/Main';
+import CommentScreen from './pages/Comments';
 
 //查看关注列表和粉丝列表
 import FollowingList from './pages/userInfo/FollowersList';
@@ -22,7 +25,7 @@ import PostPage from './pages/PostPage';
 import EditLabel from './pages/userInfo/EditInfo/EditLabel';
 
 import Login from './pages/Login';
-import api from './utils/request';
+import requestApi from './utils/request';
 
 
 const GetUrl = "https://1.tongji.edu.cn/api/ssoservice/system/loginIn";
@@ -47,7 +50,6 @@ type RootStackParamList = {
 };
 const Stack = createStackNavigator<RootStackParamList>();
 
-//type Props = {navigation: ProfileScreenNavigationProp;};
 //typescript需要指定{route, navigation}的参数类型
 export type NavigationProps = StackScreenProps<RootStackParamList, keyof RootStackParamList>;
 
@@ -83,24 +85,22 @@ const App = () => {
           data = (await axios.post(PostUrl, params)).data;
         }
         setIsModalVisible(false);
-        data = (await api.post('/register', {
+        data = (await requestApi('post', '/register', {
           username,
           password,
           id: data.data?.uid,
           sessionid: data.data?.sessionid
-        })).data;
-        if (data.code) {
-          Alert.alert('注册失败', data.msg);
-        } else {
+        }, false)).data;
+        if (data.code === 0) {
           navigationRef.current?.dispatch(StackActions.replace('Main'));
+        } else {
+          Alert.alert('注册失败', data.msg);
         }
-      } catch (error) {
-        console.log(error);
+      } catch (error: any) {
+        handleAxiosError(error, '注册失败')
       }
     }
   };
-
-
 
   const RenderSignupScreen = ({ navigation }: NavigationProps) => (
     <Signin
