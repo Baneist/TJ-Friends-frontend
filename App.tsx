@@ -4,7 +4,7 @@ import { NavigationContainer, StackActions, useNavigationContainerRef } from '@r
 import { createStackNavigator, StackScreenProps } from '@react-navigation/stack';
 import Modal from "react-native-modal";
 import { WebView } from "react-native-webview";
-import axios, {AxiosError} from 'axios';
+import axios from 'axios';
 
 import handleAxiosError from './utils/handleError'
 
@@ -91,7 +91,7 @@ const App = () => {
           id: data.data?.uid,
           sessionid: data.data?.sessionid
         }, false)).data;
-        if (data.code && data.code === 0) {
+        if (data.code === 0) {
           navigationRef.current?.dispatch(StackActions.replace('Main'));
         } else {
           Alert.alert('注册失败', data.msg);
