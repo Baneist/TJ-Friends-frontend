@@ -1,5 +1,4 @@
-import React, { forwardRef, useEffect, useImperativeHandle, useState } from "react";
-import flushSync from 'react-dom'
+import React, { useState } from "react";
 import {
   Text,
   View,
@@ -16,21 +15,12 @@ import { Alert } from "react-native";
  */
 import styles from "./Login.style";
 import TextField from "../components/TextField/TextField";
-import SocialButton from "../components/SocialButton/SocialButton";
-import { ITextRef } from "./Signin";
+import SocialButton from "../components/LoginSocialButton/SocialButton";
 import api from "../utils/request";
 
 // ? Assets
-const backArrowImage = require("../assets/left-arrow.png");
-const facebookLogo = require("../assets/facebook-logo.png");
-const twitterLogo = require("../assets/twitter-logo.png");
 const googleLogo = require("../assets/google-logo.png");
-const discordLogo = require("../assets/discord-logo.png");
 const appleLogo = require("../assets/apple-logo.png");
-
-const usernameValidator = (username: string) => {
-  return /^[A-Za-z0-9]{5,16}$/.test(username);
-};
 
 export interface ISocialLoginProps {
   loginText?: string;
@@ -116,7 +106,10 @@ const Login = (props: ISocialLoginProps) => {
   };
 
   const renderLoginTitle = () => {
-    const { loginTitleText = "Log In", loginTextStyle } = props;
+    const {
+      loginTitleText = "Log In",
+      loginTextStyle
+    } = props;
     return (
       <View style={styles.loginTitleContainer}>
         <Text style={[styles.loginTextStyle, loginTextStyle]}>
@@ -127,11 +120,15 @@ const Login = (props: ISocialLoginProps) => {
   };
 
   const renderTextFieldContainer = () => {
+    const {
+      usernameTextFieldStyle,
+      passwordTextFieldStyle
+    } = props;
     return (
       <View style={styles.textFieldContainer}>
         <TextField
           placeholder="Student ID"
-          textFieldStyle={props.usernameTextFieldStyle}
+          textFieldStyle={usernameTextFieldStyle}
           onChangeText={setUsername}
         />
         <View style={styles.passwordTextFieldContainer}>
@@ -139,7 +136,7 @@ const Login = (props: ISocialLoginProps) => {
             width="70%"
             secureTextEntry
             placeholder='Password'
-            textFieldStyle={props.passwordTextFieldStyle}
+            textFieldStyle={passwordTextFieldStyle}
             onChangeText={setPassword}
           />
         </View>
@@ -174,36 +171,26 @@ const Login = (props: ISocialLoginProps) => {
   const onHandleLoginPress = async () => {
     try {
       const data = (await api.post('/login', { id: username, password })).data;
-      console.log(data)
       if (data.code) {
-        Alert.alert('登录失败', data.msg);
         props.navigation.replace('Login');
+        Alert.alert('登录失败', data.msg);
       } else {
         props.navigation.replace('Main');
       }
-    } catch (error: any) {
-      if (error.response) {
-        console.log(error.response.data);
-        console.log(error.response.status);
-        console.log(error.response.headers);
-      } else if (error.request) {
-        console.log(error.request);
-      } else {
-        console.log('Error', error.message);
-      }
+    } catch (error) {
+      console.log(error);
     }
   }
 
   const renderClassicLoginButton = () => {
     const {
-      loginText = "Let's cook!",
+      loginText = "Let's go!",
       loginButtonBackgroundColor,
       loginButtonShadowColor = "#58a13f",
       loginButtonSpinnerVisibility,
       spinnerSize,
       spinnerType,
       loginButtonSpinnerColor,
-      onLoginPress,
     } = props;
     return (
       <SocialButton
@@ -216,34 +203,6 @@ const Login = (props: ISocialLoginProps) => {
         spinnerType={spinnerType}
         spinnerColor={loginButtonSpinnerColor}
       />
-    );
-  };
-
-  const renderFacebookLoginButton = () => {
-    const {
-      onFacebookLoginPress,
-      facebookSpinnerVisibility,
-      spinnerSize,
-      spinnerType,
-      facebookSpinnerColor,
-    } = props;
-    return (
-      <View style={styles.socialLoginButtonContainer}>
-        <SocialButton
-          width={60}
-          height={60}
-          shadowColor="#2f4a82"
-          backgroundColor="#4267B2"
-          isSpinner={facebookSpinnerVisibility}
-          spinnerSize={spinnerSize}
-          spinnerType={spinnerType}
-          spinnerColor={facebookSpinnerColor}
-          component={
-            <Image source={facebookLogo} style={styles.facebookImageStyle} />
-          }
-          onPress={() => onFacebookLoginPress && onFacebookLoginPress()}
-        />
-      </View>
     );
   };
 
@@ -270,37 +229,6 @@ const Login = (props: ISocialLoginProps) => {
             <Image source={appleLogo} style={styles.appleImageStyle} />
           }
           onPress={() => onAppleLoginPress && onAppleLoginPress()}
-        />
-      </View>
-    );
-  };
-
-  const renderTwitterLoginButton = () => {
-    const {
-      onTwitterLoginPress,
-      twitterSpinnerVisibility,
-      spinnerSize,
-      spinnerType,
-      twitterSpinnerColor,
-    } = props;
-    return (
-      <View style={styles.socialLoginButtonContainer}>
-        <SocialButton
-          width={60}
-          height={60}
-          backgroundColor="#1DA1F2"
-          shadowColor="#1a7aab"
-          isSpinner={twitterSpinnerVisibility}
-          spinnerSize={spinnerSize}
-          spinnerType={spinnerType}
-          spinnerColor={twitterSpinnerColor}
-          component={
-            <Image
-              source={twitterLogo}
-              style={styles.socialLoginButtonImageStyle}
-            />
-          }
-          onPress={() => onTwitterLoginPress && onTwitterLoginPress()}
         />
       </View>
     );
@@ -336,53 +264,16 @@ const Login = (props: ISocialLoginProps) => {
     );
   };
 
-  const renderDiscordLoginButton = () => {
-    const {
-      spinnerSize,
-      spinnerType,
-      discordSpinnerColor,
-      onDiscordLoginPress,
-      discordSpinnerVisibility,
-    } = props;
-    return (
-      <View style={styles.socialLoginButtonContainer}>
-        <SocialButton
-          width={60}
-          height={60}
-          backgroundColor="#7289DA"
-          shadowColor="#4e5e96"
-          isSpinner={discordSpinnerVisibility}
-          spinnerSize={spinnerSize}
-          spinnerType={spinnerType}
-          spinnerColor={discordSpinnerColor}
-          component={
-            <Image
-              source={discordLogo}
-              style={styles.socialLoginButtonImageStyle}
-            />
-          }
-          onPress={() => onDiscordLoginPress && onDiscordLoginPress()}
-        />
-      </View>
-    );
-  };
-
   const renderSocialButtons = () => {
     const {
-      enableFacebookLogin,
-      enableTwitterLogin,
       enableGoogleLogin,
-      enableDiscordLogin,
       enableAppleLogin,
     } = props;
     return (
       <View style={styles.socialButtonsContainer}>
         {renderClassicLoginButton()}
-        {enableFacebookLogin && renderFacebookLoginButton()}
-        {enableTwitterLogin && renderTwitterLoginButton()}
         {enableAppleLogin && renderAppleLoginButton()}
         {enableGoogleLogin && renderGoogleLoginButton()}
-        {enableDiscordLogin && renderDiscordLoginButton()}
       </View>
     );
   };

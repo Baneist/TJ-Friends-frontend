@@ -5,22 +5,25 @@ import MainScreen from './pages/Main';
 import CommentScreen from './pages/Comments';
 import { NavigationContainer, StackActions, useNavigationContainerRef } from '@react-navigation/native';
 import { createStackNavigator, StackScreenProps } from '@react-navigation/stack';
-//不知道为啥这里报错TT但是其实是有NativeStackScreenProps的（毕竟是官网抄来的代码啊！）
 import Modal from "react-native-modal";
 import { WebView } from "react-native-webview";
+import axios from 'axios';
+
 //查看关注列表和粉丝列表
 import FollowingList from './pages/userInfo/FollowersList';
 import FollowersList from './pages/userInfo/FollowersList';
+
 //编辑资料相关路由
 import { EditProfile } from './pages/userInfo/EditInfo/EditProfile';
 import EditNickName from './pages/userInfo/EditInfo/EditNickName'
 import EditInterest from './pages/userInfo/EditInfo/EditInterest';
 import EditStatus from './pages/userInfo/EditInfo/EditStatus';
-import Login from './pages/Login';
 import PostPage from './pages/PostPage';
 import EditLabel from './pages/userInfo/EditInfo/EditLabel';
+
+import Login from './pages/Login';
 import api from './utils/request';
-import axios from 'axios';
+
 
 const GetUrl = "https://1.tongji.edu.cn/api/ssoservice/system/loginIn";
 const TargetUrl = "https://1.tongji.edu.cn/ssologin";
@@ -122,7 +125,7 @@ const App = () => {
       onUserNameChangeText={setUsername}
       onPasswordChangeText={setPassword}
       navigation={navigation}
-      enableFacebookLogin
+      enableAppleLogin
       enableGoogleLogin
     />
   );

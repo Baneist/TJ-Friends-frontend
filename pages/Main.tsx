@@ -1,12 +1,11 @@
 import React, { useEffect } from 'react';
-import {View, Switch, Pressable} from 'react-native';
+import { View, Switch, Pressable } from 'react-native';
 import { Provider as PaperProvider, TextInput } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import {Text, Block} from "galio-framework";
+import { Text, Block } from "galio-framework";
 import { BottomFabBar } from 'rn-wave-bottom-bar';
-import  MemoriesScreen  from './Memories';
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import MemoriesScreen from './Memories';
 import Profile from './userInfo/Profile'
 
 
@@ -39,10 +38,10 @@ const tabBarIcon =
     }) =>
       <Icon name={name} size={28} color={focused ? 'white' : 'white'} />;
 
-      export interface IMainProps {
-        onCommentPress:()=>void;
-        onPressFAB:()=>void;
-      }
+export interface IMainProps {
+  onCommentPress: () => void;
+  onPressFAB: () => void;
+}
 const MainScreen = () => {
   const [showLabel, setShowLabel] = React.useState(false);
   const [enableSquare, setEnableSquare] = React.useState(false);
@@ -138,9 +137,6 @@ const MainScreen = () => {
       />
       <Tab.Screen
         options={{
-          // tabBarStyle: {
-          //   display: 'none',
-          // },
           tabBarIcon: tabBarIcon('Trophy'),
           tabBarLabel: showLabel ? 'Trophy' : undefined,
         }}
