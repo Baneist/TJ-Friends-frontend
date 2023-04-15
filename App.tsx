@@ -37,9 +37,10 @@ type RootStackParamList = {
   Main: undefined,
   Login: undefined,
   Signup: undefined,
+  ChangePassword: undefined,
   Profile: { name: string },
   Comment: undefined,
-  Post: undefined;
+  Post: undefined,
   EditProfile: undefined,
   EditNickName: undefined,
   EditInterest: undefined,
@@ -116,11 +117,27 @@ const App = () => {
     />
   );
 
+  const RenderChangeScreen = ({ navigation }: NavigationProps) => (
+      <Signin
+          style={{ flex: 1, justifyContent: 'center' }}
+          logoImageSource={require('./assets/logo-example.png')}
+          onLoginPress={() => setIsModalVisible(true)}
+          onUsernameChange={setUsername}
+          onPasswordChange={setPassword}
+          loginButtonText={'Continue with school validation'}
+          signupText={'Already have an account?'}
+          onSignupPress={() => navigation.replace('Login')}
+          enablePasswordValidation={false}
+          usernamePlaceholder={'修改后的账号'}
+          passwordPlaceholder={'修改后的密码'}
+      />
+  );
+
   const RenderLoginScreen = ({ navigation }: NavigationProps) => (
     <Login
       onSignUpPress={() => navigation.replace('Signup')}
       onLoginPress={() => { }}
-      onForgotPasswordPress={() => { }}
+      onForgotPasswordPress={() => navigation.replace('ChangePassword')}
       navigation={navigation}
     />
   );
@@ -131,6 +148,7 @@ const App = () => {
         <Stack.Navigator initialRouteName="Login">
           <Stack.Screen name="Login" component={RenderLoginScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Signup" component={RenderSignupScreen} />
+          <Stack.Screen name="ChangePassword" component={RenderChangeScreen} />
           <Stack.Screen name="Comment" component={CommentScreen} options={{ headerBackTitle: 'Back' }} />
           <Stack.Screen name="Post" component={PostPage} options={{ headerBackTitle: 'Back' }} />
           <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }} />
