@@ -38,12 +38,9 @@ export const styles = StyleSheet.create({
   },
 });
 
-export function UserPhoto() {
-  function handleClick() {
-    console.log('pressed');
-  }
+export function UserPhoto({clickAvatar}:{clickAvatar:()=>void}) {
   return (
-    <Pressable onPress={handleClick}>
+    <Pressable onPress={clickAvatar}>
       <Image source={{ uri: 'https://picsum.photos/700' }} style={styles.userphoto} />
     </Pressable>
   );
@@ -125,7 +122,12 @@ const FloatButton = ({ onPressFAB }: { onPressFAB: () => void }) => (
   />
 );
 
-export const CardwithButtons = ({ onCommentPress }: { onCommentPress?: () => void }) => {
+interface CardProps{
+  onCommentPress:() => void,
+  clickAvatar:() => void
+}
+
+export const CardwithButtons = (props: CardProps) => {
   const [MenuVisible, setMenuVisible] = useState(false);
 
   const toggleMenu = () => {
@@ -138,15 +140,15 @@ export const CardwithButtons = ({ onCommentPress }: { onCommentPress?: () => voi
         <Card.Title
           title="UserName"
           subtitle="PostTime"
-          left={UserPhoto}
+          left={(prps)=> <UserPhoto clickAvatar = {props.clickAvatar}/>}
           right={(props) => <IconButton icon='dots-horizontal' onPress={toggleMenu} />}
         />
-        <Pressable onPress={onCommentPress}>
+        <Pressable onPress={props.onCommentPress}>
           <Card.Cover source={{ uri: 'https://picsum.photos/700' }} />
         </Pressable>
         <Card.Actions>
           <Like />
-          <Comment onCommentPress={onCommentPress} />
+          <Comment onCommentPress={props.onCommentPress} />
           <Share />
         </Card.Actions>
       </Card>
@@ -171,11 +173,22 @@ export const CardwithButtons = ({ onCommentPress }: { onCommentPress?: () => voi
 const MemoriesScreen = ({ route, navigation }: NavigationProps) => {
   const { bottom } = useSafeAreaInsets();
   const array = [1, 2, 3, 4, 5];
+  function onCommentPress(){
+    navigation.navigate('Comment');
+  }
+  function clickAvatar(){
+    navigation.navigate('OthersPage');
+  }
   return (
     <View style={{ flex: 1, marginBottom: bottom }}>
       <ScrollView>
         <View>
-          {array.map((item,index) => <CardwithButtons onCommentPress={() => navigation.navigate('Comment')} />)}
+          {array.map((item,index) => 
+          <CardwithButtons 
+          key={index}
+          onCommentPress={onCommentPress} 
+          clickAvatar={clickAvatar}
+          />)}
         </View>
         {/* eslint-disable-next-line max-len */}
         {/* -> Set bottom view to allow scrolling to top if you set bottom-bar position absolute */}

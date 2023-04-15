@@ -13,8 +13,10 @@ import MainScreen from './pages/Main';
 import CommentScreen from './pages/Comments';
 
 //查看关注列表和粉丝列表
-import FollowingList from './pages/userInfo/FollowersList';
+import FollowingList from './pages/userInfo/FollowingList';
 import FollowersList from './pages/userInfo/FollowersList';
+//查看他人主页
+import OthersPage from './pages/userInfo/OthersPage';
 
 //编辑资料相关路由
 import { EditProfile } from './pages/userInfo/EditInfo/EditProfile';
@@ -47,7 +49,8 @@ type RootStackParamList = {
   EditStatus: undefined,
   EditLabel: undefined,
   FollowingList: undefined,
-  FollowersList: undefined
+  FollowersList: undefined,
+  OthersPage:undefined
 };
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -86,7 +89,7 @@ const App = () => {
           data = (await axios.post(PostUrl, params)).data;
         }
         setIsModalVisible(false);
-        data = (await requestApi('post', '/register', {
+        data = (await requestApi('post', '/register',null, {
           username,
           password,
           id: data.data?.uid,
@@ -152,13 +155,14 @@ const App = () => {
           <Stack.Screen name="Comment" component={CommentScreen} options={{ headerBackTitle: 'Back' }} />
           <Stack.Screen name="Post" component={PostPage} options={{ headerBackTitle: 'Back' }} />
           <Stack.Screen name="Main" component={MainScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="EditProfile" component={EditProfile} options={{ headerBackTitle: 'Back' }} />
-          <Stack.Screen name="EditNickName" component={EditNickName} options={{ headerBackTitle: 'Back' }} />
-          <Stack.Screen name="EditInterest" component={EditInterest} options={{ headerBackTitle: 'Back' }} />
-          <Stack.Screen name="EditStatus" component={EditStatus} options={{ headerBackTitle: 'Back' }} />
-          <Stack.Screen name="EditLabel" component={EditLabel} options={{ headerBackTitle: 'Back' }} />
-          <Stack.Screen name="FollowersList" component={FollowersList} options={{ headerBackTitle: 'Back' }} />
-          <Stack.Screen name="FollowingList" component={FollowingList} options={{ headerBackTitle: 'Back' }} />
+          <Stack.Screen name="EditProfile" component={EditProfile} options={{ headerBackTitle:'Back' }}/>
+          <Stack.Screen name="EditNickName" component={EditNickName} options={{ headerBackTitle:'Back' }}/>
+          <Stack.Screen name="EditInterest" component={EditInterest} options={{ headerBackTitle:'Back' }}/>
+          <Stack.Screen name="EditStatus" component={EditStatus} options={{ headerBackTitle:'Back' }}/>
+          <Stack.Screen name="EditLabel" component={EditLabel} options={{ headerBackTitle:'Back' }}/>
+          <Stack.Screen name="FollowersList" component={FollowersList} options={{ headerBackTitle:'Back' }}/>
+          <Stack.Screen name="FollowingList" component={FollowingList} options={{ headerBackTitle:'Back' }}/>
+          <Stack.Screen name="OthersPage" component={OthersPage} options={{ headerBackTitle:'Back' }}/>
         </Stack.Navigator>
       </NavigationContainer>
       <Modal

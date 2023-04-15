@@ -1,4 +1,4 @@
-import React , {useState}from "react";
+import React , {useState,useEffect}from "react";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {Button, Card, Text, Chip,
     Searchbar, Provider,Snackbar,IconButton, List,Divider } from 'react-native-paper';
@@ -7,29 +7,59 @@ import Modal from 'react-native-modal';
 import {
     View
   } from "react-native"
+import request from "../../../utils/request";
+import { defaultInfo } from "../Profile";
+import requestApi from "../../../utils/request";
+import handleAxiosError from "../../../utils/handleError";
 
+//所有标签
+const allLabel = [
+    '猫派','狗派','二次元','现充','舟批','原批','Switch玩家','体育生','篮球',
+]
 
 const EditLabel = ({route, navigation}:NavigationProps) =>{
-    const [allLabel, setAllLabel] = useState([
-        '猫派','狗派','二次元','现充','舟批','原批','Switch玩家','体育生','篮球'
-    ])
-    const [userLabel, setUserLabel] = useState([
-        '金闪闪','帅','金发','红瞳','AUO','愉悦教主','强','黄金三靶'
-    ])
+    const stuid='2052123';
+    const [userLabel, setUserLabel] = useState([] as string [])
+    let userInfo = defaultInfo;
+    const userID='2052123';
+    //初始化
+    async function fetchData(){
+        try{
+            const res = await requestApi('get', `/profile/${userID}`, null,null, true);
+            if(res.data.code==0){
+                userInfo = res.data.data;
+                setUserLabel(userInfo.userLabel.info);
+            }
+            else{
+              console.log('code err',res.data.code)
+            }
+          } catch(err){
+            handleAxiosError(err);
+        }
+    }
+    useEffect(()=>{
+        fetchData()
+    },[])
+    async function submit(){
+        userInfo.userLabel.info=userLabel;
+        console.log(userLabel)
+        try{
+            const res = await requestApi('put', '/updateUserInfo',null, userInfo, true);
+            if(res.status==200){
+              navigation.goBack()
+            }
+            else{
+              console.log('err',res.status)
+            }
+          } catch(err){
+            handleAxiosError(err);
+        }
+    }
     //记录加了哪些，直接setUserLabel会重新渲染从而对话框消失
     let addItem = [] as string [];
-    //const [addItem, setAddItem] = useState([] as string [])
-    function submit(){
-        console.log('submit');
-        navigation.goBack()
-    }
     function delLabel(idx:number){
         //删除回显
         setUserLabel((userLabel) => userLabel.filter(item => userLabel.indexOf(item)!== idx))
-    }
-    function addLabel(label:string){
-        //添加回显
-        addItem.push(label);
     }
     function addAllChosen(){
         console.log(addItem)
@@ -42,6 +72,13 @@ const EditLabel = ({route, navigation}:NavigationProps) =>{
     const [showDialog, setShowDialog] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const NewLabelDialog = () => {
+        const [allItem, setallItem] = useState(allLabel.filter(item => userLabel.indexOf(item) ==-1))
+        function addLabel(label:string){
+            //添加回显
+            console.log(allItem)
+            setallItem(allItem.filter((item)=>item!=label));
+            addItem.push(label);
+        }
         return(
             <View>
             <Modal
@@ -62,7 +99,7 @@ const EditLabel = ({route, navigation}:NavigationProps) =>{
                     style={{marginBottom:15}}
                   />
                   <View style={{flexDirection:"row",flexWrap:'wrap'}}>
-                    {allLabel.map((label, idx)=>
+                    {allItem.map((label, idx)=>
                     <Chip key={idx} style={{marginRight:10,marginBottom:10}} 
                     mode='outlined' 
                     closeIcon={() =>(

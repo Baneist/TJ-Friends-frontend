@@ -15,9 +15,12 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import { MomentsList } from "../../components/MomentsList/MomentsList";
 import {NavigationProps} from '../../App'
 import CardwithButtons from "../Memories";
+import { followProp } from "./FollowingList";
+import { userProp, defaultInfo } from "./Profile";
 import requestApi from "../../utils/request";
 import handleAxiosError from "../../utils/handleError";
-import { useFocusEffect } from '@react-navigation/native';
+import axios, { AxiosResponse } from "axios";
+
 //获取屏幕宽高
 const { width, height } = Dimensions.get("screen");
 
@@ -28,91 +31,6 @@ const profileImage = {
   ProfileBackground : require("../../assets/imgs/profile-screen-bg.png"),
   ProfilePicture: 'https://picsum.photos/700'
 }
-interface labelProp{
-  info:string[],
-  pms:boolean
-}
-interface infoProp{
-  info:string,
-  pms:boolean
-}
-export interface userProp{
-  userId:infoProp,
-  userName:infoProp,
-  userNickName:infoProp,
-  userAvatar:infoProp,
-  userGender:infoProp,
-  userBirthDate:infoProp,
-  userStatus:infoProp,
-  userMajor:infoProp,
-  userYear:infoProp,
-  userPhone:infoProp,
-  userInterest:infoProp,
-  userLabel:labelProp,
-  followerPms:boolean,
-  followingPms:boolean
-}
-export const defaultInfo = {
-  "userId": {
-    "info": "2053302",
-    "pms": false
-  },
-  "userName": {
-    "info": "吉尔伽美什",
-    "pms": false
-  },
-  "userNickName": {
-    "info": "Gilgamesh",
-    "pms": false
-  },
-  "userGender": {
-    "info": "Male",
-    "pms": false
-  },
-  "userBirthDate": {
-    "info": "2002-08-07",
-    "pms": true
-  },
-  "userStatus": {
-    "info": "愉悦！",
-    "pms": true
-  },
-  "userMajor": {
-    "info": "愉悦学",
-    "pms": true
-  },
-  "userPhone": {
-    "info": "",
-    "pms": false
-  },
-  "userYear": {
-    "info": "2020",
-    "pms": false
-  },
-  "userInterest": {
-    "info": "喜欢钱和一切金闪闪的东西，还有哈哈哈哈哈哈（是个快乐的男人！）",
-    "pms": true
-  },
-  "userLabel": {
-    "info": [
-      "金闪闪",
-      "帅",
-      "金发",
-      "红瞳",
-      "AUO",
-      "愉悦教主",
-      "强",
-      "黄金三靶"
-    ],
-    "pms": true
-  },
-  "userAvatar":{
-    "info":"https://picsum.photos/700",
-    "pms":true
-  },
-  "followerPms": true,
-  "followingPms": false
-}
 
 //更多信息
 
@@ -121,20 +39,24 @@ export const defaultInfo = {
 
 const Profile = ({route, navigation}:NavigationProps) =>{
   //state
-  const stuid = '2053186';
+  const curUser = '2053302'; //当前用户
+  const pageid = '2053186'; //所查看主页的用户
   //个人信息
   const [userInfo, setUserInfo] = useState<userProp>(defaultInfo);
   //粉丝 关注列表
   const [followerNum, setFollowerNum] = useState(0);
   const [followingNum, setFollowingNum] = useState(0);
+  //被当前用户关注了
+  const [isfollowing, setFollowing] = useState(false);
   //显示个人信息
   const { bottom } = useSafeAreaInsets();
 
   //初始化
   async function fetchData(){
     //获取资料
+    //获取资料
     try {
-      const resInfo = await requestApi('get', `/profile/${stuid}`, null,null, true);
+      const resInfo = await requestApi('get', `/profile/${pageid}`,null, null, true);
       if(resInfo.data.code==0){
         setUserInfo(resInfo.data.data);
       }
@@ -143,8 +65,9 @@ const Profile = ({route, navigation}:NavigationProps) =>{
       }
       //获取关注列表
       try{
-        const resFollowing = await requestApi('get', `/profile/${stuid}/followings`,null, null, true);
+        const resFollowing = await requestApi('get', `/profile/${pageid}/followings`,null, null, true);
         if(resFollowing.data.code == 0){
+          console.log(resFollowing.data.data)
           setFollowingNum(resFollowing.data.data.followings.length);
         }
         else{
@@ -155,9 +78,10 @@ const Profile = ({route, navigation}:NavigationProps) =>{
       }
       //获取粉丝列表
       try{
-        const resFollower = await requestApi('get', `/profile/${stuid}/followers`, null,null, true);
+        const resFollower = await requestApi('get', `/profile/${pageid}/followers`,null, null, true);
         if(resFollower.data.code == 0){
           setFollowerNum(resFollower.data.data.followers.length);
+          setFollowing(resFollower.data.data.followers.indexOf(curUser)!=-1);
         }
         else{
           console.log('code err',resFollower.data.code)
@@ -169,30 +93,60 @@ const Profile = ({route, navigation}:NavigationProps) =>{
       handleAxiosError(error);
     }
   }
-  // useEffect(()=>{
-  //   //获取数据
-  //   fetchData()
-  // },[])
-  useFocusEffect(
-    React.useCallback(() => {
-      fetchData()
-      console.log(userInfo)
-      return () => {
-      };
-    }, [])
-  );
+  useEffect(()=>{
+    //获取数据
+    fetchData()
+  },[])
   //编辑个人资料
   function editProfile(){
     navigation.navigate('EditProfile')
   }
   //查看关注列表
   function viewFollowing(){
-    navigation.navigate('FollowingList')
+    if(userInfo.followingPms)
+      navigation.navigate('FollowingList')
+    else{
+      console.log('暂不可见')
+    }
   }
   //查看粉丝列表
   function viewFollower(){
-    navigation.navigate('FollowersList')
+    if(userInfo.followerPms)
+      navigation.navigate('FollowersList')
+    else{
+      console.log('暂不可见')
+    }
   }
+  //关注/取关
+  // 关注/取消关注用户
+async function toggleFollow() {
+  if(isfollowing){ //取关
+    try{
+      const res = await requestApi('post', '/unfollow',{stuid:pageid},null,true)
+      if(res.status==200){
+        setFollowing(!isfollowing)
+      }
+      else{
+        console.log('res.status')
+      }
+    } catch (error) {
+      handleAxiosError(error);
+    }
+  }
+  else{ //关注
+    try{
+      const res = await requestApi('post', '/follow',{stuid:pageid},null,true)
+      if(res.status==200){
+        setFollowing(!isfollowing)
+      }
+      else{
+        console.log('res.status')
+      }
+    } catch (error) {
+      handleAxiosError(error);
+    }
+  }
+}
   function onCommentPress(){
     navigation.navigate('Comment')
   }
@@ -225,6 +179,23 @@ const Profile = ({route, navigation}:NavigationProps) =>{
                   />
                 </Block>
                 <Block style={styles.info}>
+                  {/* 发私信之类的 */}
+                  <Block
+                    middle
+                    row
+                    space='around'
+                    style={{ marginTop: 20, paddingBottom: 24 }}
+                  >
+                    <Button mode={isfollowing?'contained':"outlined"}
+                     onPress={toggleFollow}
+                    >
+                      {isfollowing?'取消关注':"关注"}
+                    </Button>
+                    <Button mode='contained-tonal'
+                    >
+                      发私信
+                    </Button>
+                  </Block>
                   {/* 粉丝量信息 */}
                   <Block row space="around">
                   <Pressable onPress={viewFollower}>
@@ -243,14 +214,6 @@ const Profile = ({route, navigation}:NavigationProps) =>{
                       <Text style={styles.infoName}>Following</Text>
                     </Block>
                     </Pressable>
-                    {/* <Pressable onPress={viewFollower}>
-                    <Block middle>
-                        <Text style={styles.infoNum}>
-                          188
-                        </Text>
-                      <Text style={styles.infoName}>Likes</Text>
-                      </Block>
-                    </Pressable> */}
                   </Block>
                 </Block>
               {/* 用户ID 简介等 */}
@@ -262,16 +225,6 @@ const Profile = ({route, navigation}:NavigationProps) =>{
                     </Text>
                     {/* 性别 */}
                     <Gender />
-                    {/* 改资料 */}
-                    <Block middle>
-                      <Button
-                        buttonColor="transparent"
-                        textColor="#3B5998"
-                        onPress={editProfile}
-                      >
-                        <Icon size={16} name="edit">edit your profile</Icon>
-                      </Button>
-                    </Block>
                   </Block>
                   <Block middle>
                     {/* 标签 */}
@@ -296,15 +249,28 @@ const Profile = ({route, navigation}:NavigationProps) =>{
                         left={props => <List.Icon {...props} icon="emoticon-outline" />}
                         />
                         <List.Item title="生日" 
-                        description={userInfo.userBirthDate.info}
+                        description={
+                          userInfo.userBirthDate.pms?
+                          userInfo.userBirthDate.info:'暂不可见'
+                        }
                         left={props => <List.Icon {...props} icon="cake-variant" />}
                         />
                         <List.Item title="学年/专业"
-                        description={userInfo.userYear.info+'/'+userInfo.userMajor.info}
+                        description={
+                          userInfo.userYear.pms?
+                          userInfo.userYear.info:'暂不可见'
+                          +'/'
+                          +
+                          userInfo.userMajor.pms?
+                          userInfo.userMajor.info:'暂不可见'
+                        }
                         left={props => <List.Icon {...props} icon="school" />}
                         />
                         <List.Item title="兴趣爱好" 
-                        description={userInfo.userInterest.info}
+                        description={
+                          userInfo.userInterest.pms?
+                          userInfo.userInterest.info:'暂不可见'
+                        }
                         left={props => <List.Icon {...props} icon="heart" />}
                         />
                       </List.Accordion>
