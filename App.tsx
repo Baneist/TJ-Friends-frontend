@@ -48,8 +48,8 @@ type RootStackParamList = {
   Signup: undefined;
   ChangePassword: undefined;
   Profile: { userId: string };
-  Comment: { userId: string };
-  Post: { userId: string };
+  Comment: { userId: string,postId:string };
+  Post: undefined;
   EditProfile: { userId: string };
   EditNickName: { userId: string };
   EditInterest: { userId: string };
