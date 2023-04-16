@@ -10,7 +10,7 @@ import handleAxiosError from "../../../utils/handleError";
 const EditInterest = ({route, navigation}:NavigationProps) =>{
     const [userInterest,setInterest] = useState('');
     let userInfo = defaultInfo;
-    const userID = '2052123'
+    const userID = '2052909'
     //初始化
     async function fetchData(){
         try{

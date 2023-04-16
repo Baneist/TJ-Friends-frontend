@@ -18,10 +18,9 @@ const allLabel = [
 ]
 
 const EditLabel = ({route, navigation}:NavigationProps) =>{
-    const stuid='2052123';
     const [userLabel, setUserLabel] = useState([] as string [])
     let userInfo = defaultInfo;
-    const userID='2052123';
+    const userID='2052909';
     //初始化
     async function fetchData(){
         try{

@@ -38,7 +38,7 @@ const profileImage = {
 //资料页面
 export function EditProfile({route, navigation}:NavigationProps){
   //state
-  const userID = '2053302';
+  const userID = '2052909';
   //个人信息
   const [userInfo, setUserInfo] = useState<userProp>(defaultInfo);
   const { bottom } = useSafeAreaInsets();
@@ -54,6 +54,7 @@ export function EditProfile({route, navigation}:NavigationProps){
         console.log('code err',resInfo.data.code)
       }
     } catch(err){
+      console.log(err)
       handleAxiosError(err);
     }
   }
@@ -64,7 +65,6 @@ export function EditProfile({route, navigation}:NavigationProps){
   useFocusEffect(
     React.useCallback(() => {
       fetchData()
-      console.log(userInfo)
       return () => {
       };
     }, [])

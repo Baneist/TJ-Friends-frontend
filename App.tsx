@@ -43,21 +43,21 @@ const GetSessionUserUrl =
   "https://1.tongji.edu.cn/api/sessionservice/session/getSessionUser";
 
 type RootStackParamList = {
-  Main: { userId: string };
+  Main: undefined;
   Login: undefined;
   Signup: undefined;
   ChangePassword: undefined;
-  Profile: { userId: string };
-  Comment: { userId: string };
+  Profile: undefined;
+  Comment: undefined;
   Post: { userId: string };
-  EditProfile: { userId: string };
-  EditNickName: { userId: string };
-  EditInterest: { userId: string };
-  EditStatus: { userId: string };
-  EditLabel: { userId: string };
-  FollowingList: { userId: string };
-  FollowersList: { userId: string };
-  OthersPage: { userId: string };
+  EditProfile: undefined;
+  EditNickName: undefined;
+  EditInterest: undefined;
+  EditStatus: undefined;
+  EditLabel: undefined;
+  FollowingList: undefined;
+  FollowersList: undefined;
+  OthersPage: undefined;
 };
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -98,18 +98,15 @@ const App = () => {
     const { url } = newNavState;
     if (url?.startsWith(TargetUrl)) {
       try {
-        console.log(url);
         let params: { [key: string]: string } = {};
         for (const pair of url.split("?")[1].split("&")) {
           const param = pair.split("=");
           params[param[0]] = param[1];
         }
-        console.log(params);
         let data = (await axios.post(PostUrl, params)).data;
         if (!data?.data) {
           data = (await axios.get(GetSessionUserUrl)).data;
         }
-        console.log(data);
         setIsModalVisible(false);
         data = (
           await requestApi(
