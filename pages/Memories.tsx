@@ -118,7 +118,7 @@ export function Share(props: CardProps) {
         style={styles.modal}
       >
         <View style={styles.menu}>
-          <Card.Title style={{ marginTop: -5 }} title='分享动态' right={(props) => <Button onPress={() => { console.log('pressed'); }}>分享</Button>} />
+          <Card.Title style={{ marginTop: -5 }} title='分享动态' right={(props) => <Button onPress={() => {}}>分享</Button>} />
           <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', height: 70 }}>
             <IconButton icon='qqchat' size={40} onPress={() => { }} />
             <IconButton icon='wechat' size={40} onPress={() => { }} />
