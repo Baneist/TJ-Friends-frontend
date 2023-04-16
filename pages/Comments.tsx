@@ -27,6 +27,11 @@ function UserPhoto(props: CardProps) {
 function Like(props: CardProps) {
   const[likeNum,setLike]=useState(props.content.likeNum);
   const[isLiked,setIsLiked]=useState(props.content.isLiked);
+  useEffect(() => {
+    setLike(props.content.likeNum);
+    setIsLiked(props.content.isLiked);
+  }, [props.content.likeNum,props.content.isLiked]);
+
   function handleClick() {
     async function fetchData() {
       try {
@@ -59,6 +64,10 @@ function Like(props: CardProps) {
 function Thumb(props: CardProps) {
     const[likeNum,setLike]=useState(props.content.likeNum);
     const[isLiked,setIsLiked]=useState(props.content.isLiked);
+    useEffect(() => {
+      setLike(props.content.likeNum);
+      setIsLiked(props.content.isLiked);
+    }, [props.content.likeNum,props.content.isLiked]);
     function handleClick() {
       async function fetchData() {
         try {
@@ -236,8 +245,7 @@ const dc = [
 ]
 function CommentScreen({ route, navigation }: NavigationProps) {
   const [text, setText] = React.useState("");
-  const id = route.params?.id;
-
+  const id = route.params?.postId;
   function clickAvatar() {
     navigation.navigate('OthersPage');
   }
@@ -255,7 +263,7 @@ function CommentScreen({ route, navigation }: NavigationProps) {
       setList(tmp);
     }
     else {
-      console.log('code err', res.data.code)
+      console.log('code err', res.data.code,id)
     }
   }
   useEffect(() => {
@@ -266,10 +274,7 @@ function CommentScreen({ route, navigation }: NavigationProps) {
     async function postData() {
       try {
         const res = await requestApi('post', `/postComment`, {postId:id,content:text}, null, true)
-        if (res.data.code == 0) {
-          console.log(res.data.data);
-        }
-        else {
+        if (res.data.code != 0) {
           console.log('code err', res.data.code)
         }
       } catch (error) {

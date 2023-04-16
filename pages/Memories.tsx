@@ -52,6 +52,10 @@ export function UserPhoto(props: CardProps) {
 function Like(props: CardProps) {
   const[likeNum,setLike]=useState(props.content.likeNum);
   const[isLiked,setIsLiked]=useState(props.content.isLiked);
+  useEffect(() => {
+    setLike(props.content.likeNum);
+    setIsLiked(props.content.isLiked);
+  }, [props.content.likeNum,props.content.isLiked]);
   function handleClick() {
     async function fetchData() {
       try {
@@ -200,7 +204,7 @@ export const CardwithButtons = (props: CardProps) => {
 const MemoriesScreen = ({ route, navigation }: NavigationProps) => {
   const { bottom } = useSafeAreaInsets();
   const onCommentPress = (postID: string) => {
-    navigation.navigate('Comment', { id: postID });
+    navigation.navigate('Comment', { userId:'2052909',postId: postID });
 
   }
   function clickAvatar() {
@@ -225,7 +229,7 @@ const MemoriesScreen = ({ route, navigation }: NavigationProps) => {
   }
   useEffect(() => {
     fetchData()
-  }, [])
+  }, )
 
   return (
     <View style={{ flex: 1, marginBottom: bottom }}>
