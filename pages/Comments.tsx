@@ -1,22 +1,33 @@
-import React, { useState } from 'react';
-import { Pressable, ScrollView, View, Image, Text, KeyboardAvoidingView, Platform } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { Pressable, ScrollView, View, Image, Text, KeyboardAvoidingView, Platform, Dimensions } from 'react-native';
 import { Card, TextInput, Button, Divider, IconButton } from 'react-native-paper';
-import { UserPhoto, styles, Like, Share } from './Memories'
+import { styles, Like, Share } from './Memories'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Modal from 'react-native-modal';
 import { Props } from '../App';
+import request from '../utils/request';
 
-function Thumb() {
-  const [focused, setFocused] = useState(0);
-  const [likes, setLikes] = useState('4');
-  const thumb = 
-  <View style={{ flexDirection: 'row' }}>
-      <Icon size={17} name={focused ? 'thumb-up' : 'thumb-up-outline'} />
-      {likes != '0' && <Text style={{ paddingLeft: 5 }}>{likes}</Text>}
+interface CardProps {
+  clickAvatar: () => void,
+  content: any
+}
+
+function UserPhoto(props: CardProps) {
+  return (
+    <Pressable onPress={props.clickAvatar}>
+      <Image source={{ uri: props.content.userAvatar }} style={styles.userphoto} />
+    </Pressable>
+  );
+}
+
+function Thumb(props: CardProps) {
+  const thumb =
+    <View style={{ flexDirection: 'row' }}>
+      <Icon size={17} name={props.content.isLiked ? 'thumb-up' : 'thumb-up-outline'} />
+      {props.content.likeNum != '0' && <Text style={{ paddingLeft: 5 }}>{props.content.likeNum}</Text>}
     </View>;
   function handleClick() {
-    setFocused(1 - focused);
-    console.log('pressed');
+    console.log(props.content.likeNum);
   }
 
   return (
@@ -29,60 +40,73 @@ function Thumb() {
     </Pressable>
   );
 }
-interface CardProps{
-  clickAvatar:() => void
-}
-function CommentCard(props:CardProps) {
+
+function CommentCard(props: CardProps) {
   return (
     <Card mode='outlined' style={styles.commentcard}>
       <Card.Title
-        title="UserName"
+        title={props.content.userName}
         subtitle={
           <Text
             style={{
               color: 'grey',
               fontSize: 12.5
             }}>
-            PostTime
+            {props.content.postTime}
           </Text>}
-        left={(prps)=> <UserPhoto clickAvatar = {props.clickAvatar}/>}
-        right={Thumb}
+        left={() => <UserPhoto
+          clickAvatar={props.clickAvatar}
+          content={props.content}
+        />}
+        right={() => <Thumb
+          clickAvatar={props.clickAvatar}
+          content={props.content} />}
       />
       <Card.Content style={{ marginLeft: 55 }}>
-        <Text>Comment screen Comment screen Comment screen Comment screen Comment screen</Text>
+        <Text>
+          {props.content.commentContent}
+        </Text>
       </Card.Content>
     </Card>
   );
 }
 
-function DetailedCard(props:CardProps) {
+function DetailedCard(props: CardProps) {
   const [MenuVisible, setMenuVisible] = useState(false);
-
   const toggleMenu = () => {
     setMenuVisible(!MenuVisible);
   };
+  console.log(props.content);
+  const list = props.content.postPhoto;
+  //获取屏幕宽高
+  const { width, height } = Dimensions.get("screen");
+
   return (
     <View>
       <Card mode='outlined' style={styles.commentcard}>
         <Card.Title
-          title="UserName"
-          subtitle="PostTime"
-          left={(prps)=> <UserPhoto clickAvatar = {props.clickAvatar}/>}
-          right={(props) => <IconButton icon='dots-horizontal' onPress={toggleMenu} />}
+          title={props.content.userName}
+          subtitle={props.content.postTime}
+          left={() => <UserPhoto
+            clickAvatar={props.clickAvatar}
+            content={props.content} />}
+          right={() => <IconButton icon='dots-horizontal' onPress={toggleMenu} />}
         />
         <Card.Content >
           <Text>
-            content example content example content example content example content example
+            {props.content.postContent}
           </Text>
         </Card.Content>
-        <Card.Cover
-          source={{ uri: 'https://picsum.photos/700' }}
-          style={{ borderWidth: 15, borderColor: '#fff',backgroundColor:'#fff' }}
-          
-        />
-        <View style={{ justifyContent: 'space-evenly', flexDirection: 'row', paddingBottom:5}}>
-          <Like />
-          <Share />
+        {list.map((item: string) => 
+          <Image
+            source={{ uri: item }}
+            style={{ borderWidth: 15, borderColor: '#fff', backgroundColor: '#fff',width:width,height:width,marginBottom:-15}}
+
+          />
+        )}
+        <View style={{ justifyContent: 'space-evenly', flexDirection: 'row', paddingBottom: 10,paddingTop:10 }}>
+          <Like onCommentPress={() => { }} clickAvatar={() => { }} content={props.content} />
+          <Share onCommentPress={() => { }} clickAvatar={() => { }} content={props.content} />
         </View>
       </Card>
       <Modal
@@ -101,13 +125,86 @@ function DetailedCard(props:CardProps) {
     </View>
   );
 }
-
+const defaulthh = {
+  likeNum: "29",
+  repoNum: "23",
+  userName: "锺刚",
+  postTime: "1985-08-31 10:44:54",
+  userAvatar: "http://dummyimage.com/100x100",
+  postPhoto: [
+    "http://dummyimage.com/400x400",
+    "http://dummyimage.com/400x400",
+    "http://dummyimage.com/400x400",
+    "http://dummyimage.com/400x400"
+  ],
+  postContent: "qui est tempor Excepteur",
+  comments: [
+    {
+      isLiked: false,
+      userAvatar: "http://dummyimage.com/100x100",
+      likeNum: "99",
+      commentContent: "pariatur",
+      postTime: "1989-02-15 04:57:35",
+      userName: "梁娟"
+    }
+  ],
+  senderAvatar: "http://dummyimage.com/100x100",
+  isLiked: false
+}
+const dc = [
+  {
+    isLiked: false,
+    userAvatar: "http://dummyimage.com/100x100",
+    likeNum: "99",
+    commentContent: "pariatur",
+    postTime: "1989-02-15 04:57:35",
+    userName: "梁娟"
+  },
+  {
+    isLiked: false,
+    userAvatar: "http://dummyimage.com/100x100",
+    likeNum: "99",
+    commentContent: "pariatur",
+    postTime: "1989-02-15 04:57:35",
+    userName: "梁娟"
+  },
+  {
+    isLiked: false,
+    userAvatar: "http://dummyimage.com/100x100",
+    likeNum: "99",
+    commentContent: "pariatur",
+    postTime: "1989-02-15 04:57:35",
+    userName: "梁娟"
+  }
+]
 function CommentScreen({ route, navigation }: Props) {
-  const array = [1, 2, 3, 4, 5, 6, 7, 8, 9];
   const [text, setText] = React.useState("");
-  function clickAvatar(){
+  const id = route.params.id;
+
+  function clickAvatar() {
     navigation.navigate('OthersPage');
   }
+
+  let tmp: any;
+  const [detail, setDetail] = useState(defaulthh);
+  const [commentlist, setList] = useState(dc);
+  async function fetchData() {
+    const res = await request.get(`/Memories/${id}`)
+    if (res.data.code == 0) {
+      console.log("fetch");
+      tmp = res.data.data;
+      setDetail(tmp);
+      tmp = res.data.data.comments;
+      setList(tmp);
+    }
+    else {
+      console.log('code err', res.data.code)
+    }
+  }
+  useEffect(() => {
+    fetchData()
+  }, [])
+
   return (
     <View>
       <Modal
@@ -128,7 +225,7 @@ function CommentScreen({ route, navigation }: Props) {
             alignItems: 'center',
             paddingBottom: 15
           }}>
-            <Image source={{ uri: 'https://picsum.photos/700' }} style={styles.userphoto} />
+            <Image source={{ uri: detail.senderAvatar }} style={styles.userphoto} />
             <TextInput
               label={<Text style={{ color: 'lightgrey' }}>Add a comment</Text>}
               value={text}
@@ -142,9 +239,16 @@ function CommentScreen({ route, navigation }: Props) {
         </KeyboardAvoidingView>
       </Modal>
       <ScrollView>
-        <DetailedCard clickAvatar={clickAvatar}/>
+        <DetailedCard
+          clickAvatar={clickAvatar}
+          content={detail}
+        />
         <View style={{ margin: 5 }} />
-        {array.map((item) => <CommentCard clickAvatar={clickAvatar}/>)}
+        {commentlist.map((item, index) =>
+          <CommentCard
+            clickAvatar={clickAvatar}
+            content={item}
+          />)}
         <Text
           style={{
             fontSize: 13,
