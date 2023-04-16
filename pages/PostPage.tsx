@@ -4,14 +4,29 @@ import { IconButton } from 'react-native-paper';
 import AvatarPicker from "../components/AvatarPicker/PostPicker";
 import Icon from 'react-native-vector-icons/Feather';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-const PostPage = () => {
+import requestApi from '../utils/request';
+import handleAxiosError from "../utils/handleError";
+import { NavigationProps } from '../App';
+
+const PostPage = ({ route, navigation }: NavigationProps) => {
   const [showAvatarOption, setShowAvatarOption] = useState(false);
   const [text, setText] = useState('');
   const [image, setImage] = useState([] as string[]);
 
-  const handlePost = () => {
+  async function handlePost  () {
     // 发送text和image到服务器
     console.log('发布');
+    try{
+      const res = await requestApi('post', '/Post',{postContent:text,photoUrl:image},null,true)
+      if(res.status==200){
+        navigation.goBack();
+      }
+      else{
+        console.log('res.status')
+      }
+    } catch (error) {
+      handleAxiosError(error);
+    }
   };
   function cancelAvatarOption() {
     return (

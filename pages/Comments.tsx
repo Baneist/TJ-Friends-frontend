@@ -1,15 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { Pressable, ScrollView, View, Image, Text, KeyboardAvoidingView, Platform, Dimensions } from 'react-native';
 import { Card, TextInput, Button, Divider, IconButton } from 'react-native-paper';
-import { styles, Like, Share } from './Memories'
+import { styles, Share } from './Memories'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
+
 import Modal from 'react-native-modal';
 import { NavigationProps } from '../App';
 import requestApi from '../utils/request';
+import handleAxiosError from "../utils/handleError";
 
 interface CardProps {
   clickAvatar: () => void,
-  content: any
+  content: any,
+  id:any
 }
 
 function UserPhoto(props: CardProps) {
@@ -20,15 +24,65 @@ function UserPhoto(props: CardProps) {
   );
 }
 
-function Thumb(props: CardProps) {
-  const thumb =
-    <View style={{ flexDirection: 'row' }}>
-      <Icon size={17} name={props.content.isLiked ? 'thumb-up' : 'thumb-up-outline'} />
-      {props.content.likeNum != '0' && <Text style={{ paddingLeft: 5 }}>{props.content.likeNum}</Text>}
-    </View>;
+function Like(props: CardProps) {
+  const[likeNum,setLike]=useState(props.content.likeNum);
+  const[isLiked,setIsLiked]=useState(props.content.isLiked);
   function handleClick() {
-    console.log(props.content.likeNum);
+    async function fetchData() {
+      try {
+        const res = await requestApi('get', `/updateLikeMemory/${props.id}`, null, null, true)
+        if (res.data.code == 0) {
+          setLike(res.data.data.likeNum);
+          setIsLiked(res.data.data.isLiked);
+        }
+        else {
+          console.log('code err', res.data.code)
+        }
+      } catch (error) {
+        handleAxiosError(error);
+      }
+
+    }
+    fetchData()
+    //console.log(props.content.likeNum);
   }
+  const clickHeart =
+    <Icon size={18} name={isLiked ? 'heart' : 'heart-outline'} />;
+  return (
+    <Button onPress={handleClick} style={{ flexDirection: 'row' }}>
+      {clickHeart}
+      {likeNum != '0' && <Text style={{ fontSize: 17, fontWeight: '400' }}> {likeNum}</Text>}
+    </Button>
+  );
+}
+
+function Thumb(props: CardProps) {
+    const[likeNum,setLike]=useState(props.content.likeNum);
+    const[isLiked,setIsLiked]=useState(props.content.isLiked);
+    function handleClick() {
+      async function fetchData() {
+        try {
+          const res = await requestApi('get', `/updateLikeComment/${props.content.commentId}`, null, null, true)
+          if (res.data.code == 0) {
+            setLike(res.data.data.likeNum);
+            setIsLiked(res.data.data.isLiked);
+          }
+          else {
+            console.log('code err', res.data.code)
+          }
+        } catch (error) {
+          handleAxiosError(error);
+        }
+  
+      }
+      fetchData()
+      //console.log(props.content.likeNum);
+    }
+    const thumb =
+    <View style={{ flexDirection: 'row' }}>
+      <Icon size={17} name={isLiked ? 'thumb-up' : 'thumb-up-outline'} />
+      {likeNum != '0' && <Text style={{ paddingLeft: 5 }}>{likeNum}</Text>}
+    </View>;
 
   return (
     <Pressable
@@ -42,6 +96,7 @@ function Thumb(props: CardProps) {
 }
 
 function CommentCard(props: CardProps) {
+  
   return (
     <Card mode='outlined' style={styles.commentcard}>
       <Card.Title
@@ -57,10 +112,12 @@ function CommentCard(props: CardProps) {
         left={() => <UserPhoto
           clickAvatar={props.clickAvatar}
           content={props.content}
+          id={props.id}
         />}
         right={() => <Thumb
           clickAvatar={props.clickAvatar}
-          content={props.content} />}
+          content={props.content} 
+          id={props.id}/>}
       />
       <Card.Content style={{ marginLeft: 55 }}>
         <Text>
@@ -76,7 +133,6 @@ function DetailedCard(props: CardProps) {
   const toggleMenu = () => {
     setMenuVisible(!MenuVisible);
   };
-  console.log(props.content);
   const list = props.content.postPhoto;
   //获取屏幕宽高
   const { width, height } = Dimensions.get("screen");
@@ -89,7 +145,8 @@ function DetailedCard(props: CardProps) {
           subtitle={props.content.postTime}
           left={() => <UserPhoto
             clickAvatar={props.clickAvatar}
-            content={props.content} />}
+            content={props.content}
+            id={props.id} />}
           right={() => <IconButton icon='dots-horizontal' onPress={toggleMenu} />}
         />
         <Card.Content >
@@ -105,7 +162,7 @@ function DetailedCard(props: CardProps) {
           />
         )}
         <View style={{ justifyContent: 'space-evenly', flexDirection: 'row', paddingBottom: 10,paddingTop:10 }}>
-          <Like onCommentPress={() => { }} clickAvatar={() => { }} content={props.content} />
+          <Like  clickAvatar={() => { }} content={props.content} id={props.id}/>
           <Share onCommentPress={() => { }} clickAvatar={() => { }} content={props.content} />
         </View>
       </Card>
@@ -179,7 +236,7 @@ const dc = [
 ]
 function CommentScreen({ route, navigation }: NavigationProps) {
   const [text, setText] = React.useState("");
-  const id = route.params;
+  const id = route.params?.id;
 
   function clickAvatar() {
     navigation.navigate('OthersPage');
@@ -189,9 +246,9 @@ function CommentScreen({ route, navigation }: NavigationProps) {
   const [detail, setDetail] = useState(defaulthh);
   const [commentlist, setList] = useState(dc);
   async function fetchData() {
+
     const res = await requestApi('get',`/Memories/${id}`,null,null,true)
     if (res.data.code == 0) {
-      console.log("fetch");
       tmp = res.data.data;
       setDetail(tmp);
       tmp = res.data.data.comments;
@@ -205,6 +262,24 @@ function CommentScreen({ route, navigation }: NavigationProps) {
     fetchData()
   }, [])
 
+  function postComment(){
+    async function postData() {
+      try {
+        const res = await requestApi('post', `/postComment`, {postId:id,content:text}, null, true)
+        if (res.data.code == 0) {
+          console.log(res.data.data);
+        }
+        else {
+          console.log('code err', res.data.code)
+        }
+      } catch (error) {
+        handleAxiosError(error);
+      }
+
+    }
+    postData()
+    fetchData()
+  }
   return (
     <View>
       <Modal
@@ -234,7 +309,7 @@ function CommentScreen({ route, navigation }: NavigationProps) {
               outlineStyle={{ backgroundColor: '#fff', borderColor: 'lightgrey', borderRadius: 21 }}
               style={{ width: 245, height: 42 }}
             />
-            <Button style={{ marginLeft: -15, borderWidth: 5 }} onPress={() => { }}>Send</Button>
+            <Button style={{ marginLeft: -15, borderWidth: 5 }} onPress={postComment}>Send</Button>
           </View>
         </KeyboardAvoidingView>
       </Modal>
@@ -242,13 +317,16 @@ function CommentScreen({ route, navigation }: NavigationProps) {
         <DetailedCard
           clickAvatar={clickAvatar}
           content={detail}
+          id={id}
         />
         <View style={{ margin: 5 }} />
         {commentlist.map((item, index) =>
           <CommentCard
             clickAvatar={clickAvatar}
             content={item}
+            id={id}
           />)}
+        <View style={{ margin: 20 }} />
         <Text
           style={{
             fontSize: 13,

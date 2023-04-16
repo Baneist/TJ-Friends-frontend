@@ -39,7 +39,7 @@ type RootStackParamList = {
   Main: undefined,
   Login: undefined,
   Signup: undefined,
-  Profile: { name: string },
+  Profile: undefined,
   Comment: {id:string},
   Post: undefined;
   EditProfile: undefined,

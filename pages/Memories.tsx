@@ -7,7 +7,6 @@ import { useState, useEffect } from 'react';
 import Modal from 'react-native-modal';
 import { NavigationProps } from '../App';
 import requestApi from '../utils/request';
-import { AxiosResponse } from 'axios';
 import handleAxiosError from "../utils/handleError";
 
 
@@ -50,15 +49,16 @@ export function UserPhoto(props: CardProps) {
   );
 }
 
-export function Like(props: CardProps) {
-  const clickHeart =
-    <Icon size={18} name={props.content.isLiked ? 'heart' : 'hearto'} />;
+function Like(props: CardProps) {
+  const[likeNum,setLike]=useState(props.content.likeNum);
+  const[isLiked,setIsLiked]=useState(props.content.isLiked);
   function handleClick() {
     async function fetchData() {
       try {
         const res = await requestApi('get', `/updateLikeMemory/${props.content.postId}`, null, null, true)
         if (res.data.code == 0) {
-          console.log(res.data.data);
+          setLike(res.data.data.likeNum);
+          setIsLiked(res.data.data.isLiked);
         }
         else {
           console.log('code err', res.data.code)
@@ -66,18 +66,17 @@ export function Like(props: CardProps) {
       } catch (error) {
         handleAxiosError(error);
       }
-    }
-    useEffect(() => {
-      fetchData()
-    }, [])
-    console.log(props.content.likeNum);
-    
-  }
 
+    }
+    fetchData()
+    //console.log(props.content.likeNum);
+  }
+  const clickHeart =
+    <Icon size={18} name={isLiked ? 'heart' : 'hearto'} />;
   return (
     <Button onPress={handleClick} style={{ flexDirection: 'row' }}>
       {clickHeart}
-      {props.content.likeNum != '0' && <Text style={{ fontSize: 17, fontWeight: '400' }}> {props.content.likeNum}</Text>}
+      {likeNum != '0' && <Text style={{ fontSize: 17, fontWeight: '400' }}> {likeNum}</Text>}
     </Button>
   );
 }
