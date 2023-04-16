@@ -121,7 +121,7 @@ export const defaultInfo = {
 
 const Profile = ({route, navigation}:NavigationProps) =>{
   //state
-  const stuid = '2053186';
+  const stuid = route.params?.userId;
   //个人信息
   const [userInfo, setUserInfo] = useState<userProp>(defaultInfo);
   //粉丝 关注列表
@@ -175,6 +175,7 @@ const Profile = ({route, navigation}:NavigationProps) =>{
   // },[])
   useFocusEffect(
     React.useCallback(() => {
+      console.log(stuid)
       fetchData()
       console.log(userInfo)
       return () => {
@@ -183,18 +184,18 @@ const Profile = ({route, navigation}:NavigationProps) =>{
   );
   //编辑个人资料
   function editProfile(){
-    navigation.navigate('EditProfile')
+    navigation.navigate('EditProfile', {userId: stuid ?? '0'})
   }
   //查看关注列表
   function viewFollowing(){
-    navigation.navigate('FollowingList')
+    navigation.navigate('FollowingList', {userId: stuid ?? '0'})
   }
   //查看粉丝列表
   function viewFollower(){
-    navigation.navigate('FollowersList')
+    navigation.navigate('FollowersList', {userId: stuid ?? '0'})
   }
   function onCommentPress(){
-    navigation.navigate('Comment')
+    navigation.navigate('Comment', {userId: stuid ?? '0'})
   }
   //性别
   function Gender(){

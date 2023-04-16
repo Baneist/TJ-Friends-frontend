@@ -164,7 +164,9 @@ const Login = (props: ISocialLoginProps) => {
     try {
       const data = (await requestApi('post', '/login', null, { username, password }, false)).data;
       if (data.code === 0) {
-        props.navigation.replace('Main');
+        props.navigation.replace('Main', {
+          userId: username
+        });
       } else {
         props.navigation.replace('Login');
         Alert.alert('登录失败', data.msg);
