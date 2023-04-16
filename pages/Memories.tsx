@@ -8,6 +8,8 @@ import Modal from 'react-native-modal';
 import { NavigationProps } from '../App';
 import requestApi from '../utils/request';
 import { AxiosResponse } from 'axios';
+import handleAxiosError from "../utils/handleError";
+
 
 export const styles = StyleSheet.create({
   userphoto: {
@@ -52,8 +54,24 @@ export function Like(props: CardProps) {
   const clickHeart =
     <Icon size={18} name={props.content.isLiked ? 'heart' : 'hearto'} />;
   function handleClick() {
-    //todo
+    async function fetchData() {
+      try {
+        const res = await requestApi('get', `/updateLikeMemory/${props.content.postId}`, null, null, true)
+        if (res.data.code == 0) {
+          console.log(res.data.data);
+        }
+        else {
+          console.log('code err', res.data.code)
+        }
+      } catch (error) {
+        handleAxiosError(error);
+      }
+    }
+    useEffect(() => {
+      fetchData()
+    }, [])
     console.log(props.content.likeNum);
+    
   }
 
   return (
@@ -182,24 +200,28 @@ export const CardwithButtons = (props: CardProps) => {
 
 const MemoriesScreen = ({ route, navigation }: NavigationProps) => {
   const { bottom } = useSafeAreaInsets();
-  const onCommentPress=(postID:undefined)=> {
-    navigation.navigate('Comment',postID);
-    
+  const onCommentPress = (postID: string) => {
+    navigation.navigate('Comment', { id: postID });
+
   }
   function clickAvatar() {
     navigation.navigate('OthersPage');
   }
-  const [list, setlist]=useState([] as any []);
+  const [list, setlist] = useState([] as any[]);
   let memorylist = [] as any[];
   async function fetchData() {
-    const res = await requestApi('get','/Memories',null,null,true)
-    if (res.data.code == 0) {
-      memorylist = memorylist.concat(res.data.data);
-      setlist(memorylist);
-      //console.log(res.data.data);
-    }
-    else {
-      console.log('code err', res.data.code)
+    try {
+      const res = await requestApi('get', '/Memories', null, null, true)
+      if (res.data.code == 0) {
+        memorylist = memorylist.concat(res.data.data);
+        setlist(memorylist);
+        //console.log(res.data.data);
+      }
+      else {
+        console.log('code err', res.data.code)
+      }
+    } catch (error) {
+      handleAxiosError(error);
     }
   }
   useEffect(() => {
@@ -214,7 +236,7 @@ const MemoriesScreen = ({ route, navigation }: NavigationProps) => {
             <CardwithButtons
               key={index}
               content={item}
-              onCommentPress={()=>onCommentPress(item.postId)}
+              onCommentPress={() => onCommentPress(item.postId)}
               clickAvatar={clickAvatar}
             />)}
         </View>

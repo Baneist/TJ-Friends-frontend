@@ -4,10 +4,9 @@ import { Card, TextInput, Button, Divider, IconButton } from 'react-native-paper
 import { styles, Like, Share } from './Memories'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Modal from 'react-native-modal';
-import { Props } from '../App';
-import request from '../utils/request';
+import { NavigationProps } from '../App';
+import requestApi from '../utils/request';
 
-<<<<<<< HEAD
 interface CardProps {
   clickAvatar: () => void,
   content: any
@@ -26,15 +25,6 @@ function Thumb(props: CardProps) {
     <View style={{ flexDirection: 'row' }}>
       <Icon size={17} name={props.content.isLiked ? 'thumb-up' : 'thumb-up-outline'} />
       {props.content.likeNum != '0' && <Text style={{ paddingLeft: 5 }}>{props.content.likeNum}</Text>}
-=======
-function Thumb() {
-  const [focused, setFocused] = useState(0);
-  const [likes, setLikes] = useState('4');
-  const thumb =
-    <View style={{ flexDirection: 'row' }}>
-      <Icon size={17} name={focused ? 'thumb-up' : 'thumb-up-outline'} />
-      {likes != '0' && <Text style={{ paddingLeft: 5 }}>{likes}</Text>}
->>>>>>> b7051996f5ddd3b8de432f1012879b4b818e902e
     </View>;
   function handleClick() {
     console.log(props.content.likeNum);
@@ -107,7 +97,6 @@ function DetailedCard(props: CardProps) {
             {props.content.postContent}
           </Text>
         </Card.Content>
-<<<<<<< HEAD
         {list.map((item: string) => 
           <Image
             source={{ uri: item }}
@@ -118,16 +107,6 @@ function DetailedCard(props: CardProps) {
         <View style={{ justifyContent: 'space-evenly', flexDirection: 'row', paddingBottom: 10,paddingTop:10 }}>
           <Like onCommentPress={() => { }} clickAvatar={() => { }} content={props.content} />
           <Share onCommentPress={() => { }} clickAvatar={() => { }} content={props.content} />
-=======
-        <Card.Cover
-          source={{ uri: 'https://picsum.photos/700' }}
-          style={{ borderWidth: 15, borderColor: '#fff', backgroundColor: '#fff' }}
-
-        />
-        <View style={{ justifyContent: 'space-evenly', flexDirection: 'row', paddingBottom: 5 }}>
-          <Like />
-          <Share />
->>>>>>> b7051996f5ddd3b8de432f1012879b4b818e902e
         </View>
       </Card>
       <Modal
@@ -198,9 +177,9 @@ const dc = [
     userName: "梁娟"
   }
 ]
-function CommentScreen({ route, navigation }: Props) {
+function CommentScreen({ route, navigation }: NavigationProps) {
   const [text, setText] = React.useState("");
-  const id = route.params.id;
+  const id = route.params;
 
   function clickAvatar() {
     navigation.navigate('OthersPage');
@@ -210,7 +189,7 @@ function CommentScreen({ route, navigation }: Props) {
   const [detail, setDetail] = useState(defaulthh);
   const [commentlist, setList] = useState(dc);
   async function fetchData() {
-    const res = await request.get(`/Memories/${id}`)
+    const res = await requestApi('get',`/Memories/${id}`,null,null,true)
     if (res.data.code == 0) {
       console.log("fetch");
       tmp = res.data.data;
