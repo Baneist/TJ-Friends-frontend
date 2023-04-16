@@ -1,28 +1,25 @@
-import React, { forwardRef, useImperativeHandle, useState } from "react";
+import React, { useState } from "react";
 import {
   Text,
   View,
   Image,
   TextStyle,
-  ScrollView,
   SafeAreaView,
   TouchableOpacity,
-  ViewStyle,
 } from "react-native";
+import { Alert } from "react-native";
 /**
  * ? Local Imports
  */
-import styles from "./SocialLoginScreen.style";
+import styles from "./Login.style";
 import TextField from "../components/TextField/TextField";
-import SocialButton from "../components/SocialButton/SocialButton";
-import { ITextRef } from "./LoginScreen";
+import SocialButton from "../components/LoginSocialButton/SocialButton";
+import requestApi from "../utils/request";
+import {NavigationProps} from "../App";
+import handleAxiosError from "../utils/handleError";
 
 // ? Assets
-const backArrowImage = require("../assets/left-arrow.png");
-const facebookLogo = require("../assets/facebook-logo.png");
-const twitterLogo = require("../assets/twitter-logo.png");
 const googleLogo = require("../assets/google-logo.png");
-const discordLogo = require("../assets/discord-logo.png");
 const appleLogo = require("../assets/apple-logo.png");
 
 export interface ISocialLoginProps {
@@ -34,11 +31,6 @@ export interface ISocialLoginProps {
   loginButtonBackgroundColor?: string;
   usernamePlaceholder?: string;
   passwordPlaceholder?: string;
-  enableAppleLogin?: boolean;
-  enableFacebookLogin?: boolean;
-  enableTwitterLogin?: boolean;
-  enableGoogleLogin?: boolean;
-  enableDiscordLogin?: boolean;
   backArrowImageSource?: any;
   loginButtonTextStyle?: any;
   usernameTextFieldStyle?: any;
@@ -65,30 +57,26 @@ export interface ISocialLoginProps {
   signUpTextStyle?: TextStyle;
   forgotPasswordTextStyle?: TextStyle;
   onLoginPress: () => void;
-  onAppleLoginPress?: () => void;
   onForgotPasswordPress: () => void;
   onFacebookLoginPress?: () => void;
   onTwitterLoginPress?: () => void;
   onGoogleLoginPress?: () => void;
   onDiscordLoginPress?: () => void;
-  onUserNameChangeText: (text: string) => void;
-  onPasswordChangeText: (text: string) => void;
-  //? Only Sign Up Screen Props
   onSignUpPress: () => void;
   onRepasswordChangeText?: (text: string) => void;
+  navigation: NavigationProps["navigation"];
 }
 
-const SocialLoginScreen = React.forwardRef<ITextRef, ISocialLoginProps>((props: ISocialLoginProps, ref) => {
+const Login = (props: ISocialLoginProps) => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
 
   const renderHeader = () => {
     const {
-      signUpText = "SIGN UP",
+      signUpText = "Sign Up",
       disableSignUp,
       signUpTextStyle,
-      backArrowImageSource = backArrowImage,
     } = props;
     return (
       !disableSignUp && (
@@ -110,7 +98,10 @@ const SocialLoginScreen = React.forwardRef<ITextRef, ISocialLoginProps>((props: 
   };
 
   const renderLoginTitle = () => {
-    const { loginTitleText = "Log In", loginTextStyle } = props;
+    const {
+      loginTitleText = "Log In",
+      loginTextStyle
+    } = props;
     return (
       <View style={styles.loginTitleContainer}>
         <Text style={[styles.loginTextStyle, loginTextStyle]}>
@@ -123,17 +114,12 @@ const SocialLoginScreen = React.forwardRef<ITextRef, ISocialLoginProps>((props: 
   const renderTextFieldContainer = () => {
     const {
       usernameTextFieldStyle,
-      usernamePlaceholder = "john_doe@example.com",
-      onUserNameChangeText,
-      passwordPlaceholder = "• • • • • • • •",
-      onPasswordChangeText,
-      passwordTextFieldStyle,
+      passwordTextFieldStyle
     } = props;
     return (
       <View style={styles.textFieldContainer}>
         <TextField
-          {...props}
-          placeholder={usernamePlaceholder}
+          placeholder="Student ID"
           textFieldStyle={usernameTextFieldStyle}
           onChangeText={setUsername}
         />
@@ -141,35 +127,12 @@ const SocialLoginScreen = React.forwardRef<ITextRef, ISocialLoginProps>((props: 
           <TextField
             width="70%"
             secureTextEntry
-            {...props}
-            placeholder={passwordPlaceholder}
+            placeholder='Password'
             textFieldStyle={passwordTextFieldStyle}
             onChangeText={setPassword}
           />
         </View>
-        {isSignUp
-          ? renderRepasswordContainer()
-          : renderForgotPassword()}
-      </View>
-    );
-  };
-
-  const renderRepasswordContainer = () => {
-    const {
-      passwordPlaceholder = "• • • • • • • •",
-      onRepasswordChangeText,
-      passwordTextFieldStyle,
-    } = props;
-    return (
-      <View style={styles.passwordTextFieldContainer}>
-        <TextField
-          width="70%"
-          secureTextEntry
-          {...props}
-          placeholder={passwordPlaceholder}
-          textFieldStyle={passwordTextFieldStyle}
-          onChangeText={onRepasswordChangeText}
-        />
+        {renderForgotPassword()}
       </View>
     );
   };
@@ -197,22 +160,34 @@ const SocialLoginScreen = React.forwardRef<ITextRef, ISocialLoginProps>((props: 
     );
   };
 
+  const onHandleLoginPress = async () => {
+    try {
+      const data = (await requestApi('post', '/login', null, { username, password }, false)).data;
+      if (data.code === 0) {
+        props.navigation.replace('Main');
+      } else {
+        props.navigation.replace('Login');
+        Alert.alert('登录失败', data.msg);
+      }
+    } catch (error) {
+      handleAxiosError(error, '登录失败');
+    }
+  }
+
   const renderClassicLoginButton = () => {
     const {
-      loginText = "Let's cook!",
+      loginText = "Let's Go!",
       loginButtonBackgroundColor,
       loginButtonShadowColor = "#58a13f",
       loginButtonSpinnerVisibility,
       spinnerSize,
       spinnerType,
       loginButtonSpinnerColor,
-      onLoginPress,
     } = props;
     return (
       <SocialButton
-        {...props}
         text={loginText}
-        onPress={onLoginPress}
+        onPress={onHandleLoginPress}
         shadowColor={loginButtonShadowColor}
         backgroundColor={loginButtonBackgroundColor}
         isSpinner={loginButtonSpinnerVisibility}
@@ -223,40 +198,20 @@ const SocialLoginScreen = React.forwardRef<ITextRef, ISocialLoginProps>((props: 
     );
   };
 
-  const renderFacebookLoginButton = () => {
-    const {
-      onFacebookLoginPress,
-      facebookSpinnerVisibility,
-      spinnerSize,
-      spinnerType,
-      facebookSpinnerColor,
-    } = props;
-    return (
-      <View style={styles.socialLoginButtonContainer}>
-        <SocialButton
-          width={60}
-          height={60}
-          shadowColor="#2f4a82"
-          backgroundColor="#4267B2"
-          isSpinner={facebookSpinnerVisibility}
-          spinnerSize={spinnerSize}
-          spinnerType={spinnerType}
-          spinnerColor={facebookSpinnerColor}
-          component={
-            <Image source={facebookLogo} style={styles.facebookImageStyle} />
-          }
-          onPress={() => onFacebookLoginPress && onFacebookLoginPress()}
-        />
-      </View>
-    );
-  };
+  const onAppleLoginPress = async () => {
+    try {
+      const res = await requestApi('get', '/profile/2053186',null, null, true);
+      Alert.alert('用户信息', JSON.stringify(res.data));
+    } catch (error) {
+      handleAxiosError(error);
+    }
+  }
 
   const renderAppleLoginButton = () => {
     const {
       spinnerSize,
       spinnerType,
       appleSpinnerColor,
-      onAppleLoginPress,
       appleSpinnerVisibility,
     } = props;
     return (
@@ -274,37 +229,6 @@ const SocialLoginScreen = React.forwardRef<ITextRef, ISocialLoginProps>((props: 
             <Image source={appleLogo} style={styles.appleImageStyle} />
           }
           onPress={() => onAppleLoginPress && onAppleLoginPress()}
-        />
-      </View>
-    );
-  };
-
-  const renderTwitterLoginButton = () => {
-    const {
-      onTwitterLoginPress,
-      twitterSpinnerVisibility,
-      spinnerSize,
-      spinnerType,
-      twitterSpinnerColor,
-    } = props;
-    return (
-      <View style={styles.socialLoginButtonContainer}>
-        <SocialButton
-          width={60}
-          height={60}
-          backgroundColor="#1DA1F2"
-          shadowColor="#1a7aab"
-          isSpinner={twitterSpinnerVisibility}
-          spinnerSize={spinnerSize}
-          spinnerType={spinnerType}
-          spinnerColor={twitterSpinnerColor}
-          component={
-            <Image
-              source={twitterLogo}
-              style={styles.socialLoginButtonImageStyle}
-            />
-          }
-          onPress={() => onTwitterLoginPress && onTwitterLoginPress()}
         />
       </View>
     );
@@ -340,54 +264,12 @@ const SocialLoginScreen = React.forwardRef<ITextRef, ISocialLoginProps>((props: 
     );
   };
 
-  const renderDiscordLoginButton = () => {
-    const {
-      spinnerSize,
-      spinnerType,
-      discordSpinnerColor,
-      onDiscordLoginPress,
-      discordSpinnerVisibility,
-    } = props;
-    return (
-      <View style={styles.socialLoginButtonContainer}>
-        <SocialButton
-          width={60}
-          height={60}
-          backgroundColor="#7289DA"
-          shadowColor="#4e5e96"
-          isSpinner={discordSpinnerVisibility}
-          spinnerSize={spinnerSize}
-          spinnerType={spinnerType}
-          spinnerColor={discordSpinnerColor}
-          component={
-            <Image
-              source={discordLogo}
-              style={styles.socialLoginButtonImageStyle}
-            />
-          }
-          onPress={() => onDiscordLoginPress && onDiscordLoginPress()}
-        />
-      </View>
-    );
-  };
-
   const renderSocialButtons = () => {
-    const {
-      enableFacebookLogin,
-      enableTwitterLogin,
-      enableGoogleLogin,
-      enableDiscordLogin,
-      enableAppleLogin,
-    } = props;
     return (
       <View style={styles.socialButtonsContainer}>
         {renderClassicLoginButton()}
-        {enableFacebookLogin && renderFacebookLoginButton()}
-        {enableTwitterLogin && renderTwitterLoginButton()}
-        {enableAppleLogin && renderAppleLoginButton()}
-        {enableGoogleLogin && renderGoogleLoginButton()}
-        {enableDiscordLogin && renderDiscordLoginButton()}
-
+        {renderAppleLoginButton()}
+        {renderGoogleLoginButton()}
       </View>
     );
   };
@@ -418,10 +300,6 @@ const SocialLoginScreen = React.forwardRef<ITextRef, ISocialLoginProps>((props: 
     );
   };
 
-  useImperativeHandle(ref, () => ({
-    getParams: () => ({username, password})
-  }));
-
   return (
     <SafeAreaView style={styles.container}>
       {renderRightTopAsset()}
@@ -434,6 +312,6 @@ const SocialLoginScreen = React.forwardRef<ITextRef, ISocialLoginProps>((props: 
       {renderLeftBottomAsset()}
     </SafeAreaView>
   );
-});
+};
 
-export default SocialLoginScreen;
+export default Login;

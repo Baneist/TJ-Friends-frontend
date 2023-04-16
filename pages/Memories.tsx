@@ -5,8 +5,8 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useState, useEffect } from 'react';
 import Modal from 'react-native-modal';
-import { Props } from '../App';
-import request from '../utils/request';
+import { NavigationProps } from '../App';
+import requestApi from '../utils/request';
 import { AxiosResponse } from 'axios';
 
 export const styles = StyleSheet.create({
@@ -180,10 +180,10 @@ export const CardwithButtons = (props: CardProps) => {
   );
 };
 
-const MemoriesScreen = ({ route, navigation }: Props) => {
+const MemoriesScreen = ({ route, navigation }: NavigationProps) => {
   const { bottom } = useSafeAreaInsets();
-  const onCommentPress=(postID:string)=> {
-    navigation.navigate('Comment',{id:postID});
+  const onCommentPress=(postID:undefined)=> {
+    navigation.navigate('Comment',postID);
     
   }
   function clickAvatar() {
@@ -192,7 +192,7 @@ const MemoriesScreen = ({ route, navigation }: Props) => {
   const [list, setlist]=useState([] as any []);
   let memorylist = [] as any[];
   async function fetchData() {
-    const res = await request.get('/Memories')
+    const res = await requestApi('get','/Memories',null,null,true)
     if (res.data.code == 0) {
       memorylist = memorylist.concat(res.data.data);
       setlist(memorylist);

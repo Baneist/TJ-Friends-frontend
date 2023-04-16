@@ -39,7 +39,7 @@ const SocialButton: React.FC<ISocialButtonProps> = ({
   iconImageStyle,
   textContainerStyle,
   TouchableComponent = TouchableOpacity,
-  imageSource = require("../../assets/facebook.png"),
+  imageSource = require("../../assets/apple.png"),
   onPress,
 }) => {
   return (

@@ -13,10 +13,11 @@ import {Button, List, Chip} from 'react-native-paper';
 import { Block,Text} from "galio-framework";
 import Icon from 'react-native-vector-icons/AntDesign';
 import { MomentsList } from "../../components/MomentsList/MomentsList";
-import {Props} from '../../App'
+import {NavigationProps} from '../../App'
 import CardwithButtons from "../Memories";
-import request from "../../utils/request";
-
+import requestApi from "../../utils/request";
+import handleAxiosError from "../../utils/handleError";
+import { useFocusEffect } from '@react-navigation/native';
 //获取屏幕宽高
 const { width, height } = Dimensions.get("screen");
 
@@ -52,68 +53,134 @@ export interface userProp{
   followingPms:boolean
 }
 export const defaultInfo = {
-  userId:{info:'2052123',pms:true},
-  userName:{info:'吉尔伽美什',pms:true},
-  userNickName: {info:'Gilgamesh',pms:true},
-  userGender: {info:'Male',pms:true},
-  userBirthDate:{info:'2002-08-07',pms:true},
-  userStatus:{info:'愉悦！',pms:true},
-  userMajor:{info:'金融',pms:true},
-  userYear:{info:'2020',pms:true},
-  userPhone:{info:'',pms:true},
-  userInterest:{info:'喜欢钱和一切金闪闪的东西，还有哈哈哈哈哈哈（是个快乐的男人！）',pms:true},
-  userAvatar:{info:'https://picsum.photos/700',pms:true},
-  userLabel:{
-    info:[
-      '金闪闪','帅','金发','红瞳','AUO','愉悦教主','强','黄金三靶'
-    ],
-    pms:true,
+  "userId": {
+    "info": "2053302",
+    "pms": false
   },
-  followerPms:true,
-  followingPms:true
-
+  "userName": {
+    "info": "吉尔伽美什",
+    "pms": false
+  },
+  "userNickName": {
+    "info": "Gilgamesh",
+    "pms": false
+  },
+  "userGender": {
+    "info": "Male",
+    "pms": false
+  },
+  "userBirthDate": {
+    "info": "2002-08-07",
+    "pms": true
+  },
+  "userStatus": {
+    "info": "愉悦！",
+    "pms": true
+  },
+  "userMajor": {
+    "info": "愉悦学",
+    "pms": true
+  },
+  "userPhone": {
+    "info": "",
+    "pms": false
+  },
+  "userYear": {
+    "info": "2020",
+    "pms": false
+  },
+  "userInterest": {
+    "info": "喜欢钱和一切金闪闪的东西，还有哈哈哈哈哈哈（是个快乐的男人！）",
+    "pms": true
+  },
+  "userLabel": {
+    "info": [
+      "金闪闪",
+      "帅",
+      "金发",
+      "红瞳",
+      "AUO",
+      "愉悦教主",
+      "强",
+      "黄金三靶"
+    ],
+    "pms": true
+  },
+  "userAvatar":{
+    "info":"https://picsum.photos/700",
+    "pms":true
+  },
+  "followerPms": true,
+  "followingPms": false
 }
-const array = [1, 2, 3, 4, 5];
 
 //更多信息
 
 //资料页面
 
 
-const Profile = ({route, navigation}:Props) =>{
+const Profile = ({route, navigation}:NavigationProps) =>{
   //state
+  const stuid = '2053186';
   //个人信息
   const [userInfo, setUserInfo] = useState<userProp>(defaultInfo);
+  //粉丝 关注列表
+  const [followerNum, setFollowerNum] = useState(0);
+  const [followingNum, setFollowingNum] = useState(0);
   //显示个人信息
-  const [showInfo, setShowInfo] = useState(false);
   const { bottom } = useSafeAreaInsets();
 
   //初始化
   async function fetchData(){
-    const res = await request.get('/profile',{
-      params:{
-        stuid:'2052123'
+    //获取资料
+    try {
+      const resInfo = await requestApi('get', `/profile/${stuid}`, null,null, true);
+      if(resInfo.data.code==0){
+        setUserInfo(resInfo.data.data);
       }
-    })
-    if(res.data.code==200){
-      setUserInfo(res.data.data);
-    }
-    else{
-      console.log('code err',res.data.code)
+      else{
+        console.log('code err',resInfo.data.code)
+      }
+      //获取关注列表
+      try{
+        const resFollowing = await requestApi('get', `/profile/${stuid}/followings`,null, null, true);
+        if(resFollowing.data.code == 0){
+          setFollowingNum(resFollowing.data.data.followings.length);
+        }
+        else{
+          console.log('code err', resFollowing.data.code)
+        }
+      } catch (error) {
+      handleAxiosError(error);
+      }
+      //获取粉丝列表
+      try{
+        const resFollower = await requestApi('get', `/profile/${stuid}/followers`, null,null, true);
+        if(resFollower.data.code == 0){
+          setFollowerNum(resFollower.data.data.followers.length);
+        }
+        else{
+          console.log('code err',resFollower.data.code)
+        }
+      } catch (error) {
+      handleAxiosError(error);
+      }
+    } catch (error) {
+      handleAxiosError(error);
     }
   }
-  useEffect(()=>{
-    //获取数据
-    fetchData()
-    //监听事件
-    const nickeNameListener = navigation.addListener('updateNickeName',(userInfo:userProp) =>{
-      setUserInfo(userInfo)
-    })
-    //组件卸载时取消监听
-    return ()=>{
-      nickeNameListener.remove();
-    };
-  },[])
+  // useEffect(()=>{
+  //   //获取数据
+  //   fetchData()
+  // },[])
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchData()
+      console.log(userInfo)
+      return () => {
+      };
+    }, [])
+  );
   //编辑个人资料
   function editProfile(){
     navigation.navigate('EditProfile')
@@ -153,17 +220,17 @@ const Profile = ({route, navigation}:Props) =>{
               {/* 头像 */}
                 <Block middle style={styles.avatarContainer}>
                   <Image 
-                    source={{ uri: profileImage.ProfilePicture }}
+                    source={{ uri: userInfo.userAvatar.info }}
                     style={styles.avatar}
                   />
                 </Block>
                 <Block style={styles.info}>
                   {/* 粉丝量信息 */}
-                  <Block row space="between">
+                  <Block row space="around">
                   <Pressable onPress={viewFollower}>
                     <Block middle>
                         <Text style={styles.infoNum}>
-                          2K
+                          {followerNum}
                         </Text>
                       <Text style={styles.infoName}>Followers</Text>
                     </Block>
@@ -171,19 +238,19 @@ const Profile = ({route, navigation}:Props) =>{
                     <Pressable onPress={viewFollowing}>
                     <Block middle>
                       <Text style={styles.infoNum}>
-                        10
+                        {followingNum}
                       </Text>
                       <Text style={styles.infoName}>Following</Text>
                     </Block>
                     </Pressable>
-                    <Pressable onPress={viewFollower}>
+                    {/* <Pressable onPress={viewFollower}>
                     <Block middle>
                         <Text style={styles.infoNum}>
                           188
                         </Text>
                       <Text style={styles.infoName}>Likes</Text>
                       </Block>
-                    </Pressable>
+                    </Pressable> */}
                   </Block>
                 </Block>
               {/* 用户ID 简介等 */}
@@ -288,7 +355,7 @@ const styles = StyleSheet.create({
   },
   profileCard: {
     flex: 1,
-    marginTop: 90,
+    marginTop: 130,
     borderTopLeftRadius: 6,
     borderTopRightRadius: 6,
     backgroundColor: '#FFFFFF',

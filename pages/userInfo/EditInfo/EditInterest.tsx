@@ -2,43 +2,47 @@ import React , {useState,useEffect}from "react";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {Button, Card, TextInput, Dialog, Surface,
     Portal, Provider,Snackbar,IconButton, List,Divider } from 'react-native-paper';
-import {Props} from '../../../App'
+import {NavigationProps} from '../../../App'
 import { defaultInfo } from "../Profile";
-import request from "../../../utils/request";
+import requestApi from "../../../utils/request";
+import handleAxiosError from "../../../utils/handleError";
 
-const EditInterest = ({route, navigation}:Props) =>{
+const EditInterest = ({route, navigation}:NavigationProps) =>{
     const [userInterest,setInterest] = useState('');
     let userInfo = defaultInfo;
+    const userID = '2052123'
     //初始化
     async function fetchData(){
-        const res = await request.get('/profile',{
-            params:{
-              stuid:'2052123'
+        try{
+            const res = await requestApi('get', `/profile/${userID}`, null,null, true);
+            if(res.data.code==0){
+                userInfo = res.data.data;
+                setInterest(userInfo.userInterest.info);
             }
-          })
-        if(res.data.code==200){
-            userInfo = res.data.data;
-            setInterest(userInfo.userInterest.info);
-        }
-        else{
-        console.log('code err',res.data.code)
+            else{
+              console.log('code err',res.data.code)
+            }
+          } catch(err){
+            handleAxiosError(err);
         }
     }
     useEffect(()=>{
         fetchData()
     },[])
     async function submit(){
-        userInfo.userInterest.info=userInterest;
-        const res = await request.put('/updateUserInfo',{
-            data:userInfo
-        })
+      userInfo.userInterest.info=userInterest;
+      console.log(userInfo)
+      try{
+        const res = await requestApi('put', '/updateUserInfo',null, userInfo, true);
         if(res.status==200){
-            //发送事件，传递更新的userInfo
-            navigation.goBack()
+          navigation.goBack()
         }
         else{
-            console.log('err',res.status)
+          console.log('err',res.status)
         }
+      } catch(err){
+        handleAxiosError(err);
+      }
     }
     return(
         <Card mode='outlined' style={{borderRadius:0}}>

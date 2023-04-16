@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useState } from 'react';
 import Modal from 'react-native-modal';
-import { Props } from '../../App';
+import { NavigationProps } from '../../App';
 import { CardwithButtons } from '../../pages/Memories';
 
 export const MomentsList=({onCommentPress}:{onCommentPress:()=>void}) => {

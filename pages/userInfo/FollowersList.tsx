@@ -2,47 +2,60 @@ import React,{useState,useEffect} from 'react';
 import { View, StyleSheet, Dimensions, ScrollView, Image, Pressable } from 'react-native';
 import { Block, Text } from 'galio-framework';
 import { Avatar, Button } from 'react-native-paper';
-import { Props } from '../../App';
-import request from '../../utils/request';
+import requestApi from '../../utils/request';
 import { userProp, defaultInfo } from './Profile';
 import { AxiosResponse } from 'axios';
 import { followProp } from './FollowingList';
+import handleAxiosError from '../../utils/handleError';
+import { NavigationProps } from '../../App';
 
 // 获取屏幕宽高
 const { width, height } = Dimensions.get('screen');
 
 // 关注列表页面
-const FollowersList = ({ route, navigation }: Props) => {
+const FollowersList = ({ route, navigation }: NavigationProps) => {
+  //正在查看的是谁
+  const pageUser = '2053186';
+  //当前用户
+  const curUser = '2053302';
   //关注的用户信息
   const [followerlist, setlist]=useState([] as userProp []);
   //是否在关注
   const [statusList, setstatusList] = useState([] as followProp[])
+  //查看的是否是自己的粉丝
+  const [isMine, setMine] = useState(false);
   //初始化
   let idlist = [] as followProp [];
   async function fetchData(){
-    const res = await request.get('/profile/2052123/follower')
-    if(res.data.code==200){
-      idlist = res.data.data.followers;
-      let reqList:Promise<AxiosResponse>[]=[];
-      for(let i=0;i<idlist.length;++i){
-        reqList.push(new Promise((resolve, reject)=>{
-          resolve(request.get('/profile',{
-            params:{
-              stuid:idlist[i].userID
-            }
+    try{
+      const res = await requestApi('get', `/profile/${pageUser}/followers`,null, null, true);
+      if(res.data.code==0){
+        idlist = res.data.data.followers;
+        let reqList:Promise<AxiosResponse>[]=[];
+        for(let i=0;i<idlist.length;++i){
+          reqList.push(new Promise((resolve, reject)=>{
+            resolve(requestApi('get', `/profile/${idlist[i]}`, null, null, true))
           }))
-        }))
-      }
-      Promise.all(reqList).then((values)=>{
-        for(let i=0;i<values.length;++i){
-          statusList.push({userID:idlist[i].userID, isfollowing:idlist[i].isfollowing})
-          //setstatusList([...statusList, {stuid:idlist[i], isfollowing:true}]);
-          setlist(current => current.concat(values[i].data.data))
         }
-      })
-    }
-    else{
-      console.log('code err',res.data.code)
+        try{
+          Promise.all(reqList).then((values)=>{
+            for(let i=0;i<values.length;++i){
+              //statusList.push({userID:idlist[i], isfollowing:true})
+              setstatusList(current =>[...current, {userID:idlist[i].userID, isfollowing:idlist[i].isfollowing}]);
+              //目前profile接口不正常 先这么写凑合着
+              setlist(current =>[...current, defaultInfo])
+              //setlist(current => current.concat(values[i].data.data))
+            }
+          })
+        } catch(err){
+          handleAxiosError(err)
+        }
+      }
+      else{
+        console.log('code err',res.data.code)
+      }
+    } catch(err){
+      handleAxiosError(err)
     }
 }
   useEffect(()=>{
@@ -50,17 +63,53 @@ const FollowersList = ({ route, navigation }: Props) => {
   },[])
 
 // 关注/取消关注用户
-function toggleFollow(id: string) {
-  const newList = statusList.map((item,idx) =>{
-    if(item.userID === id){
-        item.isfollowing=!item.isfollowing;
-      return item;
+async function toggleFollow(user: followProp) {
+  if(user.isfollowing){ //取关
+    try{
+      const res = await requestApi('post', '/unfollow',{stuid:user.userID},null,true)
+      if(res.status==200){
+        const newList = statusList.map((item,idx) =>{
+          if(item.userID === user.userID){
+              item.isfollowing=!item.isfollowing;
+            return item;
+          }
+          else{
+            return item;
+          }
+        })
+        setstatusList(newList)
+        //粉丝列表的回粉信息交给后端修改
+      }
+      else{
+        console.log('res.status')
+      }
+    } catch (error) {
+      handleAxiosError(error);
     }
-    else{
-      return item;
+  }
+  else{ //关注
+    try{
+      const res = await requestApi('post', '/follow',{stuid:user.userID},null,true)
+      if(res.status==200){
+        const newList = statusList.map((item,idx) =>{
+          if(item.userID === user.userID){
+              item.isfollowing=!item.isfollowing;
+            return item;
+          }
+          else{
+            return item;
+          }
+        })
+        setstatusList(newList)
+        //粉丝列表的回粉信息交给后端修改
+      }
+      else{
+        console.log('res.status')
+      }
+    } catch (error) {
+      handleAxiosError(error);
     }
-  })
-  setstatusList(newList)
+  }
 }
 
 return (
@@ -83,9 +132,11 @@ return (
           <Button
             style={styles.followButton}
             mode={statusList[idx].isfollowing ? 'outlined' : 'contained'}
-            onPress={() => toggleFollow(statusList[idx].userID)}
+            onPress={() => toggleFollow(statusList[idx])}
           >
-            {statusList[idx].isfollowing ? '互相关注' : '回粉'}
+            {isMine?
+            (statusList[idx].isfollowing?'互相关注' :'回粉')
+            :(statusList[idx].isfollowing?'关注' :'取消关注')}
           </Button>
         </Block>
       </Pressable>

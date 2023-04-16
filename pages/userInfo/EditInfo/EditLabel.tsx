@@ -2,35 +2,39 @@ import React , {useState,useEffect}from "react";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {Button, Card, Text, Chip,
     Searchbar, Provider,Snackbar,IconButton, List,Divider } from 'react-native-paper';
-import {Props} from '../../../App'
+import {NavigationProps} from '../../../App'
 import Modal from 'react-native-modal';
 import {
     View
   } from "react-native"
 import request from "../../../utils/request";
 import { defaultInfo } from "../Profile";
+import requestApi from "../../../utils/request";
+import handleAxiosError from "../../../utils/handleError";
 
 //所有标签
 const allLabel = [
     '猫派','狗派','二次元','现充','舟批','原批','Switch玩家','体育生','篮球',
 ]
 
-const EditLabel = ({route, navigation}:Props) =>{
+const EditLabel = ({route, navigation}:NavigationProps) =>{
+    const stuid='2052123';
     const [userLabel, setUserLabel] = useState([] as string [])
     let userInfo = defaultInfo;
+    const userID='2052123';
     //初始化
     async function fetchData(){
-        const res = await request.get('/profile',{
-            params:{
-              stuid:'2052123'
+        try{
+            const res = await requestApi('get', `/profile/${userID}`, null,null, true);
+            if(res.data.code==0){
+                userInfo = res.data.data;
+                setUserLabel(userInfo.userLabel.info);
             }
-          })
-        if(res.data.code==200){
-            userInfo = res.data.data;
-            setUserLabel(userInfo.userLabel.info);
-        }
-        else{
-        console.log('code err',res.data.code)
+            else{
+              console.log('code err',res.data.code)
+            }
+          } catch(err){
+            handleAxiosError(err);
         }
     }
     useEffect(()=>{
@@ -39,15 +43,16 @@ const EditLabel = ({route, navigation}:Props) =>{
     async function submit(){
         userInfo.userLabel.info=userLabel;
         console.log(userLabel)
-        const res = await request.put('/updateUserInfo',{
-            data:userInfo
-        })
-        if(res.status==200){
-            //发送事件，传递更新的userInfo
-            navigation.goBack()
-        }
-        else{
-            console.log('err',res.status)
+        try{
+            const res = await requestApi('put', '/updateUserInfo',null, userInfo, true);
+            if(res.status==200){
+              navigation.goBack()
+            }
+            else{
+              console.log('err',res.status)
+            }
+          } catch(err){
+            handleAxiosError(err);
         }
     }
     //记录加了哪些，直接setUserLabel会重新渲染从而对话框消失

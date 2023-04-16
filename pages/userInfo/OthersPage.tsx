@@ -1,4 +1,4 @@
-import React , {useState}from "react";
+import React , {useState,useEffect}from "react";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   View,
@@ -9,14 +9,17 @@ import {
   ImageBackground,
   Pressable
 } from "react-native";
-import {Button, List, Chip, IconButton} from 'react-native-paper';
+import {Button, List, Chip} from 'react-native-paper';
 import { Block,Text} from "galio-framework";
 import Icon from 'react-native-vector-icons/AntDesign';
 import { MomentsList } from "../../components/MomentsList/MomentsList";
-import {Props} from '../../App'
+import {NavigationProps} from '../../App'
 import CardwithButtons from "../Memories";
-import request from "../../utils/request";
-import axios from "axios";
+import { followProp } from "./FollowingList";
+import { userProp, defaultInfo } from "./Profile";
+import requestApi from "../../utils/request";
+import handleAxiosError from "../../utils/handleError";
+import axios, { AxiosResponse } from "axios";
 
 //获取屏幕宽高
 const { width, height } = Dimensions.get("screen");
@@ -29,61 +32,130 @@ const profileImage = {
   ProfilePicture: 'https://picsum.photos/700'
 }
 
-//个人信息
-const userInfo = {
-  userId:{"info":'2052123',"permission":true},
-  userName:{"info":'吉尔伽美什',"permission":true},
-  userNickName: {"info":'Gilgamesh',"permission":true},
-  userGender: {"info":'Male',"permission":true},
-  userBirthDate:{"info":'2002-08-07',"permission":false},
-  userStatus:{"info":'Enuma Elish!',"permission":true},
-  userMajor:{"info":'愉悦',"permission":true},
-  userPhone:{"info":'123',"permission":true},
-  userYear:{"info":'2020',"permission":true},
-  userInterest:{"info":'喜欢钱和一切金闪闪的东西，还有哈哈哈哈哈哈（是个快乐的男人！）',"permission":true},
-  userLabel : {"info":[
-    '金闪闪','帅','金发','红瞳','AUO','愉悦教主','强','黄金三靶'
-  ],"permission":true},
-  followerPms:false,
-  followingPms:true
-}
-
-//用户标签
-const userLabel = [
-  '金闪闪','帅','金发','红瞳','AUO','愉悦教主','强','黄金三靶'
-]
-const array = [1, 2, 3, 4, 5];
-
-//性别
-function Gender(){
-  if(userInfo.userGender.info=='Male')
-    return (
-    <Icon name="man" size={16} color="#32325D" style={{ marginTop: 10 }}>Male</Icon>
-    )
-  else
-    return (<Icon name="woman" size={16} color="#32325D" style={{ marginTop: 10 }}>Female</Icon>)
-}
 //更多信息
 
 //资料页面
 
 
-const OthersPage = ({route, navigation}:Props) =>{
+const Profile = ({route, navigation}:NavigationProps) =>{
+  //state
+  const curUser = '2053302'; //当前用户
+  const pageid = '2053186'; //所查看主页的用户
+  //个人信息
+  const [userInfo, setUserInfo] = useState<userProp>(defaultInfo);
+  //粉丝 关注列表
+  const [followerNum, setFollowerNum] = useState(0);
+  const [followingNum, setFollowingNum] = useState(0);
+  //被当前用户关注了
+  const [isfollowing, setFollowing] = useState(false);
   //显示个人信息
-  const [showInfo, setShowInfo] = useState(false);
   const { bottom } = useSafeAreaInsets();
+
+  //初始化
+  async function fetchData(){
+    //获取资料
+    //获取资料
+    try {
+      const resInfo = await requestApi('get', `/profile/${pageid}`,null, null, true);
+      if(resInfo.data.code==0){
+        setUserInfo(resInfo.data.data);
+      }
+      else{
+        console.log('code err',resInfo.data.code)
+      }
+      //获取关注列表
+      try{
+        const resFollowing = await requestApi('get', `/profile/${pageid}/followings`,null, null, true);
+        if(resFollowing.data.code == 0){
+          console.log(resFollowing.data.data)
+          setFollowingNum(resFollowing.data.data.followings.length);
+        }
+        else{
+          console.log('code err', resFollowing.data.code)
+        }
+      } catch (error) {
+      handleAxiosError(error);
+      }
+      //获取粉丝列表
+      try{
+        const resFollower = await requestApi('get', `/profile/${pageid}/followers`,null, null, true);
+        if(resFollower.data.code == 0){
+          setFollowerNum(resFollower.data.data.followers.length);
+          setFollowing(resFollower.data.data.followers.indexOf(curUser)!=-1);
+        }
+        else{
+          console.log('code err',resFollower.data.code)
+        }
+      } catch (error) {
+      handleAxiosError(error);
+      }
+    } catch (error) {
+      handleAxiosError(error);
+    }
+  }
+  useEffect(()=>{
+    //获取数据
+    fetchData()
+  },[])
+  //编辑个人资料
+  function editProfile(){
+    navigation.navigate('EditProfile')
+  }
   //查看关注列表
   function viewFollowing(){
     if(userInfo.followingPms)
-        navigation.navigate('FollowingList')
+      navigation.navigate('FollowingList')
+    else{
+      console.log('暂不可见')
+    }
   }
   //查看粉丝列表
   function viewFollower(){
     if(userInfo.followerPms)
-        navigation.navigate('FollowersList')
+      navigation.navigate('FollowersList')
+    else{
+      console.log('暂不可见')
+    }
   }
+  //关注/取关
+  // 关注/取消关注用户
+async function toggleFollow() {
+  if(isfollowing){ //取关
+    try{
+      const res = await requestApi('post', '/unfollow',{stuid:pageid},null,true)
+      if(res.status==200){
+        setFollowing(!isfollowing)
+      }
+      else{
+        console.log('res.status')
+      }
+    } catch (error) {
+      handleAxiosError(error);
+    }
+  }
+  else{ //关注
+    try{
+      const res = await requestApi('post', '/follow',{stuid:pageid},null,true)
+      if(res.status==200){
+        setFollowing(!isfollowing)
+      }
+      else{
+        console.log('res.status')
+      }
+    } catch (error) {
+      handleAxiosError(error);
+    }
+  }
+}
   function onCommentPress(){
     navigation.navigate('Comment')
+  }
+  //性别
+  function Gender(){
+    if(userInfo.userGender.info=='Male')
+      return (<Icon name="man" size={16} color="#32325D" style={{ marginTop: 10 }}>Male</Icon>)
+    else
+      return (<Icon name="woman" size={16} color="#32325D" style={{ marginTop: 10 }}>Female</Icon>)
   }
   return (
     <View style={{flex:1,  marginBottom: bottom}}>
@@ -102,21 +174,22 @@ const OthersPage = ({route, navigation}:Props) =>{
               {/* 头像 */}
                 <Block middle style={styles.avatarContainer}>
                   <Image 
-                    source={{ uri: profileImage.ProfilePicture }}
+                    source={{ uri: userInfo.userAvatar.info }}
                     style={styles.avatar}
                   />
                 </Block>
                 <Block style={styles.info}>
-                    {/* 发私信之类的 */}
-                    <Block
+                  {/* 发私信之类的 */}
+                  <Block
                     middle
                     row
-                    space="evenly"
+                    space='around'
                     style={{ marginTop: 20, paddingBottom: 24 }}
                   >
-                    <Button mode='contained'
+                    <Button mode={isfollowing?'contained':"outlined"}
+                     onPress={toggleFollow}
                     >
-                      关注
+                      {isfollowing?'取消关注':"关注"}
                     </Button>
                     <Button mode='contained-tonal'
                     >
@@ -124,11 +197,11 @@ const OthersPage = ({route, navigation}:Props) =>{
                     </Button>
                   </Block>
                   {/* 粉丝量信息 */}
-                  <Block row space="between">
+                  <Block row space="around">
                   <Pressable onPress={viewFollower}>
                     <Block middle>
                         <Text style={styles.infoNum}>
-                          2K
+                          {followerNum}
                         </Text>
                       <Text style={styles.infoName}>Followers</Text>
                     </Block>
@@ -136,18 +209,10 @@ const OthersPage = ({route, navigation}:Props) =>{
                     <Pressable onPress={viewFollowing}>
                     <Block middle>
                       <Text style={styles.infoNum}>
-                        10
+                        {followingNum}
                       </Text>
                       <Text style={styles.infoName}>Following</Text>
                     </Block>
-                    </Pressable>
-                    <Pressable onPress={viewFollower}>
-                    <Block middle>
-                        <Text style={styles.infoNum}>
-                          188
-                        </Text>
-                      <Text style={styles.infoName}>Likes</Text>
-                      </Block>
                     </Pressable>
                   </Block>
                 </Block>
@@ -185,24 +250,26 @@ const OthersPage = ({route, navigation}:Props) =>{
                         />
                         <List.Item title="生日" 
                         description={
-                          userInfo.userBirthDate.permission?
+                          userInfo.userBirthDate.pms?
                           userInfo.userBirthDate.info:'暂不可见'
                         }
                         left={props => <List.Icon {...props} icon="cake-variant" />}
                         />
                         <List.Item title="学年/专业"
                         description={
-                            userInfo.userYear.permission?
-                            userInfo.userYear.info:'暂不可见'+
-                            '/'+
-                            userInfo.userMajor.permission?
-                            userInfo.userMajor.info:'暂不可见'}
+                          userInfo.userYear.pms?
+                          userInfo.userYear.info:'暂不可见'
+                          +'/'
+                          +
+                          userInfo.userMajor.pms?
+                          userInfo.userMajor.info:'暂不可见'
+                        }
                         left={props => <List.Icon {...props} icon="school" />}
                         />
                         <List.Item title="兴趣爱好" 
                         description={
-                            userInfo.userInterest.permission?
-                            userInfo.userInterest.info:'暂不可见'
+                          userInfo.userInterest.pms?
+                          userInfo.userInterest.info:'暂不可见'
                         }
                         left={props => <List.Icon {...props} icon="heart" />}
                         />
@@ -308,4 +375,4 @@ const styles = StyleSheet.create({
 },
 });
 
-export default OthersPage;
+export default Profile;
