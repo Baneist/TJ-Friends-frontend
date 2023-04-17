@@ -19,7 +19,7 @@ const PostPage = ({ route, navigation }: StackNavigationProps) => {
     if (res.code == 0) {
       navigation.goBack();
     }
-  };
+  }
 
   function cancelAvatarOption() {
     return (

@@ -318,6 +318,7 @@ function Comment({route, navigation}: StackNavigationProps) {
             clickAvatar={clickAvatar}
             content={item}
             id={id}
+            key={index}
           />)}
         <View style={{margin: 20}}/>
         <Text

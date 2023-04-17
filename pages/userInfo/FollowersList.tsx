@@ -27,7 +27,7 @@ const FollowersList = ({ route, navigation }: StackNavigationProps) => {
   //初始化
   let idlist = [] as followProp[];
   async function fetchData() {
-    const res = await requestApi('get', `/profile/${pageUser}/followers`, null, true, 'get followers failed');
+    const res = await requestApi('get', `/profile/${pageUser}/followers`, null, true, 'Get Followers failed');
     if (res.code == 0) {
       idlist = res.data.followers;
       let reqList: Promise<AxiosResponse>[] = [];

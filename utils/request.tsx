@@ -48,7 +48,7 @@ const requestApi = async (method: string, url: string, data: any, withToken: boo
     });
     if (response.data.code === 0) {
       if (url === '/login') {
-        await setToken(response.data.access_token);
+        await setToken(response.data.data.access_token);
       }
     } else {
       console.log(errorTitle, response.data.code);

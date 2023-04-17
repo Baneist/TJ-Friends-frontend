@@ -22,7 +22,7 @@ const FollowingList = ({ navigation }: StackNavigationProps) => {
   //初始化
   let idlist = [] as string[];
   async function fetchData() {
-    const res = await requestApi('get', `/profile/${stuid}/followings`, null, true, 'get followings failed');
+    const res = await requestApi('get', `/profile/${stuid}/followings`, null, true, 'Get Followings failed');
     if (res.code == 0) {
       idlist = idlist.concat(res.data.followings);
       let reqList: Promise<AxiosResponse>[] = [];

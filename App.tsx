@@ -121,7 +121,7 @@ const App = () => {
         '注册失败'
       );
       if (data.code === 0) {
-        navigationRef.current?.dispatch(StackActions.replace("Main"));
+        navigationRef.current?.dispatch(StackActions.replace("Login"));
       }
     }
   };
