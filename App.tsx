@@ -43,7 +43,7 @@ const GetSessionUserUrl =
   "https://1.tongji.edu.cn/api/sessionservice/session/getSessionUser";
 
 type RootStackParamList = {
-  Main: { userId: string };
+  Main: undefined;
   Login: undefined;
   Signup: undefined;
   ChangePassword: undefined;
@@ -98,18 +98,15 @@ const App = () => {
     const { url } = newNavState;
     if (url?.startsWith(TargetUrl)) {
       try {
-        console.log(url);
         let params: { [key: string]: string } = {};
         for (const pair of url.split("?")[1].split("&")) {
           const param = pair.split("=");
           params[param[0]] = param[1];
         }
-        console.log(params);
         let data = (await axios.post(PostUrl, params)).data;
         if (!data?.data) {
           data = (await axios.get(GetSessionUserUrl)).data;
         }
-        console.log(data);
         setIsModalVisible(false);
         data = (
           await requestApi(

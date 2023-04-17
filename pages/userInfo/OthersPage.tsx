@@ -125,6 +125,7 @@ async function toggleFollow() {
       const res = await requestApi('post', '/unfollow',{stuid:pageid},null,true)
       if(res.status==200){
         setFollowing(!isfollowing)
+        setFollowingNum(followingNum + (isfollowing?1:-1));
       }
       else{
         console.log('res.status')

@@ -121,7 +121,7 @@ export const defaultInfo = {
 
 const Profile = ({route, navigation}:NavigationProps) =>{
   //state
-  const stuid = route.params?.userId;
+  const stuid = '2052909';
   //个人信息
   const [userInfo, setUserInfo] = useState<userProp>(defaultInfo);
   //粉丝 关注列表
@@ -166,6 +166,7 @@ const Profile = ({route, navigation}:NavigationProps) =>{
       handleAxiosError(error);
       }
     } catch (error) {
+      console.log(error)
       handleAxiosError(error);
     }
   }
@@ -175,7 +176,6 @@ const Profile = ({route, navigation}:NavigationProps) =>{
   // },[])
   useFocusEffect(
     React.useCallback(() => {
-      console.log(stuid)
       fetchData()
       console.log(userInfo)
       return () => {
@@ -184,22 +184,22 @@ const Profile = ({route, navigation}:NavigationProps) =>{
   );
   //编辑个人资料
   function editProfile(){
-    navigation.navigate('EditProfile', {userId: stuid ?? '0'})
+    navigation.navigate('EditProfile')
   }
   //查看关注列表
   function viewFollowing(){
-    navigation.navigate('FollowingList', {userId: stuid ?? '0'})
+    navigation.navigate('FollowingList')
   }
   //查看粉丝列表
   function viewFollower(){
-    navigation.navigate('FollowersList', {userId: stuid ?? '0'})
+    navigation.navigate('FollowersList')
   }
   function onCommentPress(){
-    navigation.navigate('Comment', {userId: stuid ?? '0'})
+    navigation.navigate('Comment')
   }
   //性别
   function Gender(){
-    if(userInfo.userGender.info=='Male')
+    if(userInfo.userGender.info=='男')
       return (<Icon name="man" size={16} color="#32325D" style={{ marginTop: 10 }}>Male</Icon>)
     else
       return (<Icon name="woman" size={16} color="#32325D" style={{ marginTop: 10 }}>Female</Icon>)
