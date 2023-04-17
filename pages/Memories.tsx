@@ -1,6 +1,6 @@
 import React from 'react';
 import { Pressable, ScrollView, View, Image, StyleSheet, Text } from 'react-native';
-import { Button, Card, IconButton, Divider, FAB, Dialog } from 'react-native-paper';
+import { Button, Card, IconButton, Divider, FAB, Dialog,Portal,Provider } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useState, useEffect } from 'react';
@@ -145,11 +145,6 @@ interface CardProps {
 
 export const CardwithButtons = (props: CardProps) => {
   const [MenuVisible, setMenuVisible] = useState(false);
-  const [visible, setVisible] = React.useState(false);
-
-  const showDialog = () => setVisible(true);
-
-  const hideDialog = () => setVisible(false);
   const toggleMenu = () => {
     setMenuVisible(!MenuVisible);
   };
@@ -211,20 +206,10 @@ export const CardwithButtons = (props: CardProps) => {
           {global.gUserId != props.content.userID && <Button style={{ height: 50, paddingTop: 5 }} onPress={() => {
           }}>举报</Button>}
           {global.gUserId === props.content.userID && <Divider />}
-          {global.gUserId === props.content.userID && <Button style={{ height: 50, paddingTop: 5 }} onPress={showDialog
+          {global.gUserId === props.content.userID && <Button style={{ height: 50, paddingTop: 5 }} onPress={onDelete
           }>删除</Button>}
         </View>
       </Modal>
-      <Dialog visible={visible} onDismiss={hideDialog}>
-        <Dialog.Title>提示</Dialog.Title>
-        <Dialog.Content>
-          <Text>你确定要删？</Text>
-        </Dialog.Content>
-        <Dialog.Actions>
-          <Button onPress={onDelete}>确定</Button>
-          <Button onPress={hideDialog}>取消</Button>
-        </Dialog.Actions>
-      </Dialog>
     </View>
   );
 };

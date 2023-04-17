@@ -98,11 +98,6 @@ function CommentCard(props: CardProps) {
   const toggleMenu = () => {
     setMenuVisible(!MenuVisible);
   };
-  const [visible, setVisible] = React.useState(false);
-
-  const showDialog = () => setVisible(true);
-
-  const hideDialog = () => setVisible(false);
   async function onDelete() {
     const res = await requestApi('get', '/deleteComment', { comment_id: props.content.commentId }, true, '删除失败');
     setMenuVisible(!MenuVisible);
@@ -144,22 +139,13 @@ function CommentCard(props: CardProps) {
           {global.gUserId != props.content.userID && <Button style={{ height: 50, paddingTop: 5 }} onPress={() => {
           }}>举报</Button>}
           {global.gUserId !== props.content.userID && <Divider />}
-          {global.gUserId === props.content.userID && <Button style={{ height: 50, paddingTop: 5 }} onPress={showDialog
+          {global.gUserId === props.content.userID && <Button style={{ height: 50, paddingTop: 5 }} onPress={onDelete
           }>删除</Button>}
           {global.gUserId === props.content.userID && <Divider />}
           <Button style={{ height: 50, paddingTop: 5 }} onPress={toggleMenu}>取消</Button>
         </View>
       </Modal>
-      <Dialog visible={visible} onDismiss={hideDialog}>
-        <Dialog.Title>提示</Dialog.Title>
-        <Dialog.Content>
-          <Text>你确定要删？</Text>
-        </Dialog.Content>
-        <Dialog.Actions>
-          <Button onPress={onDelete}>确定</Button>
-          <Button onPress={hideDialog}>取消</Button>
-        </Dialog.Actions>
-      </Dialog>
+      
     </View>
   );
 }
