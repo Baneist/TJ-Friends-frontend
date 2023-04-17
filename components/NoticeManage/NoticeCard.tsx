@@ -76,3 +76,41 @@ interface NoticeProps {
       </TouchableOpacity>
     );
   };
+
+  interface NoticeDetailedProps {
+    message: string;
+    timeStamp: Date;
+    senderName: string;
+    senderAvatar: string;
+    undealNum: number;
+    originPostId: number;
+    originCommentId: number;
+    originPostTitle: string;
+    noticeId: number;
+  };
+
+  export const NoticeCardDetailed = ({ message, timeStamp, senderName, senderAvatar, undealNum,noticeId ,originCommentId, originPostId, originPostTitle }: NoticeDetailedProps) => {
+    return (
+      <TouchableOpacity style={styles.container} onPress={()=>{ console.log('click') }}>
+        <View style={styles.container}>
+          <View style={styles.avatarContainer}>
+            <Image source={{ uri: senderAvatar }} style={styles.avatarImage} />
+          </View>
+          <View style={styles.contentContainer}>
+            <View style={styles.headerContainer}>
+              <Text style={styles.senderNameText}>{senderName}</Text>
+              <Text style={styles.timestampText}>{timeStamp.toLocaleString()}</Text>
+            </View>
+            <View style={styles.messageContainer}>
+              <Text style={styles.messageText}>{message}</Text>
+            </View>
+            <View style={{backgroundColor: '#f2f2f2', padding: 10, borderLeftWidth: 5, borderLeftColor: '#ccc'}}>
+              <Text style={{fontSize: 16, fontWeight: 'bold'}}>{originPostTitle}</Text>
+            </View>
+
+          </View>
+          {undealNum > 0 && <DialogBadge count={undealNum} />}
+        </View>
+      </TouchableOpacity>
+    );
+  };

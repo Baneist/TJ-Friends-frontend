@@ -6,11 +6,11 @@ import {IconButton} from 'react-native-paper';
 import { View, Text,Image, StyleSheet, Dimensions, Alert, TouchableOpacity, FlatList, RefreshControl, ScrollView} from 'react-native';
 import axios from 'axios';
 import { NoticeCard } from '../../components/NoticeManage/NoticeCard';
+import { useFocusEffect } from '@react-navigation/native';
 
 export const styles = StyleSheet.create({
   btscreen: {
     flexDirection: 'row',
-    alignItems: 'center',
     justifyContent: 'space-evenly',
     height: 100,
     width: Dimensions.get('window').width,
@@ -32,42 +32,43 @@ export const styles = StyleSheet.create({
 
 interface NoticeManageProps {
    count: number;
+   onPress: any;
 }
 
-function NoticeLikeButton({count} : NoticeManageProps) {
+function NoticeLikeButton({count, onPress} : NoticeManageProps) {
   return (
     <View style={{ alignItems: 'center' }}>
-      <IconButton icon='heart' key={'heart'} size={30} onPress={() => { Alert.alert('a', 'b') }} />
+      <IconButton icon='heart' key={'heart'} size={30} onPress={onPress}/>
       <Text style={styles.label1}>喜欢我的</Text>
       {count > 0 && <Badge count={count} />}
     </View>
   );
 }
 
-function NoticeCommentButton({count} : NoticeManageProps) {
+function NoticeCommentButton({count, onPress} : NoticeManageProps) {
   return (
     <View style={{ alignItems: 'center' }}>
-      <IconButton icon='comment' key={'comment'} size={30} onPress={() => { }} />
+      <IconButton icon='comment' key={'comment'} size={30} onPress={onPress} />
       <Text style={styles.label1}>评论我的</Text>
       {count > 0 && <Badge count={count} />}
     </View>
   );
 }
 
-function NoticeShareButton({count} : NoticeManageProps) {
+function NoticeShareButton({count, onPress} : NoticeManageProps) {
   return (
     <View style={{ alignItems: 'center' }}>
-      <IconButton icon='share' key={'share'} size={30} onPress={() => { }} />
+      <IconButton icon='share' key={'share'} size={30} onPress={onPress} />
       <Text style={styles.label1}>转发我的</Text>
       {count > 0 && <Badge count={count} />}
     </View>
   );
 }
 
-function NoticeFollowButton({count} : NoticeManageProps) {
+function NoticeFollowButton({count, onPress} : NoticeManageProps) {
   return (
     <View style={{ alignItems: 'center' }}>
-      <IconButton icon='eye' key={'share'} size={30} onPress={() => { }} />
+      <IconButton icon='eye' key={'share'} size={30} onPress={onPress} />
       <Text style={styles.label1}>我关注的</Text>
       {count > 0 && <Badge count={count} />}
     </View>
@@ -77,10 +78,10 @@ function NoticeFollowButton({count} : NoticeManageProps) {
 const num4eachData = {
    code: 200,
    data: {
-    commentnum: 0,
-    follownum: 0,
-    likenum: 0,
-    sharenum: 0,
+    commentNum: 0,
+    followNum: 0,
+    likeNum: 0,
+    shareNum: 0,
    }
 };
 
@@ -90,14 +91,16 @@ const messageData = {
     lastMessage:"id Lorem est mollit",
     senderName:"现受强写建",
     senderAvatar:"http://dummyimage.com/100x100",
-    timestamp:"2017-10-26 16:56:04",
-    undeal_num:57,
+    timeStamp:"2017-10-26 16:56:04",
+    undealNum:57,
   },
   ]
 }
 ;
 
 const NoticeManageScreen = ({ route, navigation }: NavigationProps) => {
+  const httpGetAllMessage = 'https://mock.apifox.cn/m1/2539601-0-default/notice/1/getAllMessage';
+  const httpGetAllNoticeNum = 'https://mock.apifox.cn/m1/2539601-0-default/notice/1/num4each';
   const [refreshing_notice, setRefreshingNotice] = useState(false);
   const [refreshing_message, setRefreshingMessage] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -105,7 +108,7 @@ const NoticeManageScreen = ({ route, navigation }: NavigationProps) => {
   const [amsdata, setamsData] = useState(messageData);
   const onRefresh = () => {// 发送 GET 请求获取新增提醒数据
     setRefreshingNotice(true); setRefreshingMessage(true); setRefreshing(true);
-    axios.get('https://mock.apifox.cn/m1/2539601-0-default/notice/1/num4each')
+    axios.get(httpGetAllNoticeNum)
     .then(response => {
       const datarecv = response.data;
       setnum4eachData(datarecv);
@@ -116,7 +119,7 @@ const NoticeManageScreen = ({ route, navigation }: NavigationProps) => {
       console.log(error);
       setRefreshingNotice(false); if(refreshing_message == false){setRefreshing(false);}
     });
-    axios.get('https://mock.apifox.cn/m1/2539601-0-default/notice/1/allmessage')
+    axios.get(httpGetAllMessage)
     .then(response => {
       const datarecv = response.data;
       setamsData(datarecv);
@@ -129,7 +132,7 @@ const NoticeManageScreen = ({ route, navigation }: NavigationProps) => {
     });
   };
   useEffect(() => {// 发送 GET 请求获取新增提醒数据
-    axios.get('https://mock.apifox.cn/m1/2539601-0-default/notice/1/num4each')
+    axios.get(httpGetAllNoticeNum)
       .then(response => {
         const datarecv = response.data;
         setnum4eachData(datarecv);
@@ -139,7 +142,7 @@ const NoticeManageScreen = ({ route, navigation }: NavigationProps) => {
       .catch(error => {
         console.error(error);
       });
-      axios.get('https://mock.apifox.cn/m1/2539601-0-default/notice/1/allmessage')
+      axios.get(httpGetAllMessage)
       .then(response => {
         const datarecv = response.data;
         setamsData(datarecv);
@@ -149,13 +152,14 @@ const NoticeManageScreen = ({ route, navigation }: NavigationProps) => {
         console.error(error);
       });
   }, []);
-  const msitems = amsdata.data.map((item) => 
+  const msitems = amsdata.data.map((item:any, index:number) => 
     <NoticeCard
+      key={index}
       message={item.lastMessage}
-      timestamp={new Date(item.timestamp)}
+      timestamp={new Date(item.timeStamp)}
       senderName={item.senderName}
       senderAvatar={item.senderAvatar}
-      undeal_num={item.undeal_num}
+      undeal_num={item.undealNum}
     />
   );
   return (
@@ -163,10 +167,10 @@ const NoticeManageScreen = ({ route, navigation }: NavigationProps) => {
         <RefreshControl refreshing={refreshing || refreshing_notice} onRefresh={onRefresh} />
       }>
         <View style={ styles.btscreen }>
-          <NoticeLikeButton count={n4edata.data.likenum} />
-          <NoticeCommentButton count={n4edata.data.commentnum}/>
-          <NoticeShareButton count={n4edata.data.sharenum}/>
-          <NoticeFollowButton count={n4edata.data.follownum}/>
+          <NoticeLikeButton count={n4edata.data.likeNum} onPress={() => {navigation.navigate('NoticeDetailScreen', {type:'like'}); setnum4eachData({code:n4edata.code, data:{commentNum:n4edata.data.commentNum,followNum:n4edata.data.followNum,likeNum:0,shareNum:n4edata.data.shareNum,}});}}/>
+          <NoticeCommentButton count={n4edata.data.commentNum} onPress={() => {navigation.navigate('NoticeDetailScreen', {type:'comment'}); setnum4eachData({code:n4edata.code, data:{commentNum:0,followNum:n4edata.data.followNum,likeNum:n4edata.data.likeNum,shareNum:n4edata.data.shareNum,}});}}/>
+          <NoticeShareButton count={n4edata.data.shareNum} onPress={() => {navigation.navigate('NoticeDetailScreen', {type:'share'}); setnum4eachData({code:n4edata.code, data:{commentNum:n4edata.data.commentNum,followNum:n4edata.data.followNum,likeNum:n4edata.data.likeNum,shareNum:0,}});}}/>
+          <NoticeFollowButton count={n4edata.data.followNum} onPress={() => {navigation.navigate('NoticeDetailScreen', {type:'follow'}); setnum4eachData({code:n4edata.code, data:{commentNum:n4edata.data.commentNum,followNum:0,likeNum:n4edata.data.likeNum,shareNum:n4edata.data.shareNum,}});}}/>
         </View>
         <View style={ {height: 0, marginTop:20} } />
         <View>

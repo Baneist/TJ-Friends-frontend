@@ -22,6 +22,8 @@ import NoticeManageScreen from './pages/noticeManage/NoticeManage';
 import EditLabel from './pages/userInfo/EditInfo/EditLabel';
 import api from './utils/request';
 import axios from 'axios';
+import NoticeDetailScreen from './pages/noticeManage/NoticeDetail';
+
 
 const GetUrl = "https://1.tongji.edu.cn/api/ssoservice/system/loginIn";
 const TargetUrl = "https://1.tongji.edu.cn/ssologin";
@@ -42,7 +44,8 @@ type RootStackParamList = {
   EditStatus: undefined,
   EditLabel: undefined,
   FollowingList: undefined,
-  FollowersList: undefined
+  FollowersList: undefined,
+  NoticeDetailScreen: { type: string },
 };
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -145,6 +148,7 @@ const App = () => {
           <Stack.Screen name="EditLabel" component={EditLabel} options={{ headerBackTitle: 'Back' }} />
           <Stack.Screen name="NoticeManageScreen" component={NoticeManageScreen} options={{ headerBackTitle: 'Back' }} />
           <Stack.Screen name="FollowersList" component={FollowersList} options={{ headerBackTitle: 'Back' }} />
+          <Stack.Screen name="NoticeDetailScreen" component={NoticeDetailScreen} options={{ headerBackTitle: 'Back' }} />
           <Stack.Screen name="FollowingList" component={FollowingList} options={{ headerBackTitle: 'Back' }} />
         </Stack.Navigator>
       </NavigationContainer>
