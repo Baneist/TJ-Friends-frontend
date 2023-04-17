@@ -119,7 +119,7 @@ export const defaultInfo = {
 
 const Profile = ({ navigation }: StackNavigationProps) => {
   //state
-  const userId = '2052909';
+  const userId = '2052333';
   //个人信息
   const [userInfo, setUserInfo] = useState<userProp>(defaultInfo);
   console.log(userInfo)
