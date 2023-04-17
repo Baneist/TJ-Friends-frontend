@@ -1,6 +1,6 @@
 import React from 'react';
 import { Pressable, ScrollView, View, Image, StyleSheet, Text } from 'react-native';
-import { Button, Card, IconButton, Divider, FAB } from 'react-native-paper';
+import { Button, Card, IconButton, Divider, FAB, Dialog,Portal,Provider } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useState, useEffect } from 'react';
@@ -136,29 +136,29 @@ const FloatButton = ({ onPressFAB }: { onPressFAB: () => void }) => (
 );
 
 interface CardProps {
-  onCommentPress: () => void,
+  onCommentPress?: () => void,
   clickAvatar?: () => void,
   key?: number,
   content?: any,
-  navigation?:any
+  navigation?: any
 }
 
 export const CardwithButtons = (props: CardProps) => {
   const [MenuVisible, setMenuVisible] = useState(false);
-
   const toggleMenu = () => {
     setMenuVisible(!MenuVisible);
   };
 
   async function onDelete() {
     const res = await requestApi('get', `/deleteMemory/${props.content.postId}`, null, true, '删除失败');
-    // if(res.code==0){
-    //   console.log(res)
-    // }
+    if (res.code == 0) {
+
+    }
     setMenuVisible(!MenuVisible);
   };
-  function onEdit(){
-    props.navigation.navigate('EditPost',{postId:props.content.postId})
+  function onEdit() {
+    console.log(props.content.postId);
+    props.navigation.navigate('EditPost', { postId: props.content.postId })
     setMenuVisible(!MenuVisible);
   }
   return (
@@ -197,20 +197,19 @@ export const CardwithButtons = (props: CardProps) => {
         style={styles.modal}
       >
         <View style={styles.menu}>
-          <Button style={{ height: 50, paddingTop: 5 }} onPress={onEdit
-          }>编辑</Button>
-          <Divider />
+          {global.gUserId === props.content.userID && <Button style={{ height: 50, paddingTop: 5 }} onPress={onEdit
+          }>编辑</Button>}
+          {global.gUserId === props.content.userID && <Divider />}
           <Button style={{ height: 50, paddingTop: 5 }} onPress={() => {
           }}>收藏</Button>
-          <Divider />
-          <Button style={{ height: 50, paddingTop: 5 }} onPress={() => {
-          }}>举报</Button>
-          <Divider />
-          <Button style={{ height: 50, paddingTop: 5 }} onPress={onDelete
-          }>删除</Button>
+          {global.gUserId != props.content.userID && <Divider />}
+          {global.gUserId != props.content.userID && <Button style={{ height: 50, paddingTop: 5 }} onPress={() => {
+          }}>举报</Button>}
+          {global.gUserId === props.content.userID && <Divider />}
+          {global.gUserId === props.content.userID && <Button style={{ height: 50, paddingTop: 5 }} onPress={onDelete
+          }>删除</Button>}
         </View>
       </Modal>
-
     </View>
   );
 };
@@ -218,7 +217,7 @@ export const CardwithButtons = (props: CardProps) => {
 const MemoriesScreen = ({ navigation }: StackNavigationProps) => {
   const { bottom } = useSafeAreaInsets();
   const onCommentPress = (postID: string) => {
-    navigation.navigate('Comment', { userId: '2052333', postId: postID });
+    navigation.navigate('Comment', { postId: postID });
   }
 
   function clickAvatar() {
