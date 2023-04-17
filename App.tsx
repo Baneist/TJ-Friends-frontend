@@ -35,6 +35,7 @@ import EditLabel from "./pages/userInfo/EditInfo/EditLabel";
 
 import Login from "./pages/Login";
 import requestApi from "./utils/request";
+import EditPost from "./pages/EditPost";
 
 const GetUrl = "https://1.tongji.edu.cn/api/ssoservice/system/loginIn";
 const TargetUrl = "https://1.tongji.edu.cn/ssologin";
@@ -51,6 +52,7 @@ type RootStackParamList = {
   Comment: { userId: string, postId: string } | undefined;
   Memories: undefined;
   Post: undefined;
+  EditPost: {postId: string };
   EditProfile: { userId: string } | undefined;
   EditNickName: { userId: string } | undefined;
   EditInterest: { userId: string } | undefined;
@@ -185,6 +187,11 @@ const App = () => {
           <Stack.Screen
             name="Post"
             component={PostPage}
+            options={{headerBackTitle: "Back"}}
+          />
+          <Stack.Screen
+            name="EditPost"
+            component={EditPost}
             options={{headerBackTitle: "Back"}}
           />
           <Stack.Screen

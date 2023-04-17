@@ -9,7 +9,6 @@ import { StackNavigationProps } from '../App';
 import requestApi from '../utils/request';
 import handleAxiosError from "../utils/handleError";
 
-
 export const styles = StyleSheet.create({
   userphoto: {
     width: 42,
@@ -28,7 +27,7 @@ export const styles = StyleSheet.create({
   },
   menu: {
     backgroundColor: '#fff',
-    padding: 20,
+    padding: 10,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
   },
@@ -140,7 +139,8 @@ interface CardProps {
   onCommentPress: () => void,
   clickAvatar?: () => void,
   key?: number,
-  content?: any
+  content?: any,
+  navigation?:any
 }
 
 export const CardwithButtons = (props: CardProps) => {
@@ -150,6 +150,17 @@ export const CardwithButtons = (props: CardProps) => {
     setMenuVisible(!MenuVisible);
   };
 
+  async function onDelete() {
+    const res = await requestApi('get', `/deleteMemory/${props.content.postId}`, null, true, '删除失败');
+    // if(res.code==0){
+    //   console.log(res)
+    // }
+    setMenuVisible(!MenuVisible);
+  };
+  function onEdit(){
+    props.navigation.navigate('EditPost',{postId:props.content.postId})
+    setMenuVisible(!MenuVisible);
+  }
   return (
     <View>
       <Card elevation={5} style={{ margin: 5 }}>
@@ -163,7 +174,7 @@ export const CardwithButtons = (props: CardProps) => {
           right={() => <IconButton icon='dots-horizontal' onPress={toggleMenu} />}
         />
         <Pressable onPress={props.onCommentPress}>
-          <Card.Cover source={{ uri: props.content.postPhoto }} />
+          <Card.Cover source={{ uri: props.content.postPhoto === "" ? "http://dummyimage.com/400x400" : props.content.postPhoto }} />
         </Pressable>
         <Card.Actions>
           <Like
@@ -186,14 +197,17 @@ export const CardwithButtons = (props: CardProps) => {
         style={styles.modal}
       >
         <View style={styles.menu}>
-          <Button style={{ height: 50 }} onPress={() => {
+          <Button style={{ height: 50, paddingTop: 5 }} onPress={onEdit
+          }>编辑</Button>
+          <Divider />
+          <Button style={{ height: 50, paddingTop: 5 }} onPress={() => {
           }}>收藏</Button>
           <Divider />
           <Button style={{ height: 50, paddingTop: 5 }} onPress={() => {
           }}>举报</Button>
           <Divider />
-          <Button style={{ height: 50, paddingTop: 10 }} onPress={() => {
-          }}>删除</Button>
+          <Button style={{ height: 50, paddingTop: 5 }} onPress={onDelete
+          }>删除</Button>
         </View>
       </Modal>
 
@@ -204,7 +218,7 @@ export const CardwithButtons = (props: CardProps) => {
 const MemoriesScreen = ({ navigation }: StackNavigationProps) => {
   const { bottom } = useSafeAreaInsets();
   const onCommentPress = (postID: string) => {
-    navigation.navigate('Comment', { userId: '2052909', postId: postID });
+    navigation.navigate('Comment', { userId: '2052333', postId: postID });
   }
 
   function clickAvatar() {
@@ -236,6 +250,7 @@ const MemoriesScreen = ({ navigation }: StackNavigationProps) => {
               content={item}
               onCommentPress={() => onCommentPress(item.postId)}
               clickAvatar={clickAvatar}
+              navigation={navigation}
             />)}
         </View>
         {/* eslint-disable-next-line max-len */}

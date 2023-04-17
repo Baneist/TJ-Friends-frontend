@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {View, TextInput, StyleSheet, Image, Pressable, Keyboard} from 'react-native';
 import {Button, IconButton} from 'react-native-paper';
 import AvatarPicker from "../components/AvatarPicker/PostPicker";
@@ -7,20 +7,28 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import requestApi from '../utils/request';
 import { StackNavigationProps } from '../App';
 
-const PostPage = ({ route, navigation }: StackNavigationProps) => {
+const EditPost = ({ route, navigation }: StackNavigationProps) => {
   const [showAvatarOption, setShowAvatarOption] = useState(false);
   const [text, setText] = useState('');
   const [image, setImage] = useState([] as string[]);
-
+  async function fetchData(){
+    const res = await requestApi('get', `/Memories/${route.params?.postId}`, null, true, 'get memories失败');
+    if (res.code == 0) {
+      setText(res.data.postContent);
+      setImage(res.data.postPhoto);
+    }
+  }
   async function handlePost() {
     // 发送text和image到服务器
     console.log('发布');
-    const res = await requestApi('post', '/Post', { postContent: text, photoUrl: image }, true, 'post失败')
+    const res = await requestApi('put', '/updateMemory/{postId}', { postContent: text, photoUrl: image }, true, '修改失败')
     if (res.code == 0) {
       navigation.goBack();
     }
-  }
-
+  };
+  useEffect(()=>{
+    fetchData()
+  },[])
   function cancelAvatarOption() {
     return (
       setShowAvatarOption(false)
@@ -29,12 +37,6 @@ const PostPage = ({ route, navigation }: StackNavigationProps) => {
 
   function changeImage(uri: string[]) {
     setImage(current => current.concat(uri))
-  }
-
-  function out() {
-    return (
-      console.log(image)
-    );
   }
 
   return (
@@ -99,4 +101,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default PostPage;
+export default EditPost;
