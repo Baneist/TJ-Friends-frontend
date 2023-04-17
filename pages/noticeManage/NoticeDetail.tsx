@@ -46,6 +46,7 @@ const noticeDetailedData = {
   ]
 };
 
+
 interface NoticeDetailScreenProps {
   type: string;
 };
