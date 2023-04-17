@@ -41,7 +41,7 @@ const requestApi = async (method: string, url: string, params:any, data: any, wi
   else{
     contentType = 'application/x-www-form-urlencoded';
   }
-  console.log(contentType)
+  //console.log(contentType)
   const response = await instance.request({
     url, method,params,data, headers: {
       'Content-Type': contentType,

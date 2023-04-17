@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {View, TextInput, StyleSheet, Image, Pressable, Keyboard} from 'react-native';
-import {IconButton} from 'react-native-paper';
+import {Button, IconButton} from 'react-native-paper';
 import AvatarPicker from "../components/AvatarPicker/PostPicker";
 import Icon from 'react-native-vector-icons/Feather';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view'
@@ -55,7 +55,7 @@ const PostPage = ({route, navigation}: StackNavigationProps) => {
         scrollEnabled={false}
         autoFocus={false}
       />
-      <View style={{flexDirection: 'row', flexWrap: 'wrap', position: 'relative', paddingBottom: 100}}>
+      <View style={{flexDirection: 'row', flexWrap: 'wrap', position: 'relative', paddingBottom: 10}}>
         {image.length != 0 && image.map((item, index) =>
           <View>
             <Image source={{uri: item}} style={styles.image}/>
@@ -75,6 +75,9 @@ const PostPage = ({route, navigation}: StackNavigationProps) => {
             size={50}
             onPress={() => setShowAvatarOption(true)}
         />}
+      </View>
+      <View style={{paddingBottom: 100}} >
+      <Button onPress={handlePost} mode='contained'>发送</Button>
       </View>
       <AvatarPicker showAvatarOption={showAvatarOption} onBackdropPress={cancelAvatarOption} setImage={changeImage}/>
     </KeyboardAwareScrollView>
