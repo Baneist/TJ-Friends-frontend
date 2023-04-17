@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Pressable, ScrollView, View, Image, Text, KeyboardAvoidingView, Platform, Dimensions, Keyboard } from 'react-native';
-import { Card, TextInput, Button, Divider, IconButton } from 'react-native-paper';
+import { Card, TextInput, Button, Divider, IconButton, Dialog } from 'react-native-paper';
 import { styles, Share } from './Memories'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -13,7 +13,7 @@ interface CardProps {
   clickAvatar?: () => void,
   content?: any,
   id?: any,
-  navigation?:any
+  navigation?: any
 }
 
 function UserPhoto(props: CardProps) {
@@ -98,8 +98,13 @@ function CommentCard(props: CardProps) {
   const toggleMenu = () => {
     setMenuVisible(!MenuVisible);
   };
+  const [visible, setVisible] = React.useState(false);
+
+  const showDialog = () => setVisible(true);
+
+  const hideDialog = () => setVisible(false);
   async function onDelete() {
-    const res = await requestApi('get', '/deleteComment', {comment_id:props.content.commentId}, true, '删除失败');
+    const res = await requestApi('get', '/deleteComment', { comment_id: props.content.commentId }, true, '删除失败');
     setMenuVisible(!MenuVisible);
   };
   return (
@@ -121,7 +126,7 @@ function CommentCard(props: CardProps) {
               content={props.content}
             />}
             right={() => <Thumb
-              content={props.content}/>}
+              content={props.content} />}
           />
           <Card.Content style={{ marginLeft: 55 }}>
             <Text>
@@ -139,12 +144,22 @@ function CommentCard(props: CardProps) {
           {global.gUserId != props.content.userID && <Button style={{ height: 50, paddingTop: 5 }} onPress={() => {
           }}>举报</Button>}
           {global.gUserId !== props.content.userID && <Divider />}
-          {global.gUserId === props.content.userID && <Button style={{ height: 50, paddingTop: 5 }} onPress={onDelete
+          {global.gUserId === props.content.userID && <Button style={{ height: 50, paddingTop: 5 }} onPress={showDialog
           }>删除</Button>}
           {global.gUserId === props.content.userID && <Divider />}
           <Button style={{ height: 50, paddingTop: 5 }} onPress={toggleMenu}>取消</Button>
         </View>
       </Modal>
+      <Dialog visible={visible} onDismiss={hideDialog}>
+        <Dialog.Title>提示</Dialog.Title>
+        <Dialog.Content>
+          <Text>你确定要删？</Text>
+        </Dialog.Content>
+        <Dialog.Actions>
+          <Button onPress={onDelete}>确定</Button>
+          <Button onPress={hideDialog}>取消</Button>
+        </Dialog.Actions>
+      </Dialog>
     </View>
   );
 }
@@ -164,8 +179,8 @@ function DetailedCard(props: CardProps) {
     // }
     setMenuVisible(!MenuVisible);
   };
-  function onEdit(){
-    props.navigation.navigate('EditPost',{postId:props.content.postId})
+  function onEdit() {
+    props.navigation.navigate('EditPost', { postId: props.content.postId })
     setMenuVisible(!MenuVisible);
   }
   return (
@@ -176,7 +191,7 @@ function DetailedCard(props: CardProps) {
           subtitle={props.content.postTime}
           left={() => <UserPhoto
             clickAvatar={props.clickAvatar}
-            content={props.content}/>}
+            content={props.content} />}
           right={() => <IconButton icon='dots-horizontal' onPress={toggleMenu} />}
         />
         <Card.Content>
@@ -199,8 +214,8 @@ function DetailedCard(props: CardProps) {
           />
         )}
         <View style={{ justifyContent: 'space-evenly', flexDirection: 'row', paddingBottom: 10, paddingTop: 10 }}>
-          <Like  content={props.content} id={props.id} />
-          <Share  content={props.content} />
+          <Like content={props.content} id={props.id} />
+          <Share content={props.content} />
         </View>
       </Card>
       <Modal
