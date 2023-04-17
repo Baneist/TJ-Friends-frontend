@@ -162,10 +162,6 @@ const Profile = ({ navigation }: StackNavigationProps) => {
     navigation.navigate("FollowersList");
   }
 
-  // 查看评论列表
-  const onCommentPress = () => {
-    navigation.navigate("Comment");
-  }
 
   // 性别
   const Gender = () => {
@@ -300,7 +296,7 @@ const Profile = ({ navigation }: StackNavigationProps) => {
                 <Text bold size={16} color="#525F7F" style={{ marginTop: 12, marginLeft: 12 }}>
                   Moments
                 </Text>
-                {/* <MomentsList onCommentPress={onCommentPress}/> */}
+                <MomentsList navigation={navigation}/>
               </Block>
             </Block>
             {/* eslint-disable-next-line max-len */}

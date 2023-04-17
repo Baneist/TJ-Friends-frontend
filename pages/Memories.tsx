@@ -9,7 +9,6 @@ import { StackNavigationProps } from '../App';
 import requestApi from '../utils/request';
 import handleAxiosError from "../utils/handleError";
 
-let changed=false;
 export const styles = StyleSheet.create({
   userphoto: {
     width: 42,
