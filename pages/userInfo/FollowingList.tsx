@@ -13,8 +13,8 @@ export interface followProp {
   isfollowing: boolean
 }
 // 关注列表页面
-const FollowingList = ({ navigation }: StackNavigationProps) => {
-  const stuid = global.gUserId;
+const FollowingList = ({route, navigation }: StackNavigationProps) => {
+  const stuid = route.params?.userId;
   //关注的用户信息
   const [followlist, setlist] = useState([] as userProp[]);
   //是否在关注

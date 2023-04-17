@@ -154,12 +154,12 @@ const Profile = ({ navigation }: StackNavigationProps) => {
 
   // 查看关注列表
   const viewFollowing = () => {
-    navigation.navigate("FollowingList");
+    navigation.navigate("FollowingList",{userId:userId});
   }
 
   // 查看粉丝列表
   const viewFollower = () => {
-    navigation.navigate("FollowersList");
+    navigation.navigate("FollowersList",{userId:userId});
   }
 
 
@@ -296,7 +296,7 @@ const Profile = ({ navigation }: StackNavigationProps) => {
                 <Text bold size={16} color="#525F7F" style={{ marginTop: 12, marginLeft: 12 }}>
                   Moments
                 </Text>
-                <MomentsList navigation={navigation}/>
+                <MomentsList navigation={navigation} postIDs={[1]}/>
               </Block>
             </Block>
             {/* eslint-disable-next-line max-len */}

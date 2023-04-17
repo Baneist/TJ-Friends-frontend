@@ -15,9 +15,9 @@ const { width, height } = Dimensions.get('screen');
 // 关注列表页面
 const FollowersList = ({ route, navigation }: StackNavigationProps) => {
   //正在查看的是谁
-  const pageUser = '2053186';
+  const pageUser = route.params?.userId;
   //当前用户
-  const curUser = '2053302';
+  const curUser = global.gUserId;
   //关注的用户信息
   const [followerlist, setlist] = useState([] as userProp[]);
   //是否在关注
@@ -28,7 +28,7 @@ const FollowersList = ({ route, navigation }: StackNavigationProps) => {
   let idlist = [] as followProp[];
   async function fetchData() {
     const res = await requestApi('get', `/profile/${pageUser}/followers`, null, true, 'Get Followers failed');
-    if (res.code == 0) {
+    if (res.code === 0) {
       idlist = res.data.followers;
       let reqList: Promise<AxiosResponse>[] = [];
       for (let i = 0; i < idlist.length; ++i) {
@@ -54,39 +54,29 @@ const FollowersList = ({ route, navigation }: StackNavigationProps) => {
 
   // 关注/取消关注用户
   async function toggleFollow(user: followProp) {
+    let res:AxiosResponse['data'];
     if (user.isfollowing) { //取关
-
-      const res = await requestApi('post', '/unfollow', { stuid: user.userID }, true, 'unfollow failed');
-      if (res.status == 200) {
-        const newList = statusList.map((item, idx) => {
-          if (item.userID === user.userID) {
-            item.isfollowing = !item.isfollowing;
-            return item;
-          }
-          else {
-            return item;
-          }
-        })
-        setstatusList(newList)
-        //粉丝列表的回粉信息交给后端修改
-      }
+      res = await requestApi('post', '/unfollow', { stuid: user.userID }, true, 'unfollow failed');
     }
     else { //关注
-      const res = await requestApi('post', '/follow', { stuid: user.userID }, true, 'follow failed');
-      if (res.status == 200) {
-        const newList = statusList.map((item, idx) => {
-          if (item.userID === user.userID) {
-            item.isfollowing = !item.isfollowing;
-            return item;
-          }
-          else {
-            return item;
-          }
-        })
-        setstatusList(newList)
-        //粉丝列表的回粉信息交给后端修改
-      }
+      res = await requestApi('post', '/follow', { stuid: user.userID }, true, 'follow failed');
     }
+    if(res.code===0){
+    const newList = statusList.map((item, idx) => {
+      if (item.userID === user.userID) {
+        item.isfollowing = !item.isfollowing;
+        return item;
+      }
+      else {
+        return item;
+      }
+    })
+    setstatusList(newList)
+    //粉丝列表的回粉信息交给后端修改
+  }
+  else{
+    console.log('code err', res.code)
+  }
   }
 
   return (

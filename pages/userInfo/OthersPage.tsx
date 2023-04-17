@@ -10,6 +10,7 @@ import { defaultInfo, userProp } from "./Profile";
 import requestApi from "../../utils/request";
 import { styles } from "./Profile.style";
 import { GENDER } from "./Profile";
+import { useFocusEffect } from '@react-navigation/native';
 
 //获取屏幕宽高
 const { width } = Dimensions.get("screen");
@@ -52,10 +53,18 @@ const Profile = ({ navigation }: StackNavigationProps) => {
     handleApiResponse(resFollower, () => { setFollowerNum(resFollower.data.followers.length); setFollowing(resFollower.data.followers.indexOf(curUser) != -1); });
   }
 
-  useEffect(() => {
-    //获取数据
-    fetchData()
-  }, [])
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchData()
+      return () => {
+      };
+    }, [])
+  );
+  // useEffect(() => {
+  //   //获取数据
+  //   fetchData()
+
+  // }, [])
 
   //编辑个人资料
   function editProfile() {
@@ -243,7 +252,7 @@ const Profile = ({ navigation }: StackNavigationProps) => {
                 <Text bold size={16} color="#525F7F" style={{ marginTop: 12, marginLeft: 12 }}>
                   Moments
                 </Text>
-                <MomentsList navigation={navigation} />
+                <MomentsList navigation={navigation} postIDs={[1]}/>
               </Block>
             </Block>
             {/* eslint-disable-next-line max-len */}
