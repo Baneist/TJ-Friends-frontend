@@ -15,7 +15,7 @@ import styles from "./Login.style";
 import TextField from "../components/TextField/TextField";
 import SocialButton from "../components/LoginSocialButton/SocialButton";
 import requestApi from "../utils/request";
-import {StackNavigationProps} from "../App";
+import { StackNavigationProps } from "../App";
 import handleAxiosError from "../utils/handleError";
 
 // ? Assets
@@ -161,18 +161,14 @@ const Login = (props: ISocialLoginProps) => {
   };
 
   const onHandleLoginPress = async () => {
-    try {
-      const data = (await requestApi('post', '/login', null, { username, password }, false)).data;
-      if (data.code === 0) {
-        props.navigation.replace('Main', {
-          userId: username
-        });
-      } else {
-        props.navigation.replace('Login');
-        Alert.alert('登录失败', data.msg);
-      }
-    } catch (error) {
-      handleAxiosError(error, '登录失败');
+    const data = await requestApi('post', '/login', null, { username, password }, false, '登录失败');
+    if (data.code === 0) {
+      props.navigation.replace('Main', {
+        userId: username
+      });
+    } else {
+      props.navigation.replace('Login');
+      Alert.alert('登录失败', data.msg);
     }
   }
 
@@ -200,14 +196,7 @@ const Login = (props: ISocialLoginProps) => {
     );
   };
 
-  const onAppleLoginPress = async () => {
-    try {
-      const res = await requestApi('get', '/profile/2053186',null, null, true);
-      Alert.alert('用户信息', JSON.stringify(res.data));
-    } catch (error) {
-      handleAxiosError(error);
-    }
-  }
+  const onAppleLoginPress = async () => { }
 
   const renderAppleLoginButton = () => {
     const {

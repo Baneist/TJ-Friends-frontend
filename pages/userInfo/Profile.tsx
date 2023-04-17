@@ -1,5 +1,5 @@
-import React, {useState} from "react";
-import {useSafeAreaInsets} from 'react-native-safe-area-context';
+import React, { useState } from "react";
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   View,
   ScrollView,
@@ -7,20 +7,20 @@ import {
   ImageBackground,
   Pressable, Dimensions
 } from "react-native";
-import {Button, List, Chip} from 'react-native-paper';
-import {Block, Text} from "galio-framework";
+import { Button, List, Chip } from 'react-native-paper';
+import { Block, Text } from "galio-framework";
 import Icon from 'react-native-vector-icons/AntDesign';
-import {MomentsList} from "../../components/MomentsList/MomentsList";
-import {StackNavigationProps} from '../../App'
+import { MomentsList } from "../../components/MomentsList/MomentsList";
+import { StackNavigationProps } from '../../App'
 import requestApi from "../../utils/request";
 import handleAxiosError from "../../utils/handleError";
-import {useFocusEffect} from '@react-navigation/native';
-import {styles} from "./Profile.style";
-import {AxiosResponse} from "axios";
+import { useFocusEffect } from '@react-navigation/native';
+import { styles } from "./Profile.style";
+import { AxiosResponse } from "axios";
 
 enum GENDER { Male = "男", Female = "女" }
 
-const {width} = Dimensions.get("screen");
+const { width } = Dimensions.get("screen");
 
 //图片
 const profileImage = {
@@ -117,7 +117,7 @@ export const defaultInfo = {
   "followingPms": false
 }
 
-const Profile = ({navigation}: StackNavigationProps) => {
+const Profile = ({ navigation }: StackNavigationProps) => {
   //state
   const userId = '2052909';
   //个人信息
@@ -127,30 +127,24 @@ const Profile = ({navigation}: StackNavigationProps) => {
   const [followerNum, setFollowerNum] = useState(0);
   const [followingNum, setFollowingNum] = useState(0);
   //显示个人信息
-  const {bottom} = useSafeAreaInsets();
+  const { bottom } = useSafeAreaInsets();
 
-  function handleApiResponse(response: AxiosResponse, callback: () => void) {
-    if (response.data.code == 0) {
+  function handleApiResponse(response: {code: number}, callback: () => void) {
+    if (response.code == 0) {
       callback();
-    } else {
-      console.log('code err', response.data.code);
     }
   }
 
   async function fetchData() {
-    try {
-      //获取资料、关注列表和粉丝列表
-      const [resInfo, resFollowing, resFollower] = await Promise.all([
-        requestApi('get', `/profile/${userId}`, null, null, true),
-        requestApi('get', `/profile/${userId}/followings`, null, null, true),
-        requestApi('get', `/profile/${userId}/followers`, null, null, true),
-      ]);
-      handleApiResponse(resInfo, () => setUserInfo(resInfo.data.data));
-      handleApiResponse(resFollowing, () => setFollowingNum(resFollowing.data.data.followings.length));
-      handleApiResponse(resFollower, () => setFollowerNum(resFollower.data.data.followers.length));
-    } catch (error) {
-      handleAxiosError(error);
-    }
+    //获取资料、关注列表和粉丝列表
+    const [resInfo, resFollowing, resFollower] = await Promise.all([
+      requestApi('get', `/profile/${userId}`, null, null, true, 'getProfile failed'),
+      requestApi('get', `/profile/${userId}/followings`, null, null, true, 'getFollowing failed'),
+      requestApi('get', `/profile/${userId}/followers`, null, null, true, 'getFollower failed'),
+    ]);
+    handleApiResponse(resInfo, () => setUserInfo(resInfo.data));
+    handleApiResponse(resFollowing, () => setFollowingNum(resFollowing.data.followings.length));
+    handleApiResponse(resFollower, () => setFollowerNum(resFollower.data.followers.length));
   }
 
   // 编辑个人资料
@@ -175,8 +169,8 @@ const Profile = ({navigation}: StackNavigationProps) => {
 
   // 性别
   const Gender = () => {
-    return (<Icon name={userInfo.userGender.info === GENDER.Male?'man':'woman'}
-     size={16} color="#32325D" style={{marginTop: 10}}>
+    return (<Icon name={userInfo.userGender.info === GENDER.Male ? 'man' : 'woman'}
+      size={16} color="#32325D" style={{ marginTop: 10 }}>
       {userInfo.userGender.info === GENDER.Male ? GENDER.Male : GENDER.Female}
     </Icon>);
   }
@@ -190,8 +184,8 @@ const Profile = ({navigation}: StackNavigationProps) => {
   );
 
   return (
-    <View style={{flex: 1, marginBottom: bottom}}>
-      <View style={{flex: 1}}>
+    <View style={{ flex: 1, marginBottom: bottom }}>
+      <View style={{ flex: 1 }}>
         {/* 资料卡片 */}
         <ImageBackground
           source={profileImage.ProfileBackground}
@@ -200,13 +194,13 @@ const Profile = ({navigation}: StackNavigationProps) => {
         >
           <ScrollView
             showsVerticalScrollIndicator={false}
-            style={{width}}
+            style={{ width }}
           >
             <Block flex style={styles.profileCard}>
               {/* 头像 */}
               <Block middle style={styles.avatarContainer}>
                 <Image
-                  source={{uri: userInfo.userAvatar.info}}
+                  source={{ uri: userInfo.userAvatar.info }}
                   style={styles.avatar}
                 />
               </Block>
@@ -239,7 +233,7 @@ const Profile = ({navigation}: StackNavigationProps) => {
                     {userInfo.userNickName.info}
                   </Text>
                   {/* 性别 */}
-                  <Gender/>
+                  <Gender />
                   {/* 改资料 */}
                   <Block middle>
                     <Button
@@ -253,57 +247,57 @@ const Profile = ({navigation}: StackNavigationProps) => {
                 </Block>
                 <Block middle>
                   {/* 标签 */}
-                  <List.Section style={{width: width / 1.1}}>
+                  <List.Section style={{ width: width / 1.1 }}>
                     <List.Accordion
                       title="标签"
-                      left={props => <List.Icon {...props} icon="label-multiple"/>}>
-                      <View style={{flex: 1, flexDirection: "row", flexWrap: 'wrap'}}>
+                      left={props => <List.Icon {...props} icon="label-multiple" />}>
+                      <View style={{ flex: 1, flexDirection: "row", flexWrap: 'wrap' }}>
                         {userInfo.userLabel.info.map((label, idx) =>
-                          <Chip key={idx} style={{marginRight: 10, marginBottom: 10}} mode='outlined'>{label}</Chip>
+                          <Chip key={idx} style={{ marginRight: 10, marginBottom: 10 }} mode='outlined'>{label}</Chip>
                         )}
                       </View>
                     </List.Accordion>
                   </List.Section>
                   {/* 查看更多信息 */}
-                  <List.Section style={{width: width / 1.1}}>
+                  <List.Section style={{ width: width / 1.1 }}>
                     <List.Accordion
                       title="view more"
-                      left={props => <List.Icon {...props} icon="balloon"/>}>
+                      left={props => <List.Icon {...props} icon="balloon" />}>
                       <List.Item title="学号/姓名"
-                                 description={userInfo.userId.info + '/' + userInfo.userName.info}
-                                 left={props => <List.Icon {...props} icon="emoticon-outline"/>}
+                        description={userInfo.userId.info + '/' + userInfo.userName.info}
+                        left={props => <List.Icon {...props} icon="emoticon-outline" />}
                       />
                       <List.Item title="生日"
-                                 description={userInfo.userBirthDate.info}
-                                 left={props => <List.Icon {...props} icon="cake-variant"/>}
+                        description={userInfo.userBirthDate.info}
+                        left={props => <List.Icon {...props} icon="cake-variant" />}
                       />
                       <List.Item title="学年/专业"
-                                 description={userInfo.userYear.info + '/' + userInfo.userMajor.info}
-                                 left={props => <List.Icon {...props} icon="school"/>}
+                        description={userInfo.userYear.info + '/' + userInfo.userMajor.info}
+                        left={props => <List.Icon {...props} icon="school" />}
                       />
                       <List.Item title="兴趣爱好"
-                                 description={userInfo.userInterest.info}
-                                 left={props => <List.Icon {...props} icon="heart"/>}
+                        description={userInfo.userInterest.info}
+                        left={props => <List.Icon {...props} icon="heart" />}
                       />
                     </List.Accordion>
                   </List.Section>
                 </Block>
                 {/* 分割线 */}
-                <Block middle style={{marginTop: 16, marginBottom: 16}}>
-                  <Block style={styles.divider}/>
+                <Block middle style={{ marginTop: 16, marginBottom: 16 }}>
+                  <Block style={styles.divider} />
                 </Block>
                 {/* 个性签名 */}
                 <Block middle>
                   <Text
                     size={16}
                     color="#525F7F"
-                    style={{textAlign: "center"}}
+                    style={{ textAlign: "center" }}
                   >
                     {userInfo.userStatus.info}
                   </Text>
                 </Block>
                 {/* 动态列表 */}
-                <Text bold size={16} color="#525F7F" style={{marginTop: 12, marginLeft: 12}}>
+                <Text bold size={16} color="#525F7F" style={{ marginTop: 12, marginLeft: 12 }}>
                   Moments
                 </Text>
                 {/* <MomentsList onCommentPress={onCommentPress}/> */}
@@ -311,7 +305,7 @@ const Profile = ({navigation}: StackNavigationProps) => {
             </Block>
             {/* eslint-disable-next-line max-len */}
             {/* -> Set bottom view to allow scrolling to top if you set bottom-bar position absolute */}
-            <View style={{height: 190}}/>
+            <View style={{ height: 190 }} />
           </ScrollView>
         </ImageBackground>
       </View>

@@ -98,38 +98,31 @@ const App = () => {
   }) => {
     const {url} = newNavState;
     if (url?.startsWith(TargetUrl)) {
-      try {
-        let params: { [key: string]: string } = {};
-        for (const pair of url.split("?")[1].split("&")) {
-          const param = pair.split("=");
-          params[param[0]] = param[1];
-        }
-        let data = (await axios.post(PostUrl, params)).data;
-        if (!data?.data) {
-          data = (await axios.get(GetSessionUserUrl)).data;
-        }
-        setIsModalVisible(false);
-        data = (
-          await requestApi(
-            "post",
-            "/register",
-            null,
-            {
-              username,
-              password,
-              id: data.data?.uid,
-              sessionid: data.data?.sessionid,
-            },
-            false
-          )
-        ).data;
-        if (data.code === 0) {
-          navigationRef.current?.dispatch(StackActions.replace("Main"));
-        } else {
-          Alert.alert("注册失败", data.msg);
-        }
-      } catch (error: any) {
-        handleAxiosError(error, "注册失败");
+      let params: { [key: string]: string } = {};
+      for (const pair of url.split("?")[1].split("&")) {
+        const param = pair.split("=");
+        params[param[0]] = param[1];
+      }
+      let data = (await axios.post(PostUrl, params)).data;
+      if (!data?.data) {
+        data = (await axios.get(GetSessionUserUrl)).data;
+      }
+      setIsModalVisible(false);
+      data = await requestApi(
+        "post",
+        "/register",
+        null,
+        {
+          username,
+          password,
+          id: data.data?.uid,
+          sessionid: data.data?.sessionid,
+        },
+        false,
+        '注册失败'
+      );
+      if (data.code === 0) {
+        navigationRef.current?.dispatch(StackActions.replace("Main"));
       }
     }
   };

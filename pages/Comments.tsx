@@ -34,22 +34,14 @@ function Like(props: CardProps) {
 
   function handleClick() {
     async function fetchData() {
-      try {
-        const res = await requestApi('get', `/updateLikeMemory/${props.id}`, null, null, true)
-        if (res.data.code == 0) {
-          setLike(res.data.data.likeNum);
-          setIsLiked(res.data.data.isLiked);
-        } else {
-          console.log('code err', res.data.code)
-        }
-      } catch (error) {
-        handleAxiosError(error);
+      const res = await requestApi('get', `/updateLikeMemory/${props.id}`, null, null, true, 'like失败');
+      if (res.code === 0) {
+        setLike(res.data.likeNum);
+        setIsLiked(res.data.isLiked);
       }
-
     }
 
     fetchData()
-    //console.log(props.content.likeNum);
   }
 
   const clickHeart =
@@ -72,16 +64,10 @@ function Thumb(props: CardProps) {
 
   function handleClick() {
     async function fetchData() {
-      try {
-        const res = await requestApi('get', `/updateLikeComment/${props.content.commentId}`, null, null, true)
-        if (res.data.code == 0) {
-          setLike(res.data.data.likeNum);
-          setIsLiked(res.data.data.isLiked);
-        } else {
-          console.log('code err', res.data.code)
-        }
-      } catch (error) {
-        handleAxiosError(error);
+      const res = await requestApi('get', `/updateLikeComment/${props.content.commentId}`, null, null, true, 'thumb失败');
+      if (res.code == 0) {
+        setLike(res.data.likeNum);
+        setIsLiked(res.data.isLiked);
       }
 
     }
@@ -273,15 +259,12 @@ function Comment({route, navigation}: StackNavigationProps) {
   const [commentlist, setList] = useState(dc);
 
   async function fetchData() {
-
-    const res = await requestApi('get', `/Memories/${id}`, null, null, true)
-    if (res.data.code == 0) {
-      tmp = res.data.data;
+    const res = await requestApi('get', `/Memories/${id}`, null, null, true, 'get memories失败');
+    if (res.code == 0) {
+      tmp = res.data;
       setDetail(tmp);
-      tmp = res.data.data.comments;
+      tmp = res.data.comments;
       setList(tmp);
-    } else {
-      console.log('code err', res.data.code, id)
     }
   }
 
@@ -291,17 +274,8 @@ function Comment({route, navigation}: StackNavigationProps) {
 
   function postComment() {
     async function postData() {
-      try {
-        const res = await requestApi('post', `/postComment`, {postId: id, content: text}, null, true)
-        if (res.data.code != 0) {
-          console.log('code err', res.data.code)
-        }
-      } catch (error) {
-        handleAxiosError(error);
-      }
-
+      await requestApi('post', `/postComment`, {postId: id, content: text}, null, true, 'post comment失败');
     }
-
     postData()
     fetchData()
   }
