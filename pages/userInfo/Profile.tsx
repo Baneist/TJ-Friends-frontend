@@ -18,7 +18,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { styles } from "./Profile.style";
 import { AxiosResponse } from "axios";
 
-enum GENDER { Male = "男", Female = "女" }
+export enum GENDER { Male = "男", Female = "女" }
 
 const { width } = Dimensions.get("screen");
 

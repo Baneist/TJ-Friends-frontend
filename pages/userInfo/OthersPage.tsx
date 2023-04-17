@@ -9,6 +9,7 @@ import { StackNavigationProps } from '../../App'
 import { defaultInfo, userProp } from "./Profile";
 import requestApi from "../../utils/request";
 import { styles } from "./Profile.style";
+import { GENDER } from "./Profile";
 
 //获取屏幕宽高
 const { width } = Dimensions.get("screen");
@@ -97,12 +98,12 @@ const Profile = ({ navigation }: StackNavigationProps) => {
   }
 
 
-  //性别
-  function Gender() {
-    if (userInfo.userGender.info == 'Male')
-      return (<Icon name="man" size={16} color="#32325D" style={{ marginTop: 10 }}>Male</Icon>)
-    else
-      return (<Icon name="woman" size={16} color="#32325D" style={{ marginTop: 10 }}>Female</Icon>)
+  // 性别
+  const Gender = () => {
+    return (<Icon name={userInfo.userGender.info === GENDER.Male ? 'man' : 'woman'}
+      size={16} color="#32325D" style={{ marginTop: 10 }}>
+      {userInfo.userGender.info === GENDER.Male ? GENDER.Male : GENDER.Female}
+    </Icon>);
   }
 
   return (

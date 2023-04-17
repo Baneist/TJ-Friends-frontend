@@ -14,7 +14,7 @@ export interface followProp {
 }
 // 关注列表页面
 const FollowingList = ({ navigation }: StackNavigationProps) => {
-  const stuid = '2053186';
+  const stuid = global.gUserId;
   //关注的用户信息
   const [followlist, setlist] = useState([] as userProp[]);
   //是否在关注
@@ -37,8 +37,7 @@ const FollowingList = ({ navigation }: StackNavigationProps) => {
           //statusList.push({userID:idlist[i], isfollowing:true})
           setstatusList(current => [...current, { userID: idlist[i], isfollowing: true }]);
           //目前profile接口不正常 先这么写凑合着
-          setlist(current => [...current, defaultInfo])
-          //setlist(current => current.concat(values[i].data))
+          setlist(current => current.concat(values[i].data))
         }
       });
     }

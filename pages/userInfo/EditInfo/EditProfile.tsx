@@ -99,7 +99,6 @@ export function EditProfile({ route, navigation }: StackNavigationProps) {
       let formatBirthDate = formatDate(birthday)
       newuser.userBirthDate.info = formatBirthDate;
       const res = await requestApi('put', '/updateUserInfo', newuser, true, '更新生日失败');
-      console.log(res)
       if (res.code === 0) {
         setUserInfo(newuser)
         //发送事件，传递更新的userInfo
@@ -371,7 +370,7 @@ export function EditProfile({ route, navigation }: StackNavigationProps) {
               }}>
                 <Block middle style={styles.avatarContainer}>
                   <Image
-                    source={{ uri: profileImage.ProfilePicture }}
+                    source={{ uri: userInfo.userAvatar.info }}
                     style={styles.avatar}
                   />
                   <AvatarPicker
