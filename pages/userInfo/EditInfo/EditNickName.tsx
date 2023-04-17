@@ -12,7 +12,7 @@ const EditeNickName = ({route, navigation}:StackNavigationProps) =>{
     //state
     const [nickName,setNickName] = useState('1');
     let userInfo = defaultInfo;
-    const userID = '2052123'
+    const userID = '2052909'
     //初始化
     async function fetchData(){
         try{

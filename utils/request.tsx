@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import qs from 'qs';
 
 const BASE_URL = 'http://119.3.178.68:8888';
-
+let contentType = 'application/json';
 const instance = axios.create({
   baseURL: BASE_URL,
 } as const);
@@ -31,11 +31,17 @@ const requestApi = async (method: string, url: string, params:any, data: any, wi
       instance.defaults.headers.common['Authorization'] = "Bearer " + token;
     }
   }
-  let contentType = 'application/json';
   if (url === '/login') {
     contentType = 'application/x-www-form-urlencoded';
     data = qs.stringify(data);
   }
+  else if(method === 'put'|| method === 'post'){
+    contentType = 'application/json';
+  }
+  else{
+    contentType = 'application/x-www-form-urlencoded';
+  }
+  console.log(contentType)
   const response = await instance.request({
     url, method,params,data, headers: {
       'Content-Type': contentType,

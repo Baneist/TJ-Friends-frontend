@@ -122,13 +122,14 @@ const Profile = ({navigation}: StackNavigationProps) => {
   const userId = '2052909';
   //个人信息
   const [userInfo, setUserInfo] = useState<userProp>(defaultInfo);
+  console.log(userInfo)
   //粉丝 关注列表
   const [followerNum, setFollowerNum] = useState(0);
   const [followingNum, setFollowingNum] = useState(0);
   //显示个人信息
   const {bottom} = useSafeAreaInsets();
 
-  function handleApiResponse(response: AxiosResponse, callback: any) {
+  function handleApiResponse(response: AxiosResponse, callback: () => void) {
     if (response.data.code == 0) {
       callback();
     } else {
@@ -174,7 +175,8 @@ const Profile = ({navigation}: StackNavigationProps) => {
 
   // 性别
   const Gender = () => {
-    return (<Icon name="man" size={16} color="#32325D" style={{marginTop: 10}}>
+    return (<Icon name={userInfo.userGender.info === GENDER.Male?'man':'woman'}
+     size={16} color="#32325D" style={{marginTop: 10}}>
       {userInfo.userGender.info === GENDER.Male ? GENDER.Male : GENDER.Female}
     </Icon>);
   }
@@ -182,7 +184,6 @@ const Profile = ({navigation}: StackNavigationProps) => {
   useFocusEffect(
     React.useCallback(() => {
       fetchData()
-      console.log(userInfo)
       return () => {
       };
     }, [])
@@ -228,14 +229,6 @@ const Profile = ({navigation}: StackNavigationProps) => {
                       <Text style={styles.infoName}>Following</Text>
                     </Block>
                   </Pressable>
-                  {/* <Pressable onPress={viewFollower}>
-                    <Block middle>
-                        <Text style={styles.infoNum}>
-                          188
-                        </Text>
-                      <Text style={styles.infoName}>Likes</Text>
-                      </Block>
-                    </Pressable> */}
                 </Block>
               </Block>
               {/* 用户ID 简介等 */}
@@ -313,7 +306,7 @@ const Profile = ({navigation}: StackNavigationProps) => {
                 <Text bold size={16} color="#525F7F" style={{marginTop: 12, marginLeft: 12}}>
                   Moments
                 </Text>
-                <MomentsList onCommentPress={onCommentPress}/>
+                {/* <MomentsList onCommentPress={onCommentPress}/> */}
               </Block>
             </Block>
             {/* eslint-disable-next-line max-len */}
