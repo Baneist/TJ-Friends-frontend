@@ -1,9 +1,8 @@
-import React, { useEffect } from 'react';
-import { View, Switch, Pressable } from 'react-native';
-import { Provider as PaperProvider, TextInput } from 'react-native-paper';
+import React from 'react';
+import { View, Switch } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Text, Block } from "galio-framework";
+import { Text } from "galio-framework";
 import { BottomFabBar } from 'rn-wave-bottom-bar';
 import MemoriesScreen from './Memories';
 import Profile from './userInfo/Profile'

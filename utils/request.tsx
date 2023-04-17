@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import qs from 'qs';
 
 const BASE_URL = 'http://119.3.178.68:8888';
-// const BASE_URL = 'https://mock.apifox.cn/m1/2539601-0-default';
+
 const instance = axios.create({
   baseURL: BASE_URL,
 } as const);
