@@ -8,7 +8,6 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Modal from 'react-native-modal';
 import {StackNavigationProps} from '../App';
 import requestApi from '../utils/request';
-import handleAxiosError from "../utils/handleError";
 
 interface CardProps {
   clickAvatar: () => void,
@@ -34,22 +33,14 @@ function Like(props: CardProps) {
 
   function handleClick() {
     async function fetchData() {
-      try {
-        const res = await requestApi('get', `/updateLikeMemory/${props.id}`, null, null, true)
-        if (res.data.code == 0) {
-          setLike(res.data.data.likeNum);
-          setIsLiked(res.data.data.isLiked);
-        } else {
-          console.log('code err', res.data.code)
-        }
-      } catch (error) {
-        handleAxiosError(error);
+      const res = await requestApi('get', `/updateLikeMemory/${props.id}`, null, true, 'like失败');
+      if (res.code === 0) {
+        setLike(res.data.likeNum);
+        setIsLiked(res.data.isLiked);
       }
-
     }
 
     fetchData()
-    //console.log(props.content.likeNum);
   }
 
   const clickHeart =
@@ -72,16 +63,10 @@ function Thumb(props: CardProps) {
 
   function handleClick() {
     async function fetchData() {
-      try {
-        const res = await requestApi('get', `/updateLikeComment/${props.content.commentId}`, null, null, true)
-        if (res.data.code == 0) {
-          setLike(res.data.data.likeNum);
-          setIsLiked(res.data.data.isLiked);
-        } else {
-          console.log('code err', res.data.code)
-        }
-      } catch (error) {
-        handleAxiosError(error);
+      const res = await requestApi('get', `/updateLikeComment/${props.content.commentId}`, null, true, 'thumb失败');
+      if (res.code == 0) {
+        setLike(res.data.likeNum);
+        setIsLiked(res.data.isLiked);
       }
 
     }
@@ -268,20 +253,14 @@ function Comment({route, navigation}: StackNavigationProps) {
     navigation.navigate('OthersPage');
   }
 
-  let tmp: any;
   const [detail, setDetail] = useState(defaulthh);
   const [commentlist, setList] = useState(dc);
 
   async function fetchData() {
-
-    const res = await requestApi('get', `/Memories/${id}`, null, null, true)
-    if (res.data.code == 0) {
-      tmp = res.data.data;
-      setDetail(tmp);
-      tmp = res.data.data.comments;
-      setList(tmp);
-    } else {
-      console.log('code err', res.data.code, id)
+    const res = await requestApi('get', `/Memories/${id}`, null, true, 'get memories失败');
+    if (res.code == 0) {
+      setDetail(res.data);
+      setList(res.data.comments);
     }
   }
 
@@ -289,20 +268,8 @@ function Comment({route, navigation}: StackNavigationProps) {
     fetchData()
   }, [])
 
-  function postComment() {
-    async function postData() {
-      try {
-        const res = await requestApi('post', `/postComment`, {postId: id, content: text}, null, true)
-        if (res.data.code != 0) {
-          console.log('code err', res.data.code)
-        }
-      } catch (error) {
-        handleAxiosError(error);
-      }
-
-    }
-
-    postData()
+  async function postComment() {
+    await requestApi('post', `/postComment`, {postId: id, content: text}, true, 'post comment失败');
     fetchData()
   }
 

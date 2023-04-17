@@ -1,9 +1,11 @@
 import axios from 'axios'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import qs from 'qs';
+import handleAxiosError from "./handleError";
+import { Alert } from "react-native";
 
 const BASE_URL = 'http://119.3.178.68:8888';
-let contentType = 'application/json';
+
 const instance = axios.create({
   baseURL: BASE_URL,
 } as const);
@@ -24,34 +26,39 @@ const getToken = async () => {
   }
 };
 
-const requestApi = async (method: string, url: string, params:any, data: any, withToken: boolean) => {
+const requestApi = async (method: string, url: string, data: any, withToken: boolean, errorTitle: string) => {
   if (withToken) {
     const token = await getToken();
     if (token) {
       instance.defaults.headers.common['Authorization'] = "Bearer " + token;
     }
   }
-  if (url === '/login') {
+  let contentType = 'application/json';
+  if (url === '/login' || method === 'get') {
     contentType = 'application/x-www-form-urlencoded';
+  }
+  if (url === '/login') {
     data = qs.stringify(data);
   }
-  else if(method === 'put'|| method === 'post'){
-    contentType = 'application/json';
-  }
-  else{
-    contentType = 'application/x-www-form-urlencoded';
-  }
-  //console.log(contentType)
-  const response = await instance.request({
-    url, method,params,data, headers: {
-      'Content-Type': contentType,
+  try {
+    const response = await instance.request({
+      url, method, data, headers: {
+        'Content-Type': contentType,
+      }
+    });
+    if (response.data.code === 0) {
+      if (url === '/login') {
+        await setToken(response.data.access_token);
+      }
+    } else {
+      console.log(errorTitle, response.data.code);
+      Alert.alert(errorTitle, response.data.msg);
     }
-  });
-
-  if (response.data.code === 0 && url === '/login') {
-    await setToken(response.data.data.access_token)
+    return response.data;
+  } catch (error) {
+    handleAxiosError(error, errorTitle)
+    return { 'code': -1, msg: 'error', data: {} };
   }
-  return response;
 };
 
 export default requestApi;
