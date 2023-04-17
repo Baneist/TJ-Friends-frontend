@@ -16,7 +16,7 @@ const EditInterest = ({route, navigation}: StackNavigationProps) => {
 
   //初始化
   async function fetchData() {
-    const res = await requestApi('get', `/profile/${userID}`, null, null, true, 'get profile失败');
+    const res = await requestApi('get', `/profile/${userID}`, null,  true, 'get profile失败');
     if (res.code == 0) {
       userInfo = res.data;
       setInterest(userInfo.userInterest.info);
@@ -30,7 +30,7 @@ const EditInterest = ({route, navigation}: StackNavigationProps) => {
   async function submit() {
     userInfo.userInterest.info = userInterest;
     console.log(userInfo)
-      const res = await requestApi('put', '/updateUserInfo', null, userInfo, true, 'update userInfo失败');
+      const res = await requestApi('put', '/updateUserInfo',  userInfo, true, 'update userInfo失败');
       if (res.code === 0) {
         navigation.goBack()
       }

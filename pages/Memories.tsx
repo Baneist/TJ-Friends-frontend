@@ -58,7 +58,7 @@ function Like(props: CardProps) {
   }, [props.content.likeNum, props.content.isLiked]);
 
   async function handleClick() {
-    const res = await requestApi('get', `/updateLikeMemory/${props.content.postId}`, null, null, true, 'update like memory失败')
+    const res = await requestApi('get', `/updateLikeMemory/${props.content.postId}`, null, true, 'update like memory失败')
     if (res.code == 0) {
       setLike(res.data.likeNum);
       setIsLiked(res.data.isLiked);
@@ -215,7 +215,7 @@ const MemoriesScreen = ({ navigation }: StackNavigationProps) => {
   let memorylist = [] as any[];
 
   async function fetchData() {
-    const res = await requestApi('get', '/Memories', null, null, true, 'getMemories failed')
+    const res = await requestApi('get', '/Memories', null, true, 'getMemories failed')
     if (res.code == 0) {
       memorylist = memorylist.concat(res.data);
       setlist(memorylist);

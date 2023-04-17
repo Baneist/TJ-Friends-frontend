@@ -47,7 +47,7 @@ export function EditProfile({ route, navigation }: StackNavigationProps) {
   //初始化
   //初始化
   async function fetchData() {
-    const resInfo = await requestApi('get', `/profile/${userID}`, null, null, true, 'get profile失败');
+    const resInfo = await requestApi('get', `/profile/${userID}`, null, true, 'get profile失败');
     if (resInfo.code == 0) {
       setUserInfo(resInfo.data);
     }
@@ -98,7 +98,7 @@ export function EditProfile({ route, navigation }: StackNavigationProps) {
       let newuser = { ...userInfo };
       let formatBirthDate = formatDate(birthday)
       newuser.userBirthDate.info = formatBirthDate;
-      const res = await requestApi('put', '/updateUserInfo', null, newuser, true, '更新生日失败');
+      const res = await requestApi('put', '/updateUserInfo', newuser, true, '更新生日失败');
       if (res.code === 0) {
         setUserInfo(newuser)
         //发送事件，传递更新的userInfo
@@ -344,7 +344,7 @@ export function EditProfile({ route, navigation }: StackNavigationProps) {
   }
 
   async function updatePmsSetting() {
-    const res = await requestApi('put', '/updateUserInfo', null, userInfo, true, 'update user info failed');
+    const res = await requestApi('put', '/updateUserInfo', userInfo, true, 'update user info failed');
     if (res.code === 0) {
       console.log('ohyes')
     }

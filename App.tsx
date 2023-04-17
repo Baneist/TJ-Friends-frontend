@@ -111,7 +111,6 @@ const App = () => {
       data = await requestApi(
         "post",
         "/register",
-        null,
         {
           username,
           password,

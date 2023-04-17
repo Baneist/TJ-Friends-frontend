@@ -5,7 +5,6 @@ import AvatarPicker from "../components/AvatarPicker/PostPicker";
 import Icon from 'react-native-vector-icons/Feather';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import requestApi from '../utils/request';
-import handleAxiosError from "../utils/handleError";
 import { StackNavigationProps } from '../App';
 
 const PostPage = ({ route, navigation }: StackNavigationProps) => {
@@ -16,7 +15,7 @@ const PostPage = ({ route, navigation }: StackNavigationProps) => {
   async function handlePost() {
     // 发送text和image到服务器
     console.log('发布');
-    const res = await requestApi('post', '/Post', { postContent: text, photoUrl: image }, null, true, 'post失败')
+    const res = await requestApi('post', '/Post', { postContent: text, photoUrl: image }, true, 'post失败')
     if (res.code == 0) {
       navigation.goBack();
     }

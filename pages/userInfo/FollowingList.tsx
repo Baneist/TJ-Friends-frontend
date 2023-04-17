@@ -6,10 +6,6 @@ import requestApi from '../../utils/request';
 import { userProp, defaultInfo } from './Profile';
 import { AxiosResponse } from 'axios';
 import { StackNavigationProps } from '../../App';
-import handleAxiosError from '../../utils/handleError';
-
-// 获取屏幕宽高
-const { width, height } = Dimensions.get('screen');
 
 // 用户信息
 export interface followProp {
@@ -26,13 +22,13 @@ const FollowingList = ({ navigation }: StackNavigationProps) => {
   //初始化
   let idlist = [] as string[];
   async function fetchData() {
-    const res = await requestApi('get', `/profile/${stuid}/followings`, null, null, true, 'get followings failed');
+    const res = await requestApi('get', `/profile/${stuid}/followings`, null, true, 'get followings failed');
     if (res.code == 0) {
       idlist = idlist.concat(res.data.followings);
       let reqList: Promise<AxiosResponse>[] = [];
       for (let i = 0; i < idlist.length; ++i) {
         reqList.push(new Promise((resolve, reject) => {
-          resolve(requestApi('get', `/profile/${idlist[i]}`, null, null, true, 'get profile failed'))
+          resolve(requestApi('get', `/profile/${idlist[i]}`, null, true, 'get profile failed'))
         }))
       }
 
@@ -55,7 +51,7 @@ const FollowingList = ({ navigation }: StackNavigationProps) => {
   // 关注/取消关注用户
   async function toggleFollow(user: followProp) {
     if (user.isfollowing) { //取关
-      const res = await requestApi('post', '/unfollow', { stuid: user.userID }, null, true, 'unfollow failed')
+      const res = await requestApi('post', '/unfollow', { stuid: user.userID }, true, 'unfollow failed')
       if (res.status == 200) {
         const newList = statusList.map((item, idx) => {
           if (item.userID === user.userID) {
@@ -71,7 +67,7 @@ const FollowingList = ({ navigation }: StackNavigationProps) => {
       }
     }
     else { //关注
-      const res = await requestApi('post', '/follow', { stuid: user.userID }, null, true, 'follow failed')
+      const res = await requestApi('post', '/follow', { stuid: user.userID }, true, 'follow failed')
       if (res.status == 200) {
         const newList = statusList.map((item, idx) => {
           if (item.userID === user.userID) {

@@ -138,9 +138,9 @@ const Profile = ({ navigation }: StackNavigationProps) => {
   async function fetchData() {
     //获取资料、关注列表和粉丝列表
     const [resInfo, resFollowing, resFollower] = await Promise.all([
-      requestApi('get', `/profile/${userId}`, null, null, true, 'getProfile failed'),
-      requestApi('get', `/profile/${userId}/followings`, null, null, true, 'getFollowing failed'),
-      requestApi('get', `/profile/${userId}/followers`, null, null, true, 'getFollower failed'),
+      requestApi('get', `/profile/${userId}`, null, true, 'getProfile failed'),
+      requestApi('get', `/profile/${userId}/followings`, null, true, 'getFollowing failed'),
+      requestApi('get', `/profile/${userId}/followers`, null, true, 'getFollower failed'),
     ]);
     handleApiResponse(resInfo, () => setUserInfo(resInfo.data));
     handleApiResponse(resFollowing, () => setFollowingNum(resFollowing.data.followings.length));

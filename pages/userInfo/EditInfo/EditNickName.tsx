@@ -18,7 +18,7 @@ const EditeNickName = ({ route, navigation }: StackNavigationProps) => {
 
   //初始化
   async function fetchData() {
-    const res = await requestApi('get', `/profile/${userID}`, null, null, true, 'get profile失败');
+    const res = await requestApi('get', `/profile/${userID}`, null, true, 'get profile失败');
     if (res.code === 0) {
       userInfo = res.data;
       setNickName(userInfo.userNickName.info);
@@ -32,7 +32,7 @@ const EditeNickName = ({ route, navigation }: StackNavigationProps) => {
   //提交修改
   async function submit() {
     userInfo.userNickName.info = nickName;
-    const res = await requestApi('put', '/updateUserInfo', null, userInfo, true, 'update userInfo失败');
+    const res = await requestApi('put', '/updateUserInfo', userInfo, true, 'update userInfo失败');
     if (res.code === 0) {
       navigation.goBack()
     }

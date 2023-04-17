@@ -27,13 +27,13 @@ const FollowersList = ({ route, navigation }: StackNavigationProps) => {
   //初始化
   let idlist = [] as followProp[];
   async function fetchData() {
-    const res = await requestApi('get', `/profile/${pageUser}/followers`, null, null, true, 'get followers failed');
+    const res = await requestApi('get', `/profile/${pageUser}/followers`, null, true, 'get followers failed');
     if (res.code == 0) {
       idlist = res.data.followers;
       let reqList: Promise<AxiosResponse>[] = [];
       for (let i = 0; i < idlist.length; ++i) {
         reqList.push(new Promise((resolve, reject) => {
-          resolve(requestApi('get', `/profile/${idlist[i]}`, null, null, true, 'get profile failed'))
+          resolve(requestApi('get', `/profile/${idlist[i]}`, null, true, 'get profile failed'))
         }))
       }
       Promise.all(reqList).then((values) => {
@@ -56,7 +56,7 @@ const FollowersList = ({ route, navigation }: StackNavigationProps) => {
   async function toggleFollow(user: followProp) {
     if (user.isfollowing) { //取关
 
-      const res = await requestApi('post', '/unfollow', { stuid: user.userID }, null, true, 'unfollow failed');
+      const res = await requestApi('post', '/unfollow', { stuid: user.userID }, true, 'unfollow failed');
       if (res.status == 200) {
         const newList = statusList.map((item, idx) => {
           if (item.userID === user.userID) {
@@ -72,7 +72,7 @@ const FollowersList = ({ route, navigation }: StackNavigationProps) => {
       }
     }
     else { //关注
-      const res = await requestApi('post', '/follow', { stuid: user.userID }, null, true, 'follow failed')
+      const res = await requestApi('post', '/follow', { stuid: user.userID }, true, 'follow failed');
       if (res.status == 200) {
         const newList = statusList.map((item, idx) => {
           if (item.userID === user.userID) {

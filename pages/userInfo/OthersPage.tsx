@@ -8,9 +8,7 @@ import { MomentsList } from "../../components/MomentsList/MomentsList";
 import { StackNavigationProps } from '../../App'
 import { defaultInfo, userProp } from "./Profile";
 import requestApi from "../../utils/request";
-import handleAxiosError from "../../utils/handleError";
 import { styles } from "./Profile.style";
-import { AxiosResponse } from "axios";
 
 //获取屏幕宽高
 const { width } = Dimensions.get("screen");
@@ -44,9 +42,9 @@ const Profile = ({ navigation }: StackNavigationProps) => {
   async function fetchData() {
     //获取资料、关注列表和粉丝列表
     const [resInfo, resFollowing, resFollower] = await Promise.all([
-      requestApi('get', `/profile/${pageid}`, null, null, true, 'getProfile failed'),
-      requestApi('get', `/profile/${pageid}/followings`, null, null, true, 'getFollowing failed'),
-      requestApi('get', `/profile/${pageid}/followers`, null, null, true, 'getFollower failed'),
+      requestApi('get', `/profile/${pageid}`, null, true, 'getProfile failed'),
+      requestApi('get', `/profile/${pageid}/followings`, null, true, 'getFollowing failed'),
+      requestApi('get', `/profile/${pageid}/followers`, null, true, 'getFollower failed'),
     ]);
     handleApiResponse(resInfo, () => setUserInfo(resInfo.data));
     handleApiResponse(resFollowing, () => setFollowingNum(resFollowing.data.followings.length));
@@ -85,13 +83,13 @@ const Profile = ({ navigation }: StackNavigationProps) => {
   // 关注/取消关注用户
   async function toggleFollow() {
     if (isfollowing) { //取关
-      const res = await requestApi('post', '/unfollow', { stuid: pageid }, null, true, 'unfollow failed')
+      const res = await requestApi('post', '/unfollow', {stuid: pageid }, true, 'unfollow failed')
       if (res.status == 200) {
         setFollowing(!isfollowing)
         setFollowingNum(followingNum + (isfollowing ? 1 : -1));
       }
     } else { //关注
-      const res = await requestApi('post', '/follow', { stuid: pageid }, null, true, 'follow failed')
+      const res = await requestApi('post', '/follow', { stuid: pageid }, true, 'follow failed')
       if (res.status == 200) {
         setFollowing(!isfollowing)
       }

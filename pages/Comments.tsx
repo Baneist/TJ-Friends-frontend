@@ -8,7 +8,6 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Modal from 'react-native-modal';
 import {StackNavigationProps} from '../App';
 import requestApi from '../utils/request';
-import handleAxiosError from "../utils/handleError";
 
 interface CardProps {
   clickAvatar: () => void,
@@ -34,7 +33,7 @@ function Like(props: CardProps) {
 
   function handleClick() {
     async function fetchData() {
-      const res = await requestApi('get', `/updateLikeMemory/${props.id}`, null, null, true, 'like失败');
+      const res = await requestApi('get', `/updateLikeMemory/${props.id}`, null, true, 'like失败');
       if (res.code === 0) {
         setLike(res.data.likeNum);
         setIsLiked(res.data.isLiked);
@@ -64,7 +63,7 @@ function Thumb(props: CardProps) {
 
   function handleClick() {
     async function fetchData() {
-      const res = await requestApi('get', `/updateLikeComment/${props.content.commentId}`, null, null, true, 'thumb失败');
+      const res = await requestApi('get', `/updateLikeComment/${props.content.commentId}`, null, true, 'thumb失败');
       if (res.code == 0) {
         setLike(res.data.likeNum);
         setIsLiked(res.data.isLiked);
@@ -254,17 +253,14 @@ function Comment({route, navigation}: StackNavigationProps) {
     navigation.navigate('OthersPage');
   }
 
-  let tmp: any;
   const [detail, setDetail] = useState(defaulthh);
   const [commentlist, setList] = useState(dc);
 
   async function fetchData() {
-    const res = await requestApi('get', `/Memories/${id}`, null, null, true, 'get memories失败');
+    const res = await requestApi('get', `/Memories/${id}`, null, true, 'get memories失败');
     if (res.code == 0) {
-      tmp = res.data;
-      setDetail(tmp);
-      tmp = res.data.comments;
-      setList(tmp);
+      setDetail(res.data);
+      setList(res.data.comments);
     }
   }
 
@@ -272,11 +268,8 @@ function Comment({route, navigation}: StackNavigationProps) {
     fetchData()
   }, [])
 
-  function postComment() {
-    async function postData() {
-      await requestApi('post', `/postComment`, {postId: id, content: text}, null, true, 'post comment失败');
-    }
-    postData()
+  async function postComment() {
+    await requestApi('post', `/postComment`, {postId: id, content: text}, true, 'post comment失败');
     fetchData()
   }
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import {
   Text,
   View,
@@ -7,7 +7,6 @@ import {
   SafeAreaView,
   TouchableOpacity,
 } from "react-native";
-import { Alert } from "react-native";
 /**
  * ? Local Imports
  */
@@ -16,7 +15,6 @@ import TextField from "../components/TextField/TextField";
 import SocialButton from "../components/LoginSocialButton/SocialButton";
 import requestApi from "../utils/request";
 import { StackNavigationProps } from "../App";
-import handleAxiosError from "../utils/handleError";
 
 // ? Assets
 const googleLogo = require("../assets/google-logo.png");
@@ -69,8 +67,8 @@ export interface ISocialLoginProps {
 
 const Login = (props: ISocialLoginProps) => {
   const [isSignUp, setIsSignUp] = useState(false);
-  const [username, setUsername] = React.useState("");
-  const [password, setPassword] = React.useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   const renderHeader = () => {
     const {
@@ -161,14 +159,11 @@ const Login = (props: ISocialLoginProps) => {
   };
 
   const onHandleLoginPress = async () => {
-    const data = await requestApi('post', '/login', null, { username, password }, false, '登录失败');
+    const data = await requestApi('post', '/login', { username, password }, false, '登录失败');
     if (data.code === 0) {
       props.navigation.replace('Main', {
         userId: username
       });
-    } else {
-      props.navigation.replace('Login');
-      Alert.alert('登录失败', data.msg);
     }
   }
 

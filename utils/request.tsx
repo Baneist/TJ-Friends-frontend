@@ -2,7 +2,7 @@ import axios from 'axios'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import qs from 'qs';
 import handleAxiosError from "./handleError";
-import {Alert} from "react-native";
+import { Alert } from "react-native";
 
 const BASE_URL = 'http://119.3.178.68:8888';
 
@@ -26,7 +26,7 @@ const getToken = async () => {
   }
 };
 
-const requestApi = async (method: string, url: string, params: any, data: any, withToken: boolean, errorTitle: string) => {
+const requestApi = async (method: string, url: string, data: any, withToken: boolean, errorTitle: string) => {
   if (withToken) {
     const token = await getToken();
     if (token) {
@@ -34,15 +34,15 @@ const requestApi = async (method: string, url: string, params: any, data: any, w
     }
   }
   let contentType = 'application/json';
+  if (url === '/login' || method === 'get') {
+    contentType = 'application/x-www-form-urlencoded';
+  }
   if (url === '/login') {
-    contentType = 'application/x-www-form-urlencoded';
     data = qs.stringify(data);
-  } else if (method === 'get') {
-    contentType = 'application/x-www-form-urlencoded';
   }
   try {
     const response = await instance.request({
-      url, method, params, data, headers: {
+      url, method, data, headers: {
         'Content-Type': contentType,
       }
     });
@@ -57,7 +57,7 @@ const requestApi = async (method: string, url: string, params: any, data: any, w
     return response.data;
   } catch (error) {
     handleAxiosError(error, errorTitle)
-    return {'code': -1, msg: 'error', data: {}};
+    return { 'code': -1, msg: 'error', data: {} };
   }
 };
 
