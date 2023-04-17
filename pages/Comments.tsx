@@ -262,15 +262,24 @@ function Comment({route, navigation}: StackNavigationProps) {
       setDetail(res.data);
       setList(res.data.comments);
     }
+    console.log(res.data)
+    console.log("fetch")
   }
 
   useEffect(() => {
     fetchData()
+    console.log('ue')
   }, [])
 
   async function postComment() {
-    await requestApi('post', `/postComment`, {postId: id, content: text}, true, 'post comment失败');
-    fetchData()
+    const res=await requestApi('post', `/postComment`, {postId: id, content: text}, true, 'post comment失败');
+    if(res.code==0){
+    setText('');
+    console.log(id,text,'pressed');
+    fetchData();
+    console.log(res.data);
+    console.log(detail);
+  }
   }
 
   return (
@@ -313,7 +322,7 @@ function Comment({route, navigation}: StackNavigationProps) {
           id={id}
         />
         <View style={{margin: 5}}/>
-        {commentlist.map((item, index) =>
+        {commentlist.map((item) =>
           <CommentCard
             clickAvatar={clickAvatar}
             content={item}

@@ -9,7 +9,7 @@ import { StackNavigationProps } from '../App';
 import requestApi from '../utils/request';
 import handleAxiosError from "../utils/handleError";
 
-
+let changed=false;
 export const styles = StyleSheet.create({
   userphoto: {
     width: 42,
@@ -150,6 +150,13 @@ export const CardwithButtons = (props: CardProps) => {
     setMenuVisible(!MenuVisible);
   };
 
+  async function onDelete(){
+    const res=await requestApi('get',`/deleteMemory/${props.content.postId}`,null,true,'删除失败');
+    // if(res.code==0){
+    //   console.log(res)
+    // }
+    setMenuVisible(!MenuVisible);
+  };
   return (
     <View>
       <Card elevation={5} style={{ margin: 5 }}>
@@ -163,7 +170,7 @@ export const CardwithButtons = (props: CardProps) => {
           right={() => <IconButton icon='dots-horizontal' onPress={toggleMenu} />}
         />
         <Pressable onPress={props.onCommentPress}>
-          <Card.Cover source={{ uri: props.content.postPhoto }} />
+          <Card.Cover source={{ uri: props.content.postPhoto===""?"http://dummyimage.com/400x400":props.content.postPhoto }} />
         </Pressable>
         <Card.Actions>
           <Like
@@ -192,8 +199,8 @@ export const CardwithButtons = (props: CardProps) => {
           <Button style={{ height: 50, paddingTop: 5 }} onPress={() => {
           }}>举报</Button>
           <Divider />
-          <Button style={{ height: 50, paddingTop: 10 }} onPress={() => {
-          }}>删除</Button>
+          <Button style={{ height: 50, paddingTop: 10 }} onPress={onDelete
+          }>删除</Button>
         </View>
       </Modal>
 

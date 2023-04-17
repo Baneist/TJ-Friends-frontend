@@ -1,12 +1,6 @@
-<<<<<<< HEAD
 import React, {useState} from 'react';
 import {View, TextInput, StyleSheet, Image, Pressable, Keyboard} from 'react-native';
 import {Button, IconButton} from 'react-native-paper';
-=======
-import React, { useState } from 'react';
-import { View, TextInput, StyleSheet, Image, Pressable, Keyboard } from 'react-native';
-import { IconButton } from 'react-native-paper';
->>>>>>> 19a45b1153949d4c205c6716de362835af5f6a9a
 import AvatarPicker from "../components/AvatarPicker/PostPicker";
 import Icon from 'react-native-vector-icons/Feather';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
@@ -54,11 +48,7 @@ const PostPage = ({ route, navigation }: StackNavigationProps) => {
         scrollEnabled={false}
         autoFocus={false}
       />
-<<<<<<< HEAD
       <View style={{flexDirection: 'row', flexWrap: 'wrap', position: 'relative', paddingBottom: 10}}>
-=======
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', position: 'relative', paddingBottom: 100 }}>
->>>>>>> 19a45b1153949d4c205c6716de362835af5f6a9a
         {image.length != 0 && image.map((item, index) =>
           <View>
             <Image source={{ uri: item }} style={styles.image} />
@@ -79,14 +69,10 @@ const PostPage = ({ route, navigation }: StackNavigationProps) => {
           onPress={() => setShowAvatarOption(true)}
         />}
       </View>
-<<<<<<< HEAD
       <View style={{paddingBottom: 100}} >
       <Button onPress={handlePost} mode='contained'>发送</Button>
       </View>
       <AvatarPicker showAvatarOption={showAvatarOption} onBackdropPress={cancelAvatarOption} setImage={changeImage}/>
-=======
-      <AvatarPicker showAvatarOption={showAvatarOption} onBackdropPress={cancelAvatarOption} setImage={changeImage} />
->>>>>>> 19a45b1153949d4c205c6716de362835af5f6a9a
     </KeyboardAwareScrollView>
   );
 };
