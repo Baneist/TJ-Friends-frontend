@@ -136,7 +136,7 @@ const FloatButton = ({ onPressFAB }: { onPressFAB: () => void }) => (
 );
 
 interface CardProps {
-  onCommentPress: () => void,
+  onCommentPress?: () => void,
   clickAvatar?: () => void,
   key?: number,
   content?: any,
@@ -158,6 +158,7 @@ export const CardwithButtons = (props: CardProps) => {
     setMenuVisible(!MenuVisible);
   };
   function onEdit(){
+    console.log(props.content.postId);
     props.navigation.navigate('EditPost',{postId:props.content.postId})
     setMenuVisible(!MenuVisible);
   }
@@ -197,17 +198,17 @@ export const CardwithButtons = (props: CardProps) => {
         style={styles.modal}
       >
         <View style={styles.menu}>
-          <Button style={{ height: 50, paddingTop: 5 }} onPress={onEdit
-          }>编辑</Button>
-          <Divider />
+          {global.gUserId===props.content.userID&&<Button style={{ height: 50, paddingTop: 5 }} onPress={onEdit
+          }>编辑</Button>}
+          {global.gUserId===props.content.userID&&<Divider />}
           <Button style={{ height: 50, paddingTop: 5 }} onPress={() => {
           }}>收藏</Button>
-          <Divider />
-          <Button style={{ height: 50, paddingTop: 5 }} onPress={() => {
-          }}>举报</Button>
-          <Divider />
-          <Button style={{ height: 50, paddingTop: 5 }} onPress={onDelete
-          }>删除</Button>
+          {global.gUserId!=props.content.userID&&<Divider />}
+          {global.gUserId!=props.content.userID&&<Button style={{ height: 50, paddingTop: 5 }} onPress={() => {
+          }}>举报</Button>}
+          {global.gUserId===props.content.userID&&<Divider />}
+          {global.gUserId===props.content.userID&&<Button style={{ height: 50, paddingTop: 5 }} onPress={onDelete
+          }>删除</Button>}
         </View>
       </Modal>
 
@@ -218,7 +219,7 @@ export const CardwithButtons = (props: CardProps) => {
 const MemoriesScreen = ({ navigation }: StackNavigationProps) => {
   const { bottom } = useSafeAreaInsets();
   const onCommentPress = (postID: string) => {
-    navigation.navigate('Comment', { userId: '2052333', postId: postID });
+    navigation.navigate('Comment', { postId: postID });
   }
 
   function clickAvatar() {

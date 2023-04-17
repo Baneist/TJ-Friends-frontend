@@ -8,7 +8,7 @@ export const MomentsList=({ navigation }: any) => {
   const { bottom } = useSafeAreaInsets();
 
   const onCommentPress = (postID: string) => {
-    navigation.navigate('Comment', { userId: '2052909', postId: postID });
+    navigation.navigate('Comment', { postId: postID });
   }
   const [list, setlist] = useState([] as any[]);
   let memorylist = [] as any[];
