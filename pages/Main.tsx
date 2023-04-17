@@ -1,12 +1,26 @@
 import React from 'react';
 import { View, Switch } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createBottomTabNavigator, BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { Text } from "galio-framework";
 import { BottomFabBar } from 'rn-wave-bottom-bar';
 import MemoriesScreen from './Memories';
 import Profile from './userInfo/Profile'
 
+type RootTabParamList = {
+  Home: undefined;
+  Meh: undefined;
+  Memories: undefined;
+  Trophy: undefined;
+  Profile: { userId: string, postId: string } | undefined;
+};
+
+const Tab = createBottomTabNavigator<RootTabParamList>();
+
+export type TabNavigationProp = BottomTabNavigationProp<
+  RootTabParamList,
+  keyof RootTabParamList
+>;
 
 const generateScreen = (screen: string) => () => {
   return (
@@ -23,7 +37,6 @@ const generateScreen = (screen: string) => () => {
   );
 };
 
-const Tab = createBottomTabNavigator();
 const tabBarIcon =
   (name: string) =>
     ({
@@ -36,11 +49,6 @@ const tabBarIcon =
       size: number;
     }) =>
       <Icon name={name} size={28} color={focused ? 'white' : 'white'} />;
-
-export interface IMainProps {
-  onCommentPress: () => void;
-  onPressFAB: () => void;
-}
 const MainScreen = () => {
   const [showLabel, setShowLabel] = React.useState(false);
   const [enableSquare, setEnableSquare] = React.useState(false);

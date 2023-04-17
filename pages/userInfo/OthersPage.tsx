@@ -5,7 +5,7 @@ import {Button, Chip, List} from 'react-native-paper';
 import {Block, Text} from "galio-framework";
 import Icon from 'react-native-vector-icons/AntDesign';
 import {MomentsList} from "../../components/MomentsList/MomentsList";
-import {NavigationProps} from '../../App'
+import {StackNavigationProps} from '../../App'
 import {defaultInfo, userProp} from "./Profile";
 import requestApi from "../../utils/request";
 import handleAxiosError from "../../utils/handleError";
@@ -25,7 +25,7 @@ const profileImage = {
 //资料页面
 
 
-const Profile = ({navigation}: NavigationProps) => {
+const Profile = ({navigation}: StackNavigationProps) => {
   //state
   const curUser = '2053302'; //当前用户
   const pageid = '2053186'; //所查看主页的用户

@@ -1,5 +1,5 @@
-import React, { useRef, useState } from "react";
-import { View, UIManager, Platform, Alert } from "react-native";
+import React, {useRef, useState} from "react";
+import {View, UIManager, Platform, Alert} from "react-native";
 import {
   NavigationContainer,
   StackActions,
@@ -10,14 +10,14 @@ import {
   StackScreenProps,
 } from "@react-navigation/stack";
 import Modal from "react-native-modal";
-import { WebView } from "react-native-webview";
+import {WebView} from "react-native-webview";
 import axios from "axios";
 
 import handleAxiosError from "./utils/handleError";
 
 import Signin from "./pages/Signin";
 import MainScreen from "./pages/Main";
-import CommentScreen from "./pages/Comments";
+import Comment from "./pages/Comments";
 
 //查看关注列表和粉丝列表
 import FollowingList from "./pages/userInfo/FollowingList";
@@ -26,7 +26,7 @@ import FollowersList from "./pages/userInfo/FollowersList";
 import OthersPage from "./pages/userInfo/OthersPage";
 
 //编辑资料相关路由
-import { EditProfile } from "./pages/userInfo/EditInfo/EditProfile";
+import {EditProfile} from "./pages/userInfo/EditInfo/EditProfile";
 import EditNickName from "./pages/userInfo/EditInfo/EditNickName";
 import EditInterest from "./pages/userInfo/EditInfo/EditInterest";
 import EditStatus from "./pages/userInfo/EditInfo/EditStatus";
@@ -43,27 +43,27 @@ const GetSessionUserUrl =
   "https://1.tongji.edu.cn/api/sessionservice/session/getSessionUser";
 
 type RootStackParamList = {
-  Main: undefined;
+  Main: { userId: string } | undefined;
   Login: undefined;
   Signup: undefined;
   ChangePassword: undefined;
   Profile: { userId: string };
-  Comment: undefined;
+  Comment: { userId: string, postId: string } | undefined;
   Memories: undefined;
   Post: undefined;
-  EditProfile: undefined;
-  EditNickName: { userId: string };
-  EditInterest: { userId: string };
-  EditStatus: { userId: string };
-  EditLabel: { userId: string };
-  FollowingList: undefined;
-  FollowersList:undefined;
-  OthersPage: { userId: string };
+  EditProfile: { userId: string } | undefined;
+  EditNickName: { userId: string } | undefined;
+  EditInterest: { userId: string } | undefined;
+  EditStatus: { userId: string } | undefined;
+  EditLabel: { userId: string } | undefined;
+  FollowingList: { userId: string } | undefined;
+  FollowersList: { userId: string } | undefined;
+  OthersPage: { userId: string } | undefined;
 };
 const Stack = createStackNavigator<RootStackParamList>();
 
 //typescript需要指定{route, navigation}的参数类型
-export type NavigationProps = StackScreenProps<
+export type StackNavigationProps = StackScreenProps<
   RootStackParamList,
   keyof RootStackParamList
 >;
@@ -87,7 +87,7 @@ const App = () => {
     return (
       <WebView
         ref={webViewRef}
-        source={{ uri: GetUrl }}
+        source={{uri: GetUrl}}
         onNavigationStateChange={handleWebViewNavigationStateChange}
       />
     );
@@ -96,7 +96,7 @@ const App = () => {
   const handleWebViewNavigationStateChange = async (newNavState: {
     url: string;
   }) => {
-    const { url } = newNavState;
+    const {url} = newNavState;
     if (url?.startsWith(TargetUrl)) {
       try {
         let params: { [key: string]: string } = {};
@@ -134,9 +134,9 @@ const App = () => {
     }
   };
 
-  const RenderSignupScreen = ({ navigation }: NavigationProps) => (
+  const RenderSignupScreen = ({navigation}: StackNavigationProps) => (
     <Signin
-      style={{ flex: 1, justifyContent: "center" }}
+      style={{flex: 1, justifyContent: "center"}}
       logoImageSource={require("./assets/logo-example.png")}
       onLoginPress={() => setIsModalVisible(true)}
       onUsernameChange={setUsername}
@@ -148,9 +148,9 @@ const App = () => {
     />
   );
 
-  const RenderChangeScreen = ({ navigation }: NavigationProps) => (
+  const RenderChangeScreen = ({navigation}: StackNavigationProps) => (
     <Signin
-      style={{ flex: 1, justifyContent: "center" }}
+      style={{flex: 1, justifyContent: "center"}}
       logoImageSource={require("./assets/logo-example.png")}
       onLoginPress={() => setIsModalVisible(true)}
       onUsernameChange={setUsername}
@@ -164,80 +164,81 @@ const App = () => {
     />
   );
 
-  const RenderLoginScreen = ({ navigation }: NavigationProps) => (
+  const RenderLoginScreen = ({navigation}: StackNavigationProps) => (
     <Login
       onSignUpPress={() => navigation.replace("Signup")}
-      onLoginPress={() => {}}
+      onLoginPress={() => {
+      }}
       onForgotPasswordPress={() => navigation.replace("ChangePassword")}
       navigation={navigation}
     />
   );
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{flex: 1}}>
       <NavigationContainer ref={navigationRef}>
         <Stack.Navigator initialRouteName="Login">
           <Stack.Screen
             name="Login"
             component={RenderLoginScreen}
-            options={{ headerShown: false }}
+            options={{headerShown: false}}
           />
-          <Stack.Screen name="Signup" component={RenderSignupScreen} />
-          <Stack.Screen name="ChangePassword" component={RenderChangeScreen} />
+          <Stack.Screen name="Signup" component={RenderSignupScreen}/>
+          <Stack.Screen name="ChangePassword" component={RenderChangeScreen}/>
           <Stack.Screen
             name="Comment"
-            component={CommentScreen}
-            options={{ headerBackTitle: "Back" }}
+            component={Comment}
+            options={{headerBackTitle: "Back"}}
           />
           <Stack.Screen
             name="Post"
             component={PostPage}
-            options={{ headerBackTitle: "Back" }}
+            options={{headerBackTitle: "Back"}}
           />
           <Stack.Screen
             name="Main"
             component={MainScreen}
-            options={{ headerShown: false }}
+            options={{headerShown: false}}
           />
           <Stack.Screen
             name="EditProfile"
             component={EditProfile}
-            options={{ headerBackTitle: "Back" }}
+            options={{headerBackTitle: "Back"}}
           />
           <Stack.Screen
             name="EditNickName"
             component={EditNickName}
-            options={{ headerBackTitle: "Back" }}
+            options={{headerBackTitle: "Back"}}
           />
           <Stack.Screen
             name="EditInterest"
             component={EditInterest}
-            options={{ headerBackTitle: "Back" }}
+            options={{headerBackTitle: "Back"}}
           />
           <Stack.Screen
             name="EditStatus"
             component={EditStatus}
-            options={{ headerBackTitle: "Back" }}
+            options={{headerBackTitle: "Back"}}
           />
           <Stack.Screen
             name="EditLabel"
             component={EditLabel}
-            options={{ headerBackTitle: "Back" }}
+            options={{headerBackTitle: "Back"}}
           />
           <Stack.Screen
             name="FollowersList"
             component={FollowersList}
-            options={{ headerBackTitle: "Back" }}
+            options={{headerBackTitle: "Back"}}
           />
           <Stack.Screen
             name="FollowingList"
             component={FollowingList}
-            options={{ headerBackTitle: "Back" }}
+            options={{headerBackTitle: "Back"}}
           />
           <Stack.Screen
             name="OthersPage"
             component={OthersPage}
-            options={{ headerBackTitle: "Back" }}
+            options={{headerBackTitle: "Back"}}
           />
         </Stack.Navigator>
       </NavigationContainer>

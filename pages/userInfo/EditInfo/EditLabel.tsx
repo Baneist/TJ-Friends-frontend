@@ -2,7 +2,7 @@ import React , {useState,useEffect}from "react";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {Button, Card, Text, Chip,
     Searchbar, Provider,Snackbar,IconButton, List,Divider } from 'react-native-paper';
-import {NavigationProps} from '../../../App'
+import {StackNavigationProps} from '../../../App'
 import Modal from 'react-native-modal';
 import {
     View
@@ -17,7 +17,7 @@ const allLabel = [
     '猫派','狗派','二次元','现充','舟批','原批','Switch玩家','体育生','篮球',
 ]
 
-const EditLabel = ({route, navigation}:NavigationProps) =>{
+const EditLabel = ({route, navigation}:StackNavigationProps) =>{
     const [userLabel, setUserLabel] = useState([] as string [])
     let userInfo = defaultInfo;
     const userID='2052909';

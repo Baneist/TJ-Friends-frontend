@@ -1,11 +1,6 @@
 import React from 'react';
-import { Pressable, ScrollView, View, Image, StyleSheet } from 'react-native';
-import { Button, Card, IconButton, Divider, FAB } from 'react-native-paper';
+import { ScrollView, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Icon from 'react-native-vector-icons/AntDesign';
-import { useState } from 'react';
-import Modal from 'react-native-modal';
-import { NavigationProps } from '../../App';
 import { CardwithButtons } from '../../pages/Memories';
 
 export const MomentsList=({onCommentPress}:{onCommentPress:()=>void}) => {

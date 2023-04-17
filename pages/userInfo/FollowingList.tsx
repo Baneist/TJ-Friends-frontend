@@ -5,7 +5,7 @@ import { Avatar, Button } from 'react-native-paper';
 import requestApi from '../../utils/request';
 import { userProp, defaultInfo } from './Profile';
 import { AxiosResponse } from 'axios';
-import { NavigationProps } from '../../App';
+import { StackNavigationProps } from '../../App';
 import handleAxiosError from '../../utils/handleError';
 
 // 获取屏幕宽高
@@ -17,7 +17,7 @@ export interface followProp{
   isfollowing:boolean
 }
 // 关注列表页面
-const FollowingList = ({ navigation }: NavigationProps) => {
+const FollowingList = ({ navigation }: StackNavigationProps) => {
   const stuid = '2053186';
   //关注的用户信息
   const [followlist, setlist]=useState([] as userProp []);

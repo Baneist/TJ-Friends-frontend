@@ -7,13 +7,13 @@ import { userProp, defaultInfo } from './Profile';
 import { AxiosResponse } from 'axios';
 import { followProp } from './FollowingList';
 import handleAxiosError from '../../utils/handleError';
-import { NavigationProps } from '../../App';
+import { StackNavigationProps } from '../../App';
 
 // 获取屏幕宽高
 const { width, height } = Dimensions.get('screen');
 
 // 关注列表页面
-const FollowersList = ({ route, navigation }: NavigationProps) => {
+const FollowersList = ({ route, navigation }: StackNavigationProps) => {
   //正在查看的是谁
   const pageUser = '2053186';
   //当前用户

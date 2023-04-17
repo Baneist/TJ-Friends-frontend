@@ -2,12 +2,12 @@ import React , {useState,useEffect}from "react";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {Button, Card, TextInput, Dialog, Surface,
     Portal, Provider,Snackbar,IconButton, List,Divider } from 'react-native-paper';
-import {NavigationProps} from '../../../App'
+import {StackNavigationProps} from '../../../App'
 import { defaultInfo } from "../Profile";
 import requestApi from "../../../utils/request";
 import handleAxiosError from "../../../utils/handleError";
 
-const EditInterest = ({route, navigation}:NavigationProps) =>{
+const EditInterest = ({route, navigation}:StackNavigationProps) =>{
     const [userInterest,setInterest] = useState('');
     let userInfo = defaultInfo;
     const userID = '2052909'

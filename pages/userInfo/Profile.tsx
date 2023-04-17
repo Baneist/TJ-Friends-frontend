@@ -11,7 +11,7 @@ import {Button, List, Chip} from 'react-native-paper';
 import {Block, Text} from "galio-framework";
 import Icon from 'react-native-vector-icons/AntDesign';
 import {MomentsList} from "../../components/MomentsList/MomentsList";
-import {NavigationProps} from '../../App'
+import {StackNavigationProps} from '../../App'
 import requestApi from "../../utils/request";
 import handleAxiosError from "../../utils/handleError";
 import {useFocusEffect} from '@react-navigation/native';
@@ -117,7 +117,7 @@ export const defaultInfo = {
   "followingPms": false
 }
 
-const Profile = ({navigation}: NavigationProps) => {
+const Profile = ({navigation}: StackNavigationProps) => {
   //state
   const userId = '2052909';
   //个人信息

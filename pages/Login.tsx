@@ -15,7 +15,7 @@ import styles from "./Login.style";
 import TextField from "../components/TextField/TextField";
 import SocialButton from "../components/LoginSocialButton/SocialButton";
 import requestApi from "../utils/request";
-import {NavigationProps} from "../App";
+import {StackNavigationProps} from "../App";
 import handleAxiosError from "../utils/handleError";
 
 // ? Assets
@@ -64,7 +64,7 @@ export interface ISocialLoginProps {
   onDiscordLoginPress?: () => void;
   onSignUpPress: () => void;
   onRepasswordChangeText?: (text: string) => void;
-  navigation: NavigationProps["navigation"];
+  navigation: StackNavigationProps["navigation"];
 }
 
 const Login = (props: ISocialLoginProps) => {
