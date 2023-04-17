@@ -151,7 +151,7 @@ function DetailedCard(props: CardProps) {
             {props.content.postContent}
           </Text>
         </Card.Content>
-        {list.map((item: string) =>
+        {list.map((item: string,index:number) =>
           <Image
             source={{uri: item}}
             style={{
@@ -162,6 +162,7 @@ function DetailedCard(props: CardProps) {
               height: width,
               marginBottom: -15
             }}
+            key={index}
           />
         )}
         <View style={{justifyContent: 'space-evenly', flexDirection: 'row', paddingBottom: 10, paddingTop: 10}}>
@@ -322,7 +323,7 @@ function Comment({route, navigation}: StackNavigationProps) {
           id={id}
         />
         <View style={{margin: 5}}/>
-        {commentlist.map((item) =>
+        {commentlist.map((item,index) =>
           <CommentCard
             clickAvatar={clickAvatar}
             content={item}
