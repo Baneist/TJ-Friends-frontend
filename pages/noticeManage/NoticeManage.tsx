@@ -88,11 +88,12 @@ const num4eachData = {
 const messageData = {
   code:77,
   data:[{
-    lastMessage:"id Lorem est mollit",
+    message:"id Lorem est mollit",
     senderName:"现受强写建",
     senderAvatar:"http://dummyimage.com/100x100",
     timeStamp:"2017-10-26 16:56:04",
-    undealNum:57,
+    noticeId:1,
+    readed:false,
   },
   ]
 }
@@ -155,11 +156,12 @@ const NoticeManageScreen = ({ route, navigation }: NavigationProps) => {
   const msitems = amsdata.data.map((item:any, index:number) => 
     <NoticeCard
       key={index}
-      message={item.lastMessage}
+      message={item.message}
       timestamp={new Date(item.timeStamp)}
       senderName={item.senderName}
       senderAvatar={item.senderAvatar}
-      undeal_num={item.undealNum}
+      noticeId={item.noticeId}
+      readed={item.readed}
     />
   );
   return (

@@ -1,12 +1,14 @@
 import { TouchableOpacity, View, Image, Text, StyleSheet,Modal,LayoutRectangle, Dimensions, TouchableWithoutFeedback } from "react-native";
 import { DialogBadge } from "./NoticeBadge";
 import { useRef, useState } from "react";
+import { Alert } from "react-native";
 interface NoticeProps {
     message: string;
     timestamp: Date;
     senderName: string;
     senderAvatar: string;
-    undeal_num: number;
+    noticeId: number;
+    readed: boolean;
   }
   
   const styles = StyleSheet.create({
@@ -68,7 +70,8 @@ interface NoticeProps {
       },
   }
   );
-  export const NoticeCard = ({ message, timestamp, senderName, senderAvatar, undeal_num }: NoticeProps) => {
+  export const NoticeCard = ({ message, timestamp, senderName, senderAvatar, noticeId, readed}: NoticeProps) => {
+    const [isReaded, setIsReaded] = useState(readed);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [modalLayout, setModalLayout] = useState<LayoutRectangle | null>(null);
     const buttonRef = useRef<TouchableOpacity>(null);
@@ -90,8 +93,11 @@ interface NoticeProps {
         });
       }
     };
+    const sendReaded = () => {
+      console.log('sendReaded');
+    };
     return (
-      <TouchableOpacity style={styles.container} onPress={()=>{ console.log('click') }} onLongPress={handleLongPress} ref={buttonRef} onLayout={handleButtonLayout}>
+      <TouchableOpacity style={styles.container} onPress={()=>{ Alert.alert(senderName, message); setIsReaded(true); sendReaded();}} onLongPress={handleLongPress} ref={buttonRef} onLayout={handleButtonLayout}>
         <View style={styles.container}>
           <View style={styles.avatarContainer}>
             <Image source={{ uri: senderAvatar }} style={styles.avatarImage} />
@@ -105,7 +111,7 @@ interface NoticeProps {
               <Text style={styles.messageText}>{message}</Text>
             </View>
           </View>
-          {undeal_num > 0 && <DialogBadge count={undeal_num} />}
+          {isReaded == false && <DialogBadge count={1} />}
         </View>
         <Modal visible={isModalVisible} onRequestClose={handleCloseModal} transparent>
           {modalLayout && (
