@@ -34,12 +34,6 @@ const PostPage = ({ route, navigation }: StackNavigationProps) => {
     setImage(current => current.concat(uri))
   }
 
-  function out() {
-    return (
-      console.log(image)
-    );
-  }
-
   return (
       <KeyboardAwareScrollView style={styles.container} onScrollToTop={Keyboard.dismiss}>
         <TextInput
