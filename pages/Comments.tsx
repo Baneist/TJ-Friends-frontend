@@ -8,6 +8,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Modal from 'react-native-modal';
 import { StackNavigationProps } from '../App';
 import requestApi from '../utils/request';
+import { useFocusEffect } from '@react-navigation/native';
 
 interface CardProps {
   clickAvatar?: () => void,
@@ -33,17 +34,13 @@ function Like(props: CardProps) {
     setIsLiked(props.content.isLiked);
   }, [props.content.likeNum, props.content.isLiked]);
 
-  function handleClick() {
-    async function fetchData() {
-      const res = await requestApi('get', `/updateLikeMemory/${props.id}`, null, true, 'like失败');
-      if (res.code === 0) {
-        setLike(res.data.likeNum);
-        setIsLiked(res.data.isLiked);
-      }
+  async function handleClick() {
+    const res = await requestApi('get', `/updateLikeMemory/${props.id}`, null, true, 'like失败');
+    if (res.code === 0) {
+      setLike(res.data.likeNum);
+      setIsLiked(res.data.isLiked);
     }
-
-    fetchData()
-  }
+  };
 
   const clickHeart =
     <Icon size={18} name={isLiked ? 'heart' : 'heart-outline'} />;
@@ -63,19 +60,13 @@ function Thumb(props: CardProps) {
     setIsLiked(props.content.isLiked);
   }, [props.content.likeNum, props.content.isLiked]);
 
-  function handleClick() {
-    async function fetchData() {
-      const res = await requestApi('get', `/updateLikeComment/${props.content.commentId}`, null, true, 'thumb失败');
-      if (res.code == 0) {
-        setLike(res.data.likeNum);
-        setIsLiked(res.data.isLiked);
-      }
-
+  async function handleClick() {
+    const res = await requestApi('get', `/updateLikeComment/${props.content.commentId}`, null, true, 'thumb失败');
+    if (res.code == 0) {
+      setLike(res.data.likeNum);
+      setIsLiked(res.data.isLiked);
     }
-
-    fetchData()
-    //console.log(props.content.likeNum);
-  }
+  };
 
   const thumb =
     <View style={{ flexDirection: 'row' }}>
@@ -106,7 +97,7 @@ function DetailedCard(props: CardProps) {
     const res = await requestApi('get', `/deleteMemory/${props.content.postId}`, null, true, '删除失败');
   };
   function onEdit() {
-    props.navigation.navigate('EditPost', { postId: props.content.postId })
+    props.navigation.navigate('EditPost', { postId: props.id })
     setMenuVisible(!MenuVisible);
   }
   return (
@@ -209,22 +200,25 @@ const dc = [
 ]
 
 function Comment({ route, navigation }: StackNavigationProps) {
+  //获取屏幕宽高
+  const { width,height } = Dimensions.get("screen");
+
   const [text, setText] = React.useState("");
   const id = route.params?.postId;
   const [senderAvatar, setAvatar] = useState("http://dummyimage.com/100x100");
-  
-  const[cid,setcid]=useState(0);
+
+  const [cid, setcid] = useState(0);
   const [MenuVisible1, setMenuVisible1] = useState(false);
   const [MenuVisible2, setMenuVisible2] = useState(false);
-  const toggleMenu = (userID:string,cid:number) => {
+  const toggleMenu = (userID: string, cid: number) => {
     console.log(1)
     setcid(cid);
-    if(global.gUserId===userID)
+    if (global.gUserId === userID)
       setMenuVisible2(true);
     else
       setMenuVisible1(true);
   };
-  
+
   const [detail, setDetail] = useState(dd);
   const [commentlist, setList] = useState(dc);
 
@@ -242,15 +236,14 @@ function Comment({ route, navigation }: StackNavigationProps) {
 
   useEffect(() => {
     fetchData()
-    console.log(commentlist)
-    console.log(global.gUserId)
-  }, [])
+  }, [commentlist])
+
 
   function onDelete(commentID: number) {
     async function deleteComment() {
       const res = await requestApi('post', '/deleteComment', { comment_id: commentID }, true, '删除失败');
       if (res.code === 0) {
-        fetchData();
+        setList([])
       }
     }
     deleteComment()
@@ -261,7 +254,6 @@ function Comment({ route, navigation }: StackNavigationProps) {
     Keyboard.dismiss;
     if (res.code == 0) {
       setText('');
-      fetchData();
     }
   }
 
@@ -270,7 +262,7 @@ function Comment({ route, navigation }: StackNavigationProps) {
   }
 
   return (
-    <View>
+    <View style={{height:height-91}}>
       <Modal
         isVisible={true}
         style={styles.modal}
@@ -302,67 +294,68 @@ function Comment({ route, navigation }: StackNavigationProps) {
           </View>
         </KeyboardAvoidingView>
       </Modal>
-      <ScrollView>
+      <ScrollView >
         <DetailedCard
           clickAvatar={clickAvatar}
           content={detail}
           id={id}
+          navigation={navigation}
         />
         <View style={{ margin: 5 }} />
         {commentlist.map((item, index) =>
           <View key={index}>
-            <Pressable onLongPress={()=>toggleMenu(item.userID,item.commentId)}>
+            <Pressable onLongPress={() => toggleMenu(item.userID, item.commentId)}>
               <View>
-              <Card mode='outlined' style={styles.commentcard}>
-                <Card.Title
-                  title={item.userName}
-                  subtitle={
-                    <Text
-                      style={{
-                        color: 'grey',
-                        fontSize: 12.5
-                      }}>
-                      {item.postTime}
-                    </Text>}
-                  left={() => <UserPhoto
-                    clickAvatar={clickAvatar}
-                    content={item}
-                  />}
-                  right={() => <Thumb
-                    content={item} />}
-                />
-                <Card.Content style={{ marginLeft: 55 }}>
-                  <Text>
-                    {item.commentContent}
-                  </Text>
-                </Card.Content>
-              </Card>
+                <Card mode='outlined' style={styles.commentcard}>
+                  <Card.Title
+                    title={item.userName}
+                    subtitle={
+                      <Text
+                        style={{
+                          color: 'grey',
+                          fontSize: 12.5
+                        }}>
+                        {item.postTime}
+                      </Text>}
+                    left={() => <UserPhoto
+                      clickAvatar={clickAvatar}
+                      content={item}
+                    />}
+                    right={() => <Thumb
+                      content={item} />}
+                  />
+                  <Card.Content style={{ marginLeft: 55 }}>
+                    <Text>
+                      {item.commentContent}
+                    </Text>
+                  </Card.Content>
+                </Card>
               </View>
             </Pressable>
             <Modal
               isVisible={MenuVisible1}
-              onBackdropPress={()=>setMenuVisible1(false)}
+              onBackdropPress={() => setMenuVisible1(false)}
               style={styles.modal}
             >
               <View style={styles.menu}>
-                 <Button style={{ height: 50, paddingTop: 5 }} onPress={()=>setMenuVisible1(false)}>举报</Button>
+                <Button style={{ height: 50, paddingTop: 5 }} onPress={() => setMenuVisible1(false)}>举报</Button>
                 <Divider />
-                <Button style={{ height: 50, paddingTop: 5 }} onPress={()=>setMenuVisible1(false)}>取消</Button>
+                <Button style={{ height: 50, paddingTop: 5 }} onPress={() => setMenuVisible1(false)}>取消</Button>
               </View>
             </Modal>
             <Modal
               isVisible={MenuVisible2}
-              onBackdropPress={()=>setMenuVisible2(false)}
+              onBackdropPress={() => setMenuVisible2(false)}
               style={styles.modal}
             >
               <View style={styles.menu}>
                 <Button style={{ height: 50, paddingTop: 5 }} onPress={
-                  () => {onDelete(cid);setMenuVisible2(false)}
+                  () => { onDelete(cid); setMenuVisible2(false) }
                 }>删除</Button>
-                 <Divider />
-                <Button style={{ height: 50, paddingTop: 5 }} onPress={()=>setMenuVisible2(false)}>取消</Button>
+                <Divider />
+                <Button style={{ height: 50, paddingTop: 5 }} onPress={() => setMenuVisible2(false)}>取消</Button>
               </View>
-              </Modal>
+            </Modal>
           </View>
         )}
         <View style={{ margin: 20 }} />

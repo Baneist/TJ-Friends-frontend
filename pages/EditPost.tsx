@@ -12,6 +12,7 @@ const EditPost = ({ route, navigation }: StackNavigationProps) => {
   const [text, setText] = useState('');
   const [image, setImage] = useState([] as string[]);
   async function fetchData(){
+    console.log(route.params?.postId)
     const res = await requestApi('get', `/Memories/${route.params?.postId}`, null, true, 'get memories失败');
     if (res.code == 0) {
       setText(res.data.postContent);
@@ -20,8 +21,7 @@ const EditPost = ({ route, navigation }: StackNavigationProps) => {
   }
   async function handlePost() {
     // 发送text和image到服务器
-    console.log('发布');
-    const res = await requestApi('put', '/updateMemory/{postId}', { postContent: text, photoUrl: image }, true, '修改失败')
+    const res = await requestApi('put', `/updateMemory/${route.params?.postId}`, { postContent: text, photoUrl: image }, true, '修改失败')
     if (res.code == 0) {
       navigation.goBack();
     }

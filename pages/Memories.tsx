@@ -8,6 +8,7 @@ import Modal from 'react-native-modal';
 import { StackNavigationProps } from '../App';
 import requestApi from '../utils/request';
 import handleAxiosError from "../utils/handleError";
+import { useFocusEffect } from '@react-navigation/native';
 
 export const styles = StyleSheet.create({
   userphoto: {
@@ -236,10 +237,10 @@ const MemoriesScreen = ({ navigation }: StackNavigationProps) => {
       setlist(memorylist);
     }
   }
-
-  useEffect(() => {
+  
+  useFocusEffect(() => {
     fetchData()
-  },)
+  })
 
   return (
     <View style={{ flex: 1, marginBottom: bottom }}>

@@ -138,6 +138,7 @@ const MainScreen = () => {
           tabBarActiveBackgroundColor: '#45014A',
           tabBarActiveTintColor: 'purple',
           tabBarLabel: showLabel ? 'Memories' : undefined,
+          headerShown:true
         }}
         name="Memories"
         component={MemoriesScreen}
