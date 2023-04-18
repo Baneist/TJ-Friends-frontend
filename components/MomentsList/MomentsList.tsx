@@ -37,7 +37,7 @@ export const MomentsList=(props: PostIdProps) => {
 
   useEffect(() => {
     fetchData()
-  })
+  },[])
 
   return (
     <View style={{ flex: 1, marginBottom: bottom }}>
