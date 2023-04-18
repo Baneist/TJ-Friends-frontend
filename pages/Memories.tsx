@@ -199,10 +199,10 @@ export const CardwithButtons = (props: CardProps) => {
           {global.gUserId === props.content.userID && <Button style={{ height: 50, paddingTop: 5 }} onPress={onEdit
           }>编辑</Button>}
           {global.gUserId === props.content.userID && <Divider />}
-          <Button style={{ height: 50, paddingTop: 5 }} onPress={() => {
+          <Button style={{ height: 50, paddingTop: 5 }} onPress={() => {toggleMenu
           }}>收藏</Button>
           {global.gUserId != props.content.userID && <Divider />}
-          {global.gUserId != props.content.userID && <Button style={{ height: 50, paddingTop: 5 }} onPress={() => {
+          {global.gUserId != props.content.userID && <Button style={{ height: 50, paddingTop: 5 }} onPress={() => {toggleMenu
           }}>举报</Button>}
           {global.gUserId === props.content.userID && <Divider />}
           {global.gUserId === props.content.userID && <Button style={{ height: 50, paddingTop: 5 }} onPress={
