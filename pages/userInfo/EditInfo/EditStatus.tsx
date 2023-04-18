@@ -12,7 +12,7 @@ import handleAxiosError from "../../../utils/handleError";
 const EditStatus = ({ route, navigation }: StackNavigationProps) => {
   const [userStatus, setStatus] = useState('');
   let userInfo = defaultInfo;
-  const userID = '2052909';
+  const userID = global.gUserId;
   //初始化
   async function fetchData() {
     const res = await requestApi('get', `/profile/${userID}`, null, true, 'get profile失败');

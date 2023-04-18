@@ -14,7 +14,8 @@ const EditeNickName = ({ route, navigation }: StackNavigationProps) => {
   //state
   const [nickName, setNickName] = useState('1');
   let userInfo = defaultInfo;
-  const userID = '2052909'
+  const userID = global.gUserId;
+
 
   //初始化
   async function fetchData() {

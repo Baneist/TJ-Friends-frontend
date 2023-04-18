@@ -180,11 +180,15 @@ function Comment({ route, navigation }: StackNavigationProps) {
     }
   }
 
-  useEffect(() => {
+  // useEffect(() => {
+  //   fetchData()
+  // }, [state])
+
+  useFocusEffect(React.useCallback(() => {
     fetchData()
-  }, [state])
-
-
+    return () => {
+    };
+  }, [state]))
   function onDelete(commentID: number) {
     async function deleteComment() {
       const res = await requestApi('post', '/deleteComment', { comment_id: commentID }, true, '删除失败');
@@ -200,6 +204,7 @@ function Comment({ route, navigation }: StackNavigationProps) {
     Keyboard.dismiss;
     if (res.code == 0) {
       setText('');
+      setState(state+1)
     }
   }
 
