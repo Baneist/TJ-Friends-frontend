@@ -40,7 +40,6 @@ const requestApi = async (method: string, url: string, data: any, withToken: boo
   if (url === '/login') {
     data = qs.stringify(data);
   }
-  console.log(contentType)
   try {
     const response = await instance.request({
       url, method, data, headers: {

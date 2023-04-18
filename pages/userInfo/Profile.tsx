@@ -300,7 +300,7 @@ const Profile = ({ navigation }: StackNavigationProps) => {
                   Moments
                 </Text>
                 {/* to do */}
-                {/* <MomentsList navigation={navigation} postIDs={[10]}/> */}
+                <MomentsList navigation={navigation} userID={userId}/>
               </Block>
             </Block>
             {/* eslint-disable-next-line max-len */}

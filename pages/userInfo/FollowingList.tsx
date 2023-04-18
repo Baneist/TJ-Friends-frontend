@@ -49,37 +49,28 @@ const FollowingList = ({route, navigation }: StackNavigationProps) => {
 
   // 关注/取消关注用户
   async function toggleFollow(user: followProp) {
+    let res:AxiosResponse['data'];
     if (user.isfollowing) { //取关
-      const res = await requestApi('post', '/unfollow', { stuid: user.userID }, true, 'unfollow failed')
-      if (res.status == 200) {
-        const newList = statusList.map((item, idx) => {
-          if (item.userID === user.userID) {
-            item.isfollowing = !item.isfollowing;
-            return item;
-          }
-          else {
-            return item;
-          }
-        })
-        setstatusList(newList)
-        //粉丝列表的回粉信息交给后端修改
-      }
+      res = await requestApi('post', '/unfollow', { stuid: user.userID }, true, 'unfollow failed')
     }
     else { //关注
-      const res = await requestApi('post', '/follow', { stuid: user.userID }, true, 'follow failed')
-      if (res.status == 200) {
-        const newList = statusList.map((item, idx) => {
-          if (item.userID === user.userID) {
-            item.isfollowing = !item.isfollowing;
-            return item;
-          }
-          else {
-            return item;
-          }
-        })
-        setstatusList(newList)
-        //粉丝列表的回粉信息交给后端修改
-      }
+      res = await requestApi('post', '/follow', { stuid: user.userID }, true, 'follow failed')
+    }
+    if(res.code==0){
+      const newList = statusList.map((item, idx) => {
+        if (item.userID === user.userID) {
+          item.isfollowing = !item.isfollowing;
+          return item;
+        }
+        else {
+          return item;
+        }
+      })
+      setstatusList(newList)
+      //粉丝列表的回粉信息交给后端修改
+    }
+    else{
+      console.log('follow/unfollow fail', res.code)
     }
   }
 

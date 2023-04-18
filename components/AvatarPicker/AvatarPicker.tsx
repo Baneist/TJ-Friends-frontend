@@ -25,6 +25,7 @@ const styles = StyleSheet.create({
 interface AvatarPickerProps{
     showAvatarOption:boolean,
     onBackdropPress:()=>void,
+    onSubmit:(url:string) => void,
 }
 
 
@@ -108,6 +109,7 @@ export default function AvatarPicker(props:AvatarPickerProps) {
           }}
           onEditingComplete={(result) => {
               console.log(result);
+              props.onSubmit(result.uri);
               props.onBackdropPress();
           }}
           mode="full"
