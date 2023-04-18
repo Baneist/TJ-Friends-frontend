@@ -73,6 +73,16 @@ export function EditProfile({ route, navigation }: StackNavigationProps) {
       return (<Icon name="woman" size={16} color="#32325D" style={{ marginTop: 10 }}>Female</Icon>)
   }
 
+  //选头像
+  async function onSubmitAvatar(url:string){
+    let newuser = { ...userInfo };
+    newuser.userAvatar.info = url;
+    const res = await requestApi('put', '/updateUserInfo', newuser, true, '更新头像失败');
+    console.log(newuser)
+    if (res.code === 0) {
+        setUserInfo(newuser)
+    }
+  }
   //选择生日
   const [showDatePicker, setShowDatePicker] = useState(false);
 
@@ -101,8 +111,6 @@ export function EditProfile({ route, navigation }: StackNavigationProps) {
       const res = await requestApi('put', '/updateUserInfo', newuser, true, '更新生日失败');
       if (res.code === 0) {
         setUserInfo(newuser)
-        //发送事件，传递更新的userInfo
-        //navigation.goBack()
       }
     }
 
@@ -376,6 +384,7 @@ export function EditProfile({ route, navigation }: StackNavigationProps) {
                   <AvatarPicker
                     showAvatarOption={showAvatarOption}
                     onBackdropPress={cancelAvatarOption}
+                    onSubmit={onSubmitAvatar}
                   />
                 </Block>
               </Pressable>

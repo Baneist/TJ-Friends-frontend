@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from 'react';
-import { ScrollView, View } from 'react-native';
+import { ScrollView, View,Text } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CardwithButtons } from '../../pages/Memories';
 import requestApi from '../../utils/request';
@@ -8,7 +8,7 @@ import { AxiosResponse } from 'axios';
 
 interface PostIdProps{
   navigation:StackNavigationProps["navigation"],
-  postIDs:number[],
+  userID:string,
 }
 
 export const MomentsList=(props: PostIdProps) => {
@@ -25,23 +25,20 @@ export const MomentsList=(props: PostIdProps) => {
   let memorylist = [] as any[];
 
   async function fetchData() {
-    let reqList: Promise<AxiosResponse>[] = [];
-    for(let i=0;i<props.postIDs.length;++i){
-      reqList.push(new Promise((resolve, reject) => {
-        resolve(requestApi('get', `/Memories/${props.postIDs[i]}`, null, true, 'get profile failed'))
-      }))
+    console.log('page userID',props.userID)
+    const res = await requestApi('get', `/getUserMemories/${props.userID}`,null, true, 'get user memories faild')
+    if(res.code === 0){
+      setlist(res.data)
     }
-    console.log('postids',props.postIDs)
-    Promise.all(reqList).then((values) => {
-      for (let i = 0; i < values.length; ++i) {
-        setlist(current => current.concat(values[i].data))
-      }
-    })
+    else{
+      console.log('get user memories faild', res.code)
+      console.log(res.msg)
+    }
   }
 
   useEffect(() => {
     fetchData()
-  },)
+  },[])
 
   return (
     <View style={{ flex: 1, marginBottom: bottom }}>
@@ -55,6 +52,11 @@ export const MomentsList=(props: PostIdProps) => {
               clickAvatar={clickAvatar}
               navigation={props.navigation}
             />)}
+          {list.length===0 && 
+            <View style={{flex:1, alignItems:'center'}}>
+              <Text style={{color:'#525F7F', marginTop:20}}>---暂无更多---</Text>
+            </View>
+          }
         </View>
         {/* eslint-disable-next-line max-len */}
         {/* -> Set bottom view to allow scrolling to top if you set bottom-bar position absolute */}
