@@ -23,7 +23,7 @@ const profileImage = {
 
 const Profile = ({ navigation }: StackNavigationProps) => {
   //state
-  const curUser = '2053302'; //当前用户
+  const curUser = global.gUserId; //当前用户
   const pageid = '2053186'; //所查看主页的用户
   //个人信息
   const [userInfo, setUserInfo] = useState<userProp>(defaultInfo);
@@ -66,15 +66,10 @@ const Profile = ({ navigation }: StackNavigationProps) => {
 
   // }, [])
 
-  //编辑个人资料
-  function editProfile() {
-    navigation.navigate('EditProfile')
-  }
-
   //查看关注列表
   function viewFollowing() {
     if (userInfo.followingPms)
-      navigation.navigate('FollowingList')
+      navigation.navigate('FollowingList',{userId:pageid})
     else {
       console.log('暂不可见')
     }
@@ -83,7 +78,7 @@ const Profile = ({ navigation }: StackNavigationProps) => {
   //查看粉丝列表
   function viewFollower() {
     if (userInfo.followerPms)
-      navigation.navigate('FollowersList')
+      navigation.navigate('FollowersList',{userId:pageid})
     else {
       console.log('暂不可见')
     }
@@ -252,7 +247,7 @@ const Profile = ({ navigation }: StackNavigationProps) => {
                 <Text bold size={16} color="#525F7F" style={{ marginTop: 12, marginLeft: 12 }}>
                   Moments
                 </Text>
-                <MomentsList navigation={navigation} postIDs={[1]}/>
+                <MomentsList navigation={navigation} userID={pageid}/>
               </Block>
             </Block>
             {/* eslint-disable-next-line max-len */}
