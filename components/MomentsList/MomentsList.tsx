@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CardwithButtons } from '../../pages/Memories';
 import requestApi from '../../utils/request';
 import { StackNavigationProps } from '../../App';
+import { useFocusEffect } from '@react-navigation/native';
 import { AxiosResponse } from 'axios';
 
 interface PostIdProps{
@@ -18,7 +19,7 @@ export const MomentsList=(props: PostIdProps) => {
   }
 
   function clickAvatar() {
-    props.navigation.navigate('OthersPage');
+    props.navigation.navigate('OthersPage',{userId:props.userID});
   }
 
   const [list, setlist] = useState([] as any[]);
@@ -35,9 +36,13 @@ export const MomentsList=(props: PostIdProps) => {
     }
   }
 
-  useEffect(() => {
-    fetchData()
-  },[])
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchData()
+      return () => {
+      };
+    }, [])
+  );
 
   return (
     <View style={{ flex: 1, marginBottom: bottom }}>

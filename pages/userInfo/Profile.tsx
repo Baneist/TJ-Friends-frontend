@@ -15,6 +15,7 @@ import requestApi from "../../utils/request";
 import handleAxiosError from "../../utils/handleError";
 import { useFocusEffect } from '@react-navigation/native';
 import { styles } from "./Profile.style";
+import MomentsList from "../../components/MomentsList/MomentsList";
 import { AxiosResponse } from "axios";
 import { CardwithButtons } from "../Memories";
 
@@ -184,49 +185,10 @@ const Profile = ({ navigation }: StackNavigationProps) => {
   useFocusEffect(
     React.useCallback(() => {
       fetchData()
-      console.log('profile has updated.')
       return () => {
       };
     }, [])
   );
-
-  //动态列表组件
-  //放进来是为了刷新
-  const MomentsList=() => {
-    const { bottom } = useSafeAreaInsets();
-    const onCommentPress = (postID: string) => {
-      navigation.navigate('Comment', { postId: postID });
-    }
-  
-    function clickAvatar() {
-      navigation.navigate('OthersPage');
-    }
-  
-    return (
-      <View style={{ flex: 1, marginBottom: bottom }}>
-        <ScrollView>
-          <View>
-            {userPosts.map((item, index) =>
-              <CardwithButtons
-                key={index}
-                content={item}
-                onCommentPress={() => onCommentPress(item.postId)}
-                clickAvatar={clickAvatar}
-                navigation={navigation}
-              />)}
-            {userPosts.length===0 && 
-              <View style={{flex:1, alignItems:'center'}}>
-                <Text style={{color:'#525F7F', marginTop:20}}>---暂无更多---</Text>
-              </View>
-            }
-          </View>
-          {/* eslint-disable-next-line max-len */}
-          {/* -> Set bottom view to allow scrolling to top if you set bottom-bar position absolute */}
-          <View style={{ height: 90 }} />
-        </ScrollView>
-      </View>
-    );
-  }
   return (
     <View style={{ flex: 1, marginBottom: bottom }}>
       <View style={{ flex: 1 }}>
@@ -344,8 +306,7 @@ const Profile = ({ navigation }: StackNavigationProps) => {
                 <Text bold size={16} color="#525F7F" style={{ marginTop: 12, marginLeft: 12 }}>
                   Moments
                 </Text>
-                {/* to do */}
-                <MomentsList/>
+                <MomentsList navigation={navigation} userID={userId}/>
               </Block>
             </Block>
             {/* eslint-disable-next-line max-len */}

@@ -6,10 +6,11 @@ import { Block, Text } from "galio-framework";
 import Icon from 'react-native-vector-icons/AntDesign';
 import { StackNavigationProps } from '../../App'
 import { defaultInfo, userProp } from "./Profile";
+import { followProp } from "./FollowingList";
 import requestApi from "../../utils/request";
 import { styles } from "./Profile.style";
 import { GENDER } from "./Profile";
-import { CardwithButtons } from "../Memories";
+import MomentsList from "../../components/MomentsList/MomentsList";
 import { useFocusEffect } from '@react-navigation/native';
 
 //获取屏幕宽高
@@ -42,7 +43,15 @@ const OthersPage = ({route, navigation }: StackNavigationProps) => {
       callback();
     }
   }
-
+  //检查是否关注
+  function hasFollowing(followerlist:followProp[]){
+    for(let i=0;i<followerlist.length;++i){
+      if(followerlist[i].userID == curUser){
+        return true;
+      }
+    }
+    return false;
+  }
   async function fetchData() {
     //获取资料、关注列表和粉丝列表
     const [resInfo, resFollowing, resFollower, resPosts] = await Promise.all([
@@ -53,7 +62,10 @@ const OthersPage = ({route, navigation }: StackNavigationProps) => {
     ]);
     handleApiResponse(resInfo, () => setUserInfo(resInfo.data));
     handleApiResponse(resFollowing, () => setFollowingNum(resFollowing.data.followings.length));
-    handleApiResponse(resFollower, () => { setFollowerNum(resFollower.data.followers.length); setFollowing(resFollower.data.followers.indexOf(curUser) != -1); });
+    handleApiResponse(resFollower, () => { 
+      setFollowerNum(resFollower.data.followers.length); 
+      setFollowing(hasFollowing(resFollower.data.followers))
+     });
     handleApiResponse(resPosts, () => setUserPosts(resPosts.data));
   }
 
@@ -93,18 +105,12 @@ const OthersPage = ({route, navigation }: StackNavigationProps) => {
   async function toggleFollow() {
     if (isfollowing) { //取关
       const res = await requestApi('post', '/unfollow', {stuid: pageid }, true, 'unfollow failed')
-      if (res.code == 0) {
-        setFollowing(!isfollowing)
-        setFollowingNum(followingNum + (isfollowing ? 1 : -1));
-      }
     } else { //关注
       console.log(pageid)
       const res = await requestApi('post', '/follow', { stuid: pageid }, true, 'follow failed')
-      console.log(res)
-      if (res.code == 0) {
-        setFollowing(!isfollowing)
-      }
     }
+    setFollowerNum(followerNum + (isfollowing ? -1 : 1));
+    setFollowing(!isfollowing)
   }
 
 
@@ -115,42 +121,6 @@ const OthersPage = ({route, navigation }: StackNavigationProps) => {
       {userInfo.userGender.info === GENDER.Male ? GENDER.Male : GENDER.Female}
     </Icon>);
   }
-  const MomentsList=() => {
-    const { bottom } = useSafeAreaInsets();
-    const onCommentPress = (postID: string) => {
-      navigation.navigate('Comment', { postId: postID });
-    }
-  
-    function clickAvatar() {
-      navigation.navigate('OthersPage');
-    }
-  
-    return (
-      <View style={{ flex: 1, marginBottom: bottom }}>
-        <ScrollView>
-          <View>
-            {userPosts.map((item, index) =>
-              <CardwithButtons
-                key={index}
-                content={item}
-                onCommentPress={() => onCommentPress(item.postId)}
-                clickAvatar={clickAvatar}
-                navigation={navigation}
-              />)}
-            {userPosts.length===0 && 
-              <View style={{flex:1, alignItems:'center'}}>
-                <Text style={{color:'#525F7F', marginTop:20}}>---暂无更多---</Text>
-              </View>
-            }
-          </View>
-          {/* eslint-disable-next-line max-len */}
-          {/* -> Set bottom view to allow scrolling to top if you set bottom-bar position absolute */}
-          <View style={{ height: 90 }} />
-        </ScrollView>
-      </View>
-    );
-  }
-
   return (
     <View style={{ flex: 1, marginBottom: bottom }}>
       <View style={{ flex: 1 }}>
@@ -288,7 +258,7 @@ const OthersPage = ({route, navigation }: StackNavigationProps) => {
                 <Text bold size={16} color="#525F7F" style={{ marginTop: 12, marginLeft: 12 }}>
                   Moments
                 </Text>
-                <MomentsList/>
+                <MomentsList navigation={navigation} userID={pageid}/>
               </Block>
             </Block>
             {/* eslint-disable-next-line max-len */}

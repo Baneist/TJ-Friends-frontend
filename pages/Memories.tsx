@@ -253,7 +253,7 @@ const MemoriesScreen = ({ navigation }: StackNavigationProps) => {
               key={index}
               content={item}
               onCommentPress={() => onCommentPress(item.postId)}
-              clickAvatar={()=>clickAvatar(item.useID)}
+              clickAvatar={()=>clickAvatar(item.userID)}
               navigation={navigation}
             />)}
         </View>
