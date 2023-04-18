@@ -99,7 +99,7 @@ const messageData = {
 ;
 
 const NoticeManageScreen = ({ route, navigation }: NavigationProps) => {
-  const httpGetAllMessage = 'https://mock.apifox.cn/m1/2539601-0-default/notice/1/getAllMessage';
+  const httpGetAllMessage = 'https://mock.apifox.cn/m1/2539601-0-default/notice/1/getAllSystemNotice';
   const httpGetAllNoticeNum = 'https://mock.apifox.cn/m1/2539601-0-default/notice/1/num4each';
   const [refreshing_notice, setRefreshingNotice] = useState(false);
   const [refreshing_message, setRefreshingMessage] = useState(false);
