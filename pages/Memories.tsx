@@ -240,8 +240,9 @@ const MemoriesScreen = ({ navigation }: StackNavigationProps) => {
   }
   
   useFocusEffect(() => {
-    fetchData()
-  })
+      fetchData()
+    }
+  )
 
   return (
     <View style={{ flex: 1, marginBottom: bottom }}>
