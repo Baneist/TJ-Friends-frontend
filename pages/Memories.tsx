@@ -239,10 +239,11 @@ const MemoriesScreen = ({ navigation }: StackNavigationProps) => {
     }
   }
   
-  useFocusEffect(() => {
-      fetchData()
-    }
-  )
+  useFocusEffect(React.useCallback(() => {
+    fetchData()
+    return () => {
+    };
+  },[]))
 
   return (
     <View style={{ flex: 1, marginBottom: bottom }}>
