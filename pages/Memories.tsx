@@ -224,8 +224,8 @@ const MemoriesScreen = ({ navigation }: StackNavigationProps) => {
     navigation.navigate('Comment', { postId: postID });
   }
 
-  function clickAvatar() {
-    navigation.navigate('OthersPage');
+  function clickAvatar(pageId:string) {
+    navigation.navigate('OthersPage', {userId:pageId});
   }
 
   const [list, setlist] = useState([] as any[]);
@@ -254,7 +254,7 @@ const MemoriesScreen = ({ navigation }: StackNavigationProps) => {
               key={index}
               content={item}
               onCommentPress={() => onCommentPress(item.postId)}
-              clickAvatar={clickAvatar}
+              clickAvatar={()=>clickAvatar(item.useID)}
               navigation={navigation}
             />)}
         </View>

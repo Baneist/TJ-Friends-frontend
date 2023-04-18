@@ -21,10 +21,10 @@ const profileImage = {
   ProfilePicture: 'https://picsum.photos/700'
 }
 
-const Profile = ({ navigation }: StackNavigationProps) => {
+const OthersPage = ({route, navigation }: StackNavigationProps) => {
   //state
   const curUser = global.gUserId; //当前用户
-  const pageid = '2053186'; //所查看主页的用户
+  const pageid = route.params?.userId; //所查看主页的用户
   //个人信息
   const [userInfo, setUserInfo] = useState<userProp>(defaultInfo);
   //粉丝 关注列表
@@ -302,4 +302,4 @@ const Profile = ({ navigation }: StackNavigationProps) => {
 }
 
 
-export default Profile;
+export default OthersPage;
