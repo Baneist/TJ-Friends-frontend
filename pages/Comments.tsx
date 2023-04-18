@@ -85,79 +85,7 @@ function Thumb(props: CardProps) {
   );
 }
 
-function DetailedCard(props: CardProps) {
-  const [MenuVisible, setMenuVisible] = useState(false);
-  const toggleMenu = () => {
-    setMenuVisible(!MenuVisible);
-  };
-  const list = props.content.postPhoto;
-  //获取屏幕宽高
-  const { width } = Dimensions.get("screen");
-  async function onDelete() {
-    const res = await requestApi('get', `/deleteMemory/${props.content.postId}`, null, true, '删除失败');
-  };
-  function onEdit() {
-    props.navigation.navigate('EditPost', { postId: props.id })
-    setMenuVisible(!MenuVisible);
-  }
-  return (
-    <View>
-      <Card mode='outlined' style={styles.commentcard}>
-        <Card.Title
-          title={props.content.userName}
-          subtitle={props.content.postTime}
-          left={() => <UserPhoto
-            clickAvatar={props.clickAvatar}
-            content={props.content} />}
-          right={() => <IconButton icon='dots-horizontal' onPress={toggleMenu} />}
-        />
-        <Card.Content>
-          <Text>
-            {props.content.postContent}
-          </Text>
-        </Card.Content>
-        {list.map((item: string, index: number) =>
-          <Image
-            source={{ uri: item }}
-            style={{
-              borderWidth: 15,
-              borderColor: '#fff',
-              backgroundColor: '#fff',
-              width: width,
-              height: width,
-              marginBottom: -15
-            }}
-            key={index}
-          />
-        )}
-        <View style={{ justifyContent: 'space-evenly', flexDirection: 'row', paddingBottom: 10, paddingTop: 10 }}>
-          <Like content={props.content} id={props.id} />
-          <Share content={props.content} />
-        </View>
-      </Card>
-      <Modal
-        isVisible={MenuVisible}
-        onBackdropPress={toggleMenu}
-        style={styles.modal}
-      >
-        <View style={styles.menu}>
-          {global.gUserId === props.content.userID && <Button style={{ height: 50, paddingTop: 5 }} onPress={onEdit
-          }>编辑</Button>}
-          {global.gUserId === props.content.userID && <Divider />}
-          <Button style={{ height: 50, paddingTop: 5 }} onPress={() => {
-          }}>收藏</Button>
-          {global.gUserId != props.content.userID && <Divider />}
-          {global.gUserId != props.content.userID && <Button style={{ height: 50, paddingTop: 5 }} onPress={() => {
-          }}>举报</Button>}
-          {global.gUserId === props.content.userID && <Divider />}
-          {global.gUserId === props.content.userID && <Button style={{ height: 50, paddingTop: 5 }} onPress={
-            () => { setMenuVisible(!MenuVisible); Alert.alert('', '确定删除这条动态吗?', [{ text: '确定', onPress: onDelete }, { text: '取消' }]); }
-          }>删除</Button>}
-        </View>
-      </Modal>
-    </View>
-  );
-}
+
 
 const dd = {
   likeNum: "51",
@@ -199,9 +127,26 @@ const dc = [
   }
 ]
 
+
 function Comment({ route, navigation }: StackNavigationProps) {
   //获取屏幕宽高
-  const { width,height } = Dimensions.get("screen");
+  const { width, height } = Dimensions.get("screen");
+
+  const [MenuVisible, setMenuVisible] = useState(false);
+  const toggleDMenu = () => {
+    setMenuVisible(!MenuVisible);
+  };
+
+  async function onMemoryDelete() {
+    const res = await requestApi('get', `/deleteMemory/${id}`, null, true, '删除失败');
+    if (res.code === 0)
+      navigation.goBack();
+  };
+  
+  function onEdit() {
+    navigation.navigate('EditPost', { postId: id })
+    setMenuVisible(!MenuVisible);
+  }
 
   const [text, setText] = React.useState("");
   const id = route.params?.postId;
@@ -221,7 +166,8 @@ function Comment({ route, navigation }: StackNavigationProps) {
 
   const [detail, setDetail] = useState(dd);
   const [commentlist, setList] = useState(dc);
-
+  const list = detail.postPhoto;
+  const [state,setState]=useState(0);
   async function fetchData() {
     const res = await requestApi('get', `/Memories/${id}`, null, true, 'get memories失败');
     if (res.code == 0) {
@@ -236,14 +182,14 @@ function Comment({ route, navigation }: StackNavigationProps) {
 
   useEffect(() => {
     fetchData()
-  }, [commentlist])
+  }, [state])
 
 
   function onDelete(commentID: number) {
     async function deleteComment() {
       const res = await requestApi('post', '/deleteComment', { comment_id: commentID }, true, '删除失败');
       if (res.code === 0) {
-        setList([])
+        setState(state+1);
       }
     }
     deleteComment()
@@ -262,7 +208,7 @@ function Comment({ route, navigation }: StackNavigationProps) {
   }
 
   return (
-    <View style={{height:height-91}}>
+    <View style={{ height: height - 91 }}>
       <Modal
         isVisible={true}
         style={styles.modal}
@@ -295,12 +241,61 @@ function Comment({ route, navigation }: StackNavigationProps) {
         </KeyboardAvoidingView>
       </Modal>
       <ScrollView >
-        <DetailedCard
-          clickAvatar={clickAvatar}
-          content={detail}
-          id={id}
-          navigation={navigation}
-        />
+        <View>
+          <Card mode='outlined' style={styles.commentcard}>
+            <Card.Title
+              title={detail.userName}
+              subtitle={detail.postTime}
+              left={() => <UserPhoto
+                clickAvatar={clickAvatar}
+                content={detail} />}
+              right={() => <IconButton icon='dots-horizontal' onPress={toggleDMenu} />}
+            />
+            <Card.Content>
+              <Text>
+                {detail.postContent}
+              </Text>
+            </Card.Content>
+            {list.map((item: string, index: number) =>
+              <Image
+                source={{ uri: item }}
+                style={{
+                  borderWidth: 15,
+                  borderColor: '#fff',
+                  backgroundColor: '#fff',
+                  width: width,
+                  height: width,
+                  marginBottom: -15
+                }}
+                key={index}
+              />
+            )}
+            <View style={{ justifyContent: 'space-evenly', flexDirection: 'row', paddingBottom: 10, paddingTop: 10 }}>
+              <Like content={detail} id={id} />
+              <Share content={detail} />
+            </View>
+          </Card>
+          <Modal
+            isVisible={MenuVisible}
+            onBackdropPress={toggleDMenu}
+            style={styles.modal}
+          >
+            <View style={styles.menu}>
+              {global.gUserId === detail.userID && <Button style={{ height: 50, paddingTop: 5 }} onPress={onEdit
+              }>编辑</Button>}
+              {global.gUserId === detail.userID && <Divider />}
+              <Button style={{ height: 50, paddingTop: 5 }} onPress={() => {
+              }}>收藏</Button>
+              {global.gUserId != detail.userID && <Divider />}
+              {global.gUserId != detail.userID && <Button style={{ height: 50, paddingTop: 5 }} onPress={() => {
+              }}>举报</Button>}
+              {global.gUserId === detail.userID && <Divider />}
+              {global.gUserId === detail.userID && <Button style={{ height: 50, paddingTop: 5 }} onPress={
+                () => { setMenuVisible(!MenuVisible); Alert.alert('', '确定删除这条动态吗?', [{ text: '确定', onPress: onMemoryDelete }, { text: '取消' }]); }
+              }>删除</Button>}
+            </View>
+          </Modal>
+        </View>
         <View style={{ margin: 5 }} />
         {commentlist.map((item, index) =>
           <View key={index}>

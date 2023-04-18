@@ -20,7 +20,7 @@ const PostPage = ({ route, navigation }: StackNavigationProps) => {
     console.log('发布');
     const res = await requestApi('post', '/Post', { postContent: text, photoUrl: image }, true, 'post失败')
     if (res.code == 0) {
-      navigation.navigate('Memories');
+      navigation.goBack();
     }
   }
 
