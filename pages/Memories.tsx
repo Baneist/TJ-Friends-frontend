@@ -9,6 +9,7 @@ import { StackNavigationProps } from '../App';
 import requestApi from '../utils/request';
 import handleAxiosError from "../utils/handleError";
 import { useFocusEffect } from '@react-navigation/native';
+import { NotionMainBadge } from '../components/NoticeManage/NoticeBadge';
 
 export const styles = StyleSheet.create({
   userphoto: {
