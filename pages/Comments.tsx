@@ -345,8 +345,7 @@ function Comment({ route, navigation }: StackNavigationProps) {
               style={styles.modal}
             >
               <View style={styles.menu}>
-                 <Button style={{ height: 50, paddingTop: 5 }} onPress={() => {console.log(item)
-                }}>举报</Button>
+                 <Button style={{ height: 50, paddingTop: 5 }} onPress={()=>setMenuVisible1(false)}>举报</Button>
                 <Divider />
                 <Button style={{ height: 50, paddingTop: 5 }} onPress={()=>setMenuVisible1(false)}>取消</Button>
               </View>
