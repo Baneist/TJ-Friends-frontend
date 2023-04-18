@@ -10,13 +10,13 @@ import {
 import { Button, List, Chip } from 'react-native-paper';
 import { Block, Text } from "galio-framework";
 import Icon from 'react-native-vector-icons/AntDesign';
-import { MomentsList } from "../../components/MomentsList/MomentsList";
 import { StackNavigationProps } from '../../App'
 import requestApi from "../../utils/request";
 import handleAxiosError from "../../utils/handleError";
 import { useFocusEffect } from '@react-navigation/native';
 import { styles } from "./Profile.style";
 import { AxiosResponse } from "axios";
+import { CardwithButtons } from "../Memories";
 
 export enum GENDER { Male = "男", Female = "女" }
 
@@ -36,6 +36,11 @@ interface labelProp {
 interface infoProp {
   info: string,
   pms: boolean
+}
+
+interface PostIdProps{
+  navigation:StackNavigationProps["navigation"],
+  userID:string,
 }
 
 export interface userProp {
@@ -127,7 +132,7 @@ const Profile = ({ navigation }: StackNavigationProps) => {
   const [followerNum, setFollowerNum] = useState(0);
   const [followingNum, setFollowingNum] = useState(0);
   //动态列表
-  const [userPostIds, setUserPostIds] = useState([] as number [])
+  const [userPosts, setUserPosts] = useState([] as any [])
   //显示个人信息
   const { bottom } = useSafeAreaInsets();
 
@@ -135,19 +140,21 @@ const Profile = ({ navigation }: StackNavigationProps) => {
     if (response.code == 0) {
       callback();
     }
-    console.log(userPostIds)
+    console.log(userPosts)
   }
 
   async function fetchData() {
     //获取资料、关注列表、粉丝列表、发布的动态
-    const [resInfo, resFollowing, resFollower] = await Promise.all([
+    const [resInfo, resFollowing, resFollower, resPosts] = await Promise.all([
       requestApi('get', `/profile/${userId}`, null, true, 'getProfile failed'),
       requestApi('get', `/profile/${userId}/followings`, null, true, 'Get Following failed'),
       requestApi('get', `/profile/${userId}/followers`, null, true, 'Get Follower failed'),
+      requestApi('get', `/getUserMemories/${userId}`,null, true, 'get user memories faild')
     ]);
     handleApiResponse(resInfo, () => setUserInfo(resInfo.data));
     handleApiResponse(resFollowing, () => setFollowingNum(resFollowing.data.followings.length));
     handleApiResponse(resFollower, () => setFollowerNum(resFollower.data.followers.length));
+    handleApiResponse(resPosts, () => setUserPosts(resPosts.data));
   }
 
   // 编辑个人资料
@@ -177,11 +184,49 @@ const Profile = ({ navigation }: StackNavigationProps) => {
   useFocusEffect(
     React.useCallback(() => {
       fetchData()
+      console.log('profile has updated.')
       return () => {
       };
     }, [])
   );
 
+  //动态列表组件
+  //放进来是为了刷新
+  const MomentsList=() => {
+    const { bottom } = useSafeAreaInsets();
+    const onCommentPress = (postID: string) => {
+      navigation.navigate('Comment', { postId: postID });
+    }
+  
+    function clickAvatar() {
+      navigation.navigate('OthersPage');
+    }
+  
+    return (
+      <View style={{ flex: 1, marginBottom: bottom }}>
+        <ScrollView>
+          <View>
+            {userPosts.map((item, index) =>
+              <CardwithButtons
+                key={index}
+                content={item}
+                onCommentPress={() => onCommentPress(item.postId)}
+                clickAvatar={clickAvatar}
+                navigation={navigation}
+              />)}
+            {userPosts.length===0 && 
+              <View style={{flex:1, alignItems:'center'}}>
+                <Text style={{color:'#525F7F', marginTop:20}}>---暂无更多---</Text>
+              </View>
+            }
+          </View>
+          {/* eslint-disable-next-line max-len */}
+          {/* -> Set bottom view to allow scrolling to top if you set bottom-bar position absolute */}
+          <View style={{ height: 90 }} />
+        </ScrollView>
+      </View>
+    );
+  }
   return (
     <View style={{ flex: 1, marginBottom: bottom }}>
       <View style={{ flex: 1 }}>
@@ -300,7 +345,7 @@ const Profile = ({ navigation }: StackNavigationProps) => {
                   Moments
                 </Text>
                 {/* to do */}
-                <MomentsList navigation={navigation} userID={userId}/>
+                <MomentsList/>
               </Block>
             </Block>
             {/* eslint-disable-next-line max-len */}
