@@ -85,8 +85,6 @@ function Thumb(props: CardProps) {
   );
 }
 
-
-
 const dd = {
   likeNum: "51",
   repoNum: "46",
@@ -156,7 +154,6 @@ function Comment({ route, navigation }: StackNavigationProps) {
   const [MenuVisible1, setMenuVisible1] = useState(false);
   const [MenuVisible2, setMenuVisible2] = useState(false);
   const toggleMenu = (userID: string, cid: number) => {
-    console.log(1)
     setcid(cid);
     if (global.gUserId === userID)
       setMenuVisible2(true);

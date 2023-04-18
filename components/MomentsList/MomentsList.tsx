@@ -53,7 +53,6 @@ export const MomentsList=(props: PostIdProps) => {
               key={index}
               content={item}
               onCommentPress={() => onCommentPress(item.postId)}
-              clickAvatar={clickAvatar}
               navigation={props.navigation}
             />)}
           {list.length===0 && 
