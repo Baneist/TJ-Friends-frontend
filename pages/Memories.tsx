@@ -1,6 +1,6 @@
 import React from 'react';
-import { Pressable, ScrollView, View, Image, StyleSheet, Text } from 'react-native';
-import { Button, Card, IconButton, Divider, FAB, Dialog,Portal,Provider } from 'react-native-paper';
+import { Pressable, ScrollView, View, Image, StyleSheet, Text,Alert } from 'react-native';
+import { Button, Card, IconButton, Divider, FAB } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useState, useEffect } from 'react';
@@ -152,9 +152,8 @@ export const CardwithButtons = (props: CardProps) => {
   async function onDelete() {
     const res = await requestApi('get', `/deleteMemory/${props.content.postId}`, null, true, '删除失败');
     if (res.code == 0) {
-
+      console.log(props.content.postId)
     }
-    setMenuVisible(!MenuVisible);
   };
   function onEdit() {
     console.log(props.content.postId);
@@ -206,7 +205,8 @@ export const CardwithButtons = (props: CardProps) => {
           {global.gUserId != props.content.userID && <Button style={{ height: 50, paddingTop: 5 }} onPress={() => {
           }}>举报</Button>}
           {global.gUserId === props.content.userID && <Divider />}
-          {global.gUserId === props.content.userID && <Button style={{ height: 50, paddingTop: 5 }} onPress={onDelete
+          {global.gUserId === props.content.userID && <Button style={{ height: 50, paddingTop: 5 }} onPress={
+            ()=>{setMenuVisible(!MenuVisible);Alert.alert('','确定删除这条动态吗?',[{text:'确定',onPress:onDelete},{text:'取消'}]);}
           }>删除</Button>}
         </View>
       </Modal>
@@ -214,9 +214,11 @@ export const CardwithButtons = (props: CardProps) => {
   );
 };
 
+
 const MemoriesScreen = ({ navigation }: StackNavigationProps) => {
   const { bottom } = useSafeAreaInsets();
   const onCommentPress = (postID: string) => {
+    console.log(postID);
     navigation.navigate('Comment', { postId: postID });
   }
 
@@ -256,6 +258,7 @@ const MemoriesScreen = ({ navigation }: StackNavigationProps) => {
         {/* -> Set bottom view to allow scrolling to top if you set bottom-bar position absolute */}
         <View style={{ height: 90 }} />
       </ScrollView>
+
       <FloatButton onPressFAB={() => navigation.navigate('Post')} />
     </View>
   );

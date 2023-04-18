@@ -40,7 +40,7 @@ const profileImage = {
 //资料页面
 export function EditProfile({ route, navigation }: StackNavigationProps) {
   //state
-  const userID = '2052909';
+  const userID = global.gUserId;
   //个人信息
   const [userInfo, setUserInfo] = useState<userProp>(defaultInfo);
   const { bottom } = useSafeAreaInsets();

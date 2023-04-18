@@ -12,7 +12,8 @@ import handleAxiosError from "../../../utils/handleError";
 const EditInterest = ({route, navigation}: StackNavigationProps) => {
   const [userInterest, setInterest] = useState('');
   let userInfo = defaultInfo;
-  const userID = '2052909'
+  const userID = global.gUserId;
+
 
   //初始化
   async function fetchData() {
