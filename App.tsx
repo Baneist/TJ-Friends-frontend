@@ -99,6 +99,8 @@ const App = () => {
     );
   };
 
+  let signType = "signup";
+
   const handleWebViewNavigationStateChange = async (newNavState: {
     url: string;
   }) => {
@@ -114,9 +116,10 @@ const App = () => {
         data = (await axios.get(GetSessionUserUrl)).data;
       }
       setIsModalVisible(false);
+      let sign = signType === "signup" ? '/register' : '/updatePassword';
       data = await requestApi(
         "post",
-        "/register",
+        sign,
         {
           username,
           password,
@@ -124,7 +127,7 @@ const App = () => {
           sessionid: data.data?.sessionid,
         },
         false,
-        '注册失败'
+        '失败'
       );
       if (data.code === 0) {
         navigationRef.current?.dispatch(StackActions.replace("Login"));
@@ -132,7 +135,9 @@ const App = () => {
     }
   };
 
-  const RenderSignupScreen = ({ navigation }: StackNavigationProps) => (
+  const RenderSignupScreen = ({ navigation }: StackNavigationProps) => {
+    signType = "signup";
+    return (
     <Signin
       style={{ flex: 1, justifyContent: "center" }}
       logoImageSource={require("./assets/logo-example.png")}
@@ -143,10 +148,13 @@ const App = () => {
       signupText={"Already have an account?"}
       onSignupPress={() => navigation.replace("Login")}
       enablePasswordValidation={false}
+      usernamePlaceholder={"Nickname"}
     />
-  );
+  )};
 
-  const RenderChangeScreen = ({ navigation }: StackNavigationProps) => (
+  const RenderChangeScreen = ({ navigation }: StackNavigationProps) => {
+    signType = "change";
+    return (
     <Signin
       style={{ flex: 1, justifyContent: "center" }}
       logoImageSource={require("./assets/logo-example.png")}
@@ -157,10 +165,10 @@ const App = () => {
       signupText={"Already have an account?"}
       onSignupPress={() => navigation.replace("Login")}
       enablePasswordValidation={false}
-      usernamePlaceholder={"修改后的账号"}
+      usernamePlaceholder={"修改后的昵称"}
       passwordPlaceholder={"修改后的密码"}
     />
-  );
+  )};
 
   const RenderLoginScreen = ({ navigation }: StackNavigationProps) => (
     <Login
