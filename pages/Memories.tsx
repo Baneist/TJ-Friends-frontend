@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, ScrollView, View, Image, StyleSheet, Text,Alert } from 'react-native';
+import { Pressable, ScrollView, View, Image, StyleSheet, Text, Alert } from 'react-native';
 import { Button, Card, IconButton, Divider, FAB } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -53,10 +53,14 @@ export function UserPhoto(props: CardProps) {
 function Like(props: CardProps) {
   const [likeNum, setLike] = useState(props.content.likeNum);
   const [isLiked, setIsLiked] = useState(props.content.isLiked);
-  useEffect(() => {
+
+  useFocusEffect(React.useCallback(() => {
     setLike(props.content.likeNum);
     setIsLiked(props.content.isLiked);
-  }, [props.content.likeNum, props.content.isLiked]);
+    return () => {
+    };
+  }, [props.content.likeNum, props.content.isLiked]))
+
 
   async function handleClick() {
     const res = await requestApi('get', `/updateLikeMemory/${props.content.postId}`, null, true, 'update like memory失败')
@@ -142,7 +146,8 @@ interface CardProps {
   clickAvatar?: () => void,
   key?: number,
   content?: any,
-  navigation?: any
+  navigation?: any,
+  onDelete?:()=>void
 }
 
 export const CardwithButtons = (props: CardProps) => {
@@ -151,12 +156,8 @@ export const CardwithButtons = (props: CardProps) => {
     setMenuVisible(!MenuVisible);
   };
 
-  async function onDelete() {
-    const res = await requestApi('get', `/deleteMemory/${props.content.postId}`, null, true, '删除失败');
-    if (res.code == 0) {
-      console.log(props.content.postId)
-    }
-  };
+  
+
   function onEdit() {
     console.log(props.content.postId);
     props.navigation.navigate('EditPost', { postId: props.content.postId })
@@ -201,14 +202,16 @@ export const CardwithButtons = (props: CardProps) => {
           {global.gUserId === props.content.userID && <Button style={{ height: 50, paddingTop: 5 }} onPress={onEdit
           }>编辑</Button>}
           {global.gUserId === props.content.userID && <Divider />}
-          <Button style={{ height: 50, paddingTop: 5 }} onPress={() => {toggleMenu
+          <Button style={{ height: 50, paddingTop: 5 }} onPress={() => {
+            toggleMenu
           }}>收藏</Button>
           {global.gUserId != props.content.userID && <Divider />}
-          {global.gUserId != props.content.userID && <Button style={{ height: 50, paddingTop: 5 }} onPress={() => {toggleMenu
+          {global.gUserId != props.content.userID && <Button style={{ height: 50, paddingTop: 5 }} onPress={() => {
+            toggleMenu
           }}>举报</Button>}
           {global.gUserId === props.content.userID && <Divider />}
           {global.gUserId === props.content.userID && <Button style={{ height: 50, paddingTop: 5 }} onPress={
-            ()=>{setMenuVisible(!MenuVisible);Alert.alert('','确定删除这条动态吗?',[{text:'确定',onPress:onDelete},{text:'取消'}]);}
+            () => { setMenuVisible(!MenuVisible); Alert.alert('', '确定删除这条动态吗?', [{ text: '确定', onPress: props.onDelete }, { text: '取消' }]); }
           }>删除</Button>}
         </View>
       </Modal>
@@ -224,26 +227,39 @@ const MemoriesScreen = ({ navigation }: StackNavigationProps) => {
     navigation.navigate('Comment', { postId: postID });
   }
 
-  function clickAvatar(pageId:string) {
-    navigation.navigate('OthersPage', {userId:pageId});
+  function clickAvatar(pageId: string) {
+    navigation.navigate('OthersPage', { userId: pageId });
   }
 
   const [list, setlist] = useState([] as any[]);
   let memorylist = [] as any[];
 
   async function fetchData() {
+    memorylist = []
     const res = await requestApi('get', '/Memories', null, true, 'getMemories failed')
     if (res.code == 0) {
       memorylist = memorylist.concat(res.data);
       setlist(memorylist);
     }
   }
-  
+  const [state,setState]=useState(false);
+
+  function onDelete(postId:string) {
+    console.log('d')
+    async function deleteMomery() {
+      const res = await requestApi('get', `/deleteMemory/${postId}`, null, true, '删除失败');
+      if (res.code == 0) {
+        console.log(postId)
+        setState(!state);
+      }
+    };
+    deleteMomery();
+  }
   useFocusEffect(React.useCallback(() => {
     fetchData()
     return () => {
     };
-  },[]))
+  }, [state]))
 
   return (
     <View style={{ flex: 1, marginBottom: bottom }}>
@@ -254,8 +270,9 @@ const MemoriesScreen = ({ navigation }: StackNavigationProps) => {
               key={index}
               content={item}
               onCommentPress={() => onCommentPress(item.postId)}
-              clickAvatar={()=>clickAvatar(item.useID)}
+              clickAvatar={() => clickAvatar(item.useID)}
               navigation={navigation}
+              onDelete={()=>onDelete(item.postId)}
             />)}
         </View>
         {/* eslint-disable-next-line max-len */}
