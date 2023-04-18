@@ -228,7 +228,12 @@ const MemoriesScreen = ({ navigation }: StackNavigationProps) => {
   }
 
   function clickAvatar(pageId: string) {
-    navigation.navigate('OthersPage', { userId: pageId });
+    if(pageId === global.gUserId){
+      navigation.navigate('Profile');
+    }
+    else{
+      navigation.navigate('OthersPage',{userId:pageId});
+    }
   }
 
   const [list, setlist] = useState([] as any[]);

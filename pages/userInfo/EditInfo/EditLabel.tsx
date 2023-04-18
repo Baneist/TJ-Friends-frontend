@@ -1,11 +1,11 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect,useRef} from "react";
 import {Button, Card, Text, Chip, Searchbar, IconButton,} from 'react-native-paper';
 import {StackNavigationProps} from '../../../App'
 import Modal from 'react-native-modal';
 import {
   View
 } from "react-native"
-import {defaultInfo} from "../Profile";
+import {defaultInfo,userProp} from "../Profile";
 import requestApi from "../../../utils/request";
 
 //所有标签
@@ -15,8 +15,8 @@ const defaultLabels = [
 
 const EditLabel = ({route, navigation}: StackNavigationProps) => {
   const [userLabel, setUserLabel] = useState([] as string [])
+  const refInfo = useRef<userProp>(defaultInfo);
   const [allLabel, setAllLabels] = useState(defaultLabels)
-  let userInfo = defaultInfo;
   const userID = global.gUserId;
   function handleApiResponse(response: {code: number}, callback: () => void) {
     if (response.code == 0) {
@@ -30,7 +30,9 @@ const EditLabel = ({route, navigation}: StackNavigationProps) => {
       requestApi('get', `/profile/${userID}`, null, true, 'get profile失败'),
       requestApi('get', `/getAllLabels`, null, true, 'get AllLabels失败'),
     ])
-    handleApiResponse(resInfo, () => {userInfo = resInfo.data, setUserLabel(userInfo.userLabel.info)}),
+    handleApiResponse(resInfo, () => {
+      refInfo.current = resInfo.data,
+      setUserLabel(resInfo.data.userLabel.info)}),
     handleApiResponse(resAllLabel, () => setAllLabels(resAllLabel.data.labels))
   }
 
@@ -39,9 +41,9 @@ const EditLabel = ({route, navigation}: StackNavigationProps) => {
   }, [])
 
   async function submit() {
-    userInfo.userLabel.info = userLabel;
+    refInfo.current.userLabel.info = userLabel;
     console.log(userLabel)
-    const res = await requestApi('put', '/updateUserInfo', userInfo, true, 'update userInfo失败');
+    const res = await requestApi('put', '/updateUserInfo', refInfo.current, true, 'update userInfo失败');
     if (res.code === 0) {
       navigation.goBack()
     }

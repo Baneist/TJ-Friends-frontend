@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   Button, Card, TextInput, Dialog, Surface,
@@ -11,14 +11,14 @@ import handleAxiosError from "../../../utils/handleError";
 
 const EditStatus = ({ route, navigation }: StackNavigationProps) => {
   const [userStatus, setStatus] = useState('');
-  let userInfo = defaultInfo;
+  const refInfo = useRef<userProp>(defaultInfo);
   const userID = global.gUserId;
   //初始化
   async function fetchData() {
     const res = await requestApi('get', `/profile/${userID}`, null, true, 'get profile失败');
     if (res.code == 0) {
-      userInfo = res.data;
-      setStatus(userInfo.userStatus.info);
+      refInfo.current = res.data;
+      setStatus(res.data.userStatus.info);
     }
 
   }
@@ -26,8 +26,8 @@ const EditStatus = ({ route, navigation }: StackNavigationProps) => {
     fetchData()
   }, [])
   async function submit() {
-    userInfo.userStatus.info = userStatus;
-    const res = await requestApi('put', '/updateUserInfo', userInfo, true, 'update userInfo失败');
+    refInfo.current.userStatus.info = userStatus;
+    const res = await requestApi('put', '/updateUserInfo', refInfo.current, true, 'update userInfo失败');
     if (res.code === 0) {
       navigation.goBack()
     }

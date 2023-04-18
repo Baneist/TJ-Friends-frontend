@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useRef} from "react";
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {
   Button, Card, TextInput, Dialog, Surface,
@@ -7,11 +7,12 @@ import {
 import {StackNavigationProps} from '../../../App'
 import {defaultInfo} from "../Profile";
 import requestApi from "../../../utils/request";
+import { userProp } from "../Profile";
 import handleAxiosError from "../../../utils/handleError";
 
 const EditInterest = ({route, navigation}: StackNavigationProps) => {
   const [userInterest, setInterest] = useState('');
-  let userInfo = defaultInfo;
+  const refInfo = useRef<userProp>(defaultInfo);
   const userID = global.gUserId;
 
 
@@ -19,8 +20,8 @@ const EditInterest = ({route, navigation}: StackNavigationProps) => {
   async function fetchData() {
     const res = await requestApi('get', `/profile/${userID}`, null,  true, 'get profile失败');
     if (res.code == 0) {
-      userInfo = res.data;
-      setInterest(userInfo.userInterest.info);
+      refInfo.current=res.data;
+      setInterest(res.data.userInterest.info);
     }
   }
 
@@ -29,12 +30,11 @@ const EditInterest = ({route, navigation}: StackNavigationProps) => {
   }, [])
 
   async function submit() {
-    userInfo.userInterest.info = userInterest;
-    console.log(userInfo)
-      const res = await requestApi('put', '/updateUserInfo',  userInfo, true, 'update userInfo失败');
-      if (res.code === 0) {
-        navigation.goBack()
-      }
+    refInfo.current.userInterest.info = userInterest
+    const res = await requestApi('put', '/updateUserInfo',  refInfo.current, true, 'update userInfo失败');
+    if (res.code === 0) {
+      navigation.goBack()
+    }
   }
 
   return (

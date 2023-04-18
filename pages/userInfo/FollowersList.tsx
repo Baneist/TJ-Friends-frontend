@@ -23,7 +23,7 @@ const FollowersList = ({ route, navigation }: StackNavigationProps) => {
   //是否在关注
   const [statusList, setstatusList] = useState([] as followProp[])
   //查看的是否是自己的粉丝
-  const [isMine, setMine] = useState(false);
+  const [isMine, setMine] = useState(pageUser==curUser);
   //初始化
   let idlist = [] as followProp[];
   async function fetchData() {
@@ -100,7 +100,7 @@ const FollowersList = ({ route, navigation }: StackNavigationProps) => {
               >
                 {isMine ?
                   (statusList[idx].isfollowing ? '互相关注' : '回粉')
-                  : (statusList[idx].isfollowing ? '关注' : '取消关注')}
+                  : (statusList[idx].isfollowing ? '取消关注' : '关注')}
               </Button>
             </Block>
           </Pressable>

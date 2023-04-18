@@ -36,7 +36,6 @@ const FollowingList = ({route, navigation }: StackNavigationProps) => {
         for (let i = 0; i < values.length; ++i) {
           //statusList.push({userID:idlist[i], isfollowing:true})
           setstatusList(current => [...current, { userID: idlist[i], isfollowing: true }]);
-          //目前profile接口不正常 先这么写凑合着
           setlist(current => current.concat(values[i].data))
         }
       });

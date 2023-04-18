@@ -35,8 +35,6 @@ const OthersPage = ({route, navigation }: StackNavigationProps) => {
   const [isfollowing, setFollowing] = useState(false);
   //显示个人信息
   const { bottom } = useSafeAreaInsets();
-  //动态列表
-  const [userPosts, setUserPosts] = useState([] as any [])
 
   function handleApiResponse(response: {code: number}, callback: () => void) {
     if (response.code == 0) {
@@ -54,11 +52,10 @@ const OthersPage = ({route, navigation }: StackNavigationProps) => {
   }
   async function fetchData() {
     //获取资料、关注列表和粉丝列表
-    const [resInfo, resFollowing, resFollower, resPosts] = await Promise.all([
+    const [resInfo, resFollowing, resFollower] = await Promise.all([
       requestApi('get', `/profile/${pageid}`, null, true, 'getProfile failed'),
       requestApi('get', `/profile/${pageid}/followings`, null, true, 'Get Following failed'),
       requestApi('get', `/profile/${pageid}/followers`, null, true, 'Get Follower failed'),
-      requestApi('get', `/getUserMemories/${pageid}`,null, true, 'get user memories faild')
     ]);
     handleApiResponse(resInfo, () => setUserInfo(resInfo.data));
     handleApiResponse(resFollowing, () => setFollowingNum(resFollowing.data.followings.length));
@@ -66,7 +63,6 @@ const OthersPage = ({route, navigation }: StackNavigationProps) => {
       setFollowerNum(resFollower.data.followers.length); 
       setFollowing(hasFollowing(resFollower.data.followers))
      });
-    handleApiResponse(resPosts, () => setUserPosts(resPosts.data));
   }
 
   useFocusEffect(

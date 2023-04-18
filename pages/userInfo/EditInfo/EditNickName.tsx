@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   Button, Card, TextInput, Dialog, Surface,
@@ -13,7 +13,7 @@ import handleAxiosError from "../../../utils/handleError";
 const EditeNickName = ({ route, navigation }: StackNavigationProps) => {
   //state
   const [nickName, setNickName] = useState('1');
-  let userInfo = defaultInfo;
+  const refInfo = useRef<userProp>(defaultInfo);
   const userID = global.gUserId;
 
 
@@ -21,8 +21,8 @@ const EditeNickName = ({ route, navigation }: StackNavigationProps) => {
   async function fetchData() {
     const res = await requestApi('get', `/profile/${userID}`, null, true, 'get profile失败');
     if (res.code === 0) {
-      userInfo = res.data;
-      setNickName(userInfo.userNickName.info);
+      refInfo.current = res.data;
+      setNickName(res.data.userNickName.info);
     }
   }
 
@@ -32,8 +32,10 @@ const EditeNickName = ({ route, navigation }: StackNavigationProps) => {
 
   //提交修改
   async function submit() {
-    userInfo.userNickName.info = nickName;
-    const res = await requestApi('put', '/updateUserInfo', userInfo, true, 'update userInfo失败');
+
+    refInfo.current.userNickName.info = nickName;
+    console.log('in change',refInfo.current)
+    const res = await requestApi('put', '/updateUserInfo', refInfo.current, true, 'update userInfo失败');
     if (res.code === 0) {
       navigation.goBack()
     }

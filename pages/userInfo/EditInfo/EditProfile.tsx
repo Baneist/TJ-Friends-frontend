@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useRef } from "react";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import {
   View,
@@ -43,6 +43,8 @@ export function EditProfile({ route, navigation }: StackNavigationProps) {
   const userID = global.gUserId;
   //个人信息
   const [userInfo, setUserInfo] = useState<userProp>(defaultInfo);
+  //及时更新
+  const refInfo = useRef<userProp>(defaultInfo);
   const { bottom } = useSafeAreaInsets();
   //初始化
   //初始化
@@ -50,6 +52,7 @@ export function EditProfile({ route, navigation }: StackNavigationProps) {
     const resInfo = await requestApi('get', `/profile/${userID}`, null, true, 'get profile失败');
     if (resInfo.code == 0) {
       setUserInfo(resInfo.data);
+      refInfo.current = resInfo.data;
     }
   }
 
@@ -61,13 +64,14 @@ export function EditProfile({ route, navigation }: StackNavigationProps) {
     React.useCallback(() => {
       fetchData()
       return () => {
+        console.log('leave edit')
       };
     }, [])
   );
 
   //性别
   function Gender() {
-    if (userInfo.userGender.info == 'Male')
+    if (userInfo.userGender.info == '男')
       return (<Icon name="man" size={16} color="#32325D" style={{ marginTop: 10 }}>Male</Icon>)
     else
       return (<Icon name="woman" size={16} color="#32325D" style={{ marginTop: 10 }}>Female</Icon>)
@@ -80,6 +84,7 @@ export function EditProfile({ route, navigation }: StackNavigationProps) {
     const res = await requestApi('put', '/updateUserInfo', newuser, true, '更新头像失败');
     console.log(newuser)
     if (res.code === 0) {
+      console.log('选头像',userInfo)
         setUserInfo(newuser)
     }
   }
@@ -105,12 +110,14 @@ export function EditProfile({ route, navigation }: StackNavigationProps) {
 
     async function submitBirthDay() {
       setShowDatePicker(false);
-      let newuser = { ...userInfo };
-      let formatBirthDate = formatDate(birthday)
-      newuser.userBirthDate.info = formatBirthDate;
+      let newuser = { ...refInfo.current };
+      console.log('new birth', newuser)
+      newuser.userBirthDate.info = formatDate(birthday);
       const res = await requestApi('put', '/updateUserInfo', newuser, true, '更新生日失败');
       if (res.code === 0) {
+        console.log('生日',userInfo)
         setUserInfo(newuser)
+        refInfo.current = newuser
       }
     }
 
@@ -316,46 +323,53 @@ export function EditProfile({ route, navigation }: StackNavigationProps) {
 
   //隐私变更
   function updateBitrthPms() {
-    let newuser = { ...userInfo };
+    let newuser = { ...refInfo.current };
     newuser.userBirthDate.pms = !newuser.userBirthDate.pms;
     setUserInfo(newuser)
+    refInfo.current.userBirthDate.pms = newuser.userBirthDate.pms;
   }
 
   function updateMajorPms() {
-    let newuser = { ...userInfo };
+    let newuser = { ...refInfo.current };
     newuser.userMajor.pms = !newuser.userMajor.pms;
     setUserInfo(newuser)
+    refInfo.current.userMajor.pms = newuser.userMajor.pms;
   }
 
   function updateYearPms() {
-    let newuser = { ...userInfo };
+    let newuser = { ...refInfo.current };
     newuser.userYear.pms = !newuser.userYear.pms;
     setUserInfo(newuser)
+    refInfo.current.userYear.pms = newuser.userYear.pms;
   }
 
   function updateInterestPms() {
-    let newuser = { ...userInfo };
+    let newuser = { ...refInfo.current };
     newuser.userInterest.pms = !newuser.userInterest.pms;
     setUserInfo(newuser)
+    refInfo.current.userInterest.pms = newuser.userInterest.pms;
   }
 
   function updateFollowingPms() {
-    let newuser = { ...userInfo };
+    let newuser = { ...refInfo.current };
     newuser.followingPms = !newuser.followingPms;
     setUserInfo(newuser)
+    refInfo.current.followingPms = newuser.followingPms;
   }
 
   function updateFollowerPms() {
-    let newuser = { ...userInfo };
+    let newuser = { ...refInfo.current };
     newuser.followerPms = !newuser.followerPms;
     setUserInfo(newuser)
+    refInfo.current.followerPms = newuser.followerPms;
   }
 
   async function updatePmsSetting() {
-    const res = await requestApi('put', '/updateUserInfo', userInfo, true, 'update user info failed');
+    const res = await requestApi('put', '/updateUserInfo', refInfo.current, true, 'update user info failed');
     if (res.code === 0) {
       console.log('ohyes')
     }
+    console.log('隐私变更',userInfo)
   }
 
   return (
