@@ -126,6 +126,8 @@ const Profile = ({ navigation }: StackNavigationProps) => {
   //粉丝 关注列表
   const [followerNum, setFollowerNum] = useState(0);
   const [followingNum, setFollowingNum] = useState(0);
+  //动态列表
+  const [userPostIds, setUserPostIds] = useState([] as number [])
   //显示个人信息
   const { bottom } = useSafeAreaInsets();
 
@@ -133,10 +135,11 @@ const Profile = ({ navigation }: StackNavigationProps) => {
     if (response.code == 0) {
       callback();
     }
+    console.log(userPostIds)
   }
 
   async function fetchData() {
-    //获取资料、关注列表和粉丝列表
+    //获取资料、关注列表、粉丝列表、发布的动态
     const [resInfo, resFollowing, resFollower] = await Promise.all([
       requestApi('get', `/profile/${userId}`, null, true, 'getProfile failed'),
       requestApi('get', `/profile/${userId}/followings`, null, true, 'Get Following failed'),
@@ -296,7 +299,7 @@ const Profile = ({ navigation }: StackNavigationProps) => {
                 <Text bold size={16} color="#525F7F" style={{ marginTop: 12, marginLeft: 12 }}>
                   Moments
                 </Text>
-                <MomentsList navigation={navigation} postIDs={[1]}/>
+                {/* <MomentsList navigation={navigation} postIDs={[10]}/> */}
               </Block>
             </Block>
             {/* eslint-disable-next-line max-len */}
