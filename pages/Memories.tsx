@@ -8,6 +8,7 @@ import Modal from 'react-native-modal';
 import { StackNavigationProps } from '../App';
 import requestApi from '../utils/request';
 import handleAxiosError from "../utils/handleError";
+import { NotionMainBadge } from '../components/NoticeManage/NoticeBadge';
 
 export const styles = StyleSheet.create({
   userphoto: {
@@ -20,6 +21,12 @@ export const styles = StyleSheet.create({
     margin: 16,
     right: 10,
     bottom: 80,
+  },
+  nmb: {
+    position: 'absolute',
+    margin: 16,
+    right: 10,
+    bottom: 160,
   },
   modal: {
     justifyContent: 'flex-end',
@@ -142,6 +149,18 @@ interface CardProps {
   content?: any,
   navigation?: any
 }
+const NoticeManageButton = ({ onPressFAB }: { onPressFAB: () => void }) => (
+  <View style={{position:"relative"}}>
+    <FAB
+    icon="bell"
+    style={styles.nmb}
+    customSize={50}
+    onPress={onPressFAB}
+    />
+    <NotionMainBadge />
+  </View>
+);
+
 
 export const CardwithButtons = (props: CardProps) => {
   const [MenuVisible, setMenuVisible] = useState(false);
@@ -255,11 +274,12 @@ const MemoriesScreen = ({ navigation }: StackNavigationProps) => {
             />)}
         </View>
         {/* eslint-disable-next-line max-len */}
-        {/* -> Set bottom view to allow scrolling to top if you set bottom-bar position absolute */}
+        {/* -> Set bottom view to allow scrolling 2to top if you set bottom-bar position absolute */}
         <View style={{ height: 90 }} />
       </ScrollView>
 
       <FloatButton onPressFAB={() => navigation.navigate('Post')} />
+      <NoticeManageButton onPressFAB={() => navigation.navigate('NoticeManageScreen')} />
     </View>
   );
 }
