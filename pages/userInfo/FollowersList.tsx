@@ -33,16 +33,13 @@ const FollowersList = ({ route, navigation }: StackNavigationProps) => {
       let reqList: Promise<AxiosResponse>[] = [];
       for (let i = 0; i < idlist.length; ++i) {
         reqList.push(new Promise((resolve, reject) => {
-          resolve(requestApi('get', `/profile/${idlist[i]}`, null, true, 'get profile failed'))
+          resolve(requestApi('get', `/profile/${idlist[i].userID}`, null, true, 'get profile failed'))
         }))
       }
       Promise.all(reqList).then((values) => {
         for (let i = 0; i < values.length; ++i) {
-          //statusList.push({userID:idlist[i], isfollowing:true})
           setstatusList(current => [...current, { userID: idlist[i].userID, isfollowing: idlist[i].isfollowing }]);
-          //目前profile接口不正常 先这么写凑合着
-          setlist(current => [...current, defaultInfo])
-          //setlist(current => current.concat(values[i].data))
+          setlist(current => current.concat(values[i].data))
         }
       })
     }

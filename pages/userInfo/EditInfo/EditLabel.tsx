@@ -9,22 +9,29 @@ import {defaultInfo} from "../Profile";
 import requestApi from "../../../utils/request";
 
 //所有标签
-const allLabel = [
+const defaultLabels = [
   '猫派', '狗派', '二次元', '现充', '舟批', '原批', 'Switch玩家', '体育生', '篮球',
 ]
 
 const EditLabel = ({route, navigation}: StackNavigationProps) => {
   const [userLabel, setUserLabel] = useState([] as string [])
+  const [allLabel, setAllLabels] = useState(defaultLabels)
   let userInfo = defaultInfo;
-  const userID = '2052909';
-
+  const userID = global.gUserId;
+  function handleApiResponse(response: {code: number}, callback: () => void) {
+    if (response.code == 0) {
+      callback();
+    }
+    console.log(response)
+  }
   //初始化
   async function fetchData() {
-    const res = await requestApi('get', `/profile/${userID}`, null, true, 'get profile失败');
-    if (res.code == 0) {
-      userInfo = res.data;
-      setUserLabel(userInfo.userLabel.info);
-    }
+    const [resInfo, resAllLabel] = await Promise.all([
+      requestApi('get', `/profile/${userID}`, null, true, 'get profile失败'),
+      requestApi('get', `/getAllLabels`, null, true, 'get AllLabels失败'),
+    ])
+    handleApiResponse(resInfo, () => {userInfo = resInfo.data, setUserLabel(userInfo.userLabel.info)}),
+    handleApiResponse(resAllLabel, () => setAllLabels(resAllLabel.data.labels))
   }
 
   useEffect(() => {
@@ -61,7 +68,6 @@ const EditLabel = ({route, navigation}: StackNavigationProps) => {
   const [searchQuery, setSearchQuery] = useState('');
   const NewLabelDialog = () => {
     const [allItem, setallItem] = useState(allLabel.filter(item => userLabel.indexOf(item) == -1))
-
     function addLabel(label: string) {
       //添加回显
       console.log(allItem)

@@ -4,7 +4,7 @@ import qs from 'qs';
 import handleAxiosError from "./handleError";
 import { Alert } from "react-native";
 
-const BASE_URL = 'http://119.3.178.68:8888';
+const BASE_URL = 'http://119.3.178.68:8000';
 
 const instance = axios.create({
   baseURL: BASE_URL,
@@ -40,6 +40,7 @@ const requestApi = async (method: string, url: string, data: any, withToken: boo
   if (url === '/login') {
     data = qs.stringify(data);
   }
+  console.log(contentType)
   try {
     const response = await instance.request({
       url, method, data, headers: {

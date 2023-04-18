@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { CardwithButtons } from '../../pages/Memories';
 import requestApi from '../../utils/request';
 import { StackNavigationProps } from '../../App';
+import { AxiosResponse } from 'axios';
 
 interface PostIdProps{
   navigation:StackNavigationProps["navigation"],
@@ -24,11 +25,18 @@ export const MomentsList=(props: PostIdProps) => {
   let memorylist = [] as any[];
 
   async function fetchData() {
-    const res = await requestApi('get', '/Memories', null, true, 'getMemories failed')
-    if (res.code == 0) {
-      memorylist = memorylist.concat(res.data);
-      setlist(memorylist);
+    let reqList: Promise<AxiosResponse>[] = [];
+    for(let i=0;i<props.postIDs.length;++i){
+      reqList.push(new Promise((resolve, reject) => {
+        resolve(requestApi('get', `/Memories/${props.postIDs[i]}`, null, true, 'get profile failed'))
+      }))
     }
+    console.log('postids',props.postIDs)
+    Promise.all(reqList).then((values) => {
+      for (let i = 0; i < values.length; ++i) {
+        setlist(current => current.concat(values[i].data))
+      }
+    })
   }
 
   useEffect(() => {
