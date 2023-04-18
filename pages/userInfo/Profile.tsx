@@ -299,6 +299,7 @@ const Profile = ({ navigation }: StackNavigationProps) => {
                 <Text bold size={16} color="#525F7F" style={{ marginTop: 12, marginLeft: 12 }}>
                   Moments
                 </Text>
+                {/* to do */}
                 {/* <MomentsList navigation={navigation} postIDs={[10]}/> */}
               </Block>
             </Block>
