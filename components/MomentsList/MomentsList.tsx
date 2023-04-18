@@ -17,8 +17,8 @@ export const MomentsList=(props: PostIdProps) => {
     props.navigation.navigate('Comment', { postId: postID });
   }
 
-  function clickAvatar() {
-    props.navigation.navigate('OthersPage');
+  function clickAvatar(id:string) {
+    props.navigation.navigate('OthersPage',{userId:id});
   }
 
   const [list, setlist] = useState([] as any[]);
@@ -49,7 +49,6 @@ export const MomentsList=(props: PostIdProps) => {
               key={index}
               content={item}
               onCommentPress={() => onCommentPress(item.postId)}
-              clickAvatar={clickAvatar}
               navigation={props.navigation}
             />)}
           {list.length===0 && 
