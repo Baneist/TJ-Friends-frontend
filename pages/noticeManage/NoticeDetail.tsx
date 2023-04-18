@@ -75,7 +75,6 @@ const NoticeDetailScreen = ({ route, navigation}: NavigationProps) => {
           const datarecv = response.data;
           setndData(datarecv);
           console.log('Start: Notice Manage Get.');
-          console.log(datarecv);
         })
         .catch(error => {
           console.error(error);

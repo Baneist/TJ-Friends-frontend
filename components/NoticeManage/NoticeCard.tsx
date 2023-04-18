@@ -1,5 +1,6 @@
-import { TouchableOpacity, View, Image, Text, StyleSheet} from "react-native";
+import { TouchableOpacity, View, Image, Text, StyleSheet,Modal,LayoutRectangle, Dimensions, TouchableWithoutFeedback } from "react-native";
 import { DialogBadge } from "./NoticeBadge";
+import { useRef, useState } from "react";
 interface NoticeProps {
     message: string;
     timestamp: Date;
@@ -52,12 +53,45 @@ interface NoticeProps {
         fontSize: 16,
         lineHeight: 22,
       },
+      modalContent: {
+        backgroundColor: '#fff',
+        padding: 16,
+        borderRadius: 4,
+        position: 'absolute',
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        shadowOpacity: 0.35,
+        shadowRadius: 3.84,
+        elevation: 10,
+      },
   }
   );
-
   export const NoticeCard = ({ message, timestamp, senderName, senderAvatar, undeal_num }: NoticeProps) => {
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [modalLayout, setModalLayout] = useState<LayoutRectangle | null>(null);
+    const buttonRef = useRef<TouchableOpacity>(null);
+    const handleLongPress = () => {
+      setIsModalVisible(true);
+    };
+  
+    const handleCloseModal = () => {
+      setIsModalVisible(false);
+    };
+  
+    const handleDeleteItem = () => {
+      setIsModalVisible(false);
+    };
+    const handleButtonLayout = (event: any) => {
+      if (buttonRef.current) {
+        buttonRef.current.measure((x: number, y: number, width: number, height: number, pageX: number, pageY: number) => {
+          setModalLayout({ x: pageX, y: pageY, width: modalLayout?.width ?? 0, height: modalLayout?.height ?? 0 });
+        });
+      }
+    };
     return (
-      <TouchableOpacity style={styles.container} onPress={()=>{ console.log('click') }}>
+      <TouchableOpacity style={styles.container} onPress={()=>{ console.log('click') }} onLongPress={handleLongPress} ref={buttonRef} onLayout={handleButtonLayout}>
         <View style={styles.container}>
           <View style={styles.avatarContainer}>
             <Image source={{ uri: senderAvatar }} style={styles.avatarImage} />
@@ -73,6 +107,17 @@ interface NoticeProps {
           </View>
           {undeal_num > 0 && <DialogBadge count={undeal_num} />}
         </View>
+        <Modal visible={isModalVisible} onRequestClose={handleCloseModal} transparent>
+          {modalLayout && (
+            <TouchableOpacity activeOpacity={0} style={StyleSheet.absoluteFill} onPress={handleCloseModal}>
+            <View style={[styles.modalContent, { left: modalLayout.x+Dimensions.get("screen").width/2, top: modalLayout.y-15, width: Dimensions.get("screen").width/3 }]}>
+              <TouchableOpacity onPress={handleDeleteItem}>
+                <Text>删除</Text>
+              </TouchableOpacity>
+            </View>
+            </TouchableOpacity>
+          )}
+        </Modal>
       </TouchableOpacity>
     );
   };
@@ -90,9 +135,32 @@ interface NoticeProps {
   };
 
   export const NoticeCardDetailed = ({ message, timeStamp, senderName, senderAvatar, undealNum,noticeId ,originCommentId, originPostId, originPostTitle }: NoticeDetailedProps) => {
+    const [isModalVisible, setIsModalVisible] = useState(false);
+    const [modalLayout, setModalLayout] = useState<LayoutRectangle | null>(null);
+    const buttonRef = useRef<TouchableOpacity>(null);
+    const handleLongPress = () => {
+      setIsModalVisible(true);
+    };
+  
+    const handleCloseModal = () => {
+      console.log('close');
+      setIsModalVisible(false);
+    };
+  
+    const handleDeleteItem = () => {
+      console.log('delete');
+      setIsModalVisible(false);
+    };
+    const handleButtonLayout = (event: any) => {
+      if (buttonRef.current) {
+        buttonRef.current.measure((x: number, y: number, width: number, height: number, pageX: number, pageY: number) => {
+          setModalLayout({ x: pageX, y: pageY, width: modalLayout?.width ?? 0, height: modalLayout?.height ?? 0 });
+        });
+      }
+    };
     return (
-      <TouchableOpacity style={styles.container} onPress={()=>{ console.log('click') }}>
-        <View style={styles.container}>
+        <TouchableOpacity style={styles.container} onPress={()=>{ console.log('click') }} onLongPress={handleLongPress} ref={buttonRef} onLayout={handleButtonLayout}>
+          <View style={styles.container}>
           <View style={styles.avatarContainer}>
             <Image source={{ uri: senderAvatar }} style={styles.avatarImage} />
           </View>
@@ -107,10 +175,21 @@ interface NoticeProps {
             <View style={{backgroundColor: '#f2f2f2', padding: 10, borderLeftWidth: 5, borderLeftColor: '#ccc'}}>
               <Text style={{fontSize: 16, fontWeight: 'bold'}}>{originPostTitle}</Text>
             </View>
-
           </View>
           {undealNum > 0 && <DialogBadge count={undealNum} />}
         </View>
+        <Modal visible={isModalVisible} onRequestClose={handleCloseModal} transparent>
+          {modalLayout && (
+            <TouchableOpacity activeOpacity={0} style={StyleSheet.absoluteFill} onPress={handleCloseModal}>
+            <View style={[styles.modalContent, { left: modalLayout.x+Dimensions.get("screen").width/2, top: modalLayout.y+30, width: Dimensions.get("screen").width/3 }]}>
+              <TouchableOpacity onPress={handleDeleteItem}>
+                <Text>删除</Text>
+              </TouchableOpacity>
+            </View>
+            </TouchableOpacity>
+          )}
+        </Modal>
+        
       </TouchableOpacity>
     );
   };
