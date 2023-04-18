@@ -4,12 +4,12 @@ import { Dimensions, Image, ImageBackground, Pressable, ScrollView, View } from 
 import { Button, Chip, List } from 'react-native-paper';
 import { Block, Text } from "galio-framework";
 import Icon from 'react-native-vector-icons/AntDesign';
-import { MomentsList } from "../../components/MomentsList/MomentsList";
 import { StackNavigationProps } from '../../App'
 import { defaultInfo, userProp } from "./Profile";
 import requestApi from "../../utils/request";
 import { styles } from "./Profile.style";
 import { GENDER } from "./Profile";
+import { CardwithButtons } from "../Memories";
 import { useFocusEffect } from '@react-navigation/native';
 
 //获取屏幕宽高
@@ -34,6 +34,8 @@ const Profile = ({ navigation }: StackNavigationProps) => {
   const [isfollowing, setFollowing] = useState(false);
   //显示个人信息
   const { bottom } = useSafeAreaInsets();
+  //动态列表
+  const [userPosts, setUserPosts] = useState([] as any [])
 
   function handleApiResponse(response: {code: number}, callback: () => void) {
     if (response.code == 0) {
@@ -43,14 +45,16 @@ const Profile = ({ navigation }: StackNavigationProps) => {
 
   async function fetchData() {
     //获取资料、关注列表和粉丝列表
-    const [resInfo, resFollowing, resFollower] = await Promise.all([
+    const [resInfo, resFollowing, resFollower, resPosts] = await Promise.all([
       requestApi('get', `/profile/${pageid}`, null, true, 'getProfile failed'),
       requestApi('get', `/profile/${pageid}/followings`, null, true, 'Get Following failed'),
       requestApi('get', `/profile/${pageid}/followers`, null, true, 'Get Follower failed'),
+      requestApi('get', `/getUserMemories/${pageid}`,null, true, 'get user memories faild')
     ]);
     handleApiResponse(resInfo, () => setUserInfo(resInfo.data));
     handleApiResponse(resFollowing, () => setFollowingNum(resFollowing.data.followings.length));
     handleApiResponse(resFollower, () => { setFollowerNum(resFollower.data.followers.length); setFollowing(resFollower.data.followers.indexOf(curUser) != -1); });
+    handleApiResponse(resPosts, () => setUserPosts(resPosts.data));
   }
 
   useFocusEffect(
@@ -89,13 +93,15 @@ const Profile = ({ navigation }: StackNavigationProps) => {
   async function toggleFollow() {
     if (isfollowing) { //取关
       const res = await requestApi('post', '/unfollow', {stuid: pageid }, true, 'unfollow failed')
-      if (res.status == 200) {
+      if (res.code == 0) {
         setFollowing(!isfollowing)
         setFollowingNum(followingNum + (isfollowing ? 1 : -1));
       }
     } else { //关注
+      console.log(pageid)
       const res = await requestApi('post', '/follow', { stuid: pageid }, true, 'follow failed')
-      if (res.status == 200) {
+      console.log(res)
+      if (res.code == 0) {
         setFollowing(!isfollowing)
       }
     }
@@ -108,6 +114,41 @@ const Profile = ({ navigation }: StackNavigationProps) => {
       size={16} color="#32325D" style={{ marginTop: 10 }}>
       {userInfo.userGender.info === GENDER.Male ? GENDER.Male : GENDER.Female}
     </Icon>);
+  }
+  const MomentsList=() => {
+    const { bottom } = useSafeAreaInsets();
+    const onCommentPress = (postID: string) => {
+      navigation.navigate('Comment', { postId: postID });
+    }
+  
+    function clickAvatar() {
+      navigation.navigate('OthersPage');
+    }
+  
+    return (
+      <View style={{ flex: 1, marginBottom: bottom }}>
+        <ScrollView>
+          <View>
+            {userPosts.map((item, index) =>
+              <CardwithButtons
+                key={index}
+                content={item}
+                onCommentPress={() => onCommentPress(item.postId)}
+                clickAvatar={clickAvatar}
+                navigation={navigation}
+              />)}
+            {userPosts.length===0 && 
+              <View style={{flex:1, alignItems:'center'}}>
+                <Text style={{color:'#525F7F', marginTop:20}}>---暂无更多---</Text>
+              </View>
+            }
+          </View>
+          {/* eslint-disable-next-line max-len */}
+          {/* -> Set bottom view to allow scrolling to top if you set bottom-bar position absolute */}
+          <View style={{ height: 90 }} />
+        </ScrollView>
+      </View>
+    );
   }
 
   return (
@@ -247,7 +288,7 @@ const Profile = ({ navigation }: StackNavigationProps) => {
                 <Text bold size={16} color="#525F7F" style={{ marginTop: 12, marginLeft: 12 }}>
                   Moments
                 </Text>
-                <MomentsList navigation={navigation} userID={pageid}/>
+                <MomentsList/>
               </Block>
             </Block>
             {/* eslint-disable-next-line max-len */}
