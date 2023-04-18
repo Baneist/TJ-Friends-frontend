@@ -22,13 +22,12 @@ export const MomentsList=(props: PostIdProps) => {
   }
 
   const [list, setlist] = useState([] as any[]);
-  let memorylist = [] as any[];
-
   async function fetchData() {
     console.log('page userID',props.userID)
     const res = await requestApi('get', `/getUserMemories/${props.userID}`,null, true, 'get user memories faild')
     if(res.code === 0){
       setlist(res.data)
+      console.log(list)
     }
     else{
       console.log('get user memories faild', res.code)
@@ -38,7 +37,7 @@ export const MomentsList=(props: PostIdProps) => {
 
   useEffect(() => {
     fetchData()
-  },[])
+  })
 
   return (
     <View style={{ flex: 1, marginBottom: bottom }}>
