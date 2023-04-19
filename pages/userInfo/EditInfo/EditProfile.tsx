@@ -20,6 +20,12 @@ import {NavigationProps} from '../../../App'
 import Modal from 'react-native-modal';
 import styles from './EditProfile.Style'
 import AvatarPicker from "../../../components/AvatarPicker/AvatarPicker";
+<<<<<<< Updated upstream
+=======
+import { userProp, defaultInfo } from "../Profile";
+import { useFocusEffect } from '@react-navigation/native';
+import uploadPicture from '../../../utils/requestPicture'
+>>>>>>> Stashed changes
 
 //获取屏幕宽高
 const { width, height } = Dimensions.get("screen");
@@ -63,6 +69,48 @@ function Gender(){
 //资料页面
 export function EditProfile({route, navigation}:NavigationProps){
   const { bottom } = useSafeAreaInsets();
+<<<<<<< Updated upstream
+=======
+  //初始化
+  //初始化
+  async function fetchData() {
+    const resInfo = await requestApi('get', `/profile/${userID}`, null, true, 'get profile失败');
+    if (resInfo.code == 0) {
+      setUserInfo(resInfo.data);
+    }
+  }
+
+  //先用FocusEffect代替Effect了，不知道为什么从其他路由返回时不触发Effect
+  // useEffect(()=>{
+  //   fetchData()
+  // },[])
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchData()
+      return () => {
+      };
+    }, [])
+  );
+
+  //性别
+  function Gender() {
+    if (userInfo.userGender.info == 'Male')
+      return (<Icon name="man" size={16} color="#32325D" style={{ marginTop: 10 }}>Male</Icon>)
+    else
+      return (<Icon name="woman" size={16} color="#32325D" style={{ marginTop: 10 }}>Female</Icon>)
+  }
+
+  //选头像
+  async function onSubmitAvatar(uri: string) {
+    let newuser = { ...userInfo };
+    newuser.userAvatar.info = await uploadPicture(uri);
+    const res = await requestApi('put', '/updateUserInfo', newuser, true, '更新头像失败');
+    console.log(newuser)
+    if (res.code === 0) {
+      setUserInfo(newuser)
+    }
+  }
+>>>>>>> Stashed changes
   //选择生日
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [birthday, setbirthday] = useState(new Date());
