@@ -105,6 +105,7 @@ const OthersPage = ({route, navigation }: StackNavigationProps) => {
       console.log(pageid)
       const res = await requestApi('post', '/follow', { stuid: pageid }, true, 'follow failed')
     }
+    //不能先set取反 因为用的是旧值快照
     setFollowerNum(followerNum + (isfollowing ? -1 : 1));
     setFollowing(!isfollowing)
   }

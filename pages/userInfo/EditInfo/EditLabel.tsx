@@ -15,6 +15,7 @@ const defaultLabels = [
 
 const EditLabel = ({route, navigation}: StackNavigationProps) => {
   const [userLabel, setUserLabel] = useState([] as string [])
+  //不展示的用ref 不能用let
   const refInfo = useRef<userProp>(defaultInfo);
   const [allLabel, setAllLabels] = useState(defaultLabels)
   const userID = global.gUserId;

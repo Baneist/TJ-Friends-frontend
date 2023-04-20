@@ -58,7 +58,9 @@ export interface userProp {
   userInterest: infoProp,
   userLabel: labelProp,
   followerPms: boolean,
-  followingPms: boolean
+  followingPms: boolean,
+  followingNum:number,
+  followerNum:number
 }
 
 export const defaultInfo = {
@@ -120,7 +122,9 @@ export const defaultInfo = {
     "pms": true
   },
   "followerPms": true,
-  "followingPms": false
+  "followingPms": false,
+  "followerNum": 1,
+  "followingNum": 1
 }
 
 const Profile = ({ navigation }: StackNavigationProps) => {
@@ -128,12 +132,6 @@ const Profile = ({ navigation }: StackNavigationProps) => {
   const userId = global.gUserId;
   //个人信息
   const [userInfo, setUserInfo] = useState<userProp>(defaultInfo);
-  console.log(userInfo)
-  //粉丝 关注列表
-  const [followerNum, setFollowerNum] = useState(0);
-  const [followingNum, setFollowingNum] = useState(0);
-  //动态列表
-  const [userPosts, setUserPosts] = useState([] as any [])
   //显示个人信息
   const { bottom } = useSafeAreaInsets();
 
@@ -141,21 +139,12 @@ const Profile = ({ navigation }: StackNavigationProps) => {
     if (response.code == 0) {
       callback();
     }
-    console.log(userPosts)
   }
 
   async function fetchData() {
-    //获取资料、关注列表、粉丝列表、发布的动态
-    const [resInfo, resFollowing, resFollower, resPosts] = await Promise.all([
-      requestApi('get', `/profile/${userId}`, null, true, 'getProfile failed'),
-      requestApi('get', `/profile/${userId}/followings`, null, true, 'Get Following failed'),
-      requestApi('get', `/profile/${userId}/followers`, null, true, 'Get Follower failed'),
-      requestApi('get', `/getUserMemories/${userId}`,null, true, 'get user memories faild')
-    ]);
-    handleApiResponse(resInfo, () => setUserInfo(resInfo.data));
-    handleApiResponse(resFollowing, () => setFollowingNum(resFollowing.data.followings.length));
-    handleApiResponse(resFollower, () => setFollowerNum(resFollower.data.followers.length));
-    handleApiResponse(resPosts, () => setUserPosts(resPosts.data));
+    //获取资料
+    const resInfo = await requestApi('get', `/profile/${userId}`, null, true, 'getProfile failed')
+    setUserInfo(resInfo.data)
   }
 
   // 编辑个人资料
@@ -216,7 +205,7 @@ const Profile = ({ navigation }: StackNavigationProps) => {
                   <Pressable onPress={viewFollower}>
                     <Block middle>
                       <Text style={styles.infoNum}>
-                        {followerNum}
+                        {userInfo.followerNum}
                       </Text>
                       <Text style={styles.infoName}>Followers</Text>
                     </Block>
@@ -224,7 +213,7 @@ const Profile = ({ navigation }: StackNavigationProps) => {
                   <Pressable onPress={viewFollowing}>
                     <Block middle>
                       <Text style={styles.infoNum}>
-                        {followingNum}
+                        {userInfo.followingNum}
                       </Text>
                       <Text style={styles.infoName}>Following</Text>
                     </Block>
