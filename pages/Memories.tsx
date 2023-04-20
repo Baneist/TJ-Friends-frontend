@@ -23,6 +23,12 @@ export const styles = StyleSheet.create({
     right: 10,
     bottom: 80,
   },
+  nmb: {
+    position: 'absolute',
+    margin: 16,
+    right: 10,
+    bottom: 160,
+  },
   modal: {
     justifyContent: 'flex-end',
     margin: 0,
@@ -219,6 +225,17 @@ export const CardwithButtons = (props: CardProps) => {
   );
 };
 
+const NoticeManageButton = ({ onPressFAB }: { onPressFAB: () => void }) => (
+  <View style={{position:"relative"}}>
+    <FAB
+    icon="bell"
+    style={styles.nmb}
+    customSize={50}
+    onPress={onPressFAB}
+    />
+    <NotionMainBadge />
+  </View>
+);
 
 const MemoriesScreen = ({ navigation }: StackNavigationProps) => {
   const { bottom } = useSafeAreaInsets();
@@ -284,8 +301,8 @@ const MemoriesScreen = ({ navigation }: StackNavigationProps) => {
         {/* -> Set bottom view to allow scrolling to top if you set bottom-bar position absolute */}
         <View style={{ height: 90 }} />
       </ScrollView>
-
       <FloatButton onPressFAB={() => navigation.navigate('Post')} />
+      <NoticeManageButton onPressFAB={() => navigation.navigate('NoticeManageScreen')} />
     </View>
   );
 }
