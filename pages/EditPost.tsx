@@ -153,7 +153,7 @@ const EditPost = ({ route, navigation }: StackNavigationProps) => {
         />}
       </View>
       <View style={{paddingBottom: 100}} >
-      <Button onPress={handlePost} mode='contained'>发送</Button>
+      <Button onPress={handlePost} mode='contained'>重新发送</Button>
       </View>
       <AvatarPicker showAvatarOption={showAvatarOption} onBackdropPress={cancelAvatarOption} setImage={changeImage}/>
     </KeyboardAwareScrollView>

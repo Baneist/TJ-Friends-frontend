@@ -166,7 +166,7 @@ const PostPage = ({ route, navigation }: StackNavigationProps) => {
   );
 };
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   container: {
     padding: 10,
     backgroundColor: '#fff',

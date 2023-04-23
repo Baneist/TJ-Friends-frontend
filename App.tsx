@@ -146,7 +146,7 @@ const App = () => {
       onPasswordChange={setPassword}
       loginButtonText={"Continue with school validation"}
       signupText={"Already have an account?"}
-      onSignupPress={() => navigation.replace("Login")}
+      onSignupPress={() => navigation.goBack()}
       enablePasswordValidation={false}
       usernamePlaceholder={"Nickname"}
     />
@@ -163,7 +163,7 @@ const App = () => {
       onPasswordChange={setPassword}
       loginButtonText={"Continue with school validation"}
       signupText={"Already have an account?"}
-      onSignupPress={() => navigation.replace("Login")}
+      onSignupPress={() => navigation.goBack()}
       enablePasswordValidation={false}
       usernamePlaceholder={"修改后的昵称"}
       passwordPlaceholder={"修改后的密码"}
@@ -172,10 +172,10 @@ const App = () => {
 
   const RenderLoginScreen = ({ navigation }: StackNavigationProps) => (
     <Login
-      onSignUpPress={() => navigation.replace("Signup")}
+      onSignUpPress={() => navigation.navigate("Signup")}
       onLoginPress={() => {
       }}
-      onForgotPasswordPress={() => navigation.replace("ChangePassword")}
+      onForgotPasswordPress={() => navigation.navigate("ChangePassword")}
       navigation={navigation}
     />
   );
