@@ -1,5 +1,5 @@
 import React, { useState, useEffect }  from 'react';
-import { NavigationProps } from '../../App';
+import { StackNavigationProps } from '../../App';
 import Badge from '../../components/NoticeManage/NoticeBadge';
 import {DialogBadge} from '../../components/NoticeManage/NoticeBadge';
 import {IconButton} from 'react-native-paper';
@@ -49,7 +49,7 @@ const noticeDetailedData = {
 interface NoticeDetailScreenProps {
   type: string;
 };
-const NoticeDetailScreen = ({ route, navigation}: NavigationProps) => {
+const NoticeDetailScreen = ({ route, navigation}: StackNavigationProps) => {
     const a = route.params?.type;
     console.log(a);
     const [refreshing_notice, setRefreshingNoticeDetailed] = useState(false);

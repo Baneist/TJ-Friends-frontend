@@ -302,7 +302,7 @@ const MemoriesScreen = ({ navigation }: StackNavigationProps) => {
         <View style={{ height: 90 }} />
       </ScrollView>
       <FloatButton onPressFAB={() => navigation.navigate('Post')} />
-      <NoticeManageButton onPressFAB={() => navigation.navigate('NoticeManageScreen')} />
+      {/* <NoticeManageButton onPressFAB={() => navigation.navigate('NoticeManageScreen')} /> */}
     </View>
   );
 }

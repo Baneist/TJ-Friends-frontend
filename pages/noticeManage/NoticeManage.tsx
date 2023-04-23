@@ -1,5 +1,5 @@
 import React, { useState, useEffect }  from 'react';
-import { NavigationProps } from '../../App';
+import { StackNavigationProps } from '../../App';
 import Badge from '../../components/NoticeManage/NoticeBadge';
 import {DialogBadge} from '../../components/NoticeManage/NoticeBadge';
 import {IconButton} from 'react-native-paper';
@@ -7,6 +7,7 @@ import { View, Text,Image, StyleSheet, Dimensions, Alert, TouchableOpacity, Flat
 import axios from 'axios';
 import { NoticeCard } from '../../components/NoticeManage/NoticeCard';
 import { useFocusEffect } from '@react-navigation/native';
+
 
 export const styles = StyleSheet.create({
   btscreen: {
@@ -99,7 +100,7 @@ const messageData = {
 }
 ;
 
-const NoticeManageScreen = ({ route, navigation }: NavigationProps) => {
+const NoticeManageScreen = ({ route, navigation }: StackNavigationProps) => {
   const httpGetAllMessage = 'https://mock.apifox.cn/m1/2539601-0-default/notice/1/getAllSystemNotice';
   const httpGetAllNoticeNum = 'https://mock.apifox.cn/m1/2539601-0-default/notice/1/num4each';
   const [refreshing_notice, setRefreshingNotice] = useState(false);
