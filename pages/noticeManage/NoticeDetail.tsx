@@ -51,32 +51,24 @@ interface NoticeDetailScreenProps {
   type: string;
 };
 const NoticeDetailScreen = ({ route, navigation}: StackNavigationProps) => {
-    const a = route.params?.type;
-    console.log(a);
+    const typ = route.params?.type;
     const [refreshing_notice, setRefreshingNoticeDetailed] = useState(false);
     const [nddata, setndData] = useState(noticeDetailedData);
     const nd_addr = "https://mock.apifox.cn/m1/2539601-0-default/notice/1/getNoticeByType/1";
+    async function getNoticeDetailed() {
+      const response = await requestApiForMockTest('get', `/notice/getNoticeByType/${typ}`, null, true, '读取系统通知失败');
+      console.log(response);
+      const datarecv = response;
+      setndData(datarecv);
+      setRefreshingNoticeDetailed(false);
+      console.log('Refresh: Notice Manage Get.');
+    }
     const onRefresh = () => {// 发送 GET 请求获取新增提醒数据
       setRefreshingNoticeDetailed(true);
-      async function getNoticeDetailed() {
-        const response = await requestApi('get', `/notice/num4each`, null, true, '读取失败');
-        const datarecv = response.data;
-        setndData(datarecv);
-        setRefreshingNoticeDetailed(false);
-        console.log('Refresh: Notice Manage Get.');
-      }
       getNoticeDetailed();
     };
     useEffect(() => {// 发送 GET 请求获取新增提醒数据
-      axios.get(nd_addr)
-        .then(response => {
-          const datarecv = response.data;
-          setndData(datarecv);
-          console.log('Start: Notice Manage Get.');
-        })
-        .catch(error => {
-          console.error(error);
-        });
+      getNoticeDetailed();
     }, []);
 
     const notice_items = nddata.data.map((item:any, index:number) => 
