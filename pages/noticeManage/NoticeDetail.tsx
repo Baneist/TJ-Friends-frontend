@@ -6,6 +6,7 @@ import {IconButton} from 'react-native-paper';
 import { View, Text,Image, StyleSheet, Dimensions, Alert, TouchableOpacity, FlatList, RefreshControl, ScrollView} from 'react-native';
 import axios from 'axios';
 import { NoticeCardDetailed } from "../../components/NoticeManage/NoticeCard";
+import requestApi, {requestApiForMockTest} from '../../utils/request';
 
 const styles = StyleSheet.create({
   btscreen: {
@@ -57,17 +58,14 @@ const NoticeDetailScreen = ({ route, navigation}: StackNavigationProps) => {
     const nd_addr = "https://mock.apifox.cn/m1/2539601-0-default/notice/1/getNoticeByType/1";
     const onRefresh = () => {// 发送 GET 请求获取新增提醒数据
       setRefreshingNoticeDetailed(true);
-      axios.get(nd_addr)
-      .then(response => {
+      async function getNoticeDetailed() {
+        const response = await requestApi('get', `/notice/num4each`, null, true, '读取失败');
         const datarecv = response.data;
         setndData(datarecv);
         setRefreshingNoticeDetailed(false);
         console.log('Refresh: Notice Manage Get.');
-      })
-      .catch(error => {
-        console.log(error);
-        setRefreshingNoticeDetailed(false);
-      });
+      }
+      getNoticeDetailed();
     };
     useEffect(() => {// 发送 GET 请求获取新增提醒数据
       axios.get(nd_addr)
