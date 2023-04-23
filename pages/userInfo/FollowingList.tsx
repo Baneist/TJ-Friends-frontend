@@ -84,6 +84,9 @@ const FollowingList = ({route, navigation }: StackNavigationProps) => {
     <View style={{ flex: 1 }}>
       {/* 关注列表 */}
       <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+        <View>
+          
+        </View>
         {followlist.map((user, idx) => (
           <Pressable key={idx}>
             <Block style={styles.userContainer}>

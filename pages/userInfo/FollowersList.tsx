@@ -6,7 +6,6 @@ import requestApi from '../../utils/request';
 import { userProp, defaultInfo } from './Profile';
 import { AxiosResponse } from 'axios';
 import { followProp } from './FollowingList';
-import handleAxiosError from '../../utils/handleError';
 import { StackNavigationProps } from '../../App';
 
 // 获取屏幕宽高

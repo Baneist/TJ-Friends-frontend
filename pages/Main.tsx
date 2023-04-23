@@ -6,6 +6,8 @@ import { Text } from "galio-framework";
 import { BottomFabBar } from 'rn-wave-bottom-bar';
 import MemoriesScreen from './Memories';
 import Profile from './userInfo/Profile'
+import { IconButton } from 'react-native-paper';
+import { StackNavigationProps } from '../App';
 
 type RootTabParamList = {
   Home: undefined;
@@ -49,7 +51,7 @@ const tabBarIcon =
       size: number;
     }) =>
       <Icon name={name} size={28} color={focused ? 'white' : 'white'} />;
-const MainScreen = () => {
+const MainScreen = ({route, navigation}:StackNavigationProps) => {
   const [showLabel, setShowLabel] = React.useState(false);
   const [enableSquare, setEnableSquare] = React.useState(false);
   const [isRtl, setIsRtl] = React.useState(false);
@@ -155,6 +157,12 @@ const MainScreen = () => {
         options={{
           tabBarIcon: tabBarIcon('user'),
           tabBarLabel: showLabel ? 'Profile' : undefined,
+          headerRight:() => (
+            <IconButton icon="cog-outline" 
+            style={{marginRight:10}}
+            onPress={() =>{navigation.navigate('BlackList')}}
+            />
+          )
         }}
         name="Profile"
         component={Profile}
