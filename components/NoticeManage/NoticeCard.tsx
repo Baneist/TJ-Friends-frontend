@@ -148,9 +148,10 @@ interface NoticeProps {
     upstate: number;
     setUPState: Function;
     type: string;
+    navigatior: Function;
   };
 
-  export const NoticeCardDetailed = ({ message, timeStamp, senderName, senderAvatar, undealNum,noticeId ,originCommentId, originPostId, originPostTitle,upstate,setUPState, type}: NoticeDetailedProps) => {
+  export const NoticeCardDetailed = ({ message, timeStamp, senderName, senderAvatar, undealNum,noticeId ,originCommentId, originPostId, originPostTitle,upstate,setUPState, type, navigatior}: NoticeDetailedProps) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [modalLayout, setModalLayout] = useState<LayoutRectangle | null>(null);
     const buttonRef = useRef<TouchableOpacity>(null);
@@ -166,7 +167,7 @@ interface NoticeProps {
     const handleDeleteItem = () => {
       console.log('delete');
       setUPState(upstate + 1);
-      const res = requestApi('post', '/notice/deleteNotice', { noticeId: noticeId, type:type }, true, '删除失败');
+      const res = requestApi('post', '/notice/deleteNotice', { noticeId: noticeId, typ:type }, true, '删除失败');
       setIsModalVisible(false);
     };
     const handleButtonLayout = (event: any) => {
@@ -177,7 +178,11 @@ interface NoticeProps {
       }
     };
     return (
-        <TouchableOpacity style={styles.container} onPress={()=>{ console.log('click') }} onLongPress={handleLongPress} ref={buttonRef} onLayout={handleButtonLayout}>
+        <TouchableOpacity style={styles.container} onPress={()=>{ 
+          if(type != 'follow'){
+            navigatior('Comment', { postId: String(originPostId) }); 
+          }
+          }} onLongPress={handleLongPress} ref={buttonRef} onLayout={handleButtonLayout}>
           <View style={styles.container}>
           <View style={styles.avatarContainer}>
             <Image source={{ uri: senderAvatar }} style={styles.avatarImage} />
@@ -190,9 +195,12 @@ interface NoticeProps {
             <View style={styles.messageContainer}>
               <Text style={styles.messageText}>{message}</Text>
             </View>
-            <View style={{backgroundColor: '#f2f2f2', padding: 10, borderLeftWidth: 5, borderLeftColor: '#ccc'}}>
-              <Text style={{fontSize: 16, fontWeight: 'bold'}}>{originPostTitle}</Text>
-            </View>
+            {
+              type != 'follow' &&
+              <View style={{backgroundColor: '#f2f2f2', padding: 10, borderLeftWidth: 5, borderLeftColor: '#ccc'}}>
+                <Text style={{fontSize: 16, fontWeight: 'bold'}}>{originPostTitle}</Text>
+              </View>
+            }
           </View>
           {undealNum > 0 && <DialogBadge count={undealNum} />}
         </View>

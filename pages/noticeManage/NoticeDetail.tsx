@@ -35,13 +35,13 @@ const styles = StyleSheet.create({
 const noticeDetailedData = {
   code:77,
   data:[{
-    sendMessage:"id Lorem est mollit",
-    senderName:"现受强写建",
-    senderAvatar:"http://dummyimage.com/100x100",
-    timeStamp:"2017-10-26 16:56:04",
+    sendMessage:"",
+    senderName:"",
+    senderAvatar:"",
+    timeStamp:"",
     undealNum:0,
     originPostId:0,
-    originPostTitle:"东西找不到了..",
+    originPostTitle:"",
     originCommentId:0,
     noticeId:0,
   },
@@ -92,6 +92,7 @@ const NoticeDetailScreen = ({ route, navigation}: StackNavigationProps) => {
       upstate={upstate}
       setUPState={setUPState}
       type={typ}
+      navigatior={navigation.navigate}
       />
   );
     return (
