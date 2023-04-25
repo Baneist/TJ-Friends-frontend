@@ -127,8 +127,8 @@ const EditPost = ({ route, navigation }: StackNavigationProps) => {
   const hasUnsavedChanges = !(text===otext&&image===oimage);
 
   React.useEffect(
-    () =>
-      navigation.addListener('beforeRemove', (e) => {
+    () =>{
+      const onbackpage = navigation.addListener('beforeRemove', (e) => {
         if (!hasUnsavedChanges||clicked) {
           // If we don't have unsaved changes, then we don't need to do anything
           return;
@@ -155,8 +155,9 @@ const EditPost = ({ route, navigation }: StackNavigationProps) => {
             },
           ]
         );
-      }),
-    [navigation, hasUnsavedChanges,clicked]
+      });
+      return onbackpage;
+    },[navigation, hasUnsavedChanges,clicked]
   );
   
   return (
