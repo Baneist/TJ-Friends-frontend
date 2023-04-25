@@ -57,9 +57,8 @@ const NoticeDetailScreen = ({ route, navigation}: StackNavigationProps) => {
     const [nddata, setndData] = useState(noticeDetailedData);
     const [upstate, setUPState] = useState(1);
     async function getNoticeDetailed() {
-      const norep = await requestApiForMockTest('post', `/notice/readNoticeByType/${typ}`, null, true, '发送已读通知失败.');
-      const response = await requestApiForMockTest('get', `/notice/getNoticeByType/${typ}`, null, true, '读取系统通知失败.');
-      //console.log(response);
+      const norep = await requestApi('post', `/notice/readNoticeByType/${typ}`, null, true, '发送已读通知失败.');
+      const response = await requestApi('get', `/notice/getNoticeByType/${typ}`, null, true, '读取系统通知失败.');
       const datarecv = response;
       setndData(datarecv);
       setRefreshingNoticeDetailed(false);

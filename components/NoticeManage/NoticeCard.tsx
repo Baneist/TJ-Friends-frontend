@@ -2,7 +2,7 @@ import { TouchableOpacity, View, Image, Text, StyleSheet,Modal,LayoutRectangle, 
 import { DialogBadge } from "./NoticeBadge";
 import { useRef, useState } from "react";
 import { Alert } from "react-native";
-import { requestApiForMockTest } from "../../utils/request";
+import requestApi, { requestApiForMockTest } from "../../utils/request";
 interface NoticeProps {
     message: string;
     timestamp: Date;
@@ -89,7 +89,7 @@ interface NoticeProps {
     const handleDeleteItem = () => {
       console.log('send delete request');
       setUPState(upstate + 1);
-      const res = requestApiForMockTest('post', '/notice/deleteNotice', { noticeId: noticeId }, true, '删除失败');
+      const res = requestApi('post', '/notice/deleteNotice', { noticeId: noticeId }, true, '删除失败');
       setIsModalVisible(false);
     };
     const handleButtonLayout = (event: any) => {
@@ -166,7 +166,7 @@ interface NoticeProps {
     const handleDeleteItem = () => {
       console.log('delete');
       setUPState(upstate + 1);
-      const res = requestApiForMockTest('post', '/notice/deleteNotice', { noticeId: noticeId, type:type }, true, '删除失败');
+      const res = requestApi('post', '/notice/deleteNotice', { noticeId: noticeId, type:type }, true, '删除失败');
       setIsModalVisible(false);
     };
     const handleButtonLayout = (event: any) => {

@@ -112,7 +112,7 @@ const NoticeManageScreen = ({ route, navigation }: StackNavigationProps) => {
   const [upstate, setUPState] = useState(1);
   
   async function getNoticeMessage() {
-    const response = await requestApiForMockTest('get', `/notice/num4each`, null, true, '读取通知列表失败');
+    const response = await requestApi('get', `/notice/num4each`, null, true, '读取通知列表失败');
     //console.log(response);
     const datarecv = response;
     setnum4eachData(datarecv);
@@ -120,7 +120,7 @@ const NoticeManageScreen = ({ route, navigation }: StackNavigationProps) => {
     console.log('Refresh: Notice Manage Get.');
   }
   async function getSystemMessage() {
-    const response = await requestApiForMockTest('get', `/notice/getAllSystemNotice`, null, true, '读取系统通知失败');
+    const response = await requestApi('get', `/notice/getAllSystemNotice`, null, true, '读取系统通知失败');
     //console.log(response);
     const datarecv = response;
     setamsData(datarecv);
@@ -164,7 +164,7 @@ const NoticeManageScreen = ({ route, navigation }: StackNavigationProps) => {
         <View style={ styles.btscreen }>
           <NoticeLikeButton count={n4edata.data.likeNum} onPress={() => {navigation.navigate('NoticeDetailScreen', {type:'like'}); setnum4eachData({code:n4edata.code, data:{commentNum:n4edata.data.commentNum,followNum:n4edata.data.followNum,likeNum:0,shareNum:n4edata.data.shareNum,}});}}/>
           <NoticeCommentButton count={n4edata.data.commentNum} onPress={() => {navigation.navigate('NoticeDetailScreen', {type:'comment'}); setnum4eachData({code:n4edata.code, data:{commentNum:0,followNum:n4edata.data.followNum,likeNum:n4edata.data.likeNum,shareNum:n4edata.data.shareNum,}});}}/>
-          <NoticeShareButton count={n4edata.data.repoNum} onPress={() => {navigation.navigate('NoticeDetailScreen', {type:'share'}); setnum4eachData({code:n4edata.code, data:{commentNum:n4edata.data.commentNum,followNum:n4edata.data.followNum,likeNum:n4edata.data.likeNum,shareNum:0,}});}}/>
+          <NoticeShareButton count={n4edata.data.repoNum} onPress={() => {navigation.navigate('NoticeDetailScreen', {type:'repo'}); setnum4eachData({code:n4edata.code, data:{commentNum:n4edata.data.commentNum,followNum:n4edata.data.followNum,likeNum:n4edata.data.likeNum,shareNum:0,}});}}/>
           <NoticeFollowButton count={n4edata.data.followNum} onPress={() => {navigation.navigate('NoticeDetailScreen', {type:'follow'}); setnum4eachData({code:n4edata.code, data:{commentNum:n4edata.data.commentNum,followNum:0,likeNum:n4edata.data.likeNum,shareNum:n4edata.data.shareNum,}});}}/>
         </View>
         <View style={ {height: 0, marginTop:20} } />
