@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, StyleSheet, Image, Pressable, Keyboard, Dimensions, Text } from 'react-native';
+import { View, TextInput, StyleSheet, Image, Pressable, Keyboard, Dimensions, Text, Alert, BackHandler } from 'react-native';
 import { Button, Divider, IconButton, Card, List } from 'react-native-paper';
 import AvatarPicker from "../components/AvatarPicker/PostPicker";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -7,6 +7,7 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import requestApi from '../utils/request';
 import { StackNavigationProps } from '../App';
 import Modal from 'react-native-modal';
+import { useFocusEffect } from '@react-navigation/native';
 
 const PostPage = ({ route, navigation }: StackNavigationProps) => {
   //获取屏幕宽高
@@ -14,11 +15,11 @@ const PostPage = ({ route, navigation }: StackNavigationProps) => {
   const [showAvatarOption, setShowAvatarOption] = useState(false);
   const [text, setText] = useState('');
   const [image, setImage] = useState([] as string[]);
-
+  const [clicked,setClick]=useState(false);
   async function handlePost() {
     // 发送text和image到服务器
     console.log('发布');
-    const res = await requestApi('post', '/Post', { postContent: text, photoUrl: image,pms:pmskey }, true, 'post失败')
+    const res = await requestApi('post', '/Post', { postContent: text, photoUrl: image, pms: pmskey }, true, 'post失败')
     if (res.code == 0) {
       navigation.goBack();
     }
@@ -38,23 +39,23 @@ const PostPage = ({ route, navigation }: StackNavigationProps) => {
   const toggleMenu = () => {
     setMenuVisible(!MenuVisible);
   };
-  const[pms,setPms]=useState('公开');
-  const[pmskey,setKey]=useState(0);
+  const [pms, setPms] = useState('公开');
+  const [pmskey, setKey] = useState(0);
   const [opct, setopct] = useState([1, 0, 0, 0]);
   function Check(key: number) {
-    if(key==0){
+    if (key == 0) {
       setPms('公开');
       setKey(0);
     }
-    else if(key==1){
+    else if (key == 1) {
       setPms('好友圈');
       setKey(1);
     }
-    else if(key==2){
+    else if (key == 2) {
       setPms('仅粉丝');
       setKey(2);
     }
-    else{
+    else {
       setPms('仅自己可见');
       setKey(3);
     }
@@ -68,35 +69,70 @@ const PostPage = ({ route, navigation }: StackNavigationProps) => {
     return (
       <View style={styles.menu}>
         <List.Section >
-          <List.Subheader style={{fontSize:16}}>选择权限</List.Subheader>
+          <List.Subheader style={{ fontSize: 16 }}>选择权限</List.Subheader>
           <List.Item title={'公开'}
             description="所有人可见"
             left={() => <Icon name='access-point' size={24} style={{ marginLeft: 15 }} />}
             right={() => <Icon name="check" size={20} style={{ opacity: opct[0], marginRight: -10, color: 'purple' }} />}
-            onPress={()=>Check(0)}
+            onPress={() => Check(0)}
           />
           <List.Item title={'好友圈'}
             description="相互关注好友可见"
             left={() => <Icon name='cards-heart-outline' size={24} style={{ marginLeft: 15 }} />}
             right={() => <Icon name="check" size={20} style={{ opacity: opct[1], marginRight: -10, color: 'purple' }} />}
-            onPress={()=>Check(1)}
+            onPress={() => Check(1)}
           />
           <List.Item title={'仅粉丝'}
-              description="关注你的人可见"
-              left={() => <Icon name='account-heart-outline' size={24} style={{ marginLeft: 15 }} />}
-              right={() => <Icon name="check" size={20} style={{ opacity: opct[2], marginRight: -10, color: 'purple' }} />}
-              onPress={()=>Check(2)}
+            description="关注你的人可见"
+            left={() => <Icon name='account-heart-outline' size={24} style={{ marginLeft: 15 }} />}
+            right={() => <Icon name="check" size={20} style={{ opacity: opct[2], marginRight: -10, color: 'purple' }} />}
+            onPress={() => Check(2)}
           />
           <List.Item title={'仅自己可见'}
-              left={() => <Icon name='lock-outline' size={24} style={{ marginLeft: 15 }} />}
-              right={() => <Icon name="check" size={20} style={{ opacity: opct[3], marginRight: -10, color: 'purple' }} />}
-              onPress={()=>Check(3)}
+            left={() => <Icon name='lock-outline' size={24} style={{ marginLeft: 15 }} />}
+            right={() => <Icon name="check" size={20} style={{ opacity: opct[3], marginRight: -10, color: 'purple' }} />}
+            onPress={() => Check(3)}
           />
         </List.Section>
       </View>
 
     );
   }
+
+  const hasUnsavedChanges = Boolean(text);
+
+  React.useEffect(
+    () =>
+      navigation.addListener('beforeRemove', (e) => {
+        if (!hasUnsavedChanges||clicked) {
+          // If we don't have unsaved changes, then we don't need to do anything
+          return;
+        }
+
+        // Prevent default behavior of leaving the screen
+        e.preventDefault();
+
+        // Prompt the user before leaving the screen
+        Alert.alert(
+          '',
+          '将此次编辑保存为草稿?',
+          [
+            {
+              text: "不保存",
+              style: 'destructive',
+              // This will continue the action that had triggered the removal of the screen
+              onPress: () => navigation.dispatch(e.data.action)
+            },
+            {
+              text: '保存',
+              style: 'cancel',
+              onPress: () => {navigation.dispatch(e.data.action)},
+            },
+          ]
+        );
+      }),
+    [navigation, hasUnsavedChanges,clicked]
+  );
 
   return (
     <View>
@@ -140,14 +176,14 @@ const PostPage = ({ route, navigation }: StackNavigationProps) => {
         }}>
           <Divider />
           <List.Item title='谁可以看'
-          left={()=><Icon name='account-outline'size={24} style={{ marginLeft: 15 }}/>}
-          right={()=><Text style={{paddingTop:3,color:'indigo',paddingRight:5}}>{pms}</Text>}
-          onPress={toggleMenu}
+            left={() => <Icon name='account-outline' size={24} style={{ marginLeft: 15 }} />}
+            right={() => <Text style={{ paddingTop: 3, color: 'indigo', paddingRight: 5 }}>{pms}</Text>}
+            onPress={toggleMenu}
           />
           <Divider />
         </View>
         <View style={{ paddingBottom: 100 }} >
-          <Button onPress={handlePost} mode='contained'>发送</Button>
+          <Button disabled={text.length==0&&image.length==0} onPress={()=>{setClick(true);handlePost();}} mode='contained'>发送</Button>
         </View>
         <AvatarPicker showAvatarOption={showAvatarOption} onBackdropPress={cancelAvatarOption} setImage={changeImage} />
 

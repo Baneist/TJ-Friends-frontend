@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, TextInput, StyleSheet, Image, Pressable, Keyboard} from 'react-native';
+import {View, TextInput, StyleSheet, Image, Pressable, Keyboard, Alert} from 'react-native';
 import {Button, IconButton,List} from 'react-native-paper';
 import AvatarPicker from "../components/AvatarPicker/PostPicker";
 import Icon from 'react-native-vector-icons/Feather';
@@ -13,14 +13,19 @@ const EditPost = ({ route, navigation }: StackNavigationProps) => {
   const [showAvatarOption, setShowAvatarOption] = useState(false);
   const [text, setText] = useState('');
   const [image, setImage] = useState([] as string[]);
+  const [otext, setoText] = useState('');
+  const [oimage, setoImage] = useState([] as string[]);
   const[pms,setPms]=useState('公开');
   const[pmskey,setKey]=useState(0);
+  const [clicked,setClick]=useState(false);
   async function fetchData(){
     console.log(route.params?.postId)
     const res = await requestApi('get', `/Memories/${route.params?.postId}`, null, true, 'get memories失败');
     if (res.code == 0) {
       setText(res.data.postContent);
       setImage(res.data.postPhoto);
+      setoText(res.data.postContent);
+      setoImage(res.data.postPhoto);
       setKey(res.pms);
       if(res.pms==0){
         setPms('公开');
@@ -119,6 +124,41 @@ const EditPost = ({ route, navigation }: StackNavigationProps) => {
     );
   }
 
+  const hasUnsavedChanges = !(text===otext&&image===oimage);
+
+  React.useEffect(
+    () =>
+      navigation.addListener('beforeRemove', (e) => {
+        if (!hasUnsavedChanges||clicked) {
+          // If we don't have unsaved changes, then we don't need to do anything
+          return;
+        }
+
+        // Prevent default behavior of leaving the screen
+        e.preventDefault();
+
+        // Prompt the user before leaving the screen
+        Alert.alert(
+          '',
+          '放弃此次编辑?',
+          [
+            {
+              text: "放弃",
+              style: 'destructive',
+              // This will continue the action that had triggered the removal of the screen
+              onPress: () => navigation.dispatch(e.data.action)
+            },
+            {
+              text: '取消',
+              style: 'cancel',
+              onPress: () => {navigation.dispatch(e.data.action);},
+            },
+          ]
+        );
+      }),
+    [navigation, hasUnsavedChanges,clicked]
+  );
+  
   return (
     <View>
     <KeyboardAwareScrollView style={styles.container} onScrollToTop={Keyboard.dismiss}>
@@ -153,7 +193,7 @@ const EditPost = ({ route, navigation }: StackNavigationProps) => {
         />}
       </View>
       <View style={{paddingBottom: 100}} >
-      <Button onPress={handlePost} mode='contained'>重新发送</Button>
+      <Button disabled={text.length==0&&image.length==0} onPress={()=>{setClick(true);handlePost();}} mode='contained'>重新发送</Button>
       </View>
       <AvatarPicker showAvatarOption={showAvatarOption} onBackdropPress={cancelAvatarOption} setImage={changeImage}/>
     </KeyboardAwareScrollView>
