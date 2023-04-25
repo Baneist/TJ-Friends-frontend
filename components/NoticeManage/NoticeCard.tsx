@@ -147,7 +147,7 @@ interface NoticeProps {
     noticeId: number;
     upstate: number;
     setUPState: Function;
-    type: number;
+    type: string;
   };
 
   export const NoticeCardDetailed = ({ message, timeStamp, senderName, senderAvatar, undealNum,noticeId ,originCommentId, originPostId, originPostTitle,upstate,setUPState, type}: NoticeDetailedProps) => {

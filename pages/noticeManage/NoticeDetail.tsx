@@ -55,7 +55,6 @@ const NoticeDetailScreen = ({ route, navigation}: StackNavigationProps) => {
     const typ = route.params?.type;
     const [refreshing_notice, setRefreshingNoticeDetailed] = useState(false);
     const [nddata, setndData] = useState(noticeDetailedData);
-    const nd_addr = "https://mock.apifox.cn/m1/2539601-0-default/notice/1/getNoticeByType/1";
     const [upstate, setUPState] = useState(1);
     async function getNoticeDetailed() {
       const norep = await requestApiForMockTest('post', `/notice/readNoticeByType/${typ}`, null, true, '发送已读通知失败.');
