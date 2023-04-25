@@ -7,6 +7,7 @@ import { View, Text,Image, StyleSheet, Dimensions, Alert, TouchableOpacity, Flat
 import axios from 'axios';
 import { NoticeCardDetailed } from "../../components/NoticeManage/NoticeCard";
 import requestApi, {requestApiForMockTest} from '../../utils/request';
+import { useFocusEffect } from '@react-navigation/native';
 
 const styles = StyleSheet.create({
   btscreen: {
@@ -55,9 +56,11 @@ const NoticeDetailScreen = ({ route, navigation}: StackNavigationProps) => {
     const [refreshing_notice, setRefreshingNoticeDetailed] = useState(false);
     const [nddata, setndData] = useState(noticeDetailedData);
     const nd_addr = "https://mock.apifox.cn/m1/2539601-0-default/notice/1/getNoticeByType/1";
+    const [upstate, setUPState] = useState(1);
     async function getNoticeDetailed() {
+      const norep = await requestApiForMockTest('post', `/notice/readNoticeByType/${typ}`, null, true, '发送已读通知失败');
       const response = await requestApiForMockTest('get', `/notice/getNoticeByType/${typ}`, null, true, '读取系统通知失败');
-      console.log(response);
+      //console.log(response);
       const datarecv = response;
       setndData(datarecv);
       setRefreshingNoticeDetailed(false);
@@ -70,6 +73,11 @@ const NoticeDetailScreen = ({ route, navigation}: StackNavigationProps) => {
     useEffect(() => {// 发送 GET 请求获取新增提醒数据
       getNoticeDetailed();
     }, []);
+    useFocusEffect(React.useCallback(() => {
+      getNoticeDetailed();
+      return () => {
+      };
+    }, [upstate]));
 
     const notice_items = nddata.data.map((item:any, index:number) => 
     <NoticeCardDetailed
@@ -83,6 +91,8 @@ const NoticeDetailScreen = ({ route, navigation}: StackNavigationProps) => {
       originPostTitle={item.originPostTitle}
       originPostId={item.originPostId}
       noticeId={item.noticeId}
+      upstate={upstate}
+      setUPState={setUPState}
       />
   );
     return (

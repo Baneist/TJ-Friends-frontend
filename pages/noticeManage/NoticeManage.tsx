@@ -109,9 +109,11 @@ const NoticeManageScreen = ({ route, navigation }: StackNavigationProps) => {
   const [refreshing, setRefreshing] = useState(false);
   const [n4edata, setnum4eachData] = useState(num4eachData);
   const [amsdata, setamsData] = useState(messageData);
+  const [upstate, setUPState] = useState(1);
+  
   async function getNoticeMessage() {
     const response = await requestApiForMockTest('get', `/notice/num4each`, null, true, '读取通知列表失败');
-    console.log(response);
+    //console.log(response);
     const datarecv = response;
     setnum4eachData(datarecv);
     setRefreshingNotice(false); if(refreshing_message == false){setRefreshing(false);}
@@ -119,7 +121,7 @@ const NoticeManageScreen = ({ route, navigation }: StackNavigationProps) => {
   }
   async function getSystemMessage() {
     const response = await requestApiForMockTest('get', `/notice/getAllSystemNotice`, null, true, '读取系统通知失败');
-    console.log(response);
+    //console.log(response);
     const datarecv = response;
     setamsData(datarecv);
     setRefreshingMessage(false); if(refreshing_notice == false){setRefreshing(false);}
@@ -130,10 +132,18 @@ const NoticeManageScreen = ({ route, navigation }: StackNavigationProps) => {
     getNoticeMessage();
     getSystemMessage();
   };
+  /*
   useEffect(() => {// 发送 GET 请求获取新增提醒数据
     getNoticeMessage();
     getSystemMessage();
   }, []);
+  */
+  useFocusEffect(React.useCallback(() => {
+    getNoticeMessage();
+    getSystemMessage();
+    return () => {
+    };
+  }, [upstate]));
   const msitems = amsdata.data.map((item:any, index:number) => 
     <NoticeCard
       key={index}
@@ -143,6 +153,8 @@ const NoticeManageScreen = ({ route, navigation }: StackNavigationProps) => {
       senderAvatar={item.senderAvatar}
       noticeId={item.noticeId}
       readed={item.readed}
+      upstate={upstate}
+      setUPState={setUPState}
     />
   );
   return (

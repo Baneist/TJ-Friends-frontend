@@ -2,6 +2,7 @@ import { TouchableOpacity, View, Image, Text, StyleSheet,Modal,LayoutRectangle, 
 import { DialogBadge } from "./NoticeBadge";
 import { useRef, useState } from "react";
 import { Alert } from "react-native";
+import { requestApiForMockTest } from "../../utils/request";
 interface NoticeProps {
     message: string;
     timestamp: Date;
@@ -9,6 +10,8 @@ interface NoticeProps {
     senderAvatar: string;
     noticeId: number;
     readed: boolean;
+    upstate: number;
+    setUPState: Function;
   }
   
   const styles = StyleSheet.create({
@@ -70,7 +73,7 @@ interface NoticeProps {
       },
   }
   );
-  export const NoticeCard = ({ message, timestamp, senderName, senderAvatar, noticeId, readed}: NoticeProps) => {
+  export const NoticeCard = ({ message, timestamp, senderName, senderAvatar, noticeId, readed, upstate, setUPState}: NoticeProps) => {
     const [isReaded, setIsReaded] = useState(readed);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [modalLayout, setModalLayout] = useState<LayoutRectangle | null>(null);
@@ -84,6 +87,9 @@ interface NoticeProps {
     };
   
     const handleDeleteItem = () => {
+      console.log('send delete request');
+      setUPState(upstate + 1);
+      const res = requestApiForMockTest('post', '/notice/deleteNotice', { noticeId: noticeId }, true, '删除失败');
       setIsModalVisible(false);
     };
     const handleButtonLayout = (event: any) => {
@@ -93,7 +99,8 @@ interface NoticeProps {
         });
       }
     };
-    const sendReaded = () => {
+    async function sendReaded() {
+      const res = await requestApiForMockTest('post', '/notice/readSystemNotice', { noticeId: noticeId }, true, '标记已读失败');
       console.log('sendReaded');
     };
     return (
@@ -138,9 +145,11 @@ interface NoticeProps {
     originCommentId: number;
     originPostTitle: string;
     noticeId: number;
+    upstate: number;
+    setUPState: Function;
   };
 
-  export const NoticeCardDetailed = ({ message, timeStamp, senderName, senderAvatar, undealNum,noticeId ,originCommentId, originPostId, originPostTitle }: NoticeDetailedProps) => {
+  export const NoticeCardDetailed = ({ message, timeStamp, senderName, senderAvatar, undealNum,noticeId ,originCommentId, originPostId, originPostTitle,upstate,setUPState }: NoticeDetailedProps) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [modalLayout, setModalLayout] = useState<LayoutRectangle | null>(null);
     const buttonRef = useRef<TouchableOpacity>(null);
@@ -155,6 +164,8 @@ interface NoticeProps {
   
     const handleDeleteItem = () => {
       console.log('delete');
+      setUPState(upstate + 1);
+      const res = requestApiForMockTest('post', '/notice/deleteNotice', { noticeId: noticeId }, true, '删除失败');
       setIsModalVisible(false);
     };
     const handleButtonLayout = (event: any) => {
