@@ -147,9 +147,10 @@ interface NoticeProps {
     noticeId: number;
     upstate: number;
     setUPState: Function;
+    type: number;
   };
 
-  export const NoticeCardDetailed = ({ message, timeStamp, senderName, senderAvatar, undealNum,noticeId ,originCommentId, originPostId, originPostTitle,upstate,setUPState }: NoticeDetailedProps) => {
+  export const NoticeCardDetailed = ({ message, timeStamp, senderName, senderAvatar, undealNum,noticeId ,originCommentId, originPostId, originPostTitle,upstate,setUPState, type}: NoticeDetailedProps) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [modalLayout, setModalLayout] = useState<LayoutRectangle | null>(null);
     const buttonRef = useRef<TouchableOpacity>(null);
@@ -165,7 +166,7 @@ interface NoticeProps {
     const handleDeleteItem = () => {
       console.log('delete');
       setUPState(upstate + 1);
-      const res = requestApiForMockTest('post', '/notice/deleteNotice', { noticeId: noticeId }, true, '删除失败');
+      const res = requestApiForMockTest('post', '/notice/deleteNotice', { noticeId: noticeId, type:type }, true, '删除失败');
       setIsModalVisible(false);
     };
     const handleButtonLayout = (event: any) => {

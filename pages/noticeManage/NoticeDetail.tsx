@@ -58,8 +58,8 @@ const NoticeDetailScreen = ({ route, navigation}: StackNavigationProps) => {
     const nd_addr = "https://mock.apifox.cn/m1/2539601-0-default/notice/1/getNoticeByType/1";
     const [upstate, setUPState] = useState(1);
     async function getNoticeDetailed() {
-      const norep = await requestApiForMockTest('post', `/notice/readNoticeByType/${typ}`, null, true, '发送已读通知失败');
-      const response = await requestApiForMockTest('get', `/notice/getNoticeByType/${typ}`, null, true, '读取系统通知失败');
+      const norep = await requestApiForMockTest('post', `/notice/readNoticeByType/${typ}`, null, true, '发送已读通知失败.');
+      const response = await requestApiForMockTest('get', `/notice/getNoticeByType/${typ}`, null, true, '读取系统通知失败.');
       //console.log(response);
       const datarecv = response;
       setndData(datarecv);
@@ -93,6 +93,7 @@ const NoticeDetailScreen = ({ route, navigation}: StackNavigationProps) => {
       noticeId={item.noticeId}
       upstate={upstate}
       setUPState={setUPState}
+      type={typ}
       />
   );
     return (
