@@ -7,7 +7,7 @@ import {
   ImageBackground,
   Pressable, Dimensions
 } from "react-native";
-import { Button, List, Chip } from 'react-native-paper';
+import { Button, List, Chip, IconButton } from 'react-native-paper';
 import { Block, Text } from "galio-framework";
 import Icon from 'react-native-vector-icons/AntDesign';
 import { StackNavigationProps } from '../../App'
@@ -65,31 +65,31 @@ export interface userProp {
 
 export const defaultInfo = {
   "userId": {
-    "info": "2053302",
+    "info": "",
     "pms": false
   },
   "userName": {
-    "info": "吉尔伽美什",
+    "info": "",
     "pms": false
   },
   "userNickName": {
-    "info": "Gilgamesh",
+    "info": "",
     "pms": false
   },
   "userGender": {
-    "info": "Male",
+    "info": "",
     "pms": false
   },
   "userBirthDate": {
-    "info": "2002-08-07",
+    "info": "",
     "pms": true
   },
   "userStatus": {
-    "info": "愉悦！",
+    "info": "",
     "pms": true
   },
   "userMajor": {
-    "info": "愉悦学",
+    "info": "",
     "pms": true
   },
   "userPhone": {
@@ -97,24 +97,15 @@ export const defaultInfo = {
     "pms": false
   },
   "userYear": {
-    "info": "2020",
+    "info": "",
     "pms": false
   },
   "userInterest": {
-    "info": "喜欢钱和一切金闪闪的东西，还有哈哈哈哈哈哈（是个快乐的男人！）",
+    "info": "",
     "pms": true
   },
   "userLabel": {
-    "info": [
-      "金闪闪",
-      "帅",
-      "金发",
-      "红瞳",
-      "AUO",
-      "愉悦教主",
-      "强",
-      "黄金三靶"
-    ],
+    "info": [],
     "pms": true
   },
   "userAvatar": {
@@ -178,6 +169,17 @@ const Profile = ({ navigation }: StackNavigationProps) => {
       };
     }, [])
   );
+  //导航栏
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight:() => (
+        <IconButton icon="cog-outline" 
+        style={{marginRight:10}}
+        onPress={() =>{navigation.navigate('BlackList')}}
+        />
+      )
+    });
+  }, [navigation]);
   return (
     <View style={{ flex: 1, marginBottom: bottom }}>
       <View style={{ flex: 1 }}>

@@ -23,6 +23,7 @@ import Comment from "./pages/Comments";
 import FollowingList from "./pages/userInfo/FollowingList";
 import FollowersList from "./pages/userInfo/FollowersList";
 import BlackList from "./pages/userInfo/BlackList";
+import ComplaintUser from "./pages/userInfo/Complaint";
 //查看他人主页
 import OthersPage from "./pages/userInfo/OthersPage";
 
@@ -66,7 +67,8 @@ type RootStackParamList = {
   OthersPage: { userId: string } | undefined;
   NoticeManageScreen: undefined;
   NoticeDetailScreen: { type: string };
-  BlackList:undefined
+  BlackList:undefined,
+  ComplaintUser:{ userId: string };
 };
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -256,6 +258,11 @@ const App = () => {
           <Stack.Screen
             name="BlackList"
             component={BlackList}
+            options={{ headerBackTitle: "Back" }}
+          />
+          <Stack.Screen
+            name="ComplaintUser"
+            component={ComplaintUser}
             options={{ headerBackTitle: "Back" }}
           />
           <Stack.Screen name="NoticeManageScreen" component={NoticeManageScreen} options={{ headerBackTitle: 'Back' }} />

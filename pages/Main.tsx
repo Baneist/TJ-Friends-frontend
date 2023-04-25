@@ -157,12 +157,6 @@ const MainScreen = ({route, navigation}:StackNavigationProps) => {
         options={{
           tabBarIcon: tabBarIcon('user'),
           tabBarLabel: showLabel ? 'Profile' : undefined,
-          headerRight:() => (
-            <IconButton icon="cog-outline" 
-            style={{marginRight:10}}
-            onPress={() =>{navigation.navigate('BlackList')}}
-            />
-          )
         }}
         name="Profile"
         component={Profile}

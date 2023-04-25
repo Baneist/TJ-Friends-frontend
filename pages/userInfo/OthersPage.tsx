@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Dimensions, Image, ImageBackground, Pressable, ScrollView, View } from "react-native";
-import { Button, Chip, List } from 'react-native-paper';
+import { Alert, Dimensions, Image, ImageBackground, Pressable, ScrollView, View } from "react-native";
+import { Button, Chip, List, IconButton, Divider } from 'react-native-paper';
 import { Block, Text } from "galio-framework";
 import Icon from 'react-native-vector-icons/AntDesign';
 import { StackNavigationProps } from '../../App'
@@ -12,6 +12,7 @@ import { styles } from "./Profile.style";
 import { GENDER } from "./Profile";
 import MomentsList from "../../components/MomentsList/MomentsList";
 import { useFocusEffect } from '@react-navigation/native';
+import Modal from 'react-native-modal';
 
 //获取屏幕宽高
 const { width } = Dimensions.get("screen");
@@ -20,6 +21,36 @@ const { width } = Dimensions.get("screen");
 const profileImage = {
   ProfileBackground: require("../../assets/imgs/profile-screen-bg.png"),
   ProfilePicture: 'https://picsum.photos/700'
+}
+
+interface ModalOptionsProps{
+  showOption:boolean,
+  onBlock:() => void,
+  onComplaint:() => void,
+  onBackdropPress:() => void
+}
+const ModalOptions = (props:ModalOptionsProps) =>{
+  return(
+      <Modal
+      isVisible={props.showOption}
+      onBackdropPress={props.onBackdropPress}
+      style={styles.modalFromBottom}
+      >
+      <View style={styles.contentContainer}>
+        <Button
+        style={styles.optionBtn} 
+        onPress={props.onBlock}
+        >加入黑名单</Button>
+        <Divider />
+        <Button
+        style={styles.optionBtn} 
+        onPress={props.onComplaint}>举报</Button>
+        <Divider />
+        <Button style={styles.optionBtn}
+        onPress={props.onBackdropPress}>取消</Button>
+      </View>
+    </Modal>
+  )
 }
 
 const OthersPage = ({route, navigation }: StackNavigationProps) => {
@@ -33,6 +64,8 @@ const OthersPage = ({route, navigation }: StackNavigationProps) => {
   const [followingNum, setFollowingNum] = useState(0);
   //被当前用户关注了
   const [isfollowing, setFollowing] = useState(false);
+  //拉黑选项
+  const [blockOption, setBlockOption] = useState(false);
   //显示个人信息
   const { bottom } = useSafeAreaInsets();
 
@@ -41,6 +74,19 @@ const OthersPage = ({route, navigation }: StackNavigationProps) => {
       callback();
     }
   }
+  //导航栏
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <View style={{ marginRight: 10 }}>
+          <IconButton icon="dots-horizontal" 
+          onPress={()=> {setBlockOption(true)}}
+          />
+        </View>
+      ),
+    });
+  }, [navigation]);
+
   //检查是否关注
   function hasFollowing(followerlist:followProp[]){
     for(let i=0;i<followerlist.length;++i){
@@ -109,7 +155,28 @@ const OthersPage = ({route, navigation }: StackNavigationProps) => {
     setFollowerNum(followerNum + (isfollowing ? -1 : 1));
     setFollowing(!isfollowing)
   }
-
+  //拉黑
+  function onBlock(){
+    Alert.alert(
+      "提示",
+      "是否确定拉黑该用户？",
+      [
+        {
+          text:'OK',
+          onPress:() =>{setBlockOption(false)}
+        },
+        {
+          text:'Cancel',
+          onPress:() => {setBlockOption(false)}
+        }
+      ]
+    )
+  }
+  //投诉
+  function onComplaint(){
+    setBlockOption(false)
+    navigation.navigate('ComplaintUser', {userId:pageid})
+  }
 
   // 性别
   const Gender = () => {
@@ -131,6 +198,12 @@ const OthersPage = ({route, navigation }: StackNavigationProps) => {
             showsVerticalScrollIndicator={false}
             style={{ width }}
           >
+            <ModalOptions 
+            showOption={blockOption}
+            onBlock={onBlock}
+            onComplaint={onComplaint}
+            onBackdropPress={()=>{setBlockOption(false)}}
+            />
             <Block flex style={styles.profileCard}>
               {/* 头像 */}
               <Block middle style={styles.avatarContainer}>
@@ -167,6 +240,12 @@ const OthersPage = ({route, navigation }: StackNavigationProps) => {
                       <Text style={styles.infoName}>Followers</Text>
                     </Block>
                   </Pressable>
+                  <Block middle>
+                      <Text style={styles.infoNum}>
+                        0%
+                      </Text>
+                      <Text style={styles.infoName}>Suitability</Text>
+                  </Block>
                   <Pressable onPress={viewFollowing}>
                     <Block middle>
                       <Text style={styles.infoNum}>

@@ -79,7 +79,7 @@ const FollowersList = ({ route, navigation }: StackNavigationProps) => {
       {/* 关注列表 */}
       <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
         {followerlist.map((user, idx) => (
-          <Pressable key={idx}>
+          <Pressable key={idx} onPress={() => {navigation.navigate('OthersPage', {userId:user.userId.info})}}>
             <Block style={styles.userContainer}>
               {/* 头像 */}
               <Avatar.Image size={64} source={{ uri: user.userAvatar.info }} />

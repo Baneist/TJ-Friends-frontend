@@ -88,7 +88,7 @@ const FollowingList = ({route, navigation }: StackNavigationProps) => {
           
         </View>
         {followlist.map((user, idx) => (
-          <Pressable key={idx}>
+          <Pressable key={idx} onPress={() => {navigation.navigate('OthersPage', {userId:user.userId.info})}}>
             <Block style={styles.userContainer}>
               {/* 头像 */}
               <Avatar.Image size={64} source={{ uri: user.userAvatar.info }} />
