@@ -39,6 +39,8 @@ import EditPost from "./pages/EditPost";
 import NoticeManageScreen from './pages/noticeManage/NoticeManage';
 import NoticeDetailScreen from "./pages/noticeManage/NoticeDetail";
 
+import ChatDetail from './pages/ChatDetail'
+
 const GetUrl = "https://1.tongji.edu.cn/api/ssoservice/system/loginIn";
 const TargetUrl = "https://1.tongji.edu.cn/ssologin";
 const PostUrl = "https://1.tongji.edu.cn/api/sessionservice/session/login";
@@ -65,6 +67,7 @@ type RootStackParamList = {
   OthersPage: { userId: string } | undefined;
   NoticeManageScreen: undefined;
   NoticeDetailScreen: { type: string };
+  ChatDetail: undefined;
 };
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -183,7 +186,7 @@ const App = () => {
   return (
     <View style={{ flex: 1 }}>
       <NavigationContainer ref={navigationRef}>
-        <Stack.Navigator initialRouteName="Login">
+        <Stack.Navigator initialRouteName="ChatDetail">
           <Stack.Screen
             name="Login"
             component={RenderLoginScreen}
@@ -249,6 +252,11 @@ const App = () => {
           <Stack.Screen
             name="OthersPage"
             component={OthersPage}
+            options={{ headerBackTitle: "Back" }}
+          />
+          <Stack.Screen
+            name="ChatDetail"
+            component={ChatDetail}
             options={{ headerBackTitle: "Back" }}
           />
           <Stack.Screen name="NoticeManageScreen" component={NoticeManageScreen} options={{ headerBackTitle: 'Back' }} />
