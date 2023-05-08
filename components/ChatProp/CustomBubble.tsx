@@ -1,4 +1,5 @@
 import React from 'react';
+import { Alert } from 'react-native';
 import { Bubble } from 'react-native-gifted-chat';
 
 
@@ -11,10 +12,32 @@ interface CustomBubbleProps {
     left?: any;
     right?: any;
   };
+  messageId?:any;
+  onMessageRecall?:any;
+  currentMessage?:any;
 }
 
 
 function CustomBubble(props: CustomBubbleProps) {
+  function handleLongPress() {
+    const { messageId, onMessageRecall } = props;
+    const canRecall = props.currentMessage.canRecall !== false; // default is true
+    if (canRecall) {
+      Alert.alert(
+        'Recall message',
+        'Are you sure you want to recall this message?',
+        [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'Recall',
+            style: 'destructive',
+            onPress: () => onMessageRecall(messageId),
+          },
+        ],
+      );
+    }
+  }
+
   return (
     <Bubble
       {...props}
@@ -42,6 +65,7 @@ function CustomBubble(props: CustomBubbleProps) {
           color: '#FFF',
         },
       }}
+      // onLongPress={handleLongPress}
     />
   );
 }

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import EmojiPicker from 'react-native-emoji-selector';
+import * as ImagePicker from 'expo-image-picker';
 
 
 function CustomInputToolbar(props) {
@@ -23,22 +24,64 @@ function CustomInputToolbar(props) {
     }
   }
 
-  function handlePickImage() {
-    // Handle picking image from device library or camera
-    // and then send it as a message
+  async function handlePickImage() {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== 'granted') {
+        alert('需要访问相册权限以选择图片！');
+        return;
+      }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      const message = {
+        image: result.assets[0].uri,
+        createdAt: new Date(),
+        user: {
+          _id: props.user._id,
+          name: props.user.name,
+        },
+      };
+
+      props.onSend([message]);
+    }
   }
 
-  function handlePickEmoji(emoji) {
-    setText(text + emoji);
+  async function handleTakePhoto(){
+    const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
+      if (!permissionResult.granted) {
+        alert('需要访问摄像头权限以拍摄图片！');
+        return;
+      }
+      const result = await ImagePicker.launchCameraAsync({
+        allowsEditing: true,
+        quality: 1,
+      });
+
+      if (!result.canceled) {
+        const message = {
+          image: result.assets[0].uri,
+          createdAt: new Date(),
+          user: {
+            _id: props.user._id,
+            name: props.user.name,
+          },
+        };
+        props.onSend([message]);
+      }
   }
 
   return (
     <View style={styles.container}>
-      {showEmojiPicker && (
-        <EmojiPicker onEmojiSelected={handlePickEmoji} />
-      )}
-      <TouchableOpacity onPress={() => setShowEmojiPicker(true)} style={styles.button}>
-        <MaterialIcons name="mood" size={24} color="#5A5A5A" />
+      <TouchableOpacity onPress={handlePickImage} style={styles.button}>
+        <MaterialIcons name="photo-library" size={24} color="#5A5A5A" />
+      </TouchableOpacity>
+      <TouchableOpacity onPress={handleTakePhoto} style={styles.button}>
+        <MaterialIcons name="photo-camera" size={24} color="#5A5A5A" />
       </TouchableOpacity>
       <TextInput
         style={styles.textInput}
@@ -46,9 +89,6 @@ function CustomInputToolbar(props) {
         value={text}
         onChangeText={setText}
       />
-      <TouchableOpacity onPress={handlePickImage} style={styles.button}>
-        <MaterialIcons name="photo-camera" size={24} color="#5A5A5A" />
-      </TouchableOpacity>
       <TouchableOpacity onPress={handleSend} style={styles.sendButton}>
         <MaterialIcons name="send" size={24} color="#FFFFFF" />
       </TouchableOpacity>
