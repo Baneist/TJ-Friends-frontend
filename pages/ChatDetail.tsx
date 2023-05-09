@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Text, View } from 'react-native';
 import { Avatar } from 'react-native-elements';
 import { GiftedChat } from 'react-native-gifted-chat';
-import { StackNavigationProps } from '../../App'
+import { StackNavigationProps } from '../App'
 import CustomBubble from '../components/ChatProp/CustomBubble';
 import CustomInputToolbar from '../components/ChatProp/CustomInputToolbar';
 
