@@ -8,7 +8,8 @@ import {
   Image,
   ImageBackground,
   Pressable,
-  Platform
+  Platform,
+  Alert
 } from "react-native"
 import {
   Button, Card, TextInput, Switch, Surface,
@@ -25,6 +26,9 @@ import handleAxiosError from "../../../utils/handleError";
 import AvatarPicker from "../../../components/AvatarPicker/AvatarPicker";
 import { userProp, defaultInfo } from "../Profile";
 import { useFocusEffect } from '@react-navigation/native';
+import { GENDER } from "../Profile";
+import { toastConfig } from "../../../components/Toast/Toast";
+import Toast from "react-native-toast-message";
 
 //获取屏幕宽高
 const { width, height } = Dimensions.get("screen");
@@ -70,17 +74,18 @@ export function EditProfile({ route, navigation }: StackNavigationProps) {
   );
 
   //性别
-  function Gender() {
-    if (userInfo.userGender.info == '男')
-      return (<Icon name="man" size={16} color="#32325D" style={{ marginTop: 10 }}>Male</Icon>)
-    else
-      return (<Icon name="woman" size={16} color="#32325D" style={{ marginTop: 10 }}>Female</Icon>)
+  const Gender = () => {
+    return (<Icon name={userInfo.userGender.info === GENDER.Male ? 'man' : 'woman'}
+      size={16} color="#32325D" style={{ marginTop: 10 }}>
+      {userInfo.userGender.info === GENDER.Male ? GENDER.Male : GENDER.Female}
+    </Icon>);
   }
 
   //选头像
   async function onSubmitAvatar(url:string){
     let newuser = { ...userInfo };
     newuser.userAvatar.info = url;
+    console.log('avatar', newuser.userAvatar)
     const res = await requestApi('put', '/updateUserInfo', newuser, true, '更新头像失败');
     console.log(newuser)
     if (res.code === 0) {
@@ -365,11 +370,13 @@ export function EditProfile({ route, navigation }: StackNavigationProps) {
   }
 
   async function updatePmsSetting() {
+    Toast.show({
+      type: 'success',
+      text1: 'Hello',
+      text2: 'This is some something 👋'
+    });
     const res = await requestApi('put', '/updateUserInfo', refInfo.current, true, 'update user info failed');
-    if (res.code === 0) {
-      console.log('ohyes')
-    }
-    console.log('隐私变更',userInfo)
+    //Alert.alert("隐私变更成功")
   }
 
   return (
@@ -570,6 +577,7 @@ export function EditProfile({ route, navigation }: StackNavigationProps) {
           </ScrollView>
         </ImageBackground>
       </View>
+      <Toast config={toastConfig} topOffset={height / 3}/>
     </View>
   )
 }
