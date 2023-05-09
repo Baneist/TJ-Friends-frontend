@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {View, TextInput, StyleSheet, Image, Pressable, Keyboard, Alert, Switch,Text, Dimensions} from 'react-native';
+import {View, TextInput, StyleSheet, Image, Pressable, Keyboard, Alert, Switch,Text, Dimensions, Platform} from 'react-native';
 import {Button, Divider, IconButton,List} from 'react-native-paper';
 import AvatarPicker from "../components/AvatarPicker/PostPicker";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -11,7 +11,7 @@ import Modal from 'react-native-modal';
 
 const EditPost = ({ route, navigation }: StackNavigationProps) => {
   const { width, height } = Dimensions.get("screen");
-  
+
   const [anonymous, setAnonymous] = useState(false);
   const [showAvatarOption, setShowAvatarOption] = useState(false);
   const [text, setText] = useState('');
@@ -47,7 +47,7 @@ const EditPost = ({ route, navigation }: StackNavigationProps) => {
   }
   async function handlePost() {
     // 发送text和image到服务器
-    const res = await requestApi('put', `/updateMemory/${route.params?.postId}`, { postContent: text, photoUrl: image,pms:pmskey }, true, '修改失败')
+    const res = await requestApi('put', `/updateMemory/${route.params?.postId}`, { postContent: text, photoUrl: image,pms:pmskey,isAnonymous:anonymous }, true, '修改失败')
     if (res.code == 0) {
       navigation.goBack();
     }
@@ -214,10 +214,10 @@ const EditPost = ({ route, navigation }: StackNavigationProps) => {
           <List.Item title='匿名'
             left={() => <Icon name='ninja' size={24} style={{ marginLeft: 15 }} />}
             right={() => <Switch
+              style={{marginTop:Platform.OS == 'ios' ?-3:-10,marginBottom:Platform.OS == 'ios' ?-3:-10}}
               value={anonymous}
               onValueChange={() => setAnonymous(!anonymous)}
             />}
-            onPress={toggleMenu}
           />
           <Divider />
         </View>
