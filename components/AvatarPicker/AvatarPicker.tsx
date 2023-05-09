@@ -43,6 +43,7 @@ export default function AvatarPicker(props:AvatarPickerProps) {
       const pickerResult = await ImagePicker.launchImageLibraryAsync();
       // Check they didn't cancel the picking
       if (!pickerResult.canceled) {
+        console.log('type',typeof(pickerResult.assets[0]))
         console.log(pickerResult.assets[0].uri)
         launchEditor(pickerResult.assets[0].uri);
       }
@@ -103,12 +104,8 @@ export default function AvatarPicker(props:AvatarPickerProps) {
           imageUri={imageUri}
           fixedCropAspectRatio={1 / 1}
           lockAspectRatio={true}
-          minimumCropDimensions={{
-            width: 400,
-            height: 400,
-          }}
           onEditingComplete={(result) => {
-              console.log(result);
+              console.log(typeof(result.uri));
               props.onSubmit(result.uri);
               props.onBackdropPress();
           }}
