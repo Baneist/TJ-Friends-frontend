@@ -52,10 +52,11 @@ interface NoticeDetailScreenProps {
   type: string;
 };
 const NoticeDetailScreen = ({ route, navigation}: StackNavigationProps) => {
-    const typ = route.params?.type;
+    const typ = route.params?.type as string;
+    let typ2title : {[key:string]:string} = {'comment':'评论我的', 'like':'喜欢我的', 'follow':'关注我的', 'repo':'分享我的'};
     React.useLayoutEffect(() => {
       navigation.setOptions({
-        title:typ
+        title: typ2title[typ],
       });
     }, [navigation]);
     const [refreshing_notice, setRefreshingNoticeDetailed] = useState(false);
