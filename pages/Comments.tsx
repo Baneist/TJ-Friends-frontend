@@ -100,7 +100,7 @@ const dd = {
   comments: [
     {
       commentId: 15,
-      userID: "21",
+      userId: "21",
       likeNum: "57",
       userName: "周秀英",
       isLiked: 30,
@@ -110,13 +110,13 @@ const dd = {
     },
   ],
   isLiked: true,
-  userID: "6",
+  userId: "6",
   isAnonymous:false
 }
 const dc = [
   {
     commentId: 15,
-    userID: "21",
+    userId: "21",
     likeNum: "57",
     userName: "周秀英",
     isLiked: 30,
@@ -154,9 +154,9 @@ function Comment({ route, navigation }: StackNavigationProps) {
   const [cid, setcid] = useState(0);
   const [MenuVisible1, setMenuVisible1] = useState(false);
   const [MenuVisible2, setMenuVisible2] = useState(false);
-  const toggleMenu = (userID: string, cid: number) => {
+  const toggleMenu = (userId: string, cid: number) => {
     setcid(cid);
-    if (global.gUserId === userID)
+    if (global.gUserId === userId)
       setMenuVisible2(true);
     else
       setMenuVisible1(true);
@@ -284,16 +284,16 @@ function Comment({ route, navigation }: StackNavigationProps) {
             style={styles.modal}
           >
             <View style={styles.menu}>
-              {global.gUserId === detail.userID && <Button style={{ height: 50, paddingTop: 5 }} onPress={onEdit
+              {global.gUserId === detail.userId && <Button style={{ height: 50, paddingTop: 5 }} onPress={onEdit
               }>编辑</Button>}
-              {global.gUserId === detail.userID && <Divider />}
+              {global.gUserId === detail.userId && <Divider />}
               <Button style={{ height: 50, paddingTop: 5 }} onPress={() => {
               }}>收藏</Button>
-              {global.gUserId != detail.userID && <Divider />}
-              {global.gUserId != detail.userID && <Button style={{ height: 50, paddingTop: 5 }} onPress={() => {
+              {global.gUserId != detail.userId && <Divider />}
+              {global.gUserId != detail.userId && <Button style={{ height: 50, paddingTop: 5 }} onPress={() => {
               }}>举报</Button>}
-              {global.gUserId === detail.userID && <Divider />}
-              {global.gUserId === detail.userID && <Button style={{ height: 50, paddingTop: 5 }} onPress={
+              {global.gUserId === detail.userId && <Divider />}
+              {global.gUserId === detail.userId && <Button style={{ height: 50, paddingTop: 5 }} onPress={
                 () => { setMenuVisible(!MenuVisible); Alert.alert('', '确定删除这条动态吗?', [{ text: '确定', onPress: onMemoryDelete }, { text: '取消' }]); }
               }>删除</Button>}
             </View>
@@ -302,7 +302,7 @@ function Comment({ route, navigation }: StackNavigationProps) {
         <View style={{ margin: 5 }} />
         {commentlist.map((item, index) =>
           <View key={index}>
-            <Pressable onLongPress={() => toggleMenu(item.userID, item.commentId)}>
+            <Pressable onLongPress={() => toggleMenu(item.userId, item.commentId)}>
               <View>
                 <Card mode='outlined' style={styles.commentcard}>
                   <Card.Title
