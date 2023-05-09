@@ -186,7 +186,7 @@ const App = () => {
   return (
     <View style={{ flex: 1 }}>
       <NavigationContainer ref={navigationRef}>
-        <Stack.Navigator initialRouteName="ChatDetail">
+        <Stack.Navigator initialRouteName="Login">
           <Stack.Screen
             name="Login"
             component={RenderLoginScreen}

@@ -1,86 +1,176 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Text, View } from 'react-native';
 import { Avatar } from 'react-native-elements';
 import { GiftedChat } from 'react-native-gifted-chat';
-import { StackNavigationProps } from '../../App'
+import { StackNavigationProps } from '../App'
 import CustomBubble from '../components/ChatProp/CustomBubble';
 import CustomInputToolbar from '../components/ChatProp/CustomInputToolbar';
+import requestApi from '../utils/request';
+import { AxiosResponse } from 'axios';
 
-type ChatMessage = {
-  _id: number;
+interface ChatMessage {
+  _id: string;
   text: string;
   createdAt: Date;
   user: {
-    _id: number;
+    _id: string;
     name: string;
     avatar: string;
   };
-  edible: boolean,
+  image?: string,
 };
 
-function ChatDetail({ navigation }: StackNavigationProps) {
-  const [messages, setMessages] = useState([
-    {
-      _id: 5,
-      text: '谢谢',
-      createdAt: new Date(new Date().getTime() + 2800 * 1000),
-      user: {
-        _id: 2,
-        name: 'ChatGPT',
-        avatar: "https://picsum.photos/700",
-      },
-      edible: false,
-    },
+const uuidv4 = () => {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
+    const r = Math.floor(Math.random() * 16)
+    const v = c === 'x' ? r : (r % 4) + 8
+    return v.toString(16)
+  })
+}
 
-    {
-      _id: 4,
-      text: '那你很棒棒',
-      createdAt: new Date(new Date().getTime() + 2800 * 1000),
-      user: {
-        _id: 1,
-        name: 'ME',
-        avatar: "https://picsum.photos/700",
-      },
-      edible: true,
+const defaultMessages = [
+  {
+    _id: uuidv4(),
+    text: '谢谢',
+    createdAt: new Date(new Date().getTime() + 2800 * 1000),
+    user: {
+      _id: '2',
+      name: 'ChatGPT',
+      avatar: "https://picsum.photos/700",
     },
+  },
+  {
+    _id: uuidv4(),
+    text: '那你很棒棒',
+    createdAt: new Date(new Date().getTime() + 2800 * 1000),
+    user: {
+      _id: '1',
+      name: 'ME',
+      avatar: "https://picsum.photos/700",
+    },
+  },
+  {
+    _id: uuidv4(),
+    text: '我写完啦',
+    createdAt: new Date(new Date().getTime() + 1800 * 1000),
+    user: {
+      _id: '2',
+      name: 'ChatGPT',
+      avatar: "https://picsum.photos/700",
+    },
+  },
+  {
+    _id: uuidv4(),
+    text: '你今天作业写完了吗',
+    createdAt: new Date(new Date().getTime() + 60 * 1000),
+    user: {
+      _id: '2',
+      name: 'ChatGPT',
+      avatar: "https://picsum.photos/700",
+    },
+  },
+  {
+    _id: uuidv4(),
+    text: '你好',
+    createdAt: new Date(),
+    user: {
+      _id: '2',
+      name: 'ChatGPT',
+      avatar: "https://picsum.photos/700",
+    },
+  },
+];
 
-    {
-      _id: 3,
-      text: '我写完啦',
-      createdAt: new Date(new Date().getTime() + 1800 * 1000),
-      user: {
-        _id: 2,
-        name: 'ChatGPT',
-        avatar: "https://picsum.photos/700",
-      },
-      edible: false,
-    },
+function ChatDetail({ route, navigation }: StackNavigationProps) {
+  const userId = global.gUserId;
+  const ChatUser = route.params?.userId;
+  
+  const [messages, setMessages] = useState([] as ChatMessage[]);
+
+  const IUser = {
+    _id: userId,
+    name: 'ChatGPT',
+    avatar: "https://picsum.photos/700",
+  }
+  const UUser = {
+    _id: ChatUser,
+    name: 'ChatGPT',
+    avatar: "https://picsum.photos/700",
+  }
+
+  async function fetchOrigin(){
+    let CurMessages: ChatMessage[] = []
     
-    {
-      _id: 2,
-      text: '你今天作业写完了吗',
-      createdAt: new Date(new Date().getTime() + 60 * 1000),
-      user: {
-        _id: 2,
-        name: 'ChatGPT',
-        avatar: "https://picsum.photos/700",
-      },
-      edible: false,
-    },
+    const resAllMessages = await requestApi('get', `/chat/receiveAllMessages/${ChatUser}`, null, true, 'Get All Messages failed');
+    if (resAllMessages.code === 0) {
+      let idlist = [userId,ChatUser]
+      let reqList: Promise<AxiosResponse>[] = [];
+      for (let i = 0; i < idlist.length; ++i) {
+        reqList.push(new Promise((resolve, reject) => {
+          resolve(requestApi('get', `/profile/${idlist[i]}`, null, true, 'get profile failed'))
+        }))
+      }
+      Promise.all(reqList).then((values) => {
+        IUser.name = values[0].data.userNickName.info
+        UUser.name = values[1].data.userNickName.info
+        IUser.avatar = values[0].data.userAvatar.info
+        UUser.avatar = values[1].data.userAvatar.info
+      })
+    }
+    for (let i = 0; i < resAllMessages.data.length; ++i) {
+      if(resAllMessages.data[i].isReceived){
+        if(resAllMessages.data[i].image=''){
+          CurMessages.push(
+            {
+              _id: resAllMessages.data[i].id,
+              text: resAllMessages.data[i].text,
+              createdAt: resAllMessages.data[i].time,
+              user: UUser
+            }
+          )
+        }
+        else{
+          CurMessages.push(
+            {
+              _id: resAllMessages.data[i].id,
+              text: '',
+              createdAt: resAllMessages.data[i].time,
+              user: UUser,
+              image: resAllMessages.data[i].image,
+            }
+          )
+        }
+      }
+      else{
+        if(resAllMessages.data[i].image=''){
+          CurMessages.push(
+            {
+              _id: resAllMessages.data[i].id,
+              text: resAllMessages.data[i].text,
+              createdAt: resAllMessages.data[i].time,
+              user: IUser
+            }
+          )
+        }
+        else{
+          CurMessages.push(
+            {
+              _id: resAllMessages.data[i].id,
+              text: '',
+              createdAt: resAllMessages.data[i].time,
+              user: IUser,
+              image: resAllMessages.data[i].image,
+            }
+          )
+        }
+      }
+      
+    }
+    
+    onSend(CurMessages)
+  }
 
-    {
-      _id: 1,
-      text: '你好',
-      createdAt: new Date(),
-      user: {
-        _id: 2,
-        name: 'ChatGPT',
-        avatar: "https://picsum.photos/700",
-      },
-      edible: false,
-    },
-
-  ]);
+  fetchOrigin()
 
   function onSend(newMessages: ChatMessage[] = []) {
     setMessages(previousMessages =>
@@ -88,12 +178,49 @@ function ChatDetail({ navigation }: StackNavigationProps) {
     );
   }
   
+  async function getUnreadMessages() {
+    const resUnreadMessages = await requestApi('get', `/chat/recieveUnreadMessages${ChatUser}`, null, true, 'Get Unread Messages failed');
+    let unreadMessage: ChatMessage[] = []
+    for (let i = 0; i < resUnreadMessages.data.length; ++i) {
+      if(resUnreadMessages.data[i].image=''){
+        unreadMessage.push(
+          {
+            _id: resUnreadMessages.data[i].id,
+            text: resUnreadMessages.data[i].text,
+            createdAt: resUnreadMessages.data[i].time,
+            user: UUser
+          }
+        )
+      }
+      else{
+        unreadMessage.push(
+          {
+            _id: resUnreadMessages.data[i].id,
+            text: '',
+            createdAt: resUnreadMessages.data[i].time,
+            user: UUser,
+            image: resUnreadMessages.data[i].image,
+          }
+        )
+      }
+      onSend(unreadMessage)
+    }
+  }
+  
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      getUnreadMessages();
+    }, 2000);
+
+    return () => clearInterval(intervalId);
+  }, []);
 
   return (
     <GiftedChat
       messages={messages}
       onSend={onSend}
-      user={{ _id: 1 }}
+      user={{ _id: userId }}
+      showAvatarForEveryMessage={true}
       alignTop={true}
       renderBubble={(props)=><CustomBubble {...props}/>}
       renderInputToolbar={(props) => <CustomInputToolbar {...props} messages={messages}/>}
@@ -104,7 +231,6 @@ function ChatDetail({ navigation }: StackNavigationProps) {
             source={{ uri: props.currentMessage.user.avatar }}
             rounded
           />
-          {/* <Text style={{ fontSize: 12 }}>{props.currentMessage.user.name.slice(0, 8)}</Text> */}
         </View>
       )}
     />
