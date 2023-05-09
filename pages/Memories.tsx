@@ -51,7 +51,7 @@ export const styles = StyleSheet.create({
 export function UserPhoto(props: CardProps) {
   return (
     <Pressable onPress={props.clickAvatar}>
-      <Image source={{ uri: props.content.userAvatar }} style={styles.userphoto} />
+      <Image source={{ uri: props.content.isAnonymous?"https://picsum.photos/200":props.content.userAvatar }} style={styles.userphoto} />
     </Pressable>
   );
 }
@@ -173,7 +173,7 @@ export const CardwithButtons = (props: CardProps) => {
     <View>
       <Card elevation={5} style={{ margin: 5 }}>
         <Card.Title
-          title={props.content.userName}
+          title={props.content.isAnonymous?"momo":props.content.userName}
           subtitle={props.content.postTime}
           left={() => <UserPhoto
             content={props.content}

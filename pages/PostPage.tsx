@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, StyleSheet, Image, Pressable, Keyboard, Dimensions, Text, Alert, BackHandler } from 'react-native';
+import { View, TextInput, StyleSheet, Image, Pressable, Keyboard, Dimensions, Text, Alert, BackHandler, Switch } from 'react-native';
 import { Button, Divider, IconButton, Card, List } from 'react-native-paper';
 import AvatarPicker from "../components/AvatarPicker/PostPicker";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -33,7 +33,7 @@ const PostPage = ({ route, navigation }: StackNavigationProps) => {
   function changeImage(uri: string[]) {
     setImage(current => current.concat(uri))
   }
-
+  const [anonymous, setAnonymous] = useState(false);
   const [MenuVisible, setMenuVisible] = useState(false);
   const toggleMenu = () => {
     setMenuVisible(!MenuVisible);
@@ -178,6 +178,15 @@ const PostPage = ({ route, navigation }: StackNavigationProps) => {
           <List.Item title='谁可以看'
             left={() => <Icon name='account-outline' size={24} style={{ marginLeft: 15 }} />}
             right={() => <Text style={{ paddingTop: 3, color: 'indigo', paddingRight: 5 }}>{pms}</Text>}
+            onPress={toggleMenu}
+          />
+          <Divider />
+          <List.Item title='匿名'
+            left={() => <Icon name='ninja' size={24} style={{ marginLeft: 15 }} />}
+            right={() => <Switch
+              value={anonymous}
+              onValueChange={() => setAnonymous(!anonymous)}
+            />}
             onPress={toggleMenu}
           />
           <Divider />
