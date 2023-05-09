@@ -39,6 +39,8 @@ import EditPost from "./pages/EditPost";
 import NoticeManageScreen from './pages/noticeManage/NoticeManage';
 import NoticeDetailScreen from "./pages/noticeManage/NoticeDetail";
 
+import ChatDetail from './pages/ChatDetail'
+
 const GetUrl = "https://1.tongji.edu.cn/api/ssoservice/system/loginIn";
 const TargetUrl = "https://1.tongji.edu.cn/ssologin";
 const PostUrl = "https://1.tongji.edu.cn/api/sessionservice/session/login";
@@ -65,6 +67,7 @@ type RootStackParamList = {
   OthersPage: { userId: string } | undefined;
   NoticeManageScreen: undefined;
   NoticeDetailScreen: { type: string };
+  ChatDetail:  { userId: string } | undefined;
 };
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -146,7 +149,7 @@ const App = () => {
       onPasswordChange={setPassword}
       loginButtonText={"Continue with school validation"}
       signupText={"Already have an account?"}
-      onSignupPress={() => navigation.replace("Login")}
+      onSignupPress={() => navigation.goBack()}
       enablePasswordValidation={false}
       usernamePlaceholder={"Nickname"}
     />
@@ -163,7 +166,7 @@ const App = () => {
       onPasswordChange={setPassword}
       loginButtonText={"Continue with school validation"}
       signupText={"Already have an account?"}
-      onSignupPress={() => navigation.replace("Login")}
+      onSignupPress={() => navigation.goBack()}
       enablePasswordValidation={false}
       usernamePlaceholder={"修改后的昵称"}
       passwordPlaceholder={"修改后的密码"}
@@ -172,10 +175,10 @@ const App = () => {
 
   const RenderLoginScreen = ({ navigation }: StackNavigationProps) => (
     <Login
-      onSignUpPress={() => navigation.replace("Signup")}
+      onSignUpPress={() => navigation.navigate("Signup")}
       onLoginPress={() => {
       }}
-      onForgotPasswordPress={() => navigation.replace("ChangePassword")}
+      onForgotPasswordPress={() => navigation.navigate("ChangePassword")}
       navigation={navigation}
     />
   );
@@ -251,8 +254,13 @@ const App = () => {
             component={OthersPage}
             options={{ headerBackTitle: "Back" }}
           />
+          <Stack.Screen
+            name="ChatDetail"
+            component={ChatDetail}
+            options={{ headerBackTitle: "Back" }}
+          />
           <Stack.Screen name="NoticeManageScreen" component={NoticeManageScreen} options={{ headerBackTitle: 'Back' }} />
-          <Stack.Screen name="NoticeDetailScreen" component={NoticeDetailScreen} options={{ headerBackTitle: 'Back' }} />
+          <Stack.Screen name="NoticeDetailScreen" component={NoticeDetailScreen} options={{ headerBackTitle: 'Back',title:'Notice' }} />
          
         </Stack.Navigator>
       </NavigationContainer>
