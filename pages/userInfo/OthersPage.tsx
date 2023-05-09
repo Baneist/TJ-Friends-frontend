@@ -11,6 +11,7 @@ import requestApi from "../../utils/request";
 import { styles } from "./Profile.style";
 import { GENDER } from "./Profile";
 import MomentsList from "../../components/MomentsList/MomentsList";
+import ChatDetail from "../ChatDetail";
 import { useFocusEffect } from '@react-navigation/native';
 import Modal from 'react-native-modal';
 
@@ -226,6 +227,7 @@ const OthersPage = ({route, navigation }: StackNavigationProps) => {
                     {isfollowing ? '取消关注' : "关注"}
                   </Button>
                   <Button mode='contained-tonal'
+                  onPress={()=>navigation.navigate('ChatDetail',{userId: pageid})}
                   >
                     发私信
                   </Button>

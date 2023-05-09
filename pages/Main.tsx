@@ -6,7 +6,7 @@ import { Text } from "galio-framework";
 import { BottomFabBar } from 'rn-wave-bottom-bar';
 import MemoriesScreen from './Memories';
 import Profile from './userInfo/Profile'
-import { IconButton } from 'react-native-paper';
+import NoticeManageScreen from './noticeManage/NoticeManage';import { IconButton } from 'react-native-paper';
 import { StackNavigationProps } from '../App';
 
 type RootTabParamList = {
@@ -147,11 +147,11 @@ const MainScreen = ({route, navigation}:StackNavigationProps) => {
       />
       <Tab.Screen
         options={{
-          tabBarIcon: tabBarIcon('Trophy'),
-          tabBarLabel: showLabel ? 'Trophy' : undefined,
+          tabBarIcon: tabBarIcon('notification'),
+          tabBarLabel: showLabel ? 'NoticeManageScreen' : undefined,
         }}
-        name="Trophy"
-        component={generateScreen('Trophy')}
+        name="    通知管理"
+        component={NoticeManageScreen}
       />
       <Tab.Screen
         options={{

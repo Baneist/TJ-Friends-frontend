@@ -2,13 +2,17 @@ import { TouchableOpacity, View, Image, Text, StyleSheet,Modal,LayoutRectangle, 
 import { DialogBadge } from "./NoticeBadge";
 import { useRef, useState } from "react";
 import { Alert } from "react-native";
+import requestApi, { requestApiForMockTest } from "../../utils/request";
 interface NoticeProps {
     message: string;
     timestamp: Date;
     senderName: string;
     senderAvatar: string;
-    noticeId: number;
-    readed: boolean;
+    unreadedNum: number;
+    upstate: number;
+    senderUserId: string;
+    setUPState: Function;
+    navigator: Function;
   }
   
   const styles = StyleSheet.create({
@@ -70,8 +74,8 @@ interface NoticeProps {
       },
   }
   );
-  export const NoticeCard = ({ message, timestamp, senderName, senderAvatar, noticeId, readed}: NoticeProps) => {
-    const [isReaded, setIsReaded] = useState(readed);
+  export const NoticeCard = ({ message, timestamp, senderName, senderAvatar, senderUserId, unreadedNum, upstate, setUPState, navigator}: NoticeProps) => {
+    const [isReaded, setIsReaded] = useState(unreadedNum);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [modalLayout, setModalLayout] = useState<LayoutRectangle | null>(null);
     const buttonRef = useRef<TouchableOpacity>(null);
@@ -84,6 +88,9 @@ interface NoticeProps {
     };
   
     const handleDeleteItem = () => {
+      console.log('send delete request');
+      setUPState(upstate + 1);
+      const res = requestApiForMockTest('post', '/chat/deleteMessage', { userId: senderUserId }, true, '删除失败');
       setIsModalVisible(false);
     };
     const handleButtonLayout = (event: any) => {
@@ -93,11 +100,18 @@ interface NoticeProps {
         });
       }
     };
-    const sendReaded = () => {
+    async function sendReaded() {
+      const res = await requestApiForMockTest('post', '/chat/readMessageInfo', { userId: senderUserId }, true, '标记已读失败');
       console.log('sendReaded');
     };
+    const handlePress = () => {
+      navigator(senderUserId);
+      sendReaded();
+      setIsReaded(0);
+    };
+
     return (
-      <TouchableOpacity style={styles.container} onPress={()=>{ Alert.alert(senderName, message); setIsReaded(true); sendReaded();}} onLongPress={handleLongPress} ref={buttonRef} onLayout={handleButtonLayout}>
+      <TouchableOpacity style={styles.container} onPress={handlePress} onLongPress={handleLongPress} ref={buttonRef} onLayout={handleButtonLayout}>
         <View style={styles.container}>
           <View style={styles.avatarContainer}>
             <Image source={{ uri: senderAvatar }} style={styles.avatarImage} />
@@ -111,7 +125,7 @@ interface NoticeProps {
               <Text style={styles.messageText}>{message}</Text>
             </View>
           </View>
-          {isReaded == false && <DialogBadge count={1} />}
+          {unreadedNum > 0 && <DialogBadge count={unreadedNum} />}
         </View>
         <Modal visible={isModalVisible} onRequestClose={handleCloseModal} transparent>
           {modalLayout && (
@@ -138,9 +152,13 @@ interface NoticeProps {
     originCommentId: number;
     originPostTitle: string;
     noticeId: number;
+    upstate: number;
+    setUPState: Function;
+    type: string;
+    navigatior: Function;
   };
 
-  export const NoticeCardDetailed = ({ message, timeStamp, senderName, senderAvatar, undealNum,noticeId ,originCommentId, originPostId, originPostTitle }: NoticeDetailedProps) => {
+  export const NoticeCardDetailed = ({ message, timeStamp, senderName, senderAvatar, undealNum,noticeId ,originCommentId, originPostId, originPostTitle,upstate,setUPState, type, navigatior}: NoticeDetailedProps) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [modalLayout, setModalLayout] = useState<LayoutRectangle | null>(null);
     const buttonRef = useRef<TouchableOpacity>(null);
@@ -155,6 +173,8 @@ interface NoticeProps {
   
     const handleDeleteItem = () => {
       console.log('delete');
+      setUPState(upstate + 1);
+      const res = requestApi('post', '/notice/deleteNotice', { noticeId: noticeId, typ:type }, true, '删除失败');
       setIsModalVisible(false);
     };
     const handleButtonLayout = (event: any) => {
@@ -165,7 +185,11 @@ interface NoticeProps {
       }
     };
     return (
-        <TouchableOpacity style={styles.container} onPress={()=>{ console.log('click') }} onLongPress={handleLongPress} ref={buttonRef} onLayout={handleButtonLayout}>
+        <TouchableOpacity style={styles.container} onPress={()=>{ 
+          if(type != 'follow'){
+            navigatior('Comment', { postId: String(originPostId) }); 
+          }
+          }} onLongPress={handleLongPress} ref={buttonRef} onLayout={handleButtonLayout}>
           <View style={styles.container}>
           <View style={styles.avatarContainer}>
             <Image source={{ uri: senderAvatar }} style={styles.avatarImage} />
@@ -178,9 +202,12 @@ interface NoticeProps {
             <View style={styles.messageContainer}>
               <Text style={styles.messageText}>{message}</Text>
             </View>
-            <View style={{backgroundColor: '#f2f2f2', padding: 10, borderLeftWidth: 5, borderLeftColor: '#ccc'}}>
-              <Text style={{fontSize: 16, fontWeight: 'bold'}}>{originPostTitle}</Text>
-            </View>
+            {
+              type != 'follow' &&
+              <View style={{backgroundColor: '#f2f2f2', padding: 10, borderLeftWidth: 5, borderLeftColor: '#ccc'}}>
+                <Text style={{fontSize: 16, fontWeight: 'bold'}}>{originPostTitle}</Text>
+              </View>
+            }
           </View>
           {undealNum > 0 && <DialogBadge count={undealNum} />}
         </View>
