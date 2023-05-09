@@ -227,7 +227,7 @@ const OthersPage = ({route, navigation }: StackNavigationProps) => {
                     {isfollowing ? '取消关注' : "关注"}
                   </Button>
                   <Button mode='contained-tonal'
-                  onPress={()=>navigation.navigate('ChatDetail',{userId: pageid})}
+                  onPress={()=>{navigation.navigate('ChatDetail',{userId: pageid})}}
                   >
                     发私信
                   </Button>

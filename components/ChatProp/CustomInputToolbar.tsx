@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import requestApi from '../../utils/request';
 
 
 function CustomInputToolbar(props) {
@@ -17,8 +18,11 @@ function CustomInputToolbar(props) {
           name: props.user.name,
           avatar: props.user.avatar,
         },
-        edible: true,
       };
+      async function sendMessage() {
+        const res = await requestApi('post', '/chat/sendMessage', { image: '' , text: message.text , userId: props.ChatUser }, true, '发送失败');
+      }
+      sendMessage()
       props.onSend([message]);
       setText('');
     }
@@ -46,7 +50,10 @@ function CustomInputToolbar(props) {
           name: props.user.name,
         },
       };
-
+      async function sendMessage() {
+        const res = await requestApi('post', '/chat/sendMessage', { image: message.image , text: '' , userId: props.ChatUser }, true, '发送失败');
+      }
+      sendMessage()
       props.onSend([message]);
     }
   }
@@ -71,6 +78,10 @@ function CustomInputToolbar(props) {
             name: props.user.name,
           },
         };
+        async function sendMessage() {
+          const res = await requestApi('post', '/chat/sendMessage', { image: message.image , text: '' , userId: props.ChatUser }, true, '发送失败');
+        }
+        sendMessage()
         props.onSend([message]);
       }
   }
@@ -88,6 +99,7 @@ function CustomInputToolbar(props) {
         placeholder="Type a message..."
         value={text}
         onChangeText={setText}
+        multiline
       />
       <TouchableOpacity onPress={handleSend} style={styles.sendButton}>
         <MaterialIcons name="send" size={24} color="#FFFFFF" />
