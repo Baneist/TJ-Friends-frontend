@@ -31,14 +31,14 @@ const FollowersList = ({ route, navigation }: StackNavigationProps) => {
     let reqList: Promise<AxiosResponse>[] = [];
     for (let i = 0; i < idlist.length; ++i) {
       reqList.push(new Promise((resolve, reject) => {
-        resolve(requestApi('get', `/profile/${idlist[i].userID}`, null, true, 'get profile failed'))
+        resolve(requestApi('get', `/profile/${idlist[i].userId}`, null, true, 'get profile failed'))
       }))
     }
     Promise.all(reqList).then((values) => {
       for (let i = 0; i < values.length; ++i) {
         setstatusList(current => [...current, 
           { 
-            userID: idlist[i].userID, 
+            userId: idlist[i].userId, 
             isFollowing: idlist[i].isFollowing, 
             isFollowed:idlist[i].isFollowed
           }
@@ -56,13 +56,13 @@ const FollowersList = ({ route, navigation }: StackNavigationProps) => {
   async function toggleFollow(user: followProp) {
     let res:AxiosResponse['data'];
     if (user.isFollowing) { //取关
-      res = await requestApi('post', '/unfollow', { stuid: user.userID }, true, 'unfollow failed');
+      res = await requestApi('post', '/unfollow', { stuid: user.userId }, true, 'unfollow failed');
     }
     else { //关注
-      res = await requestApi('post', '/follow', { stuid: user.userID }, true, 'follow failed');
+      res = await requestApi('post', '/follow', { stuid: user.userId }, true, 'follow failed');
     }
     const newList = statusList.map((item, idx) => {
-      if (item.userID === user.userID) {
+      if (item.userId === user.userId) {
         item.isFollowing = !item.isFollowing;
         return item;
       }
@@ -91,7 +91,7 @@ const FollowersList = ({ route, navigation }: StackNavigationProps) => {
               </Block>
 
               {/* 关注/取消关注按钮 */}
-              {statusList[idx].userID !== curUser && <Button
+              {statusList[idx].userId !== curUser && <Button
                 style={styles.followButton}
                 mode={statusList[idx].isFollowing ? 'outlined' : 'contained'}
                 onPress={() => toggleFollow(statusList[idx])}

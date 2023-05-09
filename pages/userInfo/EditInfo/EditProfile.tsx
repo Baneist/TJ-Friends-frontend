@@ -86,6 +86,8 @@ export function EditProfile({ route, navigation }: StackNavigationProps) {
     let newuser = { ...userInfo };
     newuser.userAvatar.info = url;
     console.log('avatar', newuser.userAvatar)
+    //先尝试上传到图床
+    // const upload=await requestApi('post','/uploadImage',)
     const res = await requestApi('put', '/updateUserInfo', newuser, true, '更新头像失败');
     console.log(newuser)
     if (res.code === 0) {
@@ -372,8 +374,9 @@ export function EditProfile({ route, navigation }: StackNavigationProps) {
   async function updatePmsSetting() {
     Toast.show({
       type: 'success',
-      text1: 'Hello',
-      text2: 'This is some something 👋'
+      text1: '成功',
+      text2:'修改权限设置成功',
+      visibilityTime:2000
     });
     const res = await requestApi('put', '/updateUserInfo', refInfo.current, true, 'update user info failed');
     //Alert.alert("隐私变更成功")
