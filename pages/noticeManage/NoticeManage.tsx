@@ -94,8 +94,8 @@ const messageData = {
     senderName:"现受强写建",
     senderAvatar:"http://dummyimage.com/100x100",
     timeStamp:"2017-10-26 16:56:04",
-    noticeId:1,
-    readed:false,
+    senderUserId:"1",
+    unreadedNum:1,
   },
   ]
 }
@@ -120,7 +120,7 @@ const NoticeManageScreen = ({ route, navigation }: StackNavigationProps) => {
     console.log('Refresh: Notice Manage Get.');
   }
   async function getSystemMessage() {
-    const response = await requestApi('get', `/notice/getAllSystemNotice`, null, true, '读取系统通知失败');
+    const response = await requestApiForMockTest('get', `/message/getMessageInfo`, null, true, '读取系统通知失败');
     //console.log(response);
     const datarecv = response;
     setamsData(datarecv);
@@ -144,6 +144,9 @@ const NoticeManageScreen = ({ route, navigation }: StackNavigationProps) => {
     return () => {
     };
   }, [upstate]));
+  const onpressNoticeCard = (userId: string) => {
+    navigation.navigate('ChatDetail', {userId: userId});
+  };
   const msitems = amsdata.data.map((item:any, index:number) => 
     <NoticeCard
       key={index}
@@ -151,10 +154,11 @@ const NoticeManageScreen = ({ route, navigation }: StackNavigationProps) => {
       timestamp={new Date(item.timeStamp)}
       senderName={item.senderName}
       senderAvatar={item.senderAvatar}
-      noticeId={item.noticeId}
-      readed={item.readed}
+      unreadedNum={item.unreadedNum}
       upstate={upstate}
       setUPState={setUPState}
+      senderUserId={item.senderUserId}
+      navigator={onpressNoticeCard}
     />
   );
   return (

@@ -8,10 +8,11 @@ interface NoticeProps {
     timestamp: Date;
     senderName: string;
     senderAvatar: string;
-    noticeId: number;
-    readed: boolean;
+    unreadedNum: number;
     upstate: number;
+    senderUserId: string;
     setUPState: Function;
+    navigator: Function;
   }
   
   const styles = StyleSheet.create({
@@ -73,8 +74,8 @@ interface NoticeProps {
       },
   }
   );
-  export const NoticeCard = ({ message, timestamp, senderName, senderAvatar, noticeId, readed, upstate, setUPState}: NoticeProps) => {
-    const [isReaded, setIsReaded] = useState(readed);
+  export const NoticeCard = ({ message, timestamp, senderName, senderAvatar, senderUserId, unreadedNum, upstate, setUPState, navigator}: NoticeProps) => {
+    const [isReaded, setIsReaded] = useState(unreadedNum);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [modalLayout, setModalLayout] = useState<LayoutRectangle | null>(null);
     const buttonRef = useRef<TouchableOpacity>(null);
@@ -89,7 +90,7 @@ interface NoticeProps {
     const handleDeleteItem = () => {
       console.log('send delete request');
       setUPState(upstate + 1);
-      const res = requestApi('post', '/notice/deleteNotice', { noticeId: noticeId }, true, '删除失败');
+      const res = requestApiForMockTest('post', '/notice/deleteNotice', { userId: senderUserId }, true, '删除失败');
       setIsModalVisible(false);
     };
     const handleButtonLayout = (event: any) => {
@@ -100,11 +101,17 @@ interface NoticeProps {
       }
     };
     async function sendReaded() {
-      const res = await requestApiForMockTest('post', '/notice/readSystemNotice', { noticeId: noticeId }, true, '标记已读失败');
+      const res = await requestApiForMockTest('post', '/message/getMessageInfo', { userId: senderUserId }, true, '标记已读失败');
       console.log('sendReaded');
     };
+    const handlePress = () => {
+      navigator(senderUserId);
+      sendReaded();
+      setIsReaded(0);
+    };
+
     return (
-      <TouchableOpacity style={styles.container} onPress={()=>{ Alert.alert(senderName, message); setIsReaded(true); sendReaded();}} onLongPress={handleLongPress} ref={buttonRef} onLayout={handleButtonLayout}>
+      <TouchableOpacity style={styles.container} onPress={handlePress} onLongPress={handleLongPress} ref={buttonRef} onLayout={handleButtonLayout}>
         <View style={styles.container}>
           <View style={styles.avatarContainer}>
             <Image source={{ uri: senderAvatar }} style={styles.avatarImage} />
@@ -118,7 +125,7 @@ interface NoticeProps {
               <Text style={styles.messageText}>{message}</Text>
             </View>
           </View>
-          {isReaded == false && <DialogBadge count={1} />}
+          {unreadedNum > 0 && <DialogBadge count={unreadedNum} />}
         </View>
         <Modal visible={isModalVisible} onRequestClose={handleCloseModal} transparent>
           {modalLayout && (
