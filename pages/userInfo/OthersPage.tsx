@@ -91,7 +91,7 @@ const OthersPage = ({route, navigation }: StackNavigationProps) => {
   //检查是否关注
   function hasFollowing(followerlist:followProp[]){
     for(let i=0;i<followerlist.length;++i){
-      if(followerlist[i].userID == curUser){
+      if(followerlist[i].userId == curUser){
         return true;
       }
     }
