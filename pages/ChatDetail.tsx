@@ -111,8 +111,8 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
     }
     for (let i = 0; i < resAllMessages.data.length; ++i) {
       if(resAllMessages.data[i].isReceived){
-        if(resAllMessages.data[i].image=''){
-          CurMessages.push(
+        if(resAllMessages.data[i].image==''){
+          CurMessages.unshift(
             {
               _id: resAllMessages.data[i].id,
               text: resAllMessages.data[i].text,
@@ -122,7 +122,7 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
           )
         }
         else{
-          CurMessages.push(
+          CurMessages.unshift(
             {
               _id: resAllMessages.data[i].id,
               text: '',
@@ -134,8 +134,8 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
         }
       }
       else{
-        if(resAllMessages.data[i].image=''){
-          CurMessages.push(
+        if(resAllMessages.data[i].image==''){
+          CurMessages.unshift(
             {
               _id: resAllMessages.data[i].id,
               text: resAllMessages.data[i].text,
@@ -145,7 +145,7 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
           )
         }
         else{
-          CurMessages.push(
+          CurMessages.unshift(
             {
               _id: resAllMessages.data[i].id,
               text: '',
@@ -159,7 +159,9 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
       
     }
     
-    onSend(CurMessages)
+    setMessages(previousMessages =>
+      GiftedChat.append(previousMessages, CurMessages)
+    );
   }
 
   function onSend(newMessages: ChatMessage[] = []) {
@@ -172,8 +174,8 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
     const resUnreadMessages = await requestApi('get', `/chat/receiveUnreadMessages?userId=${ChatUser}`, null, true, 'Get Unread Messages failed');
     let unreadMessage: ChatMessage[] = []
     for (let i = 0; i < resUnreadMessages.data.length; ++i) {
-      if(resUnreadMessages.data[i].image=''){
-        unreadMessage.push(
+      if(resUnreadMessages.data[i].image==''){
+        unreadMessage.unshift(
           {
             _id: resUnreadMessages.data[i].id,
             text: resUnreadMessages.data[i].text,
@@ -183,7 +185,7 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
         )
       }
       else{
-        unreadMessage.push(
+        unreadMessage.unshift(
           {
             _id: resUnreadMessages.data[i].id,
             text: '',
@@ -193,7 +195,11 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
           }
         )
       }
-      onSend(unreadMessage)
+      setMessages(previousMessages =>
+        GiftedChat.append(previousMessages, unreadMessage)
+      );
+
+      alreadyRead();
     }
   }
 
@@ -206,7 +212,6 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
 
     const intervalId = setInterval(() => {
       getUnreadMessages();
-      alreadyRead();
     }, 2000);
 
     return () => clearInterval(intervalId);
