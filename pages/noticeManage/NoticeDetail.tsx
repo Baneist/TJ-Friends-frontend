@@ -52,11 +52,10 @@ interface NoticeDetailScreenProps {
   type: string;
 };
 const NoticeDetailScreen = ({ route, navigation}: StackNavigationProps) => {
-    const typ = route.params?.type as string;
-    let typ2title : {[key:string]:string} = {'comment':'评论我的', 'like':'喜欢我的', 'follow':'关注我的', 'repo':'分享我的'};
+    const typ = route.params?.type;
     React.useLayoutEffect(() => {
       navigation.setOptions({
-        title: typ2title[typ],
+        title: typ == 'like' ? '喜欢我的' : typ == 'comment' ? '评论我的' : 'repo' == typ ? '转发我的' : '关注我的',
       });
     }, [navigation]);
     const [refreshing_notice, setRefreshingNoticeDetailed] = useState(false);
