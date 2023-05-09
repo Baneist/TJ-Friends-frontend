@@ -31,26 +31,34 @@ const EditPost = ({ route, navigation }: StackNavigationProps) => {
       setImage(res.data.postPhoto);
       setoText(res.data.postContent);
       setoImage(res.data.postPhoto);
-      setKey(res.pms);
-      setoPms(res.pms);
+      setKey(res.data.pms);
       setoAnony(res.data.isAnonymous)
       setAnonymous(res.data.isAnonymous);
-      if(res.pms==0){
+      if(res.data.pms==0){
         setPms('公开');
+        setoPms('公开');
       }
-      else if(res.pms==1){
+      else if(res.data.pms==1){
         setPms('好友圈');
+        setoPms('好友圈');
       }
-      else if(res.pms==2){
+      else if(res.data.pms==2){
         setPms('仅粉丝');
+        setoPms('仅粉丝');
       }
       else{
         setPms('仅自己可见');
+        setoPms('仅自己可见');
       }
+
+      let tmp = [0, 0, 0, 0];
+      tmp[res.data.pms] = 1;
+      setopct(tmp);
     }
   }
   async function handlePost() {
     // 发送text和image到服务器
+    console.log(anonymous);
     const res = await requestApi('put', `/updateMemory/${route.params?.postId}`, { postContent: text, photoUrl: image,pms:pmskey,isAnonymous:anonymous }, true, '修改失败')
     if (res.code == 0) {
       navigation.goBack();
