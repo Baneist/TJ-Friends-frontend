@@ -67,7 +67,7 @@ type RootStackParamList = {
   OthersPage: { userId: string } | undefined;
   NoticeManageScreen: undefined;
   NoticeDetailScreen: { type: string };
-  ChatDetail: undefined;
+  ChatDetail:  { userId: string } | undefined;
 };
 const Stack = createStackNavigator<RootStackParamList>();
 

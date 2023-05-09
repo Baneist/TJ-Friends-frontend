@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
-import EmojiPicker from 'react-native-emoji-selector';
 import * as ImagePicker from 'expo-image-picker';
 
 
 function CustomInputToolbar(props) {
   const [text, setText] = useState('');
-  const [showEmojiPicker, setShowEmojiPicker] = useState(false);
 
   function handleSend() {
     if (text.length > 0) {
@@ -17,7 +15,9 @@ function CustomInputToolbar(props) {
         user: {
           _id: props.user._id,
           name: props.user.name,
+          avatar: props.user.avatar,
         },
+        edible: true,
       };
       props.onSend([message]);
       setText('');

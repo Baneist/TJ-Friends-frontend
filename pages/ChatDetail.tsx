@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Text, View } from 'react-native';
 import { Avatar } from 'react-native-elements';
 import { GiftedChat } from 'react-native-gifted-chat';
+import { StackNavigationProps } from '../../App'
 import CustomBubble from '../components/ChatProp/CustomBubble';
 import CustomInputToolbar from '../components/ChatProp/CustomInputToolbar';
 
@@ -14,9 +15,10 @@ type ChatMessage = {
     name: string;
     avatar: string;
   };
+  edible: boolean,
 };
 
-function ChatDetail() {
+function ChatDetail({ navigation }: StackNavigationProps) {
   const [messages, setMessages] = useState([
     {
       _id: 5,
@@ -27,6 +29,7 @@ function ChatDetail() {
         name: 'ChatGPT',
         avatar: "https://picsum.photos/700",
       },
+      edible: false,
     },
 
     {
@@ -38,6 +41,7 @@ function ChatDetail() {
         name: 'ME',
         avatar: "https://picsum.photos/700",
       },
+      edible: true,
     },
 
     {
@@ -49,6 +53,7 @@ function ChatDetail() {
         name: 'ChatGPT',
         avatar: "https://picsum.photos/700",
       },
+      edible: false,
     },
     
     {
@@ -60,6 +65,7 @@ function ChatDetail() {
         name: 'ChatGPT',
         avatar: "https://picsum.photos/700",
       },
+      edible: false,
     },
 
     {
@@ -71,6 +77,7 @@ function ChatDetail() {
         name: 'ChatGPT',
         avatar: "https://picsum.photos/700",
       },
+      edible: false,
     },
 
   ]);
@@ -89,7 +96,7 @@ function ChatDetail() {
       user={{ _id: 1 }}
       alignTop={true}
       renderBubble={(props)=><CustomBubble {...props}/>}
-      renderInputToolbar={(props) => <CustomInputToolbar {...props} />}
+      renderInputToolbar={(props) => <CustomInputToolbar {...props} messages={messages}/>}
       renderAvatar={(props) => (
         <View style={{ marginLeft: 10 }}>
           <Avatar
