@@ -82,7 +82,7 @@ const FollowersList = ({ route, navigation }: StackNavigationProps) => {
           <Pressable key={idx} onPress={() => {navigation.navigate('OthersPage', {userId:user.userId.info})}}>
             <Block style={styles.userContainer}>
               {/* 头像 */}
-              <Avatar.Image size={64} source={{ uri: user.userAvatar.info }} />
+              {/* <Avatar.Image size={64} source={{ uri: user.userAvatar.info }} /> */}
 
               {/* 用户信息 */}
               <Block style={styles.userInfo}>

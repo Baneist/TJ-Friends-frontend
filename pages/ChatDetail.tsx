@@ -9,7 +9,7 @@ import requestApi from '../utils/request';
 import { AxiosResponse } from 'axios';
 
 interface ChatMessage {
-  _id: string;
+  _id: number;
   text: string;
   createdAt: Date;
   user: {
@@ -20,17 +20,9 @@ interface ChatMessage {
   image?: string,
 };
 
-const uuidv4 = () => {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    const r = Math.floor(Math.random() * 16)
-    const v = c === 'x' ? r : (r % 4) + 8
-    return v.toString(16)
-  })
-}
-
 const defaultMessages = [
   {
-    _id: uuidv4(),
+    _id: 5,
     text: '谢谢',
     createdAt: new Date(new Date().getTime() + 2800 * 1000),
     user: {
@@ -40,7 +32,7 @@ const defaultMessages = [
     },
   },
   {
-    _id: uuidv4(),
+    _id: 4,
     text: '那你很棒棒',
     createdAt: new Date(new Date().getTime() + 2800 * 1000),
     user: {
@@ -50,7 +42,7 @@ const defaultMessages = [
     },
   },
   {
-    _id: uuidv4(),
+    _id: 3,
     text: '我写完啦',
     createdAt: new Date(new Date().getTime() + 1800 * 1000),
     user: {
@@ -60,7 +52,7 @@ const defaultMessages = [
     },
   },
   {
-    _id: uuidv4(),
+    _id: 2,
     text: '你今天作业写完了吗',
     createdAt: new Date(new Date().getTime() + 60 * 1000),
     user: {
@@ -70,7 +62,7 @@ const defaultMessages = [
     },
   },
   {
-    _id: uuidv4(),
+    _id: 1,
     text: '你好',
     createdAt: new Date(),
     user: {
@@ -101,7 +93,7 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
   async function fetchOrigin(){
     let CurMessages: ChatMessage[] = []
     
-    const resAllMessages = await requestApi('get', `/chat/receiveAllMessages/${ChatUser}`, null, true, 'Get All Messages failed');
+    const resAllMessages = await requestApi('get', `/chat/receiveAllMessages?userId=${ChatUser}`, null, true, 'Get All Messages failed');
     if (resAllMessages.code === 0) {
       let idlist = [userId,ChatUser]
       let reqList: Promise<AxiosResponse>[] = [];
@@ -170,8 +162,6 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
     onSend(CurMessages)
   }
 
-  fetchOrigin()
-
   function onSend(newMessages: ChatMessage[] = []) {
     setMessages(previousMessages =>
       GiftedChat.append(previousMessages, newMessages),
@@ -179,7 +169,7 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
   }
   
   async function getUnreadMessages() {
-    const resUnreadMessages = await requestApi('get', `/chat/recieveUnreadMessages${ChatUser}`, null, true, 'Get Unread Messages failed');
+    const resUnreadMessages = await requestApi('get', `/chat/receiveUnreadMessages?userId=${ChatUser}`, null, true, 'Get Unread Messages failed');
     let unreadMessage: ChatMessage[] = []
     for (let i = 0; i < resUnreadMessages.data.length; ++i) {
       if(resUnreadMessages.data[i].image=''){
@@ -206,10 +196,17 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
       onSend(unreadMessage)
     }
   }
-  
+
+  async function alreadyRead() {
+    const res = await requestApi('post', '/chat/readMessageInfo', { userId: ChatUser }, true, '已读失败');
+  }
+
   useEffect(() => {
+    fetchOrigin()
+
     const intervalId = setInterval(() => {
       getUnreadMessages();
+      alreadyRead();
     }, 2000);
 
     return () => clearInterval(intervalId);
@@ -223,7 +220,7 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
       showAvatarForEveryMessage={true}
       alignTop={true}
       renderBubble={(props)=><CustomBubble {...props}/>}
-      renderInputToolbar={(props) => <CustomInputToolbar {...props} messages={messages}/>}
+      renderInputToolbar={(props) => <CustomInputToolbar {...props} messages={messages} ChatUser={ChatUser}/>}
       renderAvatar={(props) => (
         <View style={{ marginLeft: 10 }}>
           <Avatar

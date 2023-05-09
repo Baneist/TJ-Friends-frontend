@@ -5,21 +5,12 @@ import * as ImagePicker from 'expo-image-picker';
 import requestApi from '../../utils/request';
 
 
-const uuidv4 = () => {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    const r = Math.floor(Math.random() * 16)
-    const v = c === 'x' ? r : (r % 4) + 8
-    return v.toString(16)
-  })
-}
-
 function CustomInputToolbar(props) {
   const [text, setText] = useState('');
 
   function handleSend() {
     if (text.length > 0) {
       const message = {
-        _id: uuidv4(),
         text: text.trim(),
         createdAt: new Date(),
         user: {
@@ -29,7 +20,7 @@ function CustomInputToolbar(props) {
         },
       };
       async function sendMessage() {
-        const res = await requestApi('post', '/chat/sendMessage', { image: '' , text: message.text , id: message._id }, true, '发送失败');
+        const res = await requestApi('post', '/chat/sendMessage', { image: '' , text: message.text , userId: props.ChatUser }, true, '发送失败');
       }
       sendMessage()
       props.onSend([message]);
@@ -52,7 +43,6 @@ function CustomInputToolbar(props) {
 
     if (!result.canceled) {
       const message = {
-        _id: uuidv4(),
         image: result.assets[0].uri,
         createdAt: new Date(),
         user: {
@@ -61,7 +51,7 @@ function CustomInputToolbar(props) {
         },
       };
       async function sendMessage() {
-        const res = await requestApi('post', '/chat/sendMessage', { image: message.image , text: '' , id: message._id }, true, '发送失败');
+        const res = await requestApi('post', '/chat/sendMessage', { image: message.image , text: '' , userId: props.ChatUser }, true, '发送失败');
       }
       sendMessage()
       props.onSend([message]);
@@ -81,7 +71,6 @@ function CustomInputToolbar(props) {
 
       if (!result.canceled) {
         const message = {
-          _id: uuidv4(),
           image: result.assets[0].uri,
           createdAt: new Date(),
           user: {
@@ -90,7 +79,7 @@ function CustomInputToolbar(props) {
           },
         };
         async function sendMessage() {
-          const res = await requestApi('post', '/chat/sendMessage', { image: message.image , text: '' , id: message._id }, true, '发送失败');
+          const res = await requestApi('post', '/chat/sendMessage', { image: message.image , text: '' , userId: props.ChatUser }, true, '发送失败');
         }
         sendMessage()
         props.onSend([message]);
