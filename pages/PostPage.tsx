@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, StyleSheet, Image, Pressable, Keyboard, Dimensions, Text, Alert, BackHandler } from 'react-native';
+import { View, TextInput, StyleSheet, Image, Pressable, Keyboard, Dimensions, Text, Alert, BackHandler, Switch, Platform } from 'react-native';
 import { Button, Divider, IconButton, Card, List } from 'react-native-paper';
 import AvatarPicker from "../components/AvatarPicker/PostPicker";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -18,7 +18,7 @@ const PostPage = ({ route, navigation }: StackNavigationProps) => {
   async function handlePost() {
     // 发送text和image到服务器
     console.log('发布');
-    const res = await requestApi('post', '/Post', { postContent: text, photoUrl: image, pms: pmskey }, true, 'post失败')
+    const res = await requestApi('post', '/Post', { postContent: text, photoUrl: image, pms: pmskey,isAnonymous:anonymous }, true, 'post失败')
     if (res.code == 0) {
       navigation.goBack();
     }
@@ -33,7 +33,7 @@ const PostPage = ({ route, navigation }: StackNavigationProps) => {
   function changeImage(uri: string[]) {
     setImage(current => current.concat(uri))
   }
-
+  const [anonymous, setAnonymous] = useState(false);
   const [MenuVisible, setMenuVisible] = useState(false);
   const toggleMenu = () => {
     setMenuVisible(!MenuVisible);
@@ -172,13 +172,22 @@ const PostPage = ({ route, navigation }: StackNavigationProps) => {
           paddingBottom: 20,
           paddingTop: 20,
           flexDirection: 'column',
-          width: width
+          width: width,
         }}>
           <Divider />
           <List.Item title='谁可以看'
             left={() => <Icon name='account-outline' size={24} style={{ marginLeft: 15 }} />}
             right={() => <Text style={{ paddingTop: 3, color: 'indigo', paddingRight: 5 }}>{pms}</Text>}
             onPress={toggleMenu}
+          />
+          <Divider />
+          <List.Item title='匿名'
+            left={() => <Icon name='ninja' size={24} style={{ marginLeft: 15 }} />}
+            right={() => <Switch
+              style={{marginTop:Platform.OS == 'ios' ?-3:-10,marginBottom:Platform.OS == 'ios' ?-3:-10}}
+              value={anonymous}
+              onValueChange={() => setAnonymous(!anonymous)}
+            />}
           />
           <Divider />
         </View>
@@ -205,6 +214,7 @@ const PostPage = ({ route, navigation }: StackNavigationProps) => {
 export const styles = StyleSheet.create({
   container: {
     padding: 10,
+    marginTop:Platform.OS=='ios'?0:-60,
     backgroundColor: '#fff',
     paddingBottom: 300,
     borderColor: '#fff'

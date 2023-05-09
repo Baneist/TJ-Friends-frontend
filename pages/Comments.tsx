@@ -21,7 +21,7 @@ interface CardProps {
 function UserPhoto(props: CardProps) {
   return (
     <Pressable onPress={props.clickAvatar}>
-      <Image source={{ uri: props.content.userAvatar }} style={styles.userphoto} />
+      <Image source={{ uri: props.content.isAnonymous?"https://picsum.photos/200":props.content.userAvatar }} style={styles.userphoto} />
     </Pressable>
   );
 }
@@ -110,7 +110,8 @@ const dd = {
     },
   ],
   isLiked: true,
-  userID: "6"
+  userID: "6",
+  isAnonymous:false
 }
 const dc = [
   {
@@ -246,7 +247,7 @@ function Comment({ route, navigation }: StackNavigationProps) {
         <View>
           <Card mode='outlined' style={styles.commentcard}>
             <Card.Title
-              title={detail.userName}
+              title={detail.isAnonymous?"momo":detail.userName}
               subtitle={detail.postTime}
               left={() => <UserPhoto
                 clickAvatar={clickAvatar}

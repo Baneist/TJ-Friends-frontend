@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import {View, TextInput, StyleSheet, Image, Pressable, Keyboard, Alert} from 'react-native';
-import {Button, IconButton,List} from 'react-native-paper';
+import {View, TextInput, StyleSheet, Image, Pressable, Keyboard, Alert, Switch,Text, Dimensions, Platform} from 'react-native';
+import {Button, Divider, IconButton,List} from 'react-native-paper';
 import AvatarPicker from "../components/AvatarPicker/PostPicker";
-import Icon from 'react-native-vector-icons/Feather';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 import requestApi from '../utils/request';
 import { StackNavigationProps } from '../App';
@@ -10,11 +10,16 @@ import {styles} from './PostPage'
 import Modal from 'react-native-modal';
 
 const EditPost = ({ route, navigation }: StackNavigationProps) => {
+  const { width, height } = Dimensions.get("screen");
+
+  const [anonymous, setAnonymous] = useState(false);
   const [showAvatarOption, setShowAvatarOption] = useState(false);
   const [text, setText] = useState('');
   const [image, setImage] = useState([] as string[]);
   const [otext, setoText] = useState('');
   const [oimage, setoImage] = useState([] as string[]);
+  const [opms, setoPms] = useState('');
+  const [oanony, setoAnony] = useState(false);
   const[pms,setPms]=useState('公开');
   const[pmskey,setKey]=useState(0);
   const [clicked,setClick]=useState(false);
@@ -27,6 +32,9 @@ const EditPost = ({ route, navigation }: StackNavigationProps) => {
       setoText(res.data.postContent);
       setoImage(res.data.postPhoto);
       setKey(res.pms);
+      setoPms(res.pms);
+      setoAnony(res.data.isAnonymous)
+      setAnonymous(res.data.isAnonymous);
       if(res.pms==0){
         setPms('公开');
       }
@@ -43,7 +51,7 @@ const EditPost = ({ route, navigation }: StackNavigationProps) => {
   }
   async function handlePost() {
     // 发送text和image到服务器
-    const res = await requestApi('put', `/updateMemory/${route.params?.postId}`, { postContent: text, photoUrl: image,pms:pmskey }, true, '修改失败')
+    const res = await requestApi('put', `/updateMemory/${route.params?.postId}`, { postContent: text, photoUrl: image,pms:pmskey,isAnonymous:anonymous }, true, '修改失败')
     if (res.code == 0) {
       navigation.goBack();
     }
@@ -124,7 +132,7 @@ const EditPost = ({ route, navigation }: StackNavigationProps) => {
     );
   }
 
-  const hasUnsavedChanges = !(text===otext&&image===oimage);
+  const hasUnsavedChanges = !(text===otext&&image===oimage&&pms===opms&&anonymous==oanony);
 
   React.useEffect(
     () =>{
@@ -151,7 +159,6 @@ const EditPost = ({ route, navigation }: StackNavigationProps) => {
             {
               text: '取消',
               style: 'cancel',
-              onPress: () => {navigation.dispatch(e.data.action);},
             },
           ]
         );
@@ -193,6 +200,30 @@ const EditPost = ({ route, navigation }: StackNavigationProps) => {
           onPress={() => setShowAvatarOption(true)}
         />}
       </View>
+      <View style={{
+          backgroundColor: '#fff',
+          paddingBottom: 20,
+          paddingTop: 20,
+          flexDirection: 'column',
+          width: width
+        }}>
+          <Divider />
+          <List.Item title='谁可以看'
+            left={() => <Icon name='account-outline' size={24} style={{ marginLeft: 15 }} />}
+            right={() => <Text style={{ paddingTop: 3, color: 'indigo', paddingRight: 5 }}>{pms}</Text>}
+            onPress={toggleMenu}
+          />
+          <Divider />
+          <List.Item title='匿名'
+            left={() => <Icon name='ninja' size={24} style={{ marginLeft: 15 }} />}
+            right={() => <Switch
+              style={{marginTop:Platform.OS == 'ios' ?-3:-10,marginBottom:Platform.OS == 'ios' ?-3:-10}}
+              value={anonymous}
+              onValueChange={() => setAnonymous(!anonymous)}
+            />}
+          />
+          <Divider />
+        </View>
       <View style={{paddingBottom: 100}} >
       <Button disabled={text.length==0&&image.length==0} onPress={()=>{setClick(true);handlePost();}} mode='contained'>重新发送</Button>
       </View>

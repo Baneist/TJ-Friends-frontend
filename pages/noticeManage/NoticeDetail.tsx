@@ -53,6 +53,11 @@ interface NoticeDetailScreenProps {
 };
 const NoticeDetailScreen = ({ route, navigation}: StackNavigationProps) => {
     const typ = route.params?.type;
+    React.useLayoutEffect(() => {
+      navigation.setOptions({
+        title: typ == 'like' ? '喜欢我的' : typ == 'comment' ? '评论我的' : 'repo' == typ ? '转发我的' : '关注我的',
+      });
+    }, [navigation]);
     const [refreshing_notice, setRefreshingNoticeDetailed] = useState(false);
     const [nddata, setndData] = useState(noticeDetailedData);
     const [upstate, setUPState] = useState(1);
