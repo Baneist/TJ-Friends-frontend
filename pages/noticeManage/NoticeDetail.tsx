@@ -53,6 +53,11 @@ interface NoticeDetailScreenProps {
 };
 const NoticeDetailScreen = ({ route, navigation}: StackNavigationProps) => {
     const typ = route.params?.type;
+    React.useLayoutEffect(() => {
+      navigation.setOptions({
+        title:typ
+      });
+    }, [navigation]);
     const [refreshing_notice, setRefreshingNoticeDetailed] = useState(false);
     const [nddata, setndData] = useState(noticeDetailedData);
     const [upstate, setUPState] = useState(1);

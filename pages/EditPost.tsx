@@ -18,6 +18,8 @@ const EditPost = ({ route, navigation }: StackNavigationProps) => {
   const [image, setImage] = useState([] as string[]);
   const [otext, setoText] = useState('');
   const [oimage, setoImage] = useState([] as string[]);
+  const [opms, setoPms] = useState('');
+  const [oanony, setoAnony] = useState(false);
   const[pms,setPms]=useState('公开');
   const[pmskey,setKey]=useState(0);
   const [clicked,setClick]=useState(false);
@@ -30,6 +32,8 @@ const EditPost = ({ route, navigation }: StackNavigationProps) => {
       setoText(res.data.postContent);
       setoImage(res.data.postPhoto);
       setKey(res.pms);
+      setoPms(res.pms);
+      setoAnony(res.data.isAnonymous)
       setAnonymous(res.data.isAnonymous);
       if(res.pms==0){
         setPms('公开');
@@ -128,7 +132,7 @@ const EditPost = ({ route, navigation }: StackNavigationProps) => {
     );
   }
 
-  const hasUnsavedChanges = !(text===otext&&image===oimage);
+  const hasUnsavedChanges = !(text===otext&&image===oimage&&pms===opms&&anonymous==oanony);
 
   React.useEffect(
     () =>{
@@ -155,7 +159,6 @@ const EditPost = ({ route, navigation }: StackNavigationProps) => {
             {
               text: '取消',
               style: 'cancel',
-              onPress: () => {navigation.dispatch(e.data.action);},
             },
           ]
         );

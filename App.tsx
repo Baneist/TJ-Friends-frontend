@@ -260,7 +260,7 @@ const App = () => {
             options={{ headerBackTitle: "Back" }}
           />
           <Stack.Screen name="NoticeManageScreen" component={NoticeManageScreen} options={{ headerBackTitle: 'Back' }} />
-          <Stack.Screen name="NoticeDetailScreen" component={NoticeDetailScreen} options={{ headerBackTitle: 'Back' }} />
+          <Stack.Screen name="NoticeDetailScreen" component={NoticeDetailScreen} options={{ headerBackTitle: 'Back',title:'Notice' }} />
          
         </Stack.Navigator>
       </NavigationContainer>
