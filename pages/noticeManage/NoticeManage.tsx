@@ -120,7 +120,7 @@ const NoticeManageScreen = ({ route, navigation }: StackNavigationProps) => {
     console.log('Refresh: Notice Manage Get.');
   }
   async function getSystemMessage() {
-    const response = await requestApiForMockTest('get', `/message/getMessageInfo`, null, true, '读取系统通知失败');
+    const response = await requestApiForMockTest('get', `/chat/getMessageInfo`, null, true, '读取系统通知失败');
     //console.log(response);
     const datarecv = response;
     setamsData(datarecv);

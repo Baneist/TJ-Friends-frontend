@@ -90,7 +90,7 @@ interface NoticeProps {
     const handleDeleteItem = () => {
       console.log('send delete request');
       setUPState(upstate + 1);
-      const res = requestApiForMockTest('post', '/notice/deleteNotice', { userId: senderUserId }, true, '删除失败');
+      const res = requestApiForMockTest('post', '/chat/deleteMessage', { userId: senderUserId }, true, '删除失败');
       setIsModalVisible(false);
     };
     const handleButtonLayout = (event: any) => {
@@ -101,7 +101,7 @@ interface NoticeProps {
       }
     };
     async function sendReaded() {
-      const res = await requestApiForMockTest('post', '/message/getMessageInfo', { userId: senderUserId }, true, '标记已读失败');
+      const res = await requestApiForMockTest('post', '/chat/readMessageInfo', { userId: senderUserId }, true, '标记已读失败');
       console.log('sendReaded');
     };
     const handlePress = () => {
