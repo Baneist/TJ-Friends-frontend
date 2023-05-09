@@ -4,6 +4,8 @@ import qs from 'qs';
 import handleAxiosError from "./handleError";
 import { Alert } from "react-native";
 
+//mockjs
+//const BASE_URL = 'https://mock.apifox.cn/m1/2609236-0-default'
 const BASE_URL = 'http://119.3.178.68:8000';
 
 const instance = axios.create({

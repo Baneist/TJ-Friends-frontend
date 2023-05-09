@@ -66,4 +66,17 @@ export const styles = StyleSheet.create({
   infoName: {
     fontSize: 12
   },
+  
+  modalFromBottom: {
+    justifyContent: 'flex-end',
+    margin: 0,
+    },
+    optionBtn:{
+    height:50,
+    marginTop:10
+    },
+    contentContainer:{
+    backgroundColor: 'white',
+    paddingTop:15
+    },
 });

@@ -19,9 +19,11 @@ import Signin from "./pages/Signin";
 import MainScreen from "./pages/Main";
 import Comment from "./pages/Comments";
 
-//查看关注列表和粉丝列表
+//查看关注列表 粉丝列表 黑名单
 import FollowingList from "./pages/userInfo/FollowingList";
 import FollowersList from "./pages/userInfo/FollowersList";
+import BlackList from "./pages/userInfo/BlackList";
+import ComplaintUser from "./pages/userInfo/Complaint";
 //查看他人主页
 import OthersPage from "./pages/userInfo/OthersPage";
 
@@ -68,6 +70,8 @@ type RootStackParamList = {
   NoticeManageScreen: undefined;
   NoticeDetailScreen: { type: string };
   ChatDetail:  { userId: string } | undefined;
+  BlackList:undefined,
+  ComplaintUser:{ userId: string };
 };
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -252,11 +256,6 @@ const App = () => {
           <Stack.Screen
             name="OthersPage"
             component={OthersPage}
-            options={{ headerBackTitle: "Back" }}
-          />
-          <Stack.Screen
-            name="ChatDetail"
-            component={ChatDetail}
             options={{ headerBackTitle: "Back" }}
           />
           <Stack.Screen name="NoticeManageScreen" component={NoticeManageScreen} options={{ headerBackTitle: 'Back' }} />

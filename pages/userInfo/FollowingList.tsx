@@ -10,32 +10,39 @@ import { StackNavigationProps } from '../../App';
 // 用户信息
 export interface followProp {
   userID: string,
-  isfollowing: boolean
+  isFollowed:boolean,
+  isFollowing: boolean
 }
 // 关注列表页面
 const FollowingList = ({route, navigation }: StackNavigationProps) => {
-  const stuid = route.params?.userId;
+  const curUser = route.params?.userId;
   //关注的用户信息
   const [followlist, setlist] = useState([] as userProp[]);
   //是否在关注
   const [statusList, setstatusList] = useState([] as followProp[])
-  //初始化
-  let idlist = [] as string[];
   async function fetchData() {
-    const res = await requestApi('get', `/profile/${stuid}/followings`, null, true, 'Get Followings failed');
+    //初始化
+    let idlist : followProp[];
+    const res = await requestApi('get', `/profile/${curUser}/followings`, null, true, 'Get Followings failed');
     if (res.code == 0) {
-      idlist = idlist.concat(res.data.followings);
+      idlist = res.data.followings;
       let reqList: Promise<AxiosResponse>[] = [];
       for (let i = 0; i < idlist.length; ++i) {
         reqList.push(new Promise((resolve, reject) => {
-          resolve(requestApi('get', `/profile/${idlist[i]}`, null, true, 'get profile failed'))
+          resolve(requestApi('get', `/profile/${idlist[i].userID}`, null, true, 'get profile failed'))
         }))
       }
 
       Promise.all(reqList).then((values) => {
         for (let i = 0; i < values.length; ++i) {
           //statusList.push({userID:idlist[i], isfollowing:true})
-          setstatusList(current => [...current, { userID: idlist[i], isfollowing: true }]);
+          setstatusList(current => [...current, 
+            { 
+              userID: idlist[i].userID, 
+              isFollowing: idlist[i].isFollowing, 
+              isFollowed:idlist[i].isFollowed
+            }
+          ]);
           setlist(current => current.concat(values[i].data))
         }
       });
@@ -49,7 +56,7 @@ const FollowingList = ({route, navigation }: StackNavigationProps) => {
   // 关注/取消关注用户
   async function toggleFollow(user: followProp) {
     let res:AxiosResponse['data'];
-    if (user.isfollowing) { //取关
+    if (user.isFollowing) { //取关
       res = await requestApi('post', '/unfollow', { stuid: user.userID }, true, 'unfollow failed')
     }
     else { //关注
@@ -58,7 +65,7 @@ const FollowingList = ({route, navigation }: StackNavigationProps) => {
     if(res.code==0){
       const newList = statusList.map((item, idx) => {
         if (item.userID === user.userID) {
-          item.isfollowing = !item.isfollowing;
+          item.isFollowing = !item.isFollowing;
           return item;
         }
         else {
@@ -77,8 +84,11 @@ const FollowingList = ({route, navigation }: StackNavigationProps) => {
     <View style={{ flex: 1 }}>
       {/* 关注列表 */}
       <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
+        <View>
+          
+        </View>
         {followlist.map((user, idx) => (
-          <Pressable key={idx}>
+          <Pressable key={idx} onPress={() => {navigation.navigate('OthersPage', {userId:user.userId.info})}}>
             <Block style={styles.userContainer}>
               {/* 头像 */}
               <Avatar.Image size={64} source={{ uri: user.userAvatar.info }} />
@@ -90,13 +100,17 @@ const FollowingList = ({route, navigation }: StackNavigationProps) => {
               </Block>
 
               {/* 关注/取消关注按钮 */}
-              <Button
+              {statusList[idx].userID !== curUser && <Button
                 style={styles.followButton}
-                mode={statusList[idx].isfollowing ? 'outlined' : 'contained'}
+                mode={statusList[idx].isFollowing ? 'outlined' : 'contained'}
                 onPress={() => toggleFollow(statusList[idx])}
               >
-                {statusList[idx].isfollowing ? '取消关注' : '关注'}
-              </Button>
+                {
+                statusList[idx].isFollowing ? 
+                statusList[idx].isFollowed?'互相关注':'取消关注'
+                : '关注'
+                }
+              </Button>}
             </Block>
           </Pressable>
         ))}

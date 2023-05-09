@@ -7,7 +7,7 @@ import {
   ImageBackground,
   Pressable, Dimensions
 } from "react-native";
-import { Button, List, Chip } from 'react-native-paper';
+import { Button, List, Chip, IconButton } from 'react-native-paper';
 import { Block, Text } from "galio-framework";
 import Icon from 'react-native-vector-icons/AntDesign';
 import { StackNavigationProps } from '../../App'
@@ -58,36 +58,38 @@ export interface userProp {
   userInterest: infoProp,
   userLabel: labelProp,
   followerPms: boolean,
-  followingPms: boolean
+  followingPms: boolean,
+  followingNum:number,
+  followerNum:number
 }
 
 export const defaultInfo = {
   "userId": {
-    "info": "2053302",
+    "info": "",
     "pms": false
   },
   "userName": {
-    "info": "吉尔伽美什",
+    "info": "",
     "pms": false
   },
   "userNickName": {
-    "info": "Gilgamesh",
+    "info": "",
     "pms": false
   },
   "userGender": {
-    "info": "Male",
+    "info": "",
     "pms": false
   },
   "userBirthDate": {
-    "info": "2002-08-07",
+    "info": "",
     "pms": true
   },
   "userStatus": {
-    "info": "愉悦！",
+    "info": "",
     "pms": true
   },
   "userMajor": {
-    "info": "愉悦学",
+    "info": "",
     "pms": true
   },
   "userPhone": {
@@ -95,24 +97,15 @@ export const defaultInfo = {
     "pms": false
   },
   "userYear": {
-    "info": "2020",
+    "info": "",
     "pms": false
   },
   "userInterest": {
-    "info": "喜欢钱和一切金闪闪的东西，还有哈哈哈哈哈哈（是个快乐的男人！）",
+    "info": "",
     "pms": true
   },
   "userLabel": {
-    "info": [
-      "金闪闪",
-      "帅",
-      "金发",
-      "红瞳",
-      "AUO",
-      "愉悦教主",
-      "强",
-      "黄金三靶"
-    ],
+    "info": [],
     "pms": true
   },
   "userAvatar": {
@@ -120,7 +113,9 @@ export const defaultInfo = {
     "pms": true
   },
   "followerPms": true,
-  "followingPms": false
+  "followingPms": false,
+  "followerNum": 1,
+  "followingNum": 1
 }
 
 const Profile = ({ navigation }: StackNavigationProps) => {
@@ -128,12 +123,6 @@ const Profile = ({ navigation }: StackNavigationProps) => {
   const userId = global.gUserId;
   //个人信息
   const [userInfo, setUserInfo] = useState<userProp>(defaultInfo);
-  console.log(userInfo)
-  //粉丝 关注列表
-  const [followerNum, setFollowerNum] = useState(0);
-  const [followingNum, setFollowingNum] = useState(0);
-  //动态列表
-  const [userPosts, setUserPosts] = useState([] as any [])
   //显示个人信息
   const { bottom } = useSafeAreaInsets();
 
@@ -141,21 +130,12 @@ const Profile = ({ navigation }: StackNavigationProps) => {
     if (response.code == 0) {
       callback();
     }
-    console.log(userPosts)
   }
 
   async function fetchData() {
-    //获取资料、关注列表、粉丝列表、发布的动态
-    const [resInfo, resFollowing, resFollower, resPosts] = await Promise.all([
-      requestApi('get', `/profile/${userId}`, null, true, 'getProfile failed'),
-      requestApi('get', `/profile/${userId}/followings`, null, true, 'Get Following failed'),
-      requestApi('get', `/profile/${userId}/followers`, null, true, 'Get Follower failed'),
-      requestApi('get', `/getUserMemories/${userId}`,null, true, 'get user memories faild')
-    ]);
-    handleApiResponse(resInfo, () => setUserInfo(resInfo.data));
-    handleApiResponse(resFollowing, () => setFollowingNum(resFollowing.data.followings.length));
-    handleApiResponse(resFollower, () => setFollowerNum(resFollower.data.followers.length));
-    handleApiResponse(resPosts, () => setUserPosts(resPosts.data));
+    //获取资料
+    const resInfo = await requestApi('get', `/profile/${userId}`, null, true, 'getProfile failed')
+    setUserInfo(resInfo.data)
   }
 
   // 编辑个人资料
@@ -189,6 +169,17 @@ const Profile = ({ navigation }: StackNavigationProps) => {
       };
     }, [])
   );
+  //导航栏
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerRight:() => (
+        <IconButton icon="cog-outline" 
+        style={{marginRight:10}}
+        onPress={() =>{navigation.navigate('BlackList')}}
+        />
+      )
+    });
+  }, [navigation]);
   return (
     <View style={{ flex: 1, marginBottom: bottom }}>
       <View style={{ flex: 1 }}>
@@ -216,7 +207,7 @@ const Profile = ({ navigation }: StackNavigationProps) => {
                   <Pressable onPress={viewFollower}>
                     <Block middle>
                       <Text style={styles.infoNum}>
-                        {followerNum}
+                        {userInfo.followerNum}
                       </Text>
                       <Text style={styles.infoName}>Followers</Text>
                     </Block>
@@ -224,7 +215,7 @@ const Profile = ({ navigation }: StackNavigationProps) => {
                   <Pressable onPress={viewFollowing}>
                     <Block middle>
                       <Text style={styles.infoNum}>
-                        {followingNum}
+                        {userInfo.followingNum}
                       </Text>
                       <Text style={styles.infoName}>Following</Text>
                     </Block>

@@ -11,6 +11,7 @@ import handleAxiosError from "../../../utils/handleError";
 
 const EditStatus = ({ route, navigation }: StackNavigationProps) => {
   const [userStatus, setStatus] = useState('');
+  //不展示的用ref 不能用let
   const refInfo = useRef<userProp>(defaultInfo);
   const userID = global.gUserId;
   //初始化
