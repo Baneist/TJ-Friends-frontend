@@ -162,8 +162,6 @@ export const CardwithButtons = (props: CardProps) => {
     setMenuVisible(!MenuVisible);
   };
 
-  
-
   function onEdit() {
     console.log(props.content.postId);
     props.navigation.navigate('EditPost', { postId: props.content.postId })
@@ -205,18 +203,18 @@ export const CardwithButtons = (props: CardProps) => {
         style={styles.modal}
       >
         <View style={styles.menu}>
-          {global.gUserId === props.content.userID && <Button style={{ height: 50, paddingTop: 5 }} onPress={onEdit
+          {global.gUserId === props.content.userId && <Button style={{ height: 50, paddingTop: 5 }} onPress={onEdit
           }>编辑</Button>}
-          {global.gUserId === props.content.userID && <Divider />}
+          {global.gUserId === props.content.userId && <Divider />}
           <Button style={{ height: 50, paddingTop: 5 }} onPress={() => {
             toggleMenu
           }}>收藏</Button>
-          {global.gUserId != props.content.userID && <Divider />}
-          {global.gUserId != props.content.userID && <Button style={{ height: 50, paddingTop: 5 }} onPress={() => {
+          {global.gUserId != props.content.userId && <Divider />}
+          {global.gUserId != props.content.userId && <Button style={{ height: 50, paddingTop: 5 }} onPress={() => {
             toggleMenu
           }}>举报</Button>}
-          {global.gUserId === props.content.userID && <Divider />}
-          {global.gUserId === props.content.userID && <Button style={{ height: 50, paddingTop: 5 }} onPress={
+          {global.gUserId === props.content.userId && <Divider />}
+          {global.gUserId === props.content.userId && <Button style={{ height: 50, paddingTop: 5 }} onPress={
             () => { setMenuVisible(!MenuVisible); Alert.alert('', '确定删除这条动态吗?', [{ text: '确定', onPress: props.onDelete }, { text: '取消' }]); }
           }>删除</Button>}
         </View>
@@ -292,7 +290,7 @@ const MemoriesScreen = ({ navigation }: StackNavigationProps) => {
               key={index}
               content={item}
               onCommentPress={() => onCommentPress(item.postId)}
-              clickAvatar={()=>clickAvatar(item.userID)}
+              clickAvatar={()=>clickAvatar(item.userId)}
               navigation={navigation}
               onDelete={()=>onDelete(item.postId)}
             />)}
