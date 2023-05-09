@@ -19,7 +19,7 @@ export const DialogBadge = ( {count} :BadgeProps ) => {
     return (
       <View style={styles.container}>
         <View style={styles.dialogbadge}>
-          <Text style={styles.text}>{}</Text>
+          <Text style={styles.text}>{count}</Text>
         </View>
       </View>
     );
@@ -61,9 +61,9 @@ const styles = StyleSheet.create({
   },
   dialogbadge: {
     backgroundColor: 'red',
-    borderRadius: 6,
-    minWidth: 12,
-    height: 12,
+    borderRadius: 12,
+    minWidth: 24,
+    height: 24,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'absolute',
