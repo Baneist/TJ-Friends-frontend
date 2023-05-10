@@ -7,6 +7,8 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import requestApi from '../utils/request';
 import { StackNavigationProps } from '../App';
 import Modal from 'react-native-modal';
+import mime from 'mime';
+import { readFile } from './userInfo/EditInfo/EditProfile';
 
 const PostPage = ({ route, navigation }: StackNavigationProps) => {
   //获取屏幕宽高
@@ -14,11 +16,21 @@ const PostPage = ({ route, navigation }: StackNavigationProps) => {
   const [showAvatarOption, setShowAvatarOption] = useState(false);
   const [text, setText] = useState('');
   const [image, setImage] = useState([] as string[]);
-  const [clicked,setClick]=useState(false);
+  const [clicked, setClick] = useState(false);
   async function handlePost() {
     // 发送text和image到服务器
+    for (let index in image) {
+      const blob = await (await fetch(image[index])).blob();
+      const fileType = mime.getType(image[index]);
+      const fileName = 'image.' + mime.getExtension(fileType!);
+
+      const imageRes = await requestApi('post', '/uploadImage', { file: await readFile(blob), fileName }, true, '上传图片失败');
+      if (imageRes.code === 0) {
+        image[index]=imageRes.data.url;
+      }
+    }
     console.log('发布');
-    const res = await requestApi('post', '/Post', { postContent: text, photoUrl: image, pms: pmskey,isAnonymous:anonymous }, true, 'post失败')
+    const res = await requestApi('post', '/Post', { postContent: text, photoUrl: image, pms: pmskey, isAnonymous: anonymous }, true, 'post失败')
     if (res.code == 0) {
       navigation.goBack();
     }
@@ -101,9 +113,9 @@ const PostPage = ({ route, navigation }: StackNavigationProps) => {
   const hasUnsavedChanges = Boolean(text);
 
   React.useEffect(
-    () =>{
+    () => {
       const onbackpage = navigation.addListener('beforeRemove', (e) => {
-        if (!hasUnsavedChanges||clicked) {
+        if (!hasUnsavedChanges || clicked) {
           // If we don't have unsaved changes, then we don't need to do anything
           return;
         }
@@ -125,13 +137,13 @@ const PostPage = ({ route, navigation }: StackNavigationProps) => {
             {
               text: '保存',
               style: 'cancel',
-              onPress: () => {navigation.dispatch(e.data.action)},
+              onPress: () => { navigation.dispatch(e.data.action) },
             },
           ]
         );
       });
       return onbackpage;
-    },[navigation, hasUnsavedChanges,clicked]
+    }, [navigation, hasUnsavedChanges, clicked]
   );
 
   return (
@@ -184,7 +196,7 @@ const PostPage = ({ route, navigation }: StackNavigationProps) => {
           <List.Item title='匿名'
             left={() => <Icon name='ninja' size={24} style={{ marginLeft: 15 }} />}
             right={() => <Switch
-              style={{marginTop:Platform.OS == 'ios' ?-3:-10,marginBottom:Platform.OS == 'ios' ?-3:-10}}
+              style={{ marginTop: Platform.OS == 'ios' ? -3 : -10, marginBottom: Platform.OS == 'ios' ? -3 : -10 }}
               value={anonymous}
               onValueChange={() => setAnonymous(!anonymous)}
             />}
@@ -192,7 +204,7 @@ const PostPage = ({ route, navigation }: StackNavigationProps) => {
           <Divider />
         </View>
         <View style={{ paddingBottom: 100 }} >
-          <Button disabled={text.length==0&&image.length==0} onPress={()=>{setClick(true);handlePost();}} mode='contained'>发送</Button>
+          <Button disabled={text.length == 0 && image.length == 0} onPress={() => { setClick(true); handlePost(); }} mode='contained'>发送</Button>
         </View>
         <AvatarPicker showAvatarOption={showAvatarOption} onBackdropPress={cancelAvatarOption} setImage={changeImage} />
 
@@ -214,7 +226,7 @@ const PostPage = ({ route, navigation }: StackNavigationProps) => {
 export const styles = StyleSheet.create({
   container: {
     padding: 10,
-    marginTop:Platform.OS=='ios'?0:-60,
+    marginTop: Platform.OS == 'ios' ? 0 : -60,
     backgroundColor: '#fff',
     paddingBottom: 300,
     borderColor: '#fff'

@@ -42,7 +42,7 @@ const profileImage = {
   ProfilePicture: 'https://picsum.photos/700'
 }
 
-function readFile(file: Blob) {
+export function readFile(file: Blob) {
   const reader = new FileReader();
   reader.readAsDataURL(file);
   return new Promise(function(resolve, reject) {

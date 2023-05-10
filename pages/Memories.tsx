@@ -180,7 +180,7 @@ export const CardwithButtons = (props: CardProps) => {
           right={() => <IconButton icon='dots-horizontal' onPress={toggleMenu} />}
         />
         <Pressable onPress={props.onCommentPress}>
-          <Card.Cover source={{ uri: props.content.postPhoto === "" ? "http://dummyimage.com/400x400" : props.content.postPhoto }} />
+          <Card.Cover source={{ uri: props.content.postPhoto === "" ? "https://picsum.photos/600/400" : props.content.postPhoto }} />
         </Pressable>
         <Card.Actions>
           <Like

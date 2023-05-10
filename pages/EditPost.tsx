@@ -8,6 +8,8 @@ import requestApi from '../utils/request';
 import { StackNavigationProps } from '../App';
 import {styles} from './PostPage'
 import Modal from 'react-native-modal';
+import mime from 'mime';
+import { readFile } from './userInfo/EditInfo/EditProfile';
 
 const EditPost = ({ route, navigation }: StackNavigationProps) => {
   const { width, height } = Dimensions.get("screen");
@@ -58,7 +60,16 @@ const EditPost = ({ route, navigation }: StackNavigationProps) => {
   }
   async function handlePost() {
     // 发送text和image到服务器
-    console.log(anonymous);
+    for (let index in image) {
+      const blob = await (await fetch(image[index])).blob();
+      const fileType = mime.getType(image[index]);
+      const fileName = 'image.' + mime.getExtension(fileType!);
+
+      const imageRes = await requestApi('post', '/uploadImage', { file: await readFile(blob), fileName }, true, '上传图片失败');
+      if (imageRes.code === 0) {
+        image[index]=imageRes.data.url;
+      }
+    }
     const res = await requestApi('put', `/updateMemory/${route.params?.postId}`, { postContent: text, photoUrl: image,pms:pmskey,isAnonymous:anonymous }, true, '修改失败')
     if (res.code == 0) {
       navigation.goBack();
