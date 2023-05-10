@@ -50,7 +50,7 @@ export const styles = StyleSheet.create({
 
 export function UserPhoto(props: CardProps) {
   return (
-    <Pressable onPress={props.clickAvatar}>
+    <Pressable onPress={props.content.isAnonymous?()=>{}:props.clickAvatar}>
       <Image source={{ uri: props.content.isAnonymous?"https://picsum.photos/200":props.content.userAvatar }} style={styles.userphoto} />
     </Pressable>
   );
