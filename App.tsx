@@ -258,6 +258,11 @@ const App = () => {
             component={OthersPage}
             options={{ headerBackTitle: "Back" }}
           />
+          <Stack.Screen
+            name="ChatDetail"
+            component={ChatDetail}
+            options={{ headerBackTitle: "Back" }}
+          />
           <Stack.Screen name="NoticeManageScreen" component={NoticeManageScreen} options={{ headerBackTitle: 'Back' }} />
           <Stack.Screen name="NoticeDetailScreen" component={NoticeDetailScreen} options={{ headerBackTitle: 'Back',title:'Notice' }} />
          

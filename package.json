@@ -35,7 +35,7 @@
     "galio-framework": "^0.8.0",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-native": "^0.71.6",
+    "react-native": "0.71.7",
     "react-native-auto-grow-textinput": "1.1.2",
     "react-native-background-timer": "*",
     "react-native-checkbox-tree": "^2.1.0",
