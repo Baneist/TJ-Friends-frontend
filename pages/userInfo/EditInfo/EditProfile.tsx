@@ -1,5 +1,5 @@
-import React, { useState, useRef } from "react";
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import React, {useState, useRef} from "react";
+import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {
   View,
   StyleSheet,
@@ -15,23 +15,24 @@ import {
   Button, Card, TextInput, Switch, Surface,
   Portal, Provider, IconButton, List, Chip
 } from 'react-native-paper';
-import { Block, Text } from "galio-framework";
+import {Block, Text} from "galio-framework";
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Icon from 'react-native-vector-icons/AntDesign';
-import { StackNavigationProps } from '../../../App'
+import {StackNavigationProps} from '../../../App'
 import Modal from 'react-native-modal';
 import styles from './EditProfile.Style'
 import requestApi from "../../../utils/request";
 import handleAxiosError from "../../../utils/handleError";
 import AvatarPicker from "../../../components/AvatarPicker/AvatarPicker";
-import { userProp, defaultInfo } from "../Profile";
-import { useFocusEffect } from '@react-navigation/native';
-import { GENDER } from "../Profile";
-import { toastConfig } from "../../../components/Toast/Toast";
+import {userProp, defaultInfo} from "../Profile";
+import {useFocusEffect} from '@react-navigation/native';
+import {GENDER} from "../Profile";
+import {toastConfig} from "../../../components/Toast/Toast";
 import Toast from "react-native-toast-message";
+import mime from "mime";
 
 //获取屏幕宽高
-const { width, height } = Dimensions.get("screen");
+const {width, height} = Dimensions.get("screen");
 
 const thumbMeasure = (width - 48 - 32) / 3;
 
@@ -41,15 +42,28 @@ const profileImage = {
   ProfilePicture: 'https://picsum.photos/700'
 }
 
+function readFile(file: Blob) {
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+  return new Promise(function(resolve, reject) {
+    reader.onload = function() {
+      resolve(reader.result);
+    };
+    reader.onerror = function() {
+      reject(reader.error);
+    };
+  });
+}
+
 //资料页面
-export function EditProfile({ route, navigation }: StackNavigationProps) {
+export function EditProfile({route, navigation}: StackNavigationProps) {
   //state
   const userID = global.gUserId;
   //个人信息
   const [userInfo, setUserInfo] = useState<userProp>(defaultInfo);
   //及时更新
   const refInfo = useRef<userProp>(defaultInfo);
-  const { bottom } = useSafeAreaInsets();
+  const {bottom} = useSafeAreaInsets();
   //初始化
   //初始化
   async function fetchData() {
@@ -76,25 +90,34 @@ export function EditProfile({ route, navigation }: StackNavigationProps) {
   //性别
   const Gender = () => {
     return (<Icon name={userInfo.userGender.info === GENDER.Male ? 'man' : 'woman'}
-      size={16} color="#32325D" style={{ marginTop: 10 }}>
+                  size={16} color="#32325D" style={{marginTop: 10}}>
       {userInfo.userGender.info === GENDER.Male ? GENDER.Male : GENDER.Female}
     </Icon>);
   }
 
   //选头像
-  async function onSubmitAvatar(url:string){
-    let newuser = { ...userInfo };
-    newuser.userAvatar.info = url;
-    console.log('avatar', newuser.userAvatar)
-    //先尝试上传到图床
-    // const upload=await requestApi('post','/uploadImage',)
-    const res = await requestApi('put', '/updateUserInfo', newuser, true, '更新头像失败');
-    console.log(newuser)
+  async function onSubmitAvatar(url: string) {
+    const blob = await (await fetch(url)).blob();
+    const fileType = mime.getType(url);
+    const fileName = 'image.' + mime.getExtension(fileType!);
+
+    const imageRes = await requestApi('post', '/uploadImage', {file: await readFile(blob), fileName}, true, '上传图片失败');
+    let newUser = {...userInfo};
+
+    console.log(imageRes)
+    if (imageRes.code === 0) {
+      newUser.userAvatar.info = imageRes.data.url;
+      console.log('avatar', newUser.userAvatar);
+    }
+
+    const res = await requestApi('put', '/updateUserInfo', newUser, true, '更新头像失败');
+    console.log(newUser)
     if (res.code === 0) {
-      console.log('选头像',userInfo)
-        setUserInfo(newuser)
+      console.log('选头像', userInfo);
+      setUserInfo(newUser);
     }
   }
+
   //选择生日
   const [showDatePicker, setShowDatePicker] = useState(false);
 
@@ -117,12 +140,12 @@ export function EditProfile({ route, navigation }: StackNavigationProps) {
 
     async function submitBirthDay() {
       setShowDatePicker(false);
-      let newuser = { ...refInfo.current };
+      let newuser = {...refInfo.current};
       console.log('new birth', newuser)
       newuser.userBirthDate.info = formatDate(birthday);
       const res = await requestApi('put', '/updateUserInfo', newuser, true, '更新生日失败');
       if (res.code === 0) {
-        console.log('生日',userInfo)
+        console.log('生日', userInfo)
         setUserInfo(newuser)
         refInfo.current = newuser
       }
@@ -138,12 +161,12 @@ export function EditProfile({ route, navigation }: StackNavigationProps) {
       >
         {/* 仅IOS显示按钮 */}
         {Platform.OS == 'ios' && <Block row space='between' style={styles.contentContainer}>
-          <Button mode='text'
-            onPress={() => {
-              setShowDatePicker(false);
-            }}>取消</Button>
-          <Button mode='text'
-            onPress={submitBirthDay}>提交</Button>
+            <Button mode='text'
+                    onPress={() => {
+                      setShowDatePicker(false);
+                    }}>取消</Button>
+            <Button mode='text'
+                    onPress={submitBirthDay}>提交</Button>
         </Block>}
         <View style={styles.contentContainer}>
           <DateTimePicker
@@ -179,12 +202,12 @@ export function EditProfile({ route, navigation }: StackNavigationProps) {
     return (
       <View>
         <Button icon='cellphone-remove'
-          mode='outlined'
-          style={{ marginTop: 10 }}
-          onPress={() => {
-            setUnbindVisible(true);
-            console.log('pressed')
-          }}
+                mode='outlined'
+                style={{marginTop: 10}}
+                onPress={() => {
+                  setUnbindVisible(true);
+                  console.log('pressed')
+                }}
         >解绑</Button>
         <Modal
           isVisible={unbindVisible}
@@ -194,7 +217,7 @@ export function EditProfile({ route, navigation }: StackNavigationProps) {
               title='解绑手机'
               subtitle='unbind phone'
               titleVariant='titleMedium'
-              left={(props) => <IconButton {...props} size={25} icon="alert" />}
+              left={(props) => <IconButton {...props} size={25} icon="alert"/>}
             />
             <Card.Content>
               <Text variant="titleMedium">
@@ -202,24 +225,24 @@ export function EditProfile({ route, navigation }: StackNavigationProps) {
               </Text>
               {/* 输入密码 */}
               {pwdInput &&
-                <TextInput
-                  mode='outlined'
-                  style={{ marginTop: 10 }}
-                  value={password}
-                  onChangeText={(text) => setPassword(text)}
-                  label="Password"
-                  secureTextEntry={!pwdVisible}
-                  right={<TextInput.Icon icon="eye" onPress={() => {
-                    setpwdVisible(!pwdVisible)
-                  }} />}
-                />
+                  <TextInput
+                      mode='outlined'
+                      style={{marginTop: 10}}
+                      value={password}
+                      onChangeText={(text) => setPassword(text)}
+                      label="Password"
+                      secureTextEntry={!pwdVisible}
+                      right={<TextInput.Icon icon="eye" onPress={() => {
+                        setpwdVisible(!pwdVisible)
+                      }}/>}
+                  />
               }
             </Card.Content>
             <Card.Actions>
-              {!pwdInput && <Button mode='outlined' style={{ marginRight: 10 }} onPress={() => {
+              {!pwdInput && <Button mode='outlined' style={{marginRight: 10}} onPress={() => {
                 setpwdInput(true);
               }}>确定</Button>}
-              {pwdInput && <Button mode='outlined' style={{ marginRight: 10 }} onPress={() => {
+              {pwdInput && <Button mode='outlined' style={{marginRight: 10}} onPress={() => {
                 setpwdInput(false);
                 setUnbindVisible(false);
                 setsubmitted(true);
@@ -262,11 +285,11 @@ export function EditProfile({ route, navigation }: StackNavigationProps) {
     return (
       <View>
         <Button icon='cellphone-check'
-          mode='outlined'
-          onPress={() => {
-            setbindVisible(true);
-          }}
-          style={{ marginTop: 10 }}
+                mode='outlined'
+                onPress={() => {
+                  setbindVisible(true);
+                }}
+                style={{marginTop: 10}}
         >绑定</Button>
         <Modal
           isVisible={bindVisible}
@@ -276,7 +299,7 @@ export function EditProfile({ route, navigation }: StackNavigationProps) {
               title='绑定手机'
               subtitle='bind phone'
               titleVariant='titleMedium'
-              left={(props) => <IconButton {...props} size={25} icon="cellphone-check" />}
+              left={(props) => <IconButton {...props} size={25} icon="cellphone-check"/>}
             />
             <Card.Content>
               <TextInput
@@ -297,11 +320,11 @@ export function EditProfile({ route, navigation }: StackNavigationProps) {
               />
             </Card.Content>
             <Card.Actions>
-              <Button mode='outlined' style={{ marginRight: 10 }} onPress={countDown}
-                disabled={btnDisable}
+              <Button mode='outlined' style={{marginRight: 10}} onPress={countDown}
+                      disabled={btnDisable}
               >
                 {btnText}</Button>
-              <Button mode='outlined' style={{ marginRight: 10 }} onPress={() => {
+              <Button mode='outlined' style={{marginRight: 10}} onPress={() => {
                 setbindVisible(false);
               }}>取消</Button>
             </Card.Actions>
@@ -330,42 +353,42 @@ export function EditProfile({ route, navigation }: StackNavigationProps) {
 
   //隐私变更
   function updateBitrthPms() {
-    let newuser = { ...refInfo.current };
+    let newuser = {...refInfo.current};
     newuser.userBirthDate.pms = !newuser.userBirthDate.pms;
     setUserInfo(newuser)
     refInfo.current.userBirthDate.pms = newuser.userBirthDate.pms;
   }
 
   function updateMajorPms() {
-    let newuser = { ...refInfo.current };
+    let newuser = {...refInfo.current};
     newuser.userMajor.pms = !newuser.userMajor.pms;
     setUserInfo(newuser)
     refInfo.current.userMajor.pms = newuser.userMajor.pms;
   }
 
   function updateYearPms() {
-    let newuser = { ...refInfo.current };
+    let newuser = {...refInfo.current};
     newuser.userYear.pms = !newuser.userYear.pms;
     setUserInfo(newuser)
     refInfo.current.userYear.pms = newuser.userYear.pms;
   }
 
   function updateInterestPms() {
-    let newuser = { ...refInfo.current };
+    let newuser = {...refInfo.current};
     newuser.userInterest.pms = !newuser.userInterest.pms;
     setUserInfo(newuser)
     refInfo.current.userInterest.pms = newuser.userInterest.pms;
   }
 
   function updateFollowingPms() {
-    let newuser = { ...refInfo.current };
+    let newuser = {...refInfo.current};
     newuser.followingPms = !newuser.followingPms;
     setUserInfo(newuser)
     refInfo.current.followingPms = newuser.followingPms;
   }
 
   function updateFollowerPms() {
-    let newuser = { ...refInfo.current };
+    let newuser = {...refInfo.current};
     newuser.followerPms = !newuser.followerPms;
     setUserInfo(newuser)
     refInfo.current.followerPms = newuser.followerPms;
@@ -383,8 +406,8 @@ export function EditProfile({ route, navigation }: StackNavigationProps) {
   }
 
   return (
-    <View style={{ flex: 1, marginBottom: bottom }}>
-      <View style={{ flex: 1 }}>
+    <View style={{flex: 1, marginBottom: bottom}}>
+      <View style={{flex: 1}}>
         {/* 资料卡片 */}
         <ImageBackground
           source={profileImage.ProfileBackground}
@@ -393,7 +416,7 @@ export function EditProfile({ route, navigation }: StackNavigationProps) {
         >
           <ScrollView
             showsVerticalScrollIndicator={false}
-            style={{ width }}
+            style={{width}}
           >
             <Block flex style={styles.profileCard}>
               {/* 头像 */}
@@ -402,7 +425,7 @@ export function EditProfile({ route, navigation }: StackNavigationProps) {
               }}>
                 <Block middle style={styles.avatarContainer}>
                   <Image
-                    source={{ uri: userInfo.userAvatar.info }}
+                    source={{uri: userInfo.userAvatar.info}}
                     style={styles.avatar}
                   />
                   <AvatarPicker
@@ -418,155 +441,155 @@ export function EditProfile({ route, navigation }: StackNavigationProps) {
                   <Text bold size={28} color="#32325D">
                     {userInfo.userName.info}
                   </Text>
-                  <Text size={16} color="#32325D" style={{ marginTop: 10 }}>
+                  <Text size={16} color="#32325D" style={{marginTop: 10}}>
                     {userInfo.userId.info}
                   </Text>
-                  <Gender />
-                  <Text size={16} color="#32325D" style={{ marginTop: 10 }}>
+                  <Gender/>
+                  <Text size={16} color="#32325D" style={{marginTop: 10}}>
                     {userInfo.userYear.info + '/' + userInfo.userMajor.info}
                   </Text>
                 </Block>
                 {/* 修改信息 */}
-                <Surface elevation={1} mode='flat' style={{ marginTop: 10 }}>
+                <Surface elevation={1} mode='flat' style={{marginTop: 10}}>
                   <Block flex>
                     <Card.Title
                       title='个性信息'
                       subtitle='Personal Information'
                       titleVariant='titleMedium'
-                      left={(props) => <IconButton {...props} size={25} icon="emoticon-outline" />}
+                      left={(props) => <IconButton {...props} size={25} icon="emoticon-outline"/>}
                     />
-                    <List.Section style={{ marginBottom: 0 }}>
+                    <List.Section style={{marginBottom: 0}}>
                       <Pressable onPress={toEditNickName}>
                         <Surface elevation={1}>
-                          <List.Item style={{ marginLeft: 25 }}
-                            left={() => <><Text size={16} style={{ marginTop: 2 }}>昵 称</Text></>}
-                            title={userInfo.userNickName.info}
-                            right={() => <List.Icon icon="chevron-right" />} />
+                          <List.Item style={{marginLeft: 25}}
+                                     left={() => <><Text size={16} style={{marginTop: 2}}>昵 称</Text></>}
+                                     title={userInfo.userNickName.info}
+                                     right={() => <List.Icon icon="chevron-right"/>}/>
                         </Surface></Pressable>
                       <Pressable onPress={() => {
                         setShowDatePicker(true);
                       }}>
                         <Surface elevation={1}>
-                          <List.Item style={{ marginLeft: 25 }}
-                            left={() => <><Text size={16} style={{ marginTop: 2 }}>生 日</Text></>}
-                            title={userInfo.userBirthDate.info}
-                            right={() => <List.Icon icon="chevron-right" />} />
+                          <List.Item style={{marginLeft: 25}}
+                                     left={() => <><Text size={16} style={{marginTop: 2}}>生 日</Text></>}
+                                     title={userInfo.userBirthDate.info}
+                                     right={() => <List.Icon icon="chevron-right"/>}/>
                         </Surface></Pressable>
-                      <ChooseBirthDay />
+                      <ChooseBirthDay/>
                       <Pressable onPress={toEditStatus}>
                         <Surface elevation={1}>
-                          <List.Item style={{ marginLeft: 25 }}
-                            left={() => <><Text size={16} style={{ marginTop: 2 }}>个性签名</Text></>}
-                            title={userInfo.userStatus.info}
-                            right={() => <List.Icon icon="chevron-right" />} />
+                          <List.Item style={{marginLeft: 25}}
+                                     left={() => <><Text size={16} style={{marginTop: 2}}>个性签名</Text></>}
+                                     title={userInfo.userStatus.info}
+                                     right={() => <List.Icon icon="chevron-right"/>}/>
                         </Surface></Pressable>
                       <Pressable onPress={toEditInterest}>
                         <Surface elevation={1}>
-                          <List.Item style={{ marginLeft: 25 }}
-                            left={() => <><Text size={16} style={{ marginTop: 2 }}>兴趣爱好</Text></>}
-                            title={userInfo.userInterest.info}
-                            right={() => <List.Icon icon="chevron-right" />} />
+                          <List.Item style={{marginLeft: 25}}
+                                     left={() => <><Text size={16} style={{marginTop: 2}}>兴趣爱好</Text></>}
+                                     title={userInfo.userInterest.info}
+                                     right={() => <List.Icon icon="chevron-right"/>}/>
                         </Surface></Pressable>
                       <Pressable onPress={toEditLabel}>
                         <Surface elevation={1}>
-                          <List.Item style={{ marginLeft: 25 }}
-                            left={() => <><Text size={16} style={{ marginTop: 2 }}>标 签</Text></>}
-                            title={props =>
-                              <View style={{ flex: 1, flexDirection: "row", flexWrap: 'wrap' }}>
-                                {userInfo.userLabel.info.map((label, idx) =>
-                                  <Chip key={idx} style={{ marginRight: 10, marginBottom: 10 }}
-                                    mode='outlined'>{label}</Chip>
-                                )}
-                              </View>}
-                            right={() => <List.Icon icon="chevron-right" />} />
+                          <List.Item style={{marginLeft: 25}}
+                                     left={() => <><Text size={16} style={{marginTop: 2}}>标 签</Text></>}
+                                     title={props =>
+                                       <View style={{flex: 1, flexDirection: "row", flexWrap: 'wrap'}}>
+                                         {userInfo.userLabel.info.map((label, idx) =>
+                                           <Chip key={idx} style={{marginRight: 10, marginBottom: 10}}
+                                                 mode='outlined'>{label}</Chip>
+                                         )}
+                                       </View>}
+                                     right={() => <List.Icon icon="chevron-right"/>}/>
                         </Surface></Pressable>
                     </List.Section>
                   </Block>
                 </Surface>
                 {/* 手机号码 */}
-                <Surface elevation={1} mode='flat' style={{ marginTop: 10 }}>
+                <Surface elevation={1} mode='flat' style={{marginTop: 10}}>
                   <Block flex>
                     <Card.Title
                       title='手机号码'
                       subtitle='Phone Number'
                       titleVariant='titleMedium'
-                      left={(props) => <IconButton {...props} size={25} icon="cellphone" />}
+                      left={(props) => <IconButton {...props} size={25} icon="cellphone"/>}
                     />
-                    <List.Section style={{ marginBottom: 0, marginTop: 0 }}>
+                    <List.Section style={{marginBottom: 0, marginTop: 0}}>
                       <Surface elevation={1}>
-                        <List.Item style={{ marginLeft: 25 }}
-                          left={() => <><Text size={16} style={{ marginTop: 16.5 }}>+86</Text></>}
-                          title={userInfo.userPhone.info ? userInfo.userPhone.info : '暂未绑定'}
-                          right={() => userInfo.userPhone.info ? <UnbindPhone /> : <BindPhone />}
+                        <List.Item style={{marginLeft: 25}}
+                                   left={() => <><Text size={16} style={{marginTop: 16.5}}>+86</Text></>}
+                                   title={userInfo.userPhone.info ? userInfo.userPhone.info : '暂未绑定'}
+                                   right={() => userInfo.userPhone.info ? <UnbindPhone/> : <BindPhone/>}
                         />
                       </Surface>
                     </List.Section>
                   </Block>
                 </Surface>
                 {/* 隐私 */}
-                <Surface elevation={1} mode='flat' style={{ marginTop: 10 }}>
+                <Surface elevation={1} mode='flat' style={{marginTop: 10}}>
                   <Block flex>
                     <Card.Title
                       title='权限设置'
                       subtitle='Permission Setting'
                       titleVariant='titleMedium'
-                      left={(props) => <IconButton {...props} size={25} icon="lock" />}
+                      left={(props) => <IconButton {...props} size={25} icon="lock"/>}
                       right={(props) =>
                         <Button mode='outlined' icon='check'
-                          style={{ marginRight: 25 }} onPress={updatePmsSetting}
+                                style={{marginRight: 25}} onPress={updatePmsSetting}
                         >保存</Button>}
                     />
-                    <List.Section style={{ marginBottom: 0 }}>
+                    <List.Section style={{marginBottom: 0}}>
                       <Pressable onPress={updateBitrthPms}>
                         <Surface elevation={1}>
-                          <List.Item style={{ marginLeft: 25 }}
-                            left={() => <><Text size={16} style={{ marginTop: 2 }}>生日</Text></>}
-                            title=''
-                            right={() => <><Text style={styles.otherVisable}>他人可见</Text>
-                              <Switch
-                                value={userInfo.userBirthDate.pms}
-                                onValueChange={updateBitrthPms} />
-                            </>} /></Surface></Pressable>
+                          <List.Item style={{marginLeft: 25}}
+                                     left={() => <><Text size={16} style={{marginTop: 2}}>生日</Text></>}
+                                     title=''
+                                     right={() => <><Text style={styles.otherVisable}>他人可见</Text>
+                                       <Switch
+                                         value={userInfo.userBirthDate.pms}
+                                         onValueChange={updateBitrthPms}/>
+                                     </>}/></Surface></Pressable>
                       <Pressable onPress={updateMajorPms}>
                         <Surface elevation={1}>
-                          <List.Item style={{ marginLeft: 25 }}
-                            left={() => <><Text size={16} style={{ marginTop: 2 }}>专业</Text></>}
-                            title=''
-                            right={() => <><Text style={styles.otherVisable}>他人可见</Text>
-                              <Switch value={userInfo.userMajor.pms} onValueChange={updateMajorPms} /></>} />
+                          <List.Item style={{marginLeft: 25}}
+                                     left={() => <><Text size={16} style={{marginTop: 2}}>专业</Text></>}
+                                     title=''
+                                     right={() => <><Text style={styles.otherVisable}>他人可见</Text>
+                                       <Switch value={userInfo.userMajor.pms} onValueChange={updateMajorPms}/></>}/>
                         </Surface></Pressable>
                       <Pressable onPress={updateYearPms}>
                         <Surface elevation={1}>
-                          <List.Item style={{ marginLeft: 25 }}
-                            left={() => <><Text size={16} style={{ marginTop: 2 }}>学年</Text></>}
-                            title=''
-                            right={() => <><Text style={styles.otherVisable}>他人可见</Text>
-                              <Switch value={userInfo.userYear.pms} onValueChange={updateYearPms} /></>} />
+                          <List.Item style={{marginLeft: 25}}
+                                     left={() => <><Text size={16} style={{marginTop: 2}}>学年</Text></>}
+                                     title=''
+                                     right={() => <><Text style={styles.otherVisable}>他人可见</Text>
+                                       <Switch value={userInfo.userYear.pms} onValueChange={updateYearPms}/></>}/>
                         </Surface></Pressable>
                       <Pressable onPress={updateInterestPms}>
                         <Surface elevation={1}>
-                          <List.Item style={{ marginLeft: 25 }}
-                            left={() => <><Text size={16} style={{ marginTop: 2 }}>兴趣爱好</Text></>}
-                            title=''
-                            right={() => <><Text style={styles.otherVisable}>他人可见</Text>
-                              <Switch value={userInfo.userInterest.pms}
-                                onValueChange={updateInterestPms} /></>} />
+                          <List.Item style={{marginLeft: 25}}
+                                     left={() => <><Text size={16} style={{marginTop: 2}}>兴趣爱好</Text></>}
+                                     title=''
+                                     right={() => <><Text style={styles.otherVisable}>他人可见</Text>
+                                       <Switch value={userInfo.userInterest.pms}
+                                               onValueChange={updateInterestPms}/></>}/>
                         </Surface></Pressable>
                       <Pressable onPress={updateFollowingPms}>
                         <Surface elevation={1}>
-                          <List.Item style={{ marginLeft: 25 }}
-                            left={() => <><Text size={16} style={{ marginTop: 2 }}>关注列表</Text></>}
-                            title=''
-                            right={() => <><Text style={styles.otherVisable}>他人可见</Text>
-                              <Switch value={userInfo.followingPms} onValueChange={updateFollowingPms} /></>} />
+                          <List.Item style={{marginLeft: 25}}
+                                     left={() => <><Text size={16} style={{marginTop: 2}}>关注列表</Text></>}
+                                     title=''
+                                     right={() => <><Text style={styles.otherVisable}>他人可见</Text>
+                                       <Switch value={userInfo.followingPms} onValueChange={updateFollowingPms}/></>}/>
                         </Surface></Pressable>
                       <Pressable onPress={updateFollowerPms}>
                         <Surface elevation={1}>
-                          <List.Item style={{ marginLeft: 25 }}
-                            left={() => <><Text size={16} style={{ marginTop: 2 }}>粉丝列表</Text></>}
-                            title=''
-                            right={() => <><Text style={styles.otherVisable}>他人可见</Text>
-                              <Switch value={userInfo.followerPms} onValueChange={updateFollowerPms} /></>} />
+                          <List.Item style={{marginLeft: 25}}
+                                     left={() => <><Text size={16} style={{marginTop: 2}}>粉丝列表</Text></>}
+                                     title=''
+                                     right={() => <><Text style={styles.otherVisable}>他人可见</Text>
+                                       <Switch value={userInfo.followerPms} onValueChange={updateFollowerPms}/></>}/>
                         </Surface>
                       </Pressable>
                     </List.Section>
@@ -576,7 +599,7 @@ export function EditProfile({ route, navigation }: StackNavigationProps) {
             </Block>
             {/* eslint-disable-next-line max-len */}
             {/* -> Set bottom view to allow scrolling to top if you set bottom-bar position absolute */}
-            <View style={{ height: 190 }} />
+            <View style={{height: 190}}/>
           </ScrollView>
         </ImageBackground>
       </View>
