@@ -68,6 +68,7 @@
     "react-native-text-input-interactive": "^0.1.4",
     "react-native-toast-message": "^2.1.6",
     "react-native-vector-icons": "^9.2.0",
+    "react-native-waterfall-flow": "^1.1.4",
     "react-native-web": "~0.18.10",
     "react-native-webview": "11.26.0",
     "recoil": "^0.7.7",

@@ -8,6 +8,8 @@ import MemoriesScreen from './Memories';
 import Profile from './userInfo/Profile'
 import NoticeManageScreen from './noticeManage/NoticeManage';import { IconButton } from 'react-native-paper';
 import { StackNavigationProps } from '../App';
+import RoomsScreen from './Rooms';
+import { color } from 'react-native-reanimated';
 
 type RootTabParamList = {
   Home: undefined;
@@ -127,12 +129,13 @@ const MainScreen = ({route, navigation}:StackNavigationProps) => {
         component={Home}
       />
       <Tab.Screen
-        name="Meh"
         options={{
-          tabBarIcon: tabBarIcon('meh'),
+          tabBarIcon: tabBarIcon('youtube'),
+          tabBarIconStyle:{},
           tabBarLabel: showLabel ? 'Meh' : undefined,
         }}
-        component={generateScreen('meh')}
+        name="Rooms"
+        component={RoomsScreen}
       />
       <Tab.Screen
         options={{

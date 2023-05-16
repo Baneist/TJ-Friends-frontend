@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pressable, ScrollView, View, Image, StyleSheet, Text, Alert } from 'react-native';
+import { Pressable, ScrollView, View, Image, StyleSheet, Text, Alert, Linking } from 'react-native';
 import { Button, Card, IconButton, Divider, FAB } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/AntDesign';
@@ -124,12 +124,9 @@ export function Share(props: CardProps) {
           <Card.Title style={{ marginTop: -5 }} title='分享动态' right={() => <Button onPress={() => {
           }}>分享</Button>} />
           <View style={{ flexDirection: 'row', justifyContent: 'space-evenly', height: 70 }}>
-            <IconButton icon='qqchat' size={40} onPress={() => {
-            }} />
-            <IconButton icon='wechat' size={40} onPress={() => {
-            }} />
-            <IconButton icon='sina-weibo' size={40} onPress={() => {
-            }} />
+            <IconButton icon='qqchat' size={40} onPress={() => Linking.openURL('mqq://')} />
+            <IconButton icon='wechat' size={40} onPress={() => Linking.openURL('weixin://')} />
+            <IconButton icon='sina-weibo' size={40} onPress={() => Linking.openURL('weibo://')} />
           </View>
           <Button style={{ height: 50, paddingTop: 10 }} onPress={toggleShare}>取消</Button>
         </View>
@@ -210,9 +207,9 @@ export const CardwithButtons = (props: CardProps) => {
             toggleMenu
           }}>收藏</Button>
           {global.gUserId != props.content.userId && <Divider />}
-          {global.gUserId != props.content.userId && <Button style={{ height: 50, paddingTop: 5 }} onPress={() => {
+          {global.gUserId != props.content.userId && <Button style={{ height: 50, paddingTop: 5 }} onPress={
             toggleMenu
-          }}>举报</Button>}
+          }>举报</Button>}
           {global.gUserId === props.content.userId && <Divider />}
           {global.gUserId === props.content.userId && <Button style={{ height: 50, paddingTop: 5 }} onPress={
             () => { setMenuVisible(!MenuVisible); Alert.alert('', '确定删除这条动态吗?', [{ text: '确定', onPress: props.onDelete }, { text: '取消' }]); }
