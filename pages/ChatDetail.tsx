@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View } from 'react-native';
+import { Text, TouchableOpacity, View, StyleSheet } from 'react-native';
 import { Avatar } from 'react-native-elements';
 import { GiftedChat } from 'react-native-gifted-chat';
 import { StackNavigationProps } from '../App'
@@ -19,6 +19,13 @@ interface ChatMessage {
   };
   image?: string,
 };
+
+interface MessageContextMenuProps {
+  isVisible: boolean;
+  onHide: () => void;
+  onRemove: () => void;
+  onRevoke: () => void;
+}
 
 const defaultMessages = [
   {
@@ -78,6 +85,8 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
   const ChatUser = route.params?.userId;
   
   const [messages, setMessages] = useState([] as ChatMessage[]);
+  const [selectedMessage, setSelectedMessage] = useState(null);
+  const [isContextMenuVisible, setContextMenuVisible] = useState(false);
 
   const IUser = {
     _id: userId,
@@ -169,6 +178,42 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
       GiftedChat.append(previousMessages, newMessages),
     );
   }
+
+  function onLongPress(context, currentMessage) {
+    setSelectedMessage(currentMessage);
+    setContextMenuVisible(true);
+  }
+  
+  function MessageContextMenu({ isVisible, onHide, onRemove, onRevoke }: MessageContextMenuProps) {
+    if (!isVisible) {
+      return null;
+    }
+  
+    return (
+      <View style={styles.contextMenuContainer}>
+        <TouchableOpacity style={styles.contextMenuItem} onPress={onRemove}>
+          <Text style={styles.contextMenuItemText}>删除</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.contextMenuItem} onPress={onRevoke}>
+          <Text style={styles.contextMenuItemText}>撤回</Text>
+        </TouchableOpacity>
+      </View>
+    );
+  }
+  
+  function handleRemoveMessage(message) {
+    // 根据消息的 _id 进行删除操作
+    setMessages(previousMessages =>
+      previousMessages.filter(m => m._id !== message._id)
+    );
+    setContextMenuVisible(false);
+  }
+  
+  function handleRevokeMessage(message) {
+    // 实现撤回消息的逻辑
+    // ...
+    setContextMenuVisible(false);
+  }  
   
   async function getUnreadMessages() {
     const resUnreadMessages = await requestApi('get', `/chat/receiveUnreadMessages?userId=${ChatUser}`, null, true, 'Get Unread Messages failed');
@@ -218,9 +263,17 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
   }, []);
 
   return (
-    <GiftedChat
+    <View style={styles.container}>
+      <MessageContextMenu
+      isVisible={isContextMenuVisible}
+      onHide={() => setContextMenuVisible(false)}
+      onRemove={() => handleRemoveMessage(selectedMessage)}
+      onRevoke={() => handleRevokeMessage(selectedMessage)}
+    />
+      <GiftedChat
       messages={messages}
       onSend={onSend}
+      onLongPress={onLongPress}
       user={{ _id: userId }}
       showAvatarForEveryMessage={true}
       alignTop={true}
@@ -236,7 +289,35 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
         </View>
       )}
     />
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  contextMenuContainer: {
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: '#FFFFFF',
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    paddingVertical: 10,
+    borderTopWidth: 1,
+    borderTopColor: '#CCCCCC',
+  },
+  contextMenuItem: {
+    paddingHorizontal: 20,
+  },
+  contextMenuItemText: {
+    fontSize: 16,
+    color: '#333333',
+  },
+});
+
 
 export default ChatDetail;
