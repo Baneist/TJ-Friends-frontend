@@ -70,7 +70,6 @@ const EditPost = ({ route, navigation }: StackNavigationProps) => {
       image[index]=BASE_URL+imageRes.data.url;
       }
     }
-    console.log(image);
     const res = await requestApi('put', `/updateMemory/${route.params?.postId}`, { postContent: text, photoUrl: image,pms:pmskey,isAnonymous:anonymous }, true, '修改失败')
     if (res.code == 0) {
       navigation.goBack();

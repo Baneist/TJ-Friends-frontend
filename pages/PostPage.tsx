@@ -29,7 +29,6 @@ const PostPage = ({ route, navigation }: StackNavigationProps) => {
       image[index]=BASE_URL+imageRes.data.url;
       }
     }
-    console.log(image);
     const res = await requestApi('post', '/Post', { postContent: text, photoUrl: image, pms: pmskey, isAnonymous: anonymous }, true, 'post失败')
     if (res.code == 0) {
       navigation.goBack();
