@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import requestApi from '../../utils/request';
@@ -18,6 +18,7 @@ function CustomInputToolbar(props) {
           name: props.user.name,
           avatar: props.user.avatar,
         },
+        isRevoke: false,
       };
       async function sendMessage() {
         const res = await requestApi('post', '/chat/sendMessage', { image: '' , text: message.text , userId: props.ChatUser }, true, '发送失败');
@@ -49,6 +50,7 @@ function CustomInputToolbar(props) {
           _id: props.user._id,
           name: props.user.name,
         },
+        isRevoke: false,
       };
       async function sendMessage() {
         const res = await requestApi('post', '/chat/sendMessage', { image: message.image , text: '' , userId: props.ChatUser }, true, '发送失败');
@@ -77,6 +79,7 @@ function CustomInputToolbar(props) {
             _id: props.user._id,
             name: props.user.name,
           },
+          isRevoke: false,
         };
         async function sendMessage() {
           const res = await requestApi('post', '/chat/sendMessage', { image: message.image , text: '' , userId: props.ChatUser }, true, '发送失败');
@@ -87,24 +90,26 @@ function CustomInputToolbar(props) {
   }
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView style={styles.container} behavior="padding">
       <TouchableOpacity onPress={handlePickImage} style={styles.button}>
         <MaterialIcons name="photo-library" size={24} color="#5A5A5A" />
       </TouchableOpacity>
       <TouchableOpacity onPress={handleTakePhoto} style={styles.button}>
         <MaterialIcons name="photo-camera" size={24} color="#5A5A5A" />
       </TouchableOpacity>
-      <TextInput
-        style={styles.textInput}
-        placeholder="Type a message..."
-        value={text}
-        onChangeText={setText}
-        multiline
-      />
+      <View style={{ flex: 1 }}>
+        <TextInput
+          style={styles.textInput}
+          placeholder="Type a message..."
+          value={text}
+          onChangeText={setText}
+          multiline
+        />
+      </View>
       <TouchableOpacity onPress={handleSend} style={styles.sendButton}>
         <MaterialIcons name="send" size={24} color="#FFFFFF" />
       </TouchableOpacity>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 

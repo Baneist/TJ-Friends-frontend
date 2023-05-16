@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Text, TouchableOpacity, View, StyleSheet } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
+import Clipboard from '@react-native-community/clipboard';
 import { Avatar } from 'react-native-elements';
 import { GiftedChat } from 'react-native-gifted-chat';
 import { StackNavigationProps } from '../App'
@@ -17,6 +18,7 @@ interface ChatMessage {
     name: string;
     avatar: string;
   };
+  isRevoke: boolean,
   image?: string,
 };
 
@@ -37,6 +39,7 @@ const defaultMessages = [
       name: 'ChatGPT',
       avatar: "https://picsum.photos/700",
     },
+    isRevoke: false,
   },
   {
     _id: 4,
@@ -47,6 +50,7 @@ const defaultMessages = [
       name: 'ME',
       avatar: "https://picsum.photos/700",
     },
+    isRevoke: false,
   },
   {
     _id: 3,
@@ -57,6 +61,7 @@ const defaultMessages = [
       name: 'ChatGPT',
       avatar: "https://picsum.photos/700",
     },
+    isRevoke: true
   },
   {
     _id: 2,
@@ -67,6 +72,7 @@ const defaultMessages = [
       name: 'ChatGPT',
       avatar: "https://picsum.photos/700",
     },
+    isRevoke: false,
   },
   {
     _id: 1,
@@ -77,6 +83,7 @@ const defaultMessages = [
       name: 'ChatGPT',
       avatar: "https://picsum.photos/700",
     },
+    isRevoke: false,
   },
 ];
 
@@ -85,8 +92,7 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
   const ChatUser = route.params?.userId;
   
   const [messages, setMessages] = useState([] as ChatMessage[]);
-  const [selectedMessage, setSelectedMessage] = useState(null);
-  const [isContextMenuVisible, setContextMenuVisible] = useState(false);
+  const [isTimerEnabled, setIsTimerEnabled] = useState(true);
 
   const IUser = {
     _id: userId,
@@ -126,7 +132,8 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
               _id: resAllMessages.data[i].id,
               text: resAllMessages.data[i].text,
               createdAt: resAllMessages.data[i].time,
-              user: UUser
+              user: UUser,
+              isRevoke: resAllMessages.data[i].isRecall,
             }
           )
         }
@@ -138,6 +145,7 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
               createdAt: resAllMessages.data[i].time,
               user: UUser,
               image: resAllMessages.data[i].image,
+              isRevoke: resAllMessages.data[i].isRecall,
             }
           )
         }
@@ -149,7 +157,8 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
               _id: resAllMessages.data[i].id,
               text: resAllMessages.data[i].text,
               createdAt: resAllMessages.data[i].time,
-              user: IUser
+              user: IUser,
+              isRevoke: resAllMessages.data[i].isRecall,
             }
           )
         }
@@ -161,6 +170,7 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
               createdAt: resAllMessages.data[i].time,
               user: IUser,
               image: resAllMessages.data[i].image,
+              isRevoke: resAllMessages.data[i].isRecall,
             }
           )
         }
@@ -168,9 +178,10 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
       
     }
     
-    setMessages(previousMessages =>
-      GiftedChat.append(previousMessages, CurMessages)
-    );
+    // setMessages(previousMessages =>
+    //   GiftedChat.append(previousMessages, CurMessages)
+    // );
+    setMessages(CurMessages);
   }
 
   function onSend(newMessages: ChatMessage[] = []) {
@@ -179,41 +190,91 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
     );
   }
 
-  function onLongPress(context, currentMessage) {
-    setSelectedMessage(currentMessage);
-    setContextMenuVisible(true);
-  }
-  
-  function MessageContextMenu({ isVisible, onHide, onRemove, onRevoke }: MessageContextMenuProps) {
-    if (!isVisible) {
-      return null;
+  function handleLongPress(context, currentMessage) {
+    setIsTimerEnabled(false);
+
+    async function deleteMessage() {
+      const res = await requestApi('post', '/chat/deleteMessage', { messageId: currentMessage._id }, true, '删除失败');
+      console.log(currentMessage._id, 'delete')
     }
-  
-    return (
-      <View style={styles.contextMenuContainer}>
-        <TouchableOpacity style={styles.contextMenuItem} onPress={onRemove}>
-          <Text style={styles.contextMenuItemText}>删除</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.contextMenuItem} onPress={onRevoke}>
-          <Text style={styles.contextMenuItemText}>撤回</Text>
-        </TouchableOpacity>
-      </View>
-    );
+
+    async function recallMessage() {
+      const res = await requestApi('post', '/chat/recallMessage', { messageId: currentMessage._id }, true, '撤回失败');
+      console.log(currentMessage._id, 'recall')
+    }
+
+    if(currentMessage.user._id===userId){
+      const options = [
+        '复制',
+        '删除',
+        '撤回',
+        '取消',
+      ];
+      const cancelButtonIndex = options.length - 1;
+      context.actionSheet().showActionSheetWithOptions({
+        options,
+        cancelButtonIndex,
+      },
+      (buttonIndex) => {
+        switch (buttonIndex) {
+          case 0:
+            Clipboard.setString(currentMessage.text);
+            break;
+          case 1:
+            deleteMessage();
+            fetchOrigin()
+            // setMessages(previousMessages =>
+            //   previousMessages.filter(m => m._id !== currentMessage._id)
+            // );
+            break;
+          case 2:
+            recallMessage();
+            fetchOrigin()
+            // setMessages(previousMessages =>
+            //   previousMessages.map(m => {
+            //     if (m._id === currentMessage._id) {
+            //       return {
+            //         ...m, 
+            //         isRevoke: true,
+            //       };
+            //     }
+            //     return m; 
+            //   })
+            // );
+            break;
+        }
+      });
+    }
+    else{
+      const options = [
+        '复制',
+        '删除',
+        '取消',
+      ];
+      const cancelButtonIndex = options.length - 1;
+      context.actionSheet().showActionSheetWithOptions({
+        options,
+        cancelButtonIndex,
+      },
+      (buttonIndex) => {
+        switch (buttonIndex) {
+          case 0:
+            Clipboard.setString(currentMessage.text);
+            break;
+          case 1:
+            deleteMessage();
+            fetchOrigin()
+            // setMessages(previousMessages =>
+            //   previousMessages.filter(m => m._id !== currentMessage._id)
+            // );
+          break;
+        }
+      });
+    }
+    
+    setIsTimerEnabled(true);
   }
   
-  function handleRemoveMessage(message) {
-    // 根据消息的 _id 进行删除操作
-    setMessages(previousMessages =>
-      previousMessages.filter(m => m._id !== message._id)
-    );
-    setContextMenuVisible(false);
-  }
-  
-  function handleRevokeMessage(message) {
-    // 实现撤回消息的逻辑
-    // ...
-    setContextMenuVisible(false);
-  }  
   
   async function getUnreadMessages() {
     const resUnreadMessages = await requestApi('get', `/chat/receiveUnreadMessages?userId=${ChatUser}`, null, true, 'Get Unread Messages failed');
@@ -225,7 +286,8 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
             _id: resUnreadMessages.data[i].id,
             text: resUnreadMessages.data[i].text,
             createdAt: resUnreadMessages.data[i].time,
-            user: UUser
+            user: UUser,
+            isRevoke: resUnreadMessages.data[i].isRecall,
           }
         )
       }
@@ -237,6 +299,7 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
             createdAt: resUnreadMessages.data[i].time,
             user: UUser,
             image: resUnreadMessages.data[i].image,
+            isRevoke: false,
           }
         )
       }
@@ -255,69 +318,40 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
   useEffect(() => {
     fetchOrigin()
 
-    const intervalId = setInterval(() => {
-      getUnreadMessages();
-    }, 2000);
+    if (isTimerEnabled){
+      const intervalId = setInterval(() => {
+        getUnreadMessages();
+      }, 2000);
 
-    return () => clearInterval(intervalId);
-  }, []);
+      return () => clearInterval(intervalId);
+    }
+    
+  }, [isTimerEnabled]);
 
   return (
-    <View style={styles.container}>
-      <MessageContextMenu
-      isVisible={isContextMenuVisible}
-      onHide={() => setContextMenuVisible(false)}
-      onRemove={() => handleRemoveMessage(selectedMessage)}
-      onRevoke={() => handleRevokeMessage(selectedMessage)}
-    />
-      <GiftedChat
-      messages={messages}
-      onSend={onSend}
-      onLongPress={onLongPress}
-      user={{ _id: userId }}
-      showAvatarForEveryMessage={true}
-      alignTop={true}
-      renderBubble={(props)=><CustomBubble {...props}/>}
-      renderInputToolbar={(props) => <CustomInputToolbar {...props} messages={messages} ChatUser={ChatUser}/>}
-      renderAvatar={(props) => (
-        <View style={{ marginLeft: 10 }}>
+    <GiftedChat
+    messages={messages}
+    onSend={onSend}
+    onLongPress={handleLongPress}
+    user={{ _id: userId }}
+    showAvatarForEveryMessage={true}
+    alignTop={true}
+    renderBubble={(props)=><CustomBubble {...props}/>}
+    renderInputToolbar={(props) => <CustomInputToolbar {...props} messages={messages} ChatUser={ChatUser}/>}
+    renderAvatar={(props) => (
+      !props.currentMessage.isRevoke &&
+      <View style={{ marginLeft: 10 }}>
+        <TouchableOpacity onPress={() => {navigation.navigate('OthersPage', {userId:props.currentMessage.user._id})}}>
           <Avatar
             size={42}
             source={{ uri: props.currentMessage.user.avatar }}
             rounded
           />
-        </View>
-      )}
-    />
-    </View>
+        </TouchableOpacity>
+      </View>
+    )}
+  />
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  contextMenuContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: '#FFFFFF',
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    paddingVertical: 10,
-    borderTopWidth: 1,
-    borderTopColor: '#CCCCCC',
-  },
-  contextMenuItem: {
-    paddingHorizontal: 20,
-  },
-  contextMenuItemText: {
-    fontSize: 16,
-    color: '#333333',
-  },
-});
-
 
 export default ChatDetail;
