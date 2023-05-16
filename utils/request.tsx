@@ -35,13 +35,14 @@ const requestApi = async (method: string, url: string, data: any, withToken: boo
       instance.defaults.headers.common['Authorization'] = "Bearer " + token;
     }
   }
-  let contentType = 'application/json';
+  let contentType: string|boolean = 'application/json';
   if (url === '/login' || method === 'get') {
     contentType = 'application/x-www-form-urlencoded';
+    if (url === '/login') {
+      data = qs.stringify(data);
+    }
   }
-  if (url === '/login') {
-    data = qs.stringify(data);
-  }
+
   try {
     const response = await instance.request({
       url, method, data, headers: {
