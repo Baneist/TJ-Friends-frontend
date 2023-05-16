@@ -30,6 +30,7 @@ import {GENDER} from "../Profile";
 import {toastConfig} from "../../../components/Toast/Toast";
 import Toast from "react-native-toast-message";
 import mime from "mime";
+import { BASE_URL } from "../../../utils/request";
 
 //获取屏幕宽高
 const {width, height} = Dimensions.get("screen");
@@ -106,7 +107,7 @@ export function EditProfile({route, navigation}: StackNavigationProps) {
 
     console.log(imageRes)
     if (imageRes.code === 0) {
-      newUser.userAvatar.info = imageRes.data.url;
+      newUser.userAvatar.info = BASE_URL + imageRes.data.url;
       console.log('avatar', newUser.userAvatar);
     }
 

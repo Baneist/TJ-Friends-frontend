@@ -1,30 +1,20 @@
 Arguments: 
-  C:\Program Files\nodejs\node.exe C:\Users\ayiri\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js add expo-emoji
+  D:\nodejs\node.exe D:\nodejs\node_modules\yarn\bin\yarn.js add expo-screen-orientation
 
 PATH: 
-  C:\Python311\Scripts\;C:\Python311\;D:\VMware\VMware Workstation\bin\;C:\Program Files\Python310\Scripts\;C:\Program Files\Python310\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\Users\ayiri\Desktop\HW\22SV\t1\venv\Scripts\;D:\UNIX V6++V1\MinGW\bin;D:\UNIX V6++V1\NASM;C:\Program Files\Docker\Docker\resources\bin;C:\Program Files\Git\cmd;C:\Program Files\dotnet\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\nodejs\;C:\ProgramData\chocolatey\bin;C:\Users\ayiri\AppData\Local\Yarn\Data\global\node_modules\typescript\bin;C:\Program Files\MySQL\MySQL Shell 8.0\bin\;C:\Users\ayiri\AppData\Local\Microsoft\WindowsApps;D:\JetBrains\PyCharm Community Edition 2022.1.3\bin;;C:\ProgramData\Anaconda3;C:\ProgramData\Anaconda3\Scripts;C:\ProgramData\Anaconda3\Library\bin;C:\ProgramData\Anaconda3\Library\mingw-w64\bin;D:\JetBrains\PyCharm 2022.1.4\bin;;C:\Users\ayiri\AppData\Local\Programs\Microsoft VS Code\bin;D:\UNIX V6++V1\MinGW\bin;D:\UNIX V6++V1\NASM;C:\Program Files\CMake\bin;C:\Program Files\Multipass\bin;C:\Users\ayiri\.dotnet\tools;C:\Users\ayiri\AppData\Roaming\npm;C:\Users\ayiri\AppData\Local\GitHubDesktop\bin
+  F:\Program_Files\VMware\bin\;D:\Program File\CMake\bin;D:\Program File\MinGW-w64\mingw64\bin;D:\Program File\Java\java8\jdk1.8.0_341\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;D:\Program File\SPSS\JRE\bin;D:\Program File\graphviz\bin;E:\Program files\Matlab\bin;E:\Program files\texlive\texlive\2022\bin\win32;D:\Tomcat\apache-tomcat-10.0.20\bin;D:\Program File\Git\cmd;D:\nvm;D:\nodejs;E:\Program files\TortoiseGit\bin;C:\Users\19086\AppData\Local\Yarn\Data\global;D:\Program File\Java\java8\jdk1.8.0_341\jre\bin;C:\Program Files\Docker\Docker\resources\bin;D:\Anaconda;D:\Anaconda\Library\mingw-w64\bin;D:\Anaconda\Library\usr\bin;D:\Anaconda\Library\bin;D:\Anaconda\Scripts;C:\Program Files\MySQL\MySQL Shell 8.0\bin\;D:\Program File\python\Scripts\;D:\Program File\python\;C:\Users\19086\AppData\Local\Microsoft\WindowsApps;C:\Program Files (x86)\IDM Computer Solutions\UltraEdit\;D:\Program File\ModelSim\win32pe;D:\Modelsim\win32pe;D:\Program File\Microsoft VS Code\bin;C:\Program Files\MySQL\MySQL Server 8.0\bin;D:\nvm;D:\nodejs;D:\Program File\UNIX V6++\MinGW\bin;D:\Program File\UNIX V6++\NASM;D:\Program_File\Android_SDK\platform-tools;D:\Program_File\Android_SDK\emulator;D:\Program_File\Android_SDK\tools;D:\Program_File\Android_SDK\tools\bin;C:\Users\19086\AppData\Local\GitHubDesktop\bin
 
 Yarn version: 
   1.22.19
 
 Node version: 
-  18.15.0
+  16.13.0
 
 Platform: 
   win32 x64
 
 Trace: 
-  Error: https://registry.yarnpkg.com/expo-emoji: Not found
-      at params.callback [as _callback] (C:\Users\ayiri\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:66145:18)
-      at self.callback (C:\Users\ayiri\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:140890:22)
-      at Request.emit (node:events:513:28)
-      at Request.<anonymous> (C:\Users\ayiri\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:141862:10)
-      at Request.emit (node:events:513:28)
-      at IncomingMessage.<anonymous> (C:\Users\ayiri\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:141784:12)
-      at Object.onceWrapper (node:events:627:28)
-      at IncomingMessage.emit (node:events:525:35)
-      at endReadableNT (node:internal/streams/readable:1359:12)
-      at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+  Error: EROFS: read-only file system, scandir 'C:\Users\19086\AppData\Local\Yarn\Cache\v6\npm-antd-5.4.2-3923b96da76fc7276992e9fc0286ebb3a638e016-integrity\node_modules\antd\lib\input-number\style'
 
 npm manifest: 
   {
@@ -43,6 +33,7 @@ npm manifest:
       "@expo/webpack-config": "^18.0.1",
       "@react-native-async-storage/async-storage": "1.17.11",
       "@react-native-community/datetimepicker": "6.7.3",
+      "@react-native-community/slider": "^4.4.2",
       "@react-navigation/bottom-tabs": "^6.5.7",
       "@react-navigation/native": "^6.1.6",
       "@react-navigation/native-stack": "^6.9.12",
@@ -54,6 +45,7 @@ npm manifest:
       "axios": "^1.3.5",
       "expo": "~48.0.9",
       "expo-asset": "^8.9.1",
+      "expo-av": "^13.2.1",
       "expo-file-system": "^15.2.2",
       "expo-gl": "^12.4.0",
       "expo-gl-cpp": "^11.4.0",
@@ -61,10 +53,11 @@ npm manifest:
       "expo-image-manipulator": "^11.1.1",
       "expo-image-picker": "^14.1.1",
       "expo-status-bar": "~1.4.4",
+      "expo-video-player": "^2.2.0",
       "galio-framework": "^0.8.0",
       "react": "18.2.0",
       "react-dom": "18.2.0",
-      "react-native": "^0.71.6",
+      "react-native": "0.71.7",
       "react-native-auto-grow-textinput": "1.1.2",
       "react-native-background-timer": "*",
       "react-native-checkbox-tree": "^2.1.0",
@@ -77,7 +70,9 @@ npm manifest:
       "react-native-element-image": "^1.1.1",
       "react-native-element-textinput": "^2.2.0",
       "react-native-element-timer": "^2.1.2",
+      "react-native-elements": "^3.4.3",
       "react-native-emoji-board": "^1.2.1",
+      "react-native-emoji-selector": "^0.2.0",
       "react-native-gesture-handler": "~2.9.0",
       "react-native-gifted-chat": "^2.0.1",
       "react-native-keyboard-aware-scroll-view": "^0.9.5",
@@ -89,6 +84,7 @@ npm manifest:
       "react-native-spinkit": "^1.5.1",
       "react-native-svg": "13.4.0",
       "react-native-text-input-interactive": "^0.1.4",
+      "react-native-toast-message": "^2.1.6",
       "react-native-vector-icons": "^9.2.0",
       "react-native-web": "~0.18.10",
       "react-native-webview": "11.26.0",
@@ -2111,6 +2107,11 @@ Lockfile:
     dependencies:
       invariant "^2.2.4"
   
+  "@react-native-community/slider@^4.4.2":
+    version "4.4.2"
+    resolved "https://registry.npmmirror.com/@react-native-community/slider/-/slider-4.4.2.tgz#1fea0eb3ae31841fe87bd6c4fc67569066e9cf4b"
+    integrity sha512-D9bv+3Vd2gairAhnRPAghwccgEmoM7g562pm8i4qB3Esrms5mggF81G3UvCyc0w3jjtFHh8dpQkfEoKiP0NW/Q==
+  
   "@react-native-community/viewpager@^2.0.1":
     version "2.0.2"
     resolved "https://registry.yarnpkg.com/@react-native-community/viewpager/-/viewpager-2.0.2.tgz#622b190294b1310c4825c98daeaee1c8443f7124"
@@ -2426,7 +2427,7 @@ Lockfile:
       "@types/react" "*"
       "@types/react-native" "*"
   
-  "@types/react-native-vector-icons@^6.4.13":
+  "@types/react-native-vector-icons@^6.4.13", "@types/react-native-vector-icons@^6.4.6":
     version "6.4.13"
     resolved "https://registry.npmjs.org/@types/react-native-vector-icons/-/react-native-vector-icons-6.4.13.tgz"
     integrity sha512-1PqFoKuXTSzMHwGMAr+REdYJBQAbe9xrww3ecZR0FsHcD1K+vGS/rxuAriL4rsI6+p69sZQjDzpEVAbDQcjSwA==
@@ -4152,6 +4153,11 @@ Lockfile:
     resolved "https://registry.npmjs.org/deepmerge/-/deepmerge-3.3.0.tgz"
     integrity sha512-GRQOafGHwMHpjPx9iCvTgpu9NojZ49q794EEL94JVEw6VaeA8XTUyBKvAkOOjBX9oJNiV6G3P+T+tihFjo2TqA==
   
+  deepmerge@^4.2.2:
+    version "4.3.1"
+    resolved "https://registry.yarnpkg.com/deepmerge/-/deepmerge-4.3.1.tgz#44b5f2147cd3b00d4b56137685966f26fd25dd4a"
+    integrity sha512-3sUqbMEc77XqpdNO7FRyRog+eW3ph+GYCbj+rK+uYyRMuwsVy0rMiVtPn+QJlKFvWP/1PYpapqYn0Me2knFn+A==
+  
   default-gateway@^4.2.0:
     version "4.2.0"
     resolved "https://registry.npmjs.org/default-gateway/-/default-gateway-4.2.0.tgz"
@@ -4375,6 +4381,11 @@ Lockfile:
     version "5.0.1"
     resolved "https://registry.yarnpkg.com/emoji-datasource/-/emoji-datasource-5.0.1.tgz#31eaaff7caa6640929327b4f4ff66f2bf313df0a"
     integrity sha512-RXokuCv4o8RFLiigN1skAdZwJuJWqtBvcK3GVKpvAL/7BeH95enmKsli7cG8YZ85RTjyEe3+GAdpJJOV43KLKQ==
+  
+  emoji-datasource@^6.0.0:
+    version "6.1.1"
+    resolved "https://registry.yarnpkg.com/emoji-datasource/-/emoji-datasource-6.1.1.tgz#95a38737a322bedae130385c26ce291d0833ce62"
+    integrity sha512-fbS3QJpzGHhujvBULSKXcvsYmVg+1ldfI3VVXG3jnFuniZtkp7rz/OcTcQjbp3m43BYxmiJgKmaoOUPxXQupRQ==
   
   emoji-regex@^8.0.0:
     version "8.0.0"
@@ -4602,6 +4613,11 @@ Lockfile:
       path-browserify "^1.0.0"
       url-parse "^1.5.9"
   
+  expo-av@^13.2.1:
+    version "13.2.1"
+    resolved "https://registry.npmmirror.com/expo-av/-/expo-av-13.2.1.tgz#ce502a4c5d4a57962fd9f5f1a40c76c39c88f5ee"
+    integrity sha512-mC0mYSzaOaZgXjzhW2l4Ag325JjH6q5IbptfwD7gkMOFYy7VPOMxEMUnetadbs3DDzmgE6vUWrTjUIUbwq59qg==
+  
   expo-constants@~14.2.0, expo-constants@~14.2.1:
     version "14.2.1"
     resolved "https://registry.npmjs.org/expo-constants/-/expo-constants-14.2.1.tgz"
@@ -4703,6 +4719,13 @@ Lockfile:
     version "1.4.4"
     resolved "https://registry.npmjs.org/expo-status-bar/-/expo-status-bar-1.4.4.tgz"
     integrity sha512-5DV0hIEWgatSC3UgQuAZBoQeaS9CqeWRZ3vzBR9R/+IUD87Adbi4FGhU10nymRqFXOizGsureButGZIXPs7zEA==
+  
+  expo-video-player@^2.2.0:
+    version "2.2.0"
+    resolved "https://registry.npmmirror.com/expo-video-player/-/expo-video-player-2.2.0.tgz#85cf1c8a9e928dde45523ebba7a4e81906b54ee3"
+    integrity sha512-DDai4zmTF265EHOagnWWA22o/xwP4FI1YVUzhTibN5vB3nLqSL9ABBI+H++I9T0p7sCRgQhgoy4whaWWcN4ZfQ==
+    dependencies:
+      tslib "^2.4.0"
   
   expo@~48.0.9:
     version "48.0.10"
@@ -5358,7 +5381,7 @@ Lockfile:
     dependencies:
       source-map "^0.7.3"
   
-  hoist-non-react-statics@^3.3.0:
+  hoist-non-react-statics@^3.3.0, hoist-non-react-statics@^3.3.2:
     version "3.3.2"
     resolved "https://registry.npmjs.org/hoist-non-react-statics/-/hoist-non-react-statics-3.3.2.tgz"
     integrity sha512-/gGivxi8JPKWNm/W0jSmzcMPpfpPLc3dY/6GxhX2hQ9iGj3aDfklV4ET7NjKpSinLpJ5vafa9iiGIEZg10SfBw==
@@ -7160,7 +7183,7 @@ Lockfile:
       is-docker "^2.1.1"
       is-wsl "^2.2.0"
   
-  opencollective-postinstall@^2.0.1:
+  opencollective-postinstall@^2.0.1, opencollective-postinstall@^2.0.3:
     version "2.0.3"
     resolved "https://registry.npmjs.org/opencollective-postinstall/-/opencollective-postinstall-2.0.3.tgz"
     integrity sha512-8AV/sCtuzUeTo8gQK5qDZzARrulB3egtLzFgteqB2tcT4Mw7B8Kt7JcDHmltjz6FOAHsvTevk70gZEbhM4ZS9Q==
@@ -8388,6 +8411,20 @@ Lockfile:
     resolved "https://registry.npmjs.org/react-native-element-timer/-/react-native-element-timer-2.1.2.tgz"
     integrity sha512-gLlHg1Pwb88rDdPxUaUTfCtZWBfOFTv0uqb6g9XTjk1QUr1LZds8mWBa96Fm/a+WAQ3kCGgEROyXBDriXJyMSQ==
   
+  react-native-elements@^3.4.3:
+    version "3.4.3"
+    resolved "https://registry.npmmirror.com/react-native-elements/-/react-native-elements-3.4.3.tgz#c33919002aef83a0c0f98d0ed56009714ad9b1b3"
+    integrity sha512-VtZc25EecPZyUBER85zFK9ZbY6kkUdcm1ZwJ9hdoGSCr1R/GFgxor4jngOcSYeMvQ+qimd5No44OVJW3rSJECA==
+    dependencies:
+      "@types/react-native-vector-icons" "^6.4.6"
+      color "^3.1.2"
+      deepmerge "^4.2.2"
+      hoist-non-react-statics "^3.3.2"
+      lodash.isequal "^4.5.0"
+      opencollective-postinstall "^2.0.3"
+      react-native-ratings "8.0.4"
+      react-native-size-matters "^0.3.1"
+  
   react-native-emoji-board@^1.2.1:
     version "1.2.1"
     resolved "https://registry.yarnpkg.com/react-native-emoji-board/-/react-native-emoji-board-1.2.1.tgz#4302c874c6e7f80b80e6698ad6d642c48e8c1aaf"
@@ -8398,6 +8435,13 @@ Lockfile:
       prop-types "^15.7.2"
       react-native-scrollable-tab-view "^1.0.0"
       string.fromcodepoint "^0.2.1"
+  
+  react-native-emoji-selector@^0.2.0:
+    version "0.2.0"
+    resolved "https://registry.yarnpkg.com/react-native-emoji-selector/-/react-native-emoji-selector-0.2.0.tgz#b1ed980cd585a3fd0fca1da6a29006c1a5979615"
+    integrity sha512-+rPPWG5vl5AexdH8udEwtzdq9QUGD6kp+dQ8C/459d3ScM0S3UnT/qAvhmpsTgCbgjpdwiJIcrKNxKmGEDb15g==
+    dependencies:
+      emoji-datasource "^6.0.0"
   
   react-native-gesture-handler@~2.9.0:
     version "2.9.0"
@@ -8473,6 +8517,13 @@ Lockfile:
     dependencies:
       prop-types "^15.7.x"
   
+  react-native-ratings@8.0.4:
+    version "8.0.4"
+    resolved "https://registry.yarnpkg.com/react-native-ratings/-/react-native-ratings-8.0.4.tgz#efd5ebad8acc08bf98d34d39b18fb7a6813ef991"
+    integrity sha512-Xczu5lskIIRD6BEdz9A0jDRpEck/SFxRqiglkXi0u67yAtI1/pcJC76P4MukCbT8K4BPVl+42w83YqXBoBRl7A==
+    dependencies:
+      lodash "^4.17.15"
+  
   react-native-reanimated@~2.14.4:
     version "2.14.4"
     resolved "https://registry.npmjs.org/react-native-reanimated/-/react-native-reanimated-2.14.4.tgz"
@@ -8509,6 +8560,11 @@ Lockfile:
       prop-types "^15.6.0"
       react-timer-mixin "^0.13.3"
   
+  react-native-size-matters@^0.3.1:
+    version "0.3.1"
+    resolved "https://registry.yarnpkg.com/react-native-size-matters/-/react-native-size-matters-0.3.1.tgz#24d0cfc335a2c730f6d58bd7b43ea5a41be4b49f"
+    integrity sha512-mKOfBLIBFBcs9br1rlZDvxD5+mAl8Gfr5CounwJtxI6Z82rGrMO+Kgl9EIg3RMVf3G855a85YVqHJL2f5EDRlw==
+  
   react-native-size-scaling@^0.5.1:
     version "0.5.1"
     resolved "https://registry.npmjs.org/react-native-size-scaling/-/react-native-size-scaling-0.5.1.tgz"
@@ -8533,6 +8589,11 @@ Lockfile:
     version "0.1.4"
     resolved "https://registry.npmjs.org/react-native-text-input-interactive/-/react-native-text-input-interactive-0.1.4.tgz"
     integrity sha512-Y8oCZkfZ03EiSXcSV9AWns2Zr5XVNRMRQRFMFXBS5vpYvpfvR3fp9MSP4uNZ3aNi6i27qLQQOCoVXf8vZiMngg==
+  
+  react-native-toast-message@^2.1.6:
+    version "2.1.6"
+    resolved "https://registry.npmmirror.com/react-native-toast-message/-/react-native-toast-message-2.1.6.tgz#322827c66901fa22cb3db614c7383cc717f5bbe2"
+    integrity sha512-VctXuq20vmRa9AE13acaNZhrLcS3FaBS2zEevS3+vhBsnVZYG0FIlWIis9tVnpnNxUb3ART+BWtwQjzSttXTng==
   
   react-native-typing-animation@0.1.7:
     version "0.1.7"
@@ -8573,10 +8634,10 @@ Lockfile:
       escape-string-regexp "2.0.0"
       invariant "2.2.4"
   
-  react-native@^0.71.6:
-    version "0.71.6"
-    resolved "https://registry.npmjs.org/react-native/-/react-native-0.71.6.tgz"
-    integrity sha512-gHrDj7qaAaiE41JwaFCh3AtvOqOLuRgZtHKzNiwxakG/wvPAYmG73ECfWHGxjxIx/QT17Hp37Da3ipCei/CayQ==
+  react-native@0.71.7:
+    version "0.71.7"
+    resolved "https://registry.yarnpkg.com/react-native/-/react-native-0.71.7.tgz#d0ae409f6ee4fc7e7a876b4ca9d8d28934133228"
+    integrity sha512-Id6iRLS581fJMFGbBl1jP5uSmjExtGOvw5Gvh7694zISXjsRAsFMmU+izs0pyCLqDBoHK7y4BT7WGPGw693nYw==
     dependencies:
       "@jest/create-cache-key-function" "^29.2.1"
       "@react-native-community/cli" "10.2.2"

@@ -8,10 +8,11 @@ import MemoriesScreen from './Memories';
 import Profile from './userInfo/Profile'
 import NoticeManageScreen from './noticeManage/NoticeManage';import { IconButton } from 'react-native-paper';
 import { StackNavigationProps } from '../App';
+import Test from './test/test';
 
 type RootTabParamList = {
   Home: undefined;
-  Meh: undefined;
+  Test: undefined;
   Memories: undefined;
   Trophy: undefined;
   Profile: { userId: string, postId: string } | undefined;
@@ -127,12 +128,12 @@ const MainScreen = ({route, navigation}:StackNavigationProps) => {
         component={Home}
       />
       <Tab.Screen
-        name="Meh"
+        name="Test"
         options={{
           tabBarIcon: tabBarIcon('meh'),
           tabBarLabel: showLabel ? 'Meh' : undefined,
         }}
-        component={generateScreen('Meh')}
+        component={Test}
       />
       <Tab.Screen
         options={{
