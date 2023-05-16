@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
-import { Pressable, ScrollView, View, Image, StyleSheet, Text, Alert, Linking, FlatList, Dimensions } from 'react-native';
-import { Button, Card, IconButton, Divider, FAB } from 'react-native-paper';
+import { Pressable, ScrollView, View, StyleSheet } from 'react-native';
+import { Button, Card, Divider, FAB } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Icon from 'react-native-vector-icons/AntDesign';
 import Modal from 'react-native-modal';
 import { StackNavigationProps } from '../App';
 import WaterfallFlow from 'react-native-waterfall-flow'
@@ -36,7 +35,7 @@ const FloatButton = ({ onPressFAB }: { onPressFAB: () => void }) => (
 );
 
 interface CardProps {
-    onCommentPress?: () => void,
+    goToDetail?: () => void,
     key?: number,
     content?: any,
     navigation?: any,
@@ -49,7 +48,7 @@ export const CardwithButtons = (props: CardProps) => {
     };
     return (
         <View>
-            <Pressable onPress={props.onCommentPress} onLongPress={toggleMenu}>
+            <Pressable onPress={props.goToDetail} onLongPress={toggleMenu}>
                 <Card mode='contained' style={{ borderRadius: 5 }}  >
                     <Card.Cover source={{ uri: "https://picsum.photos/600/400" }} style={{ height: props.height }} />
                     <Card.Title title="Room Name" subtitle="Description" />
@@ -66,7 +65,7 @@ export const CardwithButtons = (props: CardProps) => {
                     }>举报</Button>
                     <Divider />
                     <Button style={{ height: 50, paddingTop: 5 }} onPress={
-                         toggleMenu 
+                        toggleMenu
                     }>取消</Button>
                 </View>
             </Modal>
@@ -93,13 +92,18 @@ const RoomsScreen = ({ navigation }: StackNavigationProps) => {
                                 paddingRight: columnIndex === 0 ? 4 : 8,
                                 paddingTop: 3,
                                 paddingBottom: 3
-                            }}><CardwithButtons height={item} /></View>)
+                            }}>
+                            <CardwithButtons
+                                height={item}
+                                goToDetail={() => { }}
+                            />
+                        </View>)
                     }} />
                 {/* eslint-disable-next-line max-len */}
                 {/* -> Set bottom view to allow scrolling to top if you set bottom-bar position absolute */}
                 <View style={{ height: 90 }} />
             </ScrollView>
-            <FloatButton onPressFAB={() => { console.log('创建房间') }} />
+            <FloatButton onPressFAB={() => navigation.navigate('CreateRoom')} />
             {/* <NoticeManageButton onPressFAB={() => navigation.navigate('NoticeManageScreen')} /> */}
         </View>
     );

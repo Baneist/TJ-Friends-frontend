@@ -4,7 +4,7 @@ import { Button, Divider, IconButton, Card, List } from 'react-native-paper';
 import AvatarPicker from "../components/AvatarPicker/PostPicker";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import requestApi from '../utils/request';
+import requestApi, { BASE_URL } from '../utils/request';
 import { StackNavigationProps } from '../App';
 import Modal from 'react-native-modal';
 import mime from 'mime';
@@ -26,10 +26,10 @@ const PostPage = ({ route, navigation }: StackNavigationProps) => {
 
       const imageRes = await requestApi('post', '/uploadImage', { file: await readFile(blob), fileName }, true, '上传图片失败');
       if (imageRes.code === 0) {
-        image[index]=imageRes.data.url;
+      image[index]=BASE_URL+imageRes.data.url;
       }
     }
-    console.log('发布');
+    console.log(image);
     const res = await requestApi('post', '/Post', { postContent: text, photoUrl: image, pms: pmskey, isAnonymous: anonymous }, true, 'post失败')
     if (res.code == 0) {
       navigation.goBack();

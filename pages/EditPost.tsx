@@ -4,7 +4,7 @@ import {Button, Divider, IconButton,List} from 'react-native-paper';
 import AvatarPicker from "../components/AvatarPicker/PostPicker";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import requestApi from '../utils/request';
+import requestApi, { BASE_URL } from '../utils/request';
 import { StackNavigationProps } from '../App';
 import {styles} from './PostPage'
 import Modal from 'react-native-modal';
@@ -67,9 +67,10 @@ const EditPost = ({ route, navigation }: StackNavigationProps) => {
 
       const imageRes = await requestApi('post', '/uploadImage', { file: await readFile(blob), fileName }, true, '上传图片失败');
       if (imageRes.code === 0) {
-        image[index]=imageRes.data.url;
+      image[index]=BASE_URL+imageRes.data.url;
       }
     }
+    console.log(image);
     const res = await requestApi('put', `/updateMemory/${route.params?.postId}`, { postContent: text, photoUrl: image,pms:pmskey,isAnonymous:anonymous }, true, '修改失败')
     if (res.code == 0) {
       navigation.goBack();
@@ -207,7 +208,7 @@ const EditPost = ({ route, navigation }: StackNavigationProps) => {
               onPress={() => setImage(current => current.filter((i) => {
                 return i != item
               }))}>
-              <Icon name={'x'} style={{ fontSize: 15, color: 'white', backgroundColor: 'grey', opacity: 0.6 }} />
+              <Icon name={'window-close'} style={{ fontSize: 15, color: 'white', backgroundColor: 'grey', opacity: 0.6 }} />
             </Pressable>
           </View>
         )}

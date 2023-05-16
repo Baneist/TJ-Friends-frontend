@@ -110,7 +110,7 @@ export function EditProfile({route, navigation}: StackNavigationProps) {
       newUser.userAvatar.info = BASE_URL + imageRes.data.url;
       console.log('avatar', newUser.userAvatar);
     }
-
+    console.log(newUser.userAvatar.info);
     const res = await requestApi('put', '/updateUserInfo', newUser, true, '更新头像失败');
     console.log(newUser)
     if (res.code === 0) {
