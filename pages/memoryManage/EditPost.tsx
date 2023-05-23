@@ -1,21 +1,20 @@
 import React, {useEffect, useState} from 'react';
-import {View, TextInput, StyleSheet, Image, Pressable, Keyboard, Alert, Switch,Text, Dimensions, Platform} from 'react-native';
+import {View, TextInput, Image, Pressable, Keyboard, Alert, Switch,Text, Dimensions, Platform} from 'react-native';
 import {Button, Divider, IconButton,List} from 'react-native-paper';
-import AvatarPicker from "../components/AvatarPicker/PostPicker";
+import MultiPicker from "../../components/AvatarPicker/MultiPicker";
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
-import requestApi, { BASE_URL } from '../utils/request';
-import { StackNavigationProps } from '../App';
+import requestApi, { BASE_URL } from '../../utils/request';
+import { StackNavigationProps } from '../../App';
 import {styles} from './PostPage'
 import Modal from 'react-native-modal';
-import mime from 'mime';
-import { readFile } from './userInfo/EditInfo/EditProfile';
+import uploadImage from '../../utils/uploadImage';
 
 const EditPost = ({ route, navigation }: StackNavigationProps) => {
   const { width, height } = Dimensions.get("screen");
 
   const [anonymous, setAnonymous] = useState(false);
-  const [showAvatarOption, setShowAvatarOption] = useState(false);
+  const [showPickerOption, setShowPickerOption] = useState(false);
   const [text, setText] = useState('');
   const [image, setImage] = useState([] as string[]);
   const [otext, setoText] = useState('');
@@ -61,11 +60,7 @@ const EditPost = ({ route, navigation }: StackNavigationProps) => {
   async function handlePost() {
     // 发送text和image到服务器
     for (let index in image) {
-      const blob = await (await fetch(image[index])).blob();
-      const fileType = mime.getType(image[index]);
-      const fileName = 'image.' + mime.getExtension(fileType!);
-
-      const imageRes = await requestApi('post', '/uploadImage', { file: await readFile(blob), fileName }, true, '上传图片失败');
+      const imageRes = await uploadImage(image[index]);
       if (imageRes.code === 0) {
       image[index]=BASE_URL+imageRes.data.url;
       }
@@ -78,9 +73,9 @@ const EditPost = ({ route, navigation }: StackNavigationProps) => {
   useEffect(()=>{
     fetchData()
   },[])
-  function cancelAvatarOption() {
+  function cancelPickerOption() {
     return (
-      setShowAvatarOption(false)
+      setShowPickerOption(false)
     );
   }
 
@@ -216,7 +211,7 @@ const EditPost = ({ route, navigation }: StackNavigationProps) => {
           mode='contained'
           style={{ borderRadius: 0, margin: 5, width: 112, height: 112 }}
           size={50}
-          onPress={() => setShowAvatarOption(true)}
+          onPress={() => setShowPickerOption(true)}
         />}
       </View>
       <View style={{
@@ -246,7 +241,7 @@ const EditPost = ({ route, navigation }: StackNavigationProps) => {
       <View style={{paddingBottom: 100}} >
       <Button disabled={text.length==0&&image.length==0} onPress={()=>{setClick(true);handlePost();}} mode='contained'>重新发送</Button>
       </View>
-      <AvatarPicker showAvatarOption={showAvatarOption} onBackdropPress={cancelAvatarOption} setImage={changeImage}/>
+      <MultiPicker showPickerOption={showPickerOption} onBackdropPress={cancelPickerOption} setImage={changeImage}/>
     </KeyboardAwareScrollView>
     <Modal
         isVisible={MenuVisible}

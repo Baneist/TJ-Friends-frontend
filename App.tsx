@@ -17,7 +17,7 @@ import handleAxiosError from "./utils/handleError";
 
 import Signin from "./pages/Signin";
 import MainScreen from "./pages/Main";
-import Comment from "./pages/Comments";
+import Comment from "./pages/memoryManage/Comments";
 
 //查看关注列表 粉丝列表 黑名单
 import FollowingList from "./pages/userInfo/FollowingList";
@@ -32,17 +32,17 @@ import { EditProfile } from "./pages/userInfo/EditInfo/EditProfile";
 import EditNickName from "./pages/userInfo/EditInfo/EditNickName";
 import EditInterest from "./pages/userInfo/EditInfo/EditInterest";
 import EditStatus from "./pages/userInfo/EditInfo/EditStatus";
-import PostPage from "./pages/PostPage";
+import PostPage from "./pages/memoryManage/PostPage";
 import EditLabel from "./pages/userInfo/EditInfo/EditLabel";
 
 import Login from "./pages/Login";
 import requestApi from "./utils/request";
-import EditPost from "./pages/EditPost";
+import EditPost from "./pages/memoryManage/EditPost";
 import NoticeManageScreen from './pages/noticeManage/NoticeManage';
 import NoticeDetailScreen from "./pages/noticeManage/NoticeDetail";
 
 import ChatDetail from './pages/ChatDetail'
-import CreatePage from "./pages/CreateRoom";
+import CreatePage from "./pages/roomManage/CreateRoom";
 
 const GetUrl = "https://1.tongji.edu.cn/api/ssoservice/system/loginIn";
 const TargetUrl = "https://1.tongji.edu.cn/ssologin";

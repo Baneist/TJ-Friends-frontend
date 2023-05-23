@@ -4,11 +4,11 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import { createBottomTabNavigator, BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { Text } from "galio-framework";
 import { BottomFabBar } from 'rn-wave-bottom-bar';
-import MemoriesScreen from './Memories';
+import MemoriesScreen from './memoryManage/Memories';
 import Profile from './userInfo/Profile'
 import NoticeManageScreen from './noticeManage/NoticeManage';import { IconButton } from 'react-native-paper';
 import { StackNavigationProps } from '../App';
-import RoomsScreen from './Rooms';
+import RoomsScreen from './roomManage/Rooms';
 import { color } from 'react-native-reanimated';
 
 type RootTabParamList = {

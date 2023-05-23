@@ -5,11 +5,11 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/AntDesign';
 import { useState, useEffect } from 'react';
 import Modal from 'react-native-modal';
-import { StackNavigationProps } from '../App';
-import requestApi from '../utils/request';
-import handleAxiosError from "../utils/handleError";
+import { StackNavigationProps } from '../../App';
+import requestApi from '../../utils/request';
+import handleAxiosError from "../../utils/handleError";
 import { useFocusEffect } from '@react-navigation/native';
-import { NotionMainBadge } from '../components/NoticeManage/NoticeBadge';
+import { NotionMainBadge } from '../../components/NoticeManage/NoticeBadge';
 
 export const styles = StyleSheet.create({
   userphoto: {

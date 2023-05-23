@@ -1,7 +1,7 @@
 import React,{useState,useEffect} from 'react';
 import { ScrollView, View,Text } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { CardwithButtons } from '../../pages/Memories';
+import { CardwithButtons } from '../../pages/memoryManage/Memories';
 import requestApi from '../../utils/request';
 import { StackNavigationProps } from '../../App';
 import { useFocusEffect } from '@react-navigation/native';

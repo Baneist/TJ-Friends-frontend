@@ -3,7 +3,7 @@ import { Pressable, ScrollView, View, StyleSheet } from 'react-native';
 import { Button, Card, Divider, FAB } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Modal from 'react-native-modal';
-import { StackNavigationProps } from '../App';
+import { StackNavigationProps } from '../../App';
 import WaterfallFlow from 'react-native-waterfall-flow'
 const styles = StyleSheet.create({
     fab: {
@@ -98,7 +98,8 @@ const RoomsScreen = ({ navigation }: StackNavigationProps) => {
                                 goToDetail={() => { }}
                             />
                         </View>)
-                    }} />
+                    }}
+                />
                 {/* eslint-disable-next-line max-len */}
                 {/* -> Set bottom view to allow scrolling to top if you set bottom-bar position absolute */}
                 <View style={{ height: 90 }} />
