@@ -2,20 +2,24 @@ import React from 'react';
 import { View, Text, StyleSheet, Dimensions} from 'react-native';
 
 interface BadgeProps {
-    count: number;
+    content:React.ReactNode
   }
 
-const Badge = ( {count} :BadgeProps ) => {
+const Badge = ( {content} :BadgeProps ) => {
   return (
     <View style={styles.container}>
       <View style={styles.badge}>
-        <Text style={styles.text}>{count}</Text>
+        {content}
+        {/* <Text style={styles.text}>{count}</Text> */}
       </View>
     </View>
   );
 };
 
-export const DialogBadge = ( {count} :BadgeProps ) => {
+interface DialogBadgeProps{
+  count:number
+}
+export const DialogBadge = ( {count} :DialogBadgeProps ) => {
     return (
       <View style={styles.container}>
         <View style={styles.dialogbadge}>

@@ -8,7 +8,7 @@ import { StackNavigationProps } from '../../App'
 import { defaultInfo, userProp } from "./Profile";
 import { followProp } from "./FollowingList";
 import requestApi from "../../utils/request";
-import { styles } from "./Profile.style";
+import { profileStyles } from "./Profile.style";
 import { GENDER } from "./Profile";
 import MomentsList from "../../components/MomentsList/MomentsList";
 import ChatDetail from "../ChatDetail";
@@ -35,19 +35,19 @@ const ModalOptions = (props:ModalOptionsProps) =>{
       <Modal
       isVisible={props.showOption}
       onBackdropPress={props.onBackdropPress}
-      style={styles.modalFromBottom}
+      style={profileStyles.modalFromBottom}
       >
-      <View style={styles.contentContainer}>
+      <View style={profileStyles.contentContainer}>
         <Button
-        style={styles.optionBtn} 
+        style={profileStyles.optionBtn} 
         onPress={props.onBlock}
         >加入黑名单</Button>
         <Divider />
         <Button
-        style={styles.optionBtn} 
+        style={profileStyles.optionBtn} 
         onPress={props.onComplaint}>举报</Button>
         <Divider />
-        <Button style={styles.optionBtn}
+        <Button style={profileStyles.optionBtn}
         onPress={props.onBackdropPress}>取消</Button>
       </View>
     </Modal>
@@ -177,8 +177,8 @@ const OthersPage = ({route, navigation }: StackNavigationProps) => {
         {/* 资料卡片 */}
         <ImageBackground
           source={profileImage.ProfileBackground}
-          style={styles.profileContainer}
-          imageStyle={styles.profileBackground}
+          style={profileStyles.profileContainer}
+          imageStyle={profileStyles.profileBackground}
         >
           <ScrollView
             showsVerticalScrollIndicator={false}
@@ -190,15 +190,15 @@ const OthersPage = ({route, navigation }: StackNavigationProps) => {
             onComplaint={onComplaint}
             onBackdropPress={()=>{setBlockOption(false)}}
             />
-            <Block flex style={styles.profileCard}>
+            <Block flex style={profileStyles.profileCard}>
               {/* 头像 */}
-              <Block middle style={styles.avatarContainer}>
+              <Block middle style={profileStyles.avatarContainer}>
                 <Image
                   source={{ uri: userInfo.userAvatar.info }}
-                  style={styles.avatar}
+                  style={profileStyles.avatar}
                 />
               </Block>
-              <Block style={styles.info}>
+              <Block style={profileStyles.info}>
                 {/* 发私信之类的 */}
                 <Block
                   middle
@@ -221,24 +221,24 @@ const OthersPage = ({route, navigation }: StackNavigationProps) => {
                 <Block row space="around">
                   <Pressable onPress={viewFollower}>
                     <Block middle>
-                      <Text style={styles.infoNum}>
+                      <Text style={profileStyles.infoNum}>
                         {followerNum}
                       </Text>
-                      <Text style={styles.infoName}>Followers</Text>
+                      <Text style={profileStyles.infoName}>Followers</Text>
                     </Block>
                   </Pressable>
                   <Block middle>
-                      <Text style={styles.infoNum}>
+                      <Text style={profileStyles.infoNum}>
                         0%
                       </Text>
-                      <Text style={styles.infoName}>Suitability</Text>
+                      <Text style={profileStyles.infoName}>Suitability</Text>
                   </Block>
                   <Pressable onPress={viewFollowing}>
                     <Block middle>
-                      <Text style={styles.infoNum}>
+                      <Text style={profileStyles.infoNum}>
                         {followingNum}
                       </Text>
-                      <Text style={styles.infoName}>Following</Text>
+                      <Text style={profileStyles.infoName}>Following</Text>
                     </Block>
                   </Pressable>
                 </Block>
@@ -246,7 +246,7 @@ const OthersPage = ({route, navigation }: StackNavigationProps) => {
               {/* 用户ID 简介等 */}
               <Block flex>
                 {/* 用户昵称 */}
-                <Block middle style={styles.nameInfo}>
+                <Block middle style={profileStyles.nameInfo}>
                   <Text bold size={28} color="#32325D">
                     {userInfo.userNickName.info}
                   </Text>
@@ -305,7 +305,7 @@ const OthersPage = ({route, navigation }: StackNavigationProps) => {
                 </Block>
                 {/* 分割线 */}
                 <Block middle style={{ marginTop: 16, marginBottom: 16 }}>
-                  <Block style={styles.divider} />
+                  <Block style={profileStyles.divider} />
                 </Block>
                 {/* 个性签名 */}
                 <Block middle>

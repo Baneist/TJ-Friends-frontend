@@ -14,7 +14,7 @@ import { StackNavigationProps } from '../../App'
 import requestApi from "../../utils/request";
 import handleAxiosError from "../../utils/handleError";
 import { useFocusEffect } from '@react-navigation/native';
-import { styles } from "./Profile.style";
+import { profileStyles} from "./Profile.style";
 import MomentsList from "../../components/MomentsList/MomentsList";
 import { AxiosResponse } from "axios";
 import { CardwithButtons } from "../memoryManage/Memories";
@@ -24,7 +24,7 @@ export enum GENDER { Male = "男", Female = "女" }
 const { width } = Dimensions.get("screen");
 
 //图片
-const profileImage = {
+export const profileImage = {
   ProfileBackground: require("../../assets/imgs/profile-screen-bg.png"),
   ProfilePicture: 'https://picsum.photos/700'
 }
@@ -186,38 +186,38 @@ const Profile = ({ navigation }: StackNavigationProps) => {
         {/* 资料卡片 */}
         <ImageBackground
           source={profileImage.ProfileBackground}
-          style={styles.profileContainer}
-          imageStyle={styles.profileBackground}
+          style={profileStyles.profileContainer}
+          imageStyle={profileStyles.profileBackground}
         >
           <ScrollView
             showsVerticalScrollIndicator={false}
             style={{ width }}
           >
-            <Block flex style={styles.profileCard}>
+            <Block flex style={profileStyles.profileCard}>
               {/* 头像 */}
-              <Block middle style={styles.avatarContainer}>
+              <Block middle style={profileStyles.avatarContainer}>
                 <Image
                   source={{ uri: userInfo.userAvatar.info }}
-                  style={styles.avatar}
+                  style={profileStyles.avatar}
                 />
               </Block>
-              <Block style={styles.info}>
+              <Block style={profileStyles.info}>
                 {/* 粉丝量信息 */}
                 <Block row space="around">
                   <Pressable onPress={viewFollower}>
                     <Block middle>
-                      <Text style={styles.infoNum}>
+                      <Text style={profileStyles.infoNum}>
                         {userInfo.followerNum}
                       </Text>
-                      <Text style={styles.infoName}>Followers</Text>
+                      <Text style={profileStyles.infoName}>Followers</Text>
                     </Block>
                   </Pressable>
                   <Pressable onPress={viewFollowing}>
                     <Block middle>
-                      <Text style={styles.infoNum}>
+                      <Text style={profileStyles.infoNum}>
                         {userInfo.followingNum}
                       </Text>
-                      <Text style={styles.infoName}>Following</Text>
+                      <Text style={profileStyles.infoName}>Following</Text>
                     </Block>
                   </Pressable>
                 </Block>
@@ -225,7 +225,7 @@ const Profile = ({ navigation }: StackNavigationProps) => {
               {/* 用户ID 简介等 */}
               <Block flex>
                 {/* 用户昵称 */}
-                <Block middle style={styles.nameInfo}>
+                <Block middle style={profileStyles.nameInfo}>
                   <Text bold size={28} color="#32325D">
                     {userInfo.userNickName.info}
                   </Text>
@@ -281,7 +281,7 @@ const Profile = ({ navigation }: StackNavigationProps) => {
                 </Block>
                 {/* 分割线 */}
                 <Block middle style={{ marginTop: 16, marginBottom: 16 }}>
-                  <Block style={styles.divider} />
+                  <Block style={profileStyles.divider} />
                 </Block>
                 {/* 个性签名 */}
                 <Block middle>

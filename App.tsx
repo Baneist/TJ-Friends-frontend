@@ -46,6 +46,7 @@ import CreatePage from "./pages/roomManage/CreateRoom";
 
 //房间
 import RoomInside from "./pages/roomManage/RoomInside";
+import EditPage from "./pages/roomManage/EditRoom";
 
 const GetUrl = "https://1.tongji.edu.cn/api/ssoservice/system/loginIn";
 const TargetUrl = "https://1.tongji.edu.cn/ssologin";
@@ -58,7 +59,7 @@ type RootStackParamList = {
   Login: undefined;
   Signup: undefined;
   ChangePassword: undefined;
-  Profile: undefined;
+  Profile: { userId: string } | undefined;
   Comment: { postId: string } | undefined;
   Memories: undefined;
   Post: undefined;
@@ -78,6 +79,7 @@ type RootStackParamList = {
   ComplaintUser:{ userId: string };
   RoomInside:undefined
   CreateRoom:undefined;
+  EditRoom:undefined;
 };
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -279,6 +281,16 @@ const App = () => {
           <Stack.Screen
             name="CreateRoom"
             component={CreatePage}
+            options={{ headerBackTitle: "Back" }}
+          />
+          <Stack.Screen
+            name="EditRoom"
+            component={EditPage}
+            options={{ headerBackTitle: "Back" }}
+          />
+          <Stack.Screen
+            name="BlackList"
+            component={BlackList}
             options={{ headerBackTitle: "Back" }}
           />
         </Stack.Navigator>

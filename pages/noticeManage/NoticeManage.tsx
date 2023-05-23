@@ -24,6 +24,11 @@ export const styles = StyleSheet.create({
   label1: {
     fontSize: 12,
   },
+  text: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
   sys_msg_list: {
     width: Dimensions.get('window').width,
     height: Dimensions.get('window').height - 100,
@@ -42,7 +47,7 @@ function NoticeLikeButton({count, onPress} : NoticeManageProps) {
     <View style={{ alignItems: 'center' }}>
       <IconButton icon='heart' key={'heart'} size={30} onPress={onPress}/>
       <Text style={styles.label1}>喜欢我的</Text>
-      {count > 0 && <Badge count={count} />}
+      {count > 0 && <Badge content={<Text style={styles.text}>{count}</Text>} />}
     </View>
   );
 }
@@ -52,7 +57,7 @@ function NoticeCommentButton({count, onPress} : NoticeManageProps) {
     <View style={{ alignItems: 'center' }}>
       <IconButton icon='comment' key={'comment'} size={30} onPress={onPress} />
       <Text style={styles.label1}>评论我的</Text>
-      {count > 0 && <Badge count={count} />}
+      {count > 0 && <Badge content={<Text style={styles.text}>{count}</Text>} />}
     </View>
   );
 }
@@ -62,7 +67,7 @@ function NoticeShareButton({count, onPress} : NoticeManageProps) {
     <View style={{ alignItems: 'center' }}>
       <IconButton icon='share' key={'share'} size={30} onPress={onPress} />
       <Text style={styles.label1}>转发我的</Text>
-      {count > 0 && <Badge count={count} />}
+      {count > 0 && <Badge content={<Text style={styles.text}>{count}</Text>} />}
     </View>
   );
 }
@@ -72,7 +77,7 @@ function NoticeFollowButton({count, onPress} : NoticeManageProps) {
     <View style={{ alignItems: 'center' }}>
       <IconButton icon='eye' key={'share'} size={30} onPress={onPress} />
       <Text style={styles.label1}>我关注的</Text>
-      {count > 0 && <Badge count={count} />}
+      {count > 0 && <Badge content={<Text style={styles.text}>{count}</Text>} />}
     </View>
   );
 }

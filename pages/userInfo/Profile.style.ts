@@ -1,7 +1,7 @@
 import {Dimensions, StyleSheet} from "react-native";
 const {width, height} = Dimensions.get("screen");
 const thumbMeasure = (width - 48 - 32) / 3;
-export const styles = StyleSheet.create({
+export const profileStyles = StyleSheet.create({
   profileContainer: {
     width: width,
     height: height,
