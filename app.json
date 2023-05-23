@@ -3,7 +3,7 @@
     "name": "TJFriends",
     "slug": "tjfriends",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "default",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
@@ -15,6 +15,7 @@
       "**/*"
     ],
     "ios": {
+      "requireFullScreen": true,
       "supportsTablet": true
     },
     "android": {
@@ -32,6 +33,14 @@
         "projectId": "ce062628-adee-41b5-b6b8-d35ac71a6967"
       }
     },
+    "plugins": [
+      [
+        "expo-screen-orientation",
+        {
+          "initialOrientation": "DEFAULT"
+        }
+      ]
+    ],
     "owner": "peanutpuff"
   }
 }

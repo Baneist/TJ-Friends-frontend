@@ -43,6 +43,9 @@ import NoticeDetailScreen from "./pages/noticeManage/NoticeDetail";
 
 import ChatDetail from './pages/ChatDetail'
 
+//房间
+import RoomInside from "./pages/room/RoomInside";
+
 const GetUrl = "https://1.tongji.edu.cn/api/ssoservice/system/loginIn";
 const TargetUrl = "https://1.tongji.edu.cn/ssologin";
 const PostUrl = "https://1.tongji.edu.cn/api/sessionservice/session/login";
@@ -72,6 +75,7 @@ type RootStackParamList = {
   ChatDetail:  { userId: string } | undefined;
   BlackList:undefined,
   ComplaintUser:{ userId: string };
+  RoomInside:undefined
 };
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -261,6 +265,11 @@ const App = () => {
           <Stack.Screen
             name="ChatDetail"
             component={ChatDetail}
+            options={{ headerBackTitle: "Back" }}
+          />
+          <Stack.Screen
+            name="RoomInside"
+            component={RoomInside}
             options={{ headerBackTitle: "Back" }}
           />
           <Stack.Screen name="NoticeManageScreen" component={NoticeManageScreen} options={{ headerBackTitle: 'Back' }} />

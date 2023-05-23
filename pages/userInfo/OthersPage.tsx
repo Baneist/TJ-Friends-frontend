@@ -99,17 +99,10 @@ const OthersPage = ({route, navigation }: StackNavigationProps) => {
   }
   async function fetchData() {
     //获取资料、关注列表和粉丝列表
-    const [resInfo, resFollowing, resFollower] = await Promise.all([
-      requestApi('get', `/profile/${pageid}`, null, true, 'getProfile failed'),
-      requestApi('get', `/profile/${pageid}/followings`, null, true, 'Get Following failed'),
-      requestApi('get', `/profile/${pageid}/followers`, null, true, 'Get Follower failed'),
-    ]);
-    handleApiResponse(resInfo, () => setUserInfo(resInfo.data));
-    handleApiResponse(resFollowing, () => setFollowingNum(resFollowing.data.followings.length));
-    handleApiResponse(resFollower, () => { 
-      setFollowerNum(resFollower.data.followers.length); 
-      setFollowing(hasFollowing(resFollower.data.followers))
-     });
+    const resInfo = await requestApi('get', `/profile/${pageid}`, null, true, 'getProfile failed')
+    setUserInfo(resInfo.data)
+    setFollowerNum(resInfo.data.followerNum)
+    setFollowingNum(resInfo.data.followingNum)
   }
 
   useFocusEffect(
