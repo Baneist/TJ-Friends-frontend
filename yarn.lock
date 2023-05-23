@@ -1994,6 +1994,11 @@
     prompts "^2.4.0"
     semver "^6.3.0"
 
+"@react-native-community/clipboard@^1.5.1":
+  version "1.5.1"
+  resolved "https://registry.yarnpkg.com/@react-native-community/clipboard/-/clipboard-1.5.1.tgz#32abb3ea2eb91ee3f9c5fb1d32d5783253c9fabe"
+  integrity sha512-AHAmrkLEH5UtPaDiRqoULERHh3oNv7Dgs0bTC0hO5Z2GdNokAMPT5w8ci8aMcRemcwbtdHjxChgtjbeA38GBdA==
+
 "@react-native-community/datetimepicker@6.7.3":
   version "6.7.3"
   resolved "https://registry.npmjs.org/@react-native-community/datetimepicker/-/datetimepicker-6.7.3.tgz"
@@ -8237,6 +8242,11 @@ react-native-checkbox-tree@^2.1.0:
   resolved "https://registry.npmjs.org/react-native-checkbox-tree/-/react-native-checkbox-tree-2.1.0.tgz"
   integrity sha512-4JQPd46wWJE78MLfuQJ+XNm4XSksn9amMsfVN66c6RvNlI9i7VsfMBMn30jyXu6y1B0fHK6xPWctI6OjfhUeIw==
 
+react-native-clipboard@^0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/react-native-clipboard/-/react-native-clipboard-0.0.5.tgz#3e3f57f32f6785fff05453f88fbcc0a34ed47828"
+  integrity sha512-0tKNkVyYAQ+79SbTYIoa+5NATLOZkk4c1wQJoloWbRj0PcYPt06+jCC+S9jFs9UxZTRkbdZI+pWblQWwO5N2hg==
+
 react-native-codegen@^0.71.5:
   version "0.71.5"
   resolved "https://registry.npmjs.org/react-native-codegen/-/react-native-codegen-0.71.5.tgz"
@@ -8511,6 +8521,11 @@ react-native-virtualized-view@*:
   version "1.0.0"
   resolved "https://registry.npmjs.org/react-native-virtualized-view/-/react-native-virtualized-view-1.0.0.tgz"
   integrity sha512-7YyFMMkNzJ787/giGkKcm0JEx0IcLEE/XHREGz2I4K1RISQGFjEDe6iWsapOnHSR/e1vhebZJ8VmqhSpg5YPzg==
+
+react-native-waterfall-flow@^1.1.4:
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/react-native-waterfall-flow/-/react-native-waterfall-flow-1.1.4.tgz#32abda9ead409cde408da0fc45459a81615d35b1"
+  integrity sha512-Jyxgau9TU9UsAcgD0NoBFM3Xkf1/zvg7IjlUwapHLoPQokFw3OMkz7RgvZDH3dk8uWrJlpunCsxrQ1QODV7v2A==
 
 react-native-web@~0.18.10:
   version "0.18.12"

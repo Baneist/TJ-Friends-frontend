@@ -4,15 +4,16 @@ import Icon from 'react-native-vector-icons/AntDesign';
 import { createBottomTabNavigator, BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
 import { Text } from "galio-framework";
 import { BottomFabBar } from 'rn-wave-bottom-bar';
-import MemoriesScreen from './Memories';
+import MemoriesScreen from './memoryManage/Memories';
 import Profile from './userInfo/Profile'
 import NoticeManageScreen from './noticeManage/NoticeManage';import { IconButton } from 'react-native-paper';
 import { StackNavigationProps } from '../App';
-import Room from './room/Room';
+import RoomsScreen from './roomManage/Rooms';
+import { color } from 'react-native-reanimated';
 
 type RootTabParamList = {
   Home: undefined;
-  Room: undefined;
+  Meh: undefined;
   Memories: undefined;
   Trophy: undefined;
   Profile: { userId: string, postId: string } | undefined;
@@ -128,12 +129,13 @@ const MainScreen = ({route, navigation}:StackNavigationProps) => {
         component={Home}
       />
       <Tab.Screen
-        name="Room"
         options={{
-          tabBarIcon: tabBarIcon('meh'),
+          tabBarIcon: tabBarIcon('youtube'),
+          tabBarIconStyle:{},
           tabBarLabel: showLabel ? 'Meh' : undefined,
         }}
-        component={Room}
+        name="Rooms"
+        component={RoomsScreen}
       />
       <Tab.Screen
         options={{

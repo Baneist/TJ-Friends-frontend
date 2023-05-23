@@ -17,7 +17,7 @@ import { useFocusEffect } from '@react-navigation/native';
 import { styles } from "./Profile.style";
 import MomentsList from "../../components/MomentsList/MomentsList";
 import { AxiosResponse } from "axios";
-import { CardwithButtons } from "../Memories";
+import { CardwithButtons } from "../memoryManage/Memories";
 
 export enum GENDER { Male = "男", Female = "女" }
 

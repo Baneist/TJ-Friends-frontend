@@ -1,5 +1,5 @@
 import React from 'react';
-import { Alert } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { Bubble } from 'react-native-gifted-chat';
 
 
@@ -17,58 +17,18 @@ interface CustomBubbleProps {
   currentMessage?:any;
 }
 
-// function handleLongPress(props) {
-//   const message = props.currentMessage;
-//   // if (!message.editable) {
-//   //   return;
-//   // }
-//   Alert.alert(
-//     '撤回消息',
-//     '您确定要撤回该消息吗？',
-//     [
-//       { text: '取消' },
-//       {
-//         text: '确定',
-//         onPress: () => {
-//           const updatedMessages = props.messages.map(m => {
-//             if (m._id === message._id) {
-//               return {
-//                 ...m,
-//                 text: '该条消息已被撤回',
-//                 createdAt: new Date(),
-//                 system: true,
-//               };
-//             } else {
-//               return m;
-//             }
-//           });
-//           props.setMessages(updatedMessages);
-//         },
-//       },
-//     ],
-//   );
-// }
 
 function CustomBubble(props: CustomBubbleProps) {
-  // function handleLongPress() {
-  //   const { messageId, onMessageRecall } = props;
-  //   const canRecall = props.currentMessage.canRecall !== false; // default is true
-  //   if (canRecall) {
-  //     Alert.alert(
-  //       'Recall message',
-  //       'Are you sure you want to recall this message?',
-  //       [
-  //         { text: 'Cancel', style: 'cancel' },
-  //         {
-  //           text: 'Recall',
-  //           style: 'destructive',
-  //           onPress: () => onMessageRecall(messageId),
-  //         },
-  //       ],
-  //     );
-  //   }
-  // }
 
+  if(props.currentMessage.isRevoke){
+    return (
+      <View style={styles.revokedBubble}>
+        <Text style={styles.revokedText}>
+          {`${props.currentMessage.user.name} 撤回了一条消息`}
+        </Text>
+      </View>
+    );
+  }
   return (
     <Bubble
       {...props}
@@ -96,9 +56,19 @@ function CustomBubble(props: CustomBubbleProps) {
           color: '#FFF',
         },
       }}
-      // onLongPress={() => handleLongPress(props)}
     />
   );
 }
+
+const styles = StyleSheet.create({
+  revokedBubble: {
+    height: 40, 
+    justifyContent: 'center', 
+    flex: 1,
+  },
+  revokedText: {
+    textAlign: 'center', // 文字水平居中
+  },
+});
 
 export default CustomBubble;

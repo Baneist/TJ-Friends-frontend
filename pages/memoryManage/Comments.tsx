@@ -6,8 +6,8 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 
 import Modal from 'react-native-modal';
-import { StackNavigationProps } from '../App';
-import requestApi from '../utils/request';
+import { StackNavigationProps } from '../../App';
+import requestApi from '../../utils/request';
 import { useFocusEffect } from '@react-navigation/native';
 
 interface CardProps {

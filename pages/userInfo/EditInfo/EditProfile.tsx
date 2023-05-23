@@ -31,6 +31,7 @@ import {toastConfig} from "../../../components/Toast/Toast";
 import Toast from "react-native-toast-message";
 import mime from "mime";
 import { BASE_URL } from "../../../utils/request";
+import uploadImage from "../../../utils/uploadImage";
 
 //获取屏幕宽高
 const {width, height} = Dimensions.get("screen");
@@ -98,11 +99,7 @@ export function EditProfile({route, navigation}: StackNavigationProps) {
 
   //选头像
   async function onSubmitAvatar(url: string) {
-    const blob = await (await fetch(url)).blob();
-    const fileType = mime.getType(url);
-    const fileName = 'image.' + mime.getExtension(fileType!);
-
-    const imageRes = await requestApi('post', '/uploadImage', {file: await readFile(blob), fileName}, true, '上传图片失败');
+    const imageRes=await uploadImage(url);
     let newUser = {...userInfo};
 
     console.log(imageRes)
@@ -110,7 +107,6 @@ export function EditProfile({route, navigation}: StackNavigationProps) {
       newUser.userAvatar.info = BASE_URL + imageRes.data.url;
       console.log('avatar', newUser.userAvatar);
     }
-
     const res = await requestApi('put', '/updateUserInfo', newUser, true, '更新头像失败');
     console.log(newUser)
     if (res.code === 0) {

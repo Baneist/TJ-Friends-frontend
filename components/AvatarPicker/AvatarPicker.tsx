@@ -1,35 +1,37 @@
-import React , {useState}from "react";
+import React, { useState } from "react";
 import { StyleSheet, View, Image, Alert } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { ImageEditor } from "expo-image-editor";
 import Modal from 'react-native-modal';
-import {Button, Card, TextInput, Dialog, Surface,
-    Portal, Provider,Snackbar,IconButton, List, Divider } from 'react-native-paper';
+import {
+  Button, Card, TextInput, Dialog, Surface,
+  Portal, Provider, Snackbar, IconButton, List, Divider
+} from 'react-native-paper';
 
-const styles = StyleSheet.create({
-    modalFromBottom: {
-        justifyContent: 'flex-end',
-        margin: 0,
-      },
-      avatarBtn:{
-        height:50,
-        marginTop:10
-      },
-      contentContainer:{
-        backgroundColor: 'white',
-        paddingTop:15
-      },
+export const styles = StyleSheet.create({
+  modalFromBottom: {
+    justifyContent: 'flex-end',
+    margin: 0,
+  },
+  avatarBtn: {
+    height: 50,
+    marginTop: 10
+  },
+  contentContainer: {
+    backgroundColor: 'white',
+    paddingTop: 15
+  },
 });
 
 
-interface AvatarPickerProps{
-    showAvatarOption:boolean,
-    onBackdropPress:()=>void,
-    onSubmit:(url:string) => void,
+interface AvatarPickerProps {
+  showAvatarOption: boolean,
+  onBackdropPress: () => void,
+  onSubmit: (url: string) => void,
 }
 
 
-export default function AvatarPicker(props:AvatarPickerProps) {
+export default function AvatarPicker(props: AvatarPickerProps) {
   const [imageUri, setImageUri] = useState('');
 
   const [editorVisible, setEditorVisible] = useState(false);
@@ -43,7 +45,7 @@ export default function AvatarPicker(props:AvatarPickerProps) {
       const pickerResult = await ImagePicker.launchImageLibraryAsync();
       // Check they didn't cancel the picking
       if (!pickerResult.canceled) {
-        console.log('type',typeof(pickerResult.assets[0]))
+        console.log('type', typeof (pickerResult.assets[0]))
         console.log(pickerResult.assets[0].uri)
         launchEditor(pickerResult.assets[0].uri);
       }
@@ -79,38 +81,38 @@ export default function AvatarPicker(props:AvatarPickerProps) {
     // And set the image editor to be visible
     setEditorVisible(true);
   };
-  return(
-      <Modal
+  return (
+    <Modal
       isVisible={props.showAvatarOption}
       onBackdropPress={props.onBackdropPress}
       style={styles.modalFromBottom}
-      >
-        <View style={styles.contentContainer}>
-          <Button icon="camera" 
-          style={styles.avatarBtn} 
+    >
+      <View style={styles.contentContainer}>
+        <Button icon="camera"
+          style={styles.avatarBtn}
           onPress={() => fromCamara()}
-          >从相机选择</Button>
-          <Divider />
-          <Button icon='image'
-          style={styles.avatarBtn} 
+        >从相机选择</Button>
+        <Divider />
+        <Button icon='image'
+          style={styles.avatarBtn}
           onPress={() => fromAlbum()}>从相册选择</Button>
-          <Divider />
-          <Button style={styles.avatarBtn}
+        <Divider />
+        <Button style={styles.avatarBtn}
           onPress={props.onBackdropPress}>取消</Button>
-        </View>
-          <ImageEditor
-          visible={editorVisible}
-          onCloseEditor={() => setEditorVisible(false)}
-          imageUri={imageUri}
-          fixedCropAspectRatio={1 / 1}
-          lockAspectRatio={true}
-          onEditingComplete={(result) => {
-              console.log(typeof(result.uri));
-              props.onSubmit(result.uri);
-              props.onBackdropPress();
-          }}
-          mode="full"
-        />
-      </Modal>
-    );
-  }
+      </View>
+      <ImageEditor
+        visible={editorVisible}
+        onCloseEditor={() => setEditorVisible(false)}
+        imageUri={imageUri}
+        fixedCropAspectRatio={1 / 1}
+        lockAspectRatio={true}
+        onEditingComplete={(result) => {
+          console.log(typeof (result.uri));
+          props.onSubmit(result.uri);
+          props.onBackdropPress();
+        }}
+        mode="full"
+      />
+    </Modal>
+  );
+}
