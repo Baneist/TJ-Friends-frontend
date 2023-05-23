@@ -4,9 +4,10 @@ import { TextInput, List, Button, IconButton } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import SinglePicker from '../../components/AvatarPicker/SinglePicker';
 import uploadImage from '../../utils/uploadImage';
-import { BASE_URL } from '../../utils/request';
+import requestApi, { BASE_URL } from '../../utils/request';
+import { StackNavigationProps } from '../../App';
 
-const CreatePage = () => {
+const CreatePage = ({ route, navigation }: StackNavigationProps) => {
     const [locked, setLocked] = useState(false);
     const [text1, setText1] = useState('');
     const [text2, setText2] = useState('');
@@ -22,11 +23,16 @@ const CreatePage = () => {
     function changeImage(uri: string) {
         setImage(uri)
     }
+
     async function handleCreate() {
-        // const imageRes = await uploadImage(image);
-        // if (imageRes.code === 0) {
-        //     setImage(BASE_URL + imageRes.data.url);
-        // }
+        const imageRes = await uploadImage(image);
+        if (imageRes.code === 0) {
+            setImage(BASE_URL + imageRes.data.url);
+        }
+        const res = await requestApi('post', '/createRoom', { coverUrl: image, videoUrl: text1, roomName: text2, roomDescription: text3, roomPms: locked }, true, 'post失败')
+        if (res.code == 0) {
+            navigation.goBack();
+        }
         console.log('create');
     }
     return (
@@ -126,12 +132,11 @@ const CreatePage = () => {
                 mode='contained'
                 style={{ margin: 20, }}
                 onPress={handleCreate}
-                disabled={text1===""||text2===""}
+                disabled={image === "" || text1 === "" || text2 === "" || text3 === ""}
             >
                 创建
             </Button>
             <SinglePicker showPickerOption={showPickerOption} onBackdropPress={cancelPickerOption} setImage={changeImage} />
-
         </View>
     );
 }

@@ -173,7 +173,7 @@ function Comment({ route, navigation }: StackNavigationProps) {
     if (res.code == 0) {
       setDetail(res.data);
       setList(res.data.comments);
-      let temp=[];
+      let temp = [];
       for (let index in res.data.postPhoto) {
         temp.push({ url: res.data.postPhoto[index] });
       }
@@ -212,7 +212,7 @@ function Comment({ route, navigation }: StackNavigationProps) {
   function clickAvatar() {
     navigation.navigate('OthersPage');
   }
-  const [pno,setpno]=useState(1);
+  const [pno, setpno] = useState(1);
   return (
     <View style={{ height: height - 91 }}>
       <Modal
@@ -263,7 +263,7 @@ function Comment({ route, navigation }: StackNavigationProps) {
               </Text>
             </Card.Content>
             {list.map((item: string, index: number) =>
-              <Pressable onPress={() => {setFullview(true);setpno(index)}}>
+              <Pressable onPress={() => { setFullview(true); setpno(index) }}>
                 <Image
                   source={{ uri: item }}
                   style={{
@@ -284,9 +284,9 @@ function Comment({ route, navigation }: StackNavigationProps) {
               <Share content={detail} />
             </View>
           </Card>
-          <Modal 
-          isVisible={fullview} 
-          presentationStyle='fullScreen'
+          <Modal
+            isVisible={fullview}
+            presentationStyle='fullScreen'
           >
             <ImageViewer
               imageUrls={urls}
