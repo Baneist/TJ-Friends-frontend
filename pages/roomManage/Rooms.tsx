@@ -81,7 +81,7 @@ const RoomsScreen = ({ navigation }: StackNavigationProps) => {
     }
     return (
         <View style={{ flex: 1, marginBottom: bottom }}>
-            <ScrollView>
+            <ScrollView nestedScrollEnabled={true}>
                 <WaterfallFlow
                     data={list}
                     numColumns={2}
@@ -95,7 +95,7 @@ const RoomsScreen = ({ navigation }: StackNavigationProps) => {
                             }}>
                             <CardwithButtons
                                 height={item}
-                                goToDetail={() => { }}
+                                goToDetail={() => { navigation.navigate('RoomInside')}}
                             />
                         </View>)
                     }}

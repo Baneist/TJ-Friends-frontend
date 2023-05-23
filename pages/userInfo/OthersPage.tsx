@@ -88,21 +88,13 @@ const OthersPage = ({route, navigation }: StackNavigationProps) => {
     });
   }, [navigation]);
 
-  //检查是否关注
-  function hasFollowing(followerlist:followProp[]){
-    for(let i=0;i<followerlist.length;++i){
-      if(followerlist[i].userId == curUser){
-        return true;
-      }
-    }
-    return false;
-  }
   async function fetchData() {
     //获取资料、关注列表和粉丝列表
     const resInfo = await requestApi('get', `/profile/${pageid}`, null, true, 'getProfile failed')
     setUserInfo(resInfo.data)
     setFollowerNum(resInfo.data.followerNum)
     setFollowingNum(resInfo.data.followingNum)
+    setFollowing(resInfo.data.isFollowing)
   }
 
   useFocusEffect(
@@ -123,7 +115,7 @@ const OthersPage = ({route, navigation }: StackNavigationProps) => {
     if (userInfo.followingPms)
       navigation.navigate('FollowingList',{userId:pageid})
     else {
-      console.log('暂不可见')
+      Alert.alert('关注列表暂不可见')
     }
   }
 
@@ -132,7 +124,7 @@ const OthersPage = ({route, navigation }: StackNavigationProps) => {
     if (userInfo.followerPms)
       navigation.navigate('FollowersList',{userId:pageid})
     else {
-      console.log('暂不可见')
+      Alert.alert('粉丝列表暂不可见')
     }
   }
 

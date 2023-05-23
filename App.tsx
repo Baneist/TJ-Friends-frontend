@@ -45,7 +45,7 @@ import ChatDetail from './pages/ChatDetail'
 import CreatePage from "./pages/roomManage/CreateRoom";
 
 //房间
-import RoomInside from "./pages/room/RoomInside";
+import RoomInside from "./pages/roomManage/RoomInside";
 
 const GetUrl = "https://1.tongji.edu.cn/api/ssoservice/system/loginIn";
 const TargetUrl = "https://1.tongji.edu.cn/ssologin";
