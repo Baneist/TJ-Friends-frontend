@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView } from 'react-native';
+import { View, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import requestApi from '../../utils/request';
+import { GiftedChat } from 'react-native-gifted-chat';
 
 
 function CustomInputToolbar(props) {
@@ -11,20 +12,19 @@ function CustomInputToolbar(props) {
   function handleSend() {
     if (text.length > 0) {
       const message = {
+        _id: 0,
         text: text.trim(),
         createdAt: new Date(),
-        user: {
-          _id: props.user._id,
-          name: props.user.name,
-          avatar: props.user.avatar,
-        },
+        user: props.user,
         isRevoke: false,
       };
       async function sendMessage() {
         const res = await requestApi('post', '/chat/sendMessage', { image: '' , text: message.text , userId: props.ChatUser }, true, '发送失败');
+        message._id = res.data.id;
+        console.log(message._id, 'send')
       }
       sendMessage()
-      props.onSend([message]);
+      props.setMessages(GiftedChat.append(props.messages, [message]));
       setText('');
     }
   }
@@ -44,19 +44,19 @@ function CustomInputToolbar(props) {
 
     if (!result.canceled) {
       const message = {
+        _id: 0,
+        text: '',
         image: result.assets[0].uri,
         createdAt: new Date(),
-        user: {
-          _id: props.user._id,
-          name: props.user.name,
-        },
+        user: props.user,
         isRevoke: false,
       };
       async function sendMessage() {
         const res = await requestApi('post', '/chat/sendMessage', { image: message.image , text: '' , userId: props.ChatUser }, true, '发送失败');
+        message._id = res.data.id;
       }
       sendMessage()
-      props.onSend([message]);
+      props.setMessages(GiftedChat.append(props.messages, [message]));
     }
   }
 
@@ -73,19 +73,19 @@ function CustomInputToolbar(props) {
 
       if (!result.canceled) {
         const message = {
+          _id: 0,
+          text: '',
           image: result.assets[0].uri,
           createdAt: new Date(),
-          user: {
-            _id: props.user._id,
-            name: props.user.name,
-          },
+          user: props.user,
           isRevoke: false,
         };
         async function sendMessage() {
           const res = await requestApi('post', '/chat/sendMessage', { image: message.image , text: '' , userId: props.ChatUser }, true, '发送失败');
+          message._id = res.data.id;
         }
         sendMessage()
-        props.onSend([message]);
+        props.setMessages(GiftedChat.append(props.messages, [message]));
       }
   }
 

@@ -22,13 +22,6 @@ interface ChatMessage {
   image?: string,
 };
 
-interface MessageContextMenuProps {
-  isVisible: boolean;
-  onHide: () => void;
-  onRemove: () => void;
-  onRevoke: () => void;
-}
-
 const defaultMessages = [
   {
     _id: 5,
@@ -93,17 +86,16 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
   
   const [messages, setMessages] = useState([] as ChatMessage[]);
   const [isTimerEnabled, setIsTimerEnabled] = useState(true);
-
-  const IUser = {
+  const [IUser, setIUser] = useState({
     _id: userId,
     name: 'ChatGPT',
     avatar: "https://picsum.photos/700",
-  }
-  const UUser = {
+  });
+  const [UUser, setUUser] = useState({
     _id: ChatUser,
     name: 'ChatGPT',
     avatar: "https://picsum.photos/700",
-  }
+  });
 
   async function fetchOrigin(){
     let CurMessages: ChatMessage[] = []
@@ -118,69 +110,73 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
         }))
       }
       Promise.all(reqList).then((values) => {
-        IUser.name = values[0].data.userNickName.info
-        UUser.name = values[1].data.userNickName.info
-        IUser.avatar = values[0].data.userAvatar.info
-        UUser.avatar = values[1].data.userAvatar.info
+        setIUser({
+          _id: userId,
+          name: values[0].data.userNickName.info,
+          avatar: values[0].data.userAvatar.info,
+        });
+        setUUser({
+          _id: ChatUser,
+          name: values[1].data.userNickName.info,
+          avatar: values[1].data.userAvatar.info,
+        })
       })
-    }
-    for (let i = 0; i < resAllMessages.data.length; ++i) {
-      if(resAllMessages.data[i].isReceived){
-        if(resAllMessages.data[i].image==''){
-          CurMessages.unshift(
-            {
-              _id: resAllMessages.data[i].id,
-              text: resAllMessages.data[i].text,
-              createdAt: resAllMessages.data[i].time,
-              user: UUser,
-              isRevoke: resAllMessages.data[i].isRecall,
-            }
-          )
+
+      for (let i = 0; i < resAllMessages.data.length; ++i) {
+        if(resAllMessages.data[i].isReceived){
+          if(resAllMessages.data[i].image==''){
+            CurMessages.unshift(
+              {
+                _id: resAllMessages.data[i].id,
+                text: resAllMessages.data[i].text,
+                createdAt: resAllMessages.data[i].time,
+                user: UUser,
+                isRevoke: resAllMessages.data[i].isRecall,
+              }
+            )
+          }
+          else{
+            CurMessages.unshift(
+              {
+                _id: resAllMessages.data[i].id,
+                text: '',
+                createdAt: resAllMessages.data[i].time,
+                user: UUser,
+                image: resAllMessages.data[i].image,
+                isRevoke: resAllMessages.data[i].isRecall,
+              }
+            )
+          }
         }
         else{
-          CurMessages.unshift(
-            {
-              _id: resAllMessages.data[i].id,
-              text: '',
-              createdAt: resAllMessages.data[i].time,
-              user: UUser,
-              image: resAllMessages.data[i].image,
-              isRevoke: resAllMessages.data[i].isRecall,
-            }
-          )
+          if(resAllMessages.data[i].image==''){
+            CurMessages.unshift(
+              {
+                _id: resAllMessages.data[i].id,
+                text: resAllMessages.data[i].text,
+                createdAt: resAllMessages.data[i].time,
+                user: IUser,
+                isRevoke: resAllMessages.data[i].isRecall,
+              }
+            )
+          }
+          else{
+            CurMessages.unshift(
+              {
+                _id: resAllMessages.data[i].id,
+                text: '',
+                createdAt: resAllMessages.data[i].time,
+                user: IUser,
+                image: resAllMessages.data[i].image,
+                isRevoke: resAllMessages.data[i].isRecall,
+              }
+            )
+          }
         }
+        
       }
-      else{
-        if(resAllMessages.data[i].image==''){
-          CurMessages.unshift(
-            {
-              _id: resAllMessages.data[i].id,
-              text: resAllMessages.data[i].text,
-              createdAt: resAllMessages.data[i].time,
-              user: IUser,
-              isRevoke: resAllMessages.data[i].isRecall,
-            }
-          )
-        }
-        else{
-          CurMessages.unshift(
-            {
-              _id: resAllMessages.data[i].id,
-              text: '',
-              createdAt: resAllMessages.data[i].time,
-              user: IUser,
-              image: resAllMessages.data[i].image,
-              isRevoke: resAllMessages.data[i].isRecall,
-            }
-          )
-        }
-      }
-      
     }
-    
-    // setMessages(previousMessages =>
-    //   GiftedChat.append(previousMessages, CurMessages)
-    // );
+
     setMessages(CurMessages);
   }
 
@@ -195,12 +191,12 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
 
     async function deleteMessage() {
       const res = await requestApi('post', '/chat/deleteMessage', { messageId: currentMessage._id }, true, '删除失败');
-      console.log(currentMessage._id, 'delete')
+      fetchOrigin()
     }
 
     async function recallMessage() {
       const res = await requestApi('post', '/chat/recallMessage', { messageId: currentMessage._id }, true, '撤回失败');
-      console.log(currentMessage._id, 'recall')
+      fetchOrigin()
     }
 
     if(currentMessage.user._id===userId){
@@ -222,25 +218,9 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
             break;
           case 1:
             deleteMessage();
-            fetchOrigin()
-            // setMessages(previousMessages =>
-            //   previousMessages.filter(m => m._id !== currentMessage._id)
-            // );
             break;
           case 2:
             recallMessage();
-            fetchOrigin()
-            // setMessages(previousMessages =>
-            //   previousMessages.map(m => {
-            //     if (m._id === currentMessage._id) {
-            //       return {
-            //         ...m, 
-            //         isRevoke: true,
-            //       };
-            //     }
-            //     return m; 
-            //   })
-            // );
             break;
         }
       });
@@ -263,10 +243,6 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
             break;
           case 1:
             deleteMessage();
-            fetchOrigin()
-            // setMessages(previousMessages =>
-            //   previousMessages.filter(m => m._id !== currentMessage._id)
-            // );
           break;
         }
       });
@@ -333,11 +309,11 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
     messages={messages}
     onSend={onSend}
     onLongPress={handleLongPress}
-    user={{ _id: userId }}
+    user={IUser}
     showAvatarForEveryMessage={true}
     alignTop={true}
     renderBubble={(props)=><CustomBubble {...props}/>}
-    renderInputToolbar={(props) => <CustomInputToolbar {...props} messages={messages} ChatUser={ChatUser}/>}
+    renderInputToolbar={(props) => <CustomInputToolbar {...props} messages={messages} ChatUser={ChatUser} setMessages={setMessages}/>}
     renderAvatar={(props) => (
       !props.currentMessage.isRevoke &&
       <View style={{ marginLeft: 10 }}>
