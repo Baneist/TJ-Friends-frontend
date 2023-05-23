@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
+import Clipboard from '@react-native-community/clipboard';
 import { Avatar } from 'react-native-elements';
 import { GiftedChat } from 'react-native-gifted-chat';
 import { StackNavigationProps } from '../App'
@@ -17,6 +18,7 @@ interface ChatMessage {
     name: string;
     avatar: string;
   };
+  isRevoke: boolean,
   image?: string,
 };
 
@@ -30,6 +32,7 @@ const defaultMessages = [
       name: 'ChatGPT',
       avatar: "https://picsum.photos/700",
     },
+    isRevoke: false,
   },
   {
     _id: 4,
@@ -40,6 +43,7 @@ const defaultMessages = [
       name: 'ME',
       avatar: "https://picsum.photos/700",
     },
+    isRevoke: false,
   },
   {
     _id: 3,
@@ -50,6 +54,7 @@ const defaultMessages = [
       name: 'ChatGPT',
       avatar: "https://picsum.photos/700",
     },
+    isRevoke: true
   },
   {
     _id: 2,
@@ -60,6 +65,7 @@ const defaultMessages = [
       name: 'ChatGPT',
       avatar: "https://picsum.photos/700",
     },
+    isRevoke: false,
   },
   {
     _id: 1,
@@ -70,6 +76,7 @@ const defaultMessages = [
       name: 'ChatGPT',
       avatar: "https://picsum.photos/700",
     },
+    isRevoke: false,
   },
 ];
 
@@ -78,17 +85,17 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
   const ChatUser = route.params?.userId;
   
   const [messages, setMessages] = useState([] as ChatMessage[]);
-
-  const IUser = {
+  const [isTimerEnabled, setIsTimerEnabled] = useState(true);
+  const [IUser, setIUser] = useState({
     _id: userId,
     name: 'ChatGPT',
     avatar: "https://picsum.photos/700",
-  }
-  const UUser = {
+  });
+  const [UUser, setUUser] = useState({
     _id: ChatUser,
     name: 'ChatGPT',
     avatar: "https://picsum.photos/700",
-  }
+  });
 
   async function fetchOrigin(){
     let CurMessages: ChatMessage[] = []
@@ -103,65 +110,74 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
         }))
       }
       Promise.all(reqList).then((values) => {
-        IUser.name = values[0].data.userNickName.info
-        UUser.name = values[1].data.userNickName.info
-        IUser.avatar = values[0].data.userAvatar.info
-        UUser.avatar = values[1].data.userAvatar.info
+        setIUser({
+          _id: userId,
+          name: values[0].data.userNickName.info,
+          avatar: values[0].data.userAvatar.info,
+        });
+        setUUser({
+          _id: ChatUser,
+          name: values[1].data.userNickName.info,
+          avatar: values[1].data.userAvatar.info,
+        })
       })
-    }
-    for (let i = 0; i < resAllMessages.data.length; ++i) {
-      if(resAllMessages.data[i].isReceived){
-        if(resAllMessages.data[i].image==''){
-          CurMessages.unshift(
-            {
-              _id: resAllMessages.data[i].id,
-              text: resAllMessages.data[i].text,
-              createdAt: resAllMessages.data[i].time,
-              user: UUser
-            }
-          )
+
+      for (let i = 0; i < resAllMessages.data.length; ++i) {
+        if(resAllMessages.data[i].isReceived){
+          if(resAllMessages.data[i].image==''){
+            CurMessages.unshift(
+              {
+                _id: resAllMessages.data[i].id,
+                text: resAllMessages.data[i].text,
+                createdAt: resAllMessages.data[i].time,
+                user: UUser,
+                isRevoke: resAllMessages.data[i].isRecall,
+              }
+            )
+          }
+          else{
+            CurMessages.unshift(
+              {
+                _id: resAllMessages.data[i].id,
+                text: '',
+                createdAt: resAllMessages.data[i].time,
+                user: UUser,
+                image: resAllMessages.data[i].image,
+                isRevoke: resAllMessages.data[i].isRecall,
+              }
+            )
+          }
         }
         else{
-          CurMessages.unshift(
-            {
-              _id: resAllMessages.data[i].id,
-              text: '',
-              createdAt: resAllMessages.data[i].time,
-              user: UUser,
-              image: resAllMessages.data[i].image,
-            }
-          )
+          if(resAllMessages.data[i].image==''){
+            CurMessages.unshift(
+              {
+                _id: resAllMessages.data[i].id,
+                text: resAllMessages.data[i].text,
+                createdAt: resAllMessages.data[i].time,
+                user: IUser,
+                isRevoke: resAllMessages.data[i].isRecall,
+              }
+            )
+          }
+          else{
+            CurMessages.unshift(
+              {
+                _id: resAllMessages.data[i].id,
+                text: '',
+                createdAt: resAllMessages.data[i].time,
+                user: IUser,
+                image: resAllMessages.data[i].image,
+                isRevoke: resAllMessages.data[i].isRecall,
+              }
+            )
+          }
         }
+        
       }
-      else{
-        if(resAllMessages.data[i].image==''){
-          CurMessages.unshift(
-            {
-              _id: resAllMessages.data[i].id,
-              text: resAllMessages.data[i].text,
-              createdAt: resAllMessages.data[i].time,
-              user: IUser
-            }
-          )
-        }
-        else{
-          CurMessages.unshift(
-            {
-              _id: resAllMessages.data[i].id,
-              text: '',
-              createdAt: resAllMessages.data[i].time,
-              user: IUser,
-              image: resAllMessages.data[i].image,
-            }
-          )
-        }
-      }
-      
     }
-    
-    setMessages(previousMessages =>
-      GiftedChat.append(previousMessages, CurMessages)
-    );
+
+    setMessages(CurMessages);
   }
 
   function onSend(newMessages: ChatMessage[] = []) {
@@ -169,6 +185,72 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
       GiftedChat.append(previousMessages, newMessages),
     );
   }
+
+  function handleLongPress(context, currentMessage) {
+    setIsTimerEnabled(false);
+
+    async function deleteMessage() {
+      const res = await requestApi('post', '/chat/deleteMessage', { messageId: currentMessage._id }, true, '删除失败');
+      fetchOrigin()
+    }
+
+    async function recallMessage() {
+      const res = await requestApi('post', '/chat/recallMessage', { messageId: currentMessage._id }, true, '撤回失败');
+      fetchOrigin()
+    }
+
+    if(currentMessage.user._id===userId){
+      const options = [
+        '复制',
+        '删除',
+        '撤回',
+        '取消',
+      ];
+      const cancelButtonIndex = options.length - 1;
+      context.actionSheet().showActionSheetWithOptions({
+        options,
+        cancelButtonIndex,
+      },
+      (buttonIndex) => {
+        switch (buttonIndex) {
+          case 0:
+            Clipboard.setString(currentMessage.text);
+            break;
+          case 1:
+            deleteMessage();
+            break;
+          case 2:
+            recallMessage();
+            break;
+        }
+      });
+    }
+    else{
+      const options = [
+        '复制',
+        '删除',
+        '取消',
+      ];
+      const cancelButtonIndex = options.length - 1;
+      context.actionSheet().showActionSheetWithOptions({
+        options,
+        cancelButtonIndex,
+      },
+      (buttonIndex) => {
+        switch (buttonIndex) {
+          case 0:
+            Clipboard.setString(currentMessage.text);
+            break;
+          case 1:
+            deleteMessage();
+          break;
+        }
+      });
+    }
+    
+    setIsTimerEnabled(true);
+  }
+  
   
   async function getUnreadMessages() {
     const resUnreadMessages = await requestApi('get', `/chat/receiveUnreadMessages?userId=${ChatUser}`, null, true, 'Get Unread Messages failed');
@@ -180,7 +262,8 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
             _id: resUnreadMessages.data[i].id,
             text: resUnreadMessages.data[i].text,
             createdAt: resUnreadMessages.data[i].time,
-            user: UUser
+            user: UUser,
+            isRevoke: resUnreadMessages.data[i].isRecall,
           }
         )
       }
@@ -192,6 +275,7 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
             createdAt: resUnreadMessages.data[i].time,
             user: UUser,
             image: resUnreadMessages.data[i].image,
+            isRevoke: false,
           }
         )
       }
@@ -210,32 +294,39 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
   useEffect(() => {
     fetchOrigin()
 
-    const intervalId = setInterval(() => {
-      getUnreadMessages();
-    }, 2000);
+    if (isTimerEnabled){
+      const intervalId = setInterval(() => {
+        getUnreadMessages();
+      }, 2000);
 
-    return () => clearInterval(intervalId);
-  }, []);
+      return () => clearInterval(intervalId);
+    }
+    
+  }, [isTimerEnabled]);
 
   return (
     <GiftedChat
-      messages={messages}
-      onSend={onSend}
-      user={{ _id: userId }}
-      showAvatarForEveryMessage={true}
-      alignTop={true}
-      renderBubble={(props)=><CustomBubble {...props}/>}
-      renderInputToolbar={(props) => <CustomInputToolbar {...props} messages={messages} ChatUser={ChatUser}/>}
-      renderAvatar={(props) => (
-        <View style={{ marginLeft: 10 }}>
+    messages={messages}
+    onSend={onSend}
+    onLongPress={handleLongPress}
+    user={IUser}
+    showAvatarForEveryMessage={true}
+    alignTop={true}
+    renderBubble={(props)=><CustomBubble {...props}/>}
+    renderInputToolbar={(props) => <CustomInputToolbar {...props} messages={messages} ChatUser={ChatUser} setMessages={setMessages}/>}
+    renderAvatar={(props) => (
+      !props.currentMessage.isRevoke &&
+      <View style={{ marginLeft: 10 }}>
+        <TouchableOpacity onPress={() => {navigation.navigate('OthersPage', {userId:props.currentMessage.user._id})}}>
           <Avatar
             size={42}
             source={{ uri: props.currentMessage.user.avatar }}
             rounded
           />
-        </View>
-      )}
-    />
+        </TouchableOpacity>
+      </View>
+    )}
+  />
   );
 }
 
