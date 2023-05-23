@@ -40,7 +40,7 @@ import requestApi from "./utils/request";
 import EditPost from "./pages/memoryManage/EditPost";
 import NoticeManageScreen from './pages/noticeManage/NoticeManage';
 import NoticeDetailScreen from "./pages/noticeManage/NoticeDetail";
-
+import MatchDetailScreen from "./pages/matchManage/matchDetail";
 import ChatDetail from './pages/ChatDetail'
 import CreatePage from "./pages/roomManage/CreateRoom";
 
@@ -74,6 +74,7 @@ type RootStackParamList = {
   BlackList:undefined,
   ComplaintUser:{ userId: string };
   CreateRoom:undefined;
+  MatchDetailScreen: { userId: string };
 };
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -270,6 +271,11 @@ const App = () => {
           <Stack.Screen
             name="CreateRoom"
             component={CreatePage}
+            options={{ headerBackTitle: "Back" }}
+          />
+          <Stack.Screen
+            name="MatchDetailScreen"
+            component={MatchDetailScreen}
             options={{ headerBackTitle: "Back" }}
           />
         </Stack.Navigator>

@@ -10,6 +10,7 @@ import NoticeManageScreen from './noticeManage/NoticeManage';import { IconButton
 import { StackNavigationProps } from '../App';
 import RoomsScreen from './roomManage/Rooms';
 import { color } from 'react-native-reanimated';
+import {MatchDetailScreen} from './matchManage/matchDetail';
 
 type RootTabParamList = {
   Home: undefined;
@@ -123,10 +124,10 @@ const MainScreen = ({route, navigation}:StackNavigationProps) => {
       <Tab.Screen
         options={{
           tabBarIcon: tabBarIcon('aliwangwang-o1'),
-          tabBarLabel: showLabel ? 'Home' : undefined,
+          tabBarLabel: showLabel ? 'MatchDetailScreen' : undefined,
         }}
-        name="Home"
-        component={Home}
+        name="MatchDetailScreen"
+        component={MatchDetailScreen}
       />
       <Tab.Screen
         options={{
