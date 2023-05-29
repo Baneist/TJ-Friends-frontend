@@ -15,7 +15,7 @@ const {width, height} = Dimensions.get("screen");
 interface RoomProps {
   roomId:number,
   roomName:string,
-  videoUri:string,
+  videoUrl:string,
   ownerId:string
 }
 
@@ -35,7 +35,7 @@ const defaultMember = {
 const defaultRoom = {
   roomId:1,
   roomName:'一起来玩吧',
-  videoUri:'https://vip.ffzy-play6.com/20221127/8802_3816a20c/2000k/hls/index.m3u8',
+  videoUrl:'https://vip.ffzy-play6.com/20221127/8802_3816a20c/2000k/hls/index.m3u8',
   members:['2052909','2052333','2052732'],
   ownerId:'2052909'
 }
@@ -209,7 +209,7 @@ const RoomInside = ({route, navigation}:StackNavigationProps) => {
   }, [navigation]);
   return (
     <View style={{height:Dimensions.get('screen').height-110}}>
-        <MyVideoPlayer navigation={navigation} videoUri={roomInfo.videoUri}/>
+        <MyVideoPlayer navigation={navigation} videoUri={roomInfo.videoUrl}/>
         <MemberList members={roomInfo.members} ownerId={roomInfo.ownerId} navigation={navigation}/>
         <ChatRoom />
     </View>
