@@ -5,13 +5,13 @@ import Modal from 'react-native-modal';
 import {Button, Divider } from 'react-native-paper';
 import {styles} from './AvatarPicker'
 
-interface AvatarPickerProps{
+interface MultiPickerProps{
     showPickerOption:boolean,
     onBackdropPress:()=>void,
     setImage:(uri:string[])=>void
 }
 
-export default function MultiPicker(props:AvatarPickerProps) {
+export default function MultiPicker(props:MultiPickerProps) {
   const [imageUri, setImageUri] = useState('');
 
   const [editorVisible, setEditorVisible] = useState(false);

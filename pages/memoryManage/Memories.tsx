@@ -203,9 +203,9 @@ export const CardwithButtons = (props: CardProps) => {
           {global.gUserId === props.content.userId && <Button style={{ height: 50, paddingTop: 5 }} onPress={onEdit
           }>编辑</Button>}
           {global.gUserId === props.content.userId && <Divider />}
-          <Button style={{ height: 50, paddingTop: 5 }} onPress={() => {
+          <Button style={{ height: 50, paddingTop: 5 }} onPress={
             toggleMenu
-          }}>收藏</Button>
+          }>收藏</Button>
           {global.gUserId != props.content.userId && <Divider />}
           {global.gUserId != props.content.userId && <Button style={{ height: 50, paddingTop: 5 }} onPress={
             toggleMenu
@@ -219,18 +219,6 @@ export const CardwithButtons = (props: CardProps) => {
     </View>
   );
 };
-
-const NoticeManageButton = ({ onPressFAB }: { onPressFAB: () => void }) => (
-  <View style={{position:"relative"}}>
-    <FAB
-    icon="bell"
-    style={styles.nmb}
-    customSize={50}
-    onPress={onPressFAB}
-    />
-    <NotionMainBadge />
-  </View>
-);
 
 const MemoriesScreen = ({ navigation }: StackNavigationProps) => {
   const { bottom } = useSafeAreaInsets();
