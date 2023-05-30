@@ -25,8 +25,8 @@ const EditDraft = ({ route, navigation }: StackNavigationProps) => {
   const[pmskey,setKey]=useState(0);
   const [clicked,setClick]=useState(false);
   async function fetchData(){
-    console.log(route.params?.postId)
-    const res = await requestApi('get', `/Memories/${route.params?.postId}`, null, true, 'get memories失败');
+    console.log(route.params?.draftId)
+    const res = await requestApi('get', '/getDraft', {draftId:route.params?.draftId}, true, 'get draft失败');
     if (res.code == 0) {
       setText(res.data.postContent);
       setImage(res.data.postPhoto);
