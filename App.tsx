@@ -26,6 +26,8 @@ import BlackList from "./pages/userInfo/BlackList";
 import ComplaintUser from "./pages/userInfo/Complaint";
 //查看他人主页
 import OthersPage from "./pages/userInfo/OthersPage";
+//草稿箱
+import DraftList from "./pages/userInfo/DraftList";
 
 //编辑资料相关路由
 import { EditProfile } from "./pages/userInfo/EditInfo/EditProfile";
@@ -80,6 +82,7 @@ type RootStackParamList = {
   RoomInside:undefined
   CreateRoom:undefined;
   EditRoom:undefined;
+  DraftList:undefined;
 };
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -291,6 +294,11 @@ const App = () => {
           <Stack.Screen
             name="BlackList"
             component={BlackList}
+            options={{ headerBackTitle: "Back" }}
+          />
+          <Stack.Screen
+            name="DraftList"
+            component={DraftList}
             options={{ headerBackTitle: "Back" }}
           />
         </Stack.Navigator>

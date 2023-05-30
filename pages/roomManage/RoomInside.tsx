@@ -1,5 +1,5 @@
 import { View, Image, StyleSheet, Text, Dimensions, KeyboardAvoidingView, Platform, ImageBackground, Pressable } from 'react-native'
-import { Button, IconButton, Avatar, List, Card} from 'react-native-paper';
+import { Button, IconButton, Avatar, List, Card, TextInput} from 'react-native-paper';
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { StackNavigationProps } from '../../App'
 import MyVideoPlayer from '../../components/VideoPlayer';
@@ -16,6 +16,7 @@ interface RoomProps {
   roomId:number,
   roomName:string,
   videoUrl:string,
+  members:string[],
   ownerId:string
 }
 
@@ -127,8 +128,16 @@ const UserDetail = (props:detailProps) => {
   )
 }
 
-const InviteFriend = () => {
+interface inviteProps{
+  roomId:number,
+  roomName:string
+}
+const InviteFriend = (props:inviteProps) => {
   const [dialogVis, setDialogVis] = useState(false);
+  const [stuId, setStuId]=useState('');
+  function invite(){
+    setDialogVis(!dialogVis)
+  }
   return(
     <View>
       <Pressable onPress={()=>setDialogVis(!dialogVis)}>
@@ -138,11 +147,30 @@ const InviteFriend = () => {
         <Card>
           <Card.Title 
             left={(props) => <List.Icon {...props} icon="account-plus-outline" />}
-            title="邀请好友"
+            title="邀请成员"
           />
           <Card.Content>
-            
+            <TextInput
+              label="学号"
+              value={stuId}
+              maxLength={7}
+              mode='outlined'
+              keyboardType='number-pad'
+              onChangeText={text => setStuId(text)}
+            />
+            <View style={{marginTop:10,backgroundColor:'white',borderRadius:20, borderColor:'#32325D', borderWidth:1, paddingVertical:10}}>
+              <Text style={{fontSize:18, marginHorizontal:10, color:'#525F7F'}}>
+                加入房间“{props.roomName}”，和我们一起玩吧！
+              </Text>
+              <Text style={{fontSize:18, marginHorizontal:10, color:'#525F7F'}}>
+                房间码：{props.roomId}
+              </Text>
+            </View>
           </Card.Content>
+          <Card.Actions>
+            <Button onPress={()=>setDialogVis(!dialogVis)}>取消</Button>
+            <Button onPress={invite}>确定</Button>
+          </Card.Actions>
         </Card>
       </Modal>
     </View>
@@ -150,8 +178,7 @@ const InviteFriend = () => {
 }
 
 interface MemberListProps{
-  ownerId:string,
-  members:string [],
+  roomInfo:RoomProps,
   navigation:StackNavigationProps['navigation']
 }
 const MemberList = (props:MemberListProps) => {
@@ -163,9 +190,9 @@ const MemberList = (props:MemberListProps) => {
 
   async function fetchData(){
     let reqList: Promise<AxiosResponse>[] = [];
-    for (let i = 0; i < props.members.length; ++i) {
+    for (let i = 0; i < props.roomInfo.members.length; ++i) {
       reqList.push(new Promise((resolve, reject) => {
-        resolve(requestApi('get', `/profile/${props.members[i]}`, null, true, 'get profile failed(In room)'))
+        resolve(requestApi('get', `/profile/${props.roomInfo.members[i]}`, null, true, 'get profile failed(In room)'))
       }))
     }
     Promise.all(reqList).then((values) => {
@@ -191,7 +218,7 @@ const MemberList = (props:MemberListProps) => {
       <Card.Title
         style={{marginBottom:0}}
         title="房间成员"
-        subtitle={"当前"+props.members.length+"人"}
+        subtitle={"当前"+props.roomInfo.members.length+"人"}
         left={(props) => <List.Icon icon="account-group"/>}
       />
       <View style={styles.memberListContainer}>
@@ -206,12 +233,12 @@ const MemberList = (props:MemberListProps) => {
           showDetial={viewMember} 
           onBackdropPress={()=> setViewMember(false)} 
           navigation={props.navigation}
-          ownerId={props.ownerId}
+          ownerId={props.roomInfo.ownerId}
           userInfo={member}
           />
           </View>
         ))}
-        <InviteFriend />
+        <InviteFriend roomId={props.roomInfo.roomId} roomName={props.roomInfo.roomName}/>
       </View>
     </View>
   )
@@ -233,7 +260,7 @@ const RoomInside = ({route, navigation}:StackNavigationProps) => {
   return (
     <View style={{height:Dimensions.get('screen').height-110}}>
         <MyVideoPlayer navigation={navigation} videoUri={roomInfo.videoUrl}/>
-        <MemberList members={roomInfo.members} ownerId={roomInfo.ownerId} navigation={navigation}/>
+        <MemberList roomInfo={roomInfo} navigation={navigation}/>
         <ChatRoom />
     </View>
   )
