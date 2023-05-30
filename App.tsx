@@ -41,8 +41,9 @@ import EditPost from "./pages/memoryManage/EditPost";
 import NoticeManageScreen from './pages/noticeManage/NoticeManage';
 import NoticeDetailScreen from "./pages/noticeManage/NoticeDetail";
 
-import ChatDetail from './pages/ChatDetail'
+import ChatDetail from './pages/ChatManage/ChatDetail'
 import CreatePage from "./pages/roomManage/CreateRoom";
+import WaitingPage from "./pages/WaitingPage";
 
 //房间
 import RoomInside from "./pages/roomManage/RoomInside";
@@ -80,6 +81,7 @@ type RootStackParamList = {
   RoomInside:undefined
   CreateRoom:undefined;
   EditRoom:undefined;
+  WaitingPage: { userId: string, avatar: string } | undefined;
 };
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -291,6 +293,11 @@ const App = () => {
           <Stack.Screen
             name="BlackList"
             component={BlackList}
+            options={{ headerBackTitle: "Back" }}
+          />
+          <Stack.Screen
+            name="WaitingPage"
+            component={WaitingPage}
             options={{ headerBackTitle: "Back" }}
           />
         </Stack.Navigator>

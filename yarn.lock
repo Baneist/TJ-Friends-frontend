@@ -4624,7 +4624,7 @@ expo-pwa@0.0.124:
 
 expo-screen-orientation@^5.1.1:
   version "5.1.1"
-  resolved "https://registry.npmmirror.com/expo-screen-orientation/-/expo-screen-orientation-5.1.1.tgz"
+  resolved "https://registry.yarnpkg.com/expo-screen-orientation/-/expo-screen-orientation-5.1.1.tgz#d586f035cca8eb4e4620a774f9510bd77083258d"
   integrity sha512-rYpHUwHpuKlEErxupl3wM+KWcySrSJTXb5Une5gDINMmjWbLBx0N1P2MG1aSPA2eT7bShTO/xDJyegjf438l8w==
 
 expo-status-bar@~1.4.4:
