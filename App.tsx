@@ -79,7 +79,7 @@ type RootStackParamList = {
   ComplaintUser:{ userId: string };
   RoomInside:{roomId:string,roomPwd:any}
   CreateRoom:undefined;
-  EditRoom:undefined;
+  EditRoom:{roomId:string};
 };
 const Stack = createStackNavigator<RootStackParamList>();
 
