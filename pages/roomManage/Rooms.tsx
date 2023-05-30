@@ -176,7 +176,7 @@ const RoomsScreen = ({ navigation }: StackNavigationProps) => {
                             paddingBottom: 3
                         }}>
                         <CardwithButtons
-                            goToDetail={() => { }}
+                            goToDetail={() => { navigation.navigate('RoomInside') }}
                             content={item}
                         />
                     </View>)

@@ -7,36 +7,38 @@ import { StackNavigationProps } from '../../App';
 import { useFocusEffect } from '@react-navigation/native';
 import { AxiosResponse } from 'axios';
 
-interface PostIdProps{
+export interface PostsProps{
   navigation:StackNavigationProps["navigation"],
-  userID:string,
+  userId:string,
 }
-
-export const MomentsList=(props: PostIdProps) => {
+const MomentsList=(props: PostsProps) => {
   const { bottom } = useSafeAreaInsets();
   const onCommentPress = (postID: string) => {
     props.navigation.navigate('Comment', { postId: postID });
   }
 
   function clickAvatar() {
-    props.navigation.navigate('OthersPage',{userId:props.userID});
+    props.navigation.navigate('OthersPage',{userId:props.userId});
   }
 
   const [list, setlist] = useState([] as any[]);
   async function fetchData() {
-    const res = await requestApi('get', `/getUserMemories/${props.userID}`,null, true, 'get user memories faild')
+    const res = await requestApi('get', `/getUserMemories/${props.userId}`,null, true, 'get user memories faild')
     if(res.code === 0){
       setlist(res.data)
-      console.log(list)
+      console.log(props.userId,list)
     }
     else{
       console.log('get user memories faild', res.code)
       console.log(res.msg)
+      console.log(props.userId)
     }
   }
 
+  
   useFocusEffect(
     React.useCallback(() => {
+      console.log(props.userId)
       fetchData()
       return () => {
       };
@@ -45,7 +47,6 @@ export const MomentsList=(props: PostIdProps) => {
 
   return (
     <View style={{ flex: 1, marginBottom: bottom }}>
-      <ScrollView>
         <View>
           {list.map((item, index) =>
             <CardwithButtons
@@ -60,10 +61,6 @@ export const MomentsList=(props: PostIdProps) => {
             </View>
           }
         </View>
-        {/* eslint-disable-next-line max-len */}
-        {/* -> Set bottom view to allow scrolling to top if you set bottom-bar position absolute */}
-        <View style={{ height: 90 }} />
-      </ScrollView>
     </View>
   );
 }

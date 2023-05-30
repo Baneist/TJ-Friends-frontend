@@ -126,6 +126,29 @@ const UserDetail = (props:detailProps) => {
     </Modal>
   )
 }
+
+const InviteFriend = () => {
+  const [dialogVis, setDialogVis] = useState(false);
+  return(
+    <View>
+      <Pressable onPress={()=>setDialogVis(!dialogVis)}>
+          <Avatar.Icon size={40} icon='plus' style={styles.memberContainer} />
+      </Pressable>
+      <Modal isVisible={dialogVis} onBackdropPress={()=>setDialogVis(!dialogVis)}>
+        <Card>
+          <Card.Title 
+            left={(props) => <List.Icon {...props} icon="account-plus-outline" />}
+            title="邀请好友"
+          />
+          <Card.Content>
+            
+          </Card.Content>
+        </Card>
+      </Modal>
+    </View>
+  )
+}
+
 interface MemberListProps{
   ownerId:string,
   members:string [],
@@ -188,7 +211,7 @@ const MemberList = (props:MemberListProps) => {
           />
           </View>
         ))}
-        <Avatar.Icon size={40} icon='plus' style={styles.memberContainer} />
+        <InviteFriend />
       </View>
     </View>
   )

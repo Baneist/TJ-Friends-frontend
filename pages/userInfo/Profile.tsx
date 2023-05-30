@@ -7,9 +7,9 @@ import {
   ImageBackground,
   Pressable, Dimensions
 } from "react-native";
-import { Button, List, Chip, IconButton } from 'react-native-paper';
+import { Button, List, Chip, IconButton, Menu, Divider, Provider } from 'react-native-paper';
 import { Block, Text } from "galio-framework";
-import Icon from 'react-native-vector-icons/AntDesign';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { StackNavigationProps } from '../../App'
 import requestApi from "../../utils/request";
 import handleAxiosError from "../../utils/handleError";
@@ -156,8 +156,8 @@ const Profile = ({ navigation }: StackNavigationProps) => {
 
   // 性别
   const Gender = () => {
-    return (<Icon name={userInfo.userGender.info === GENDER.Male ? 'man' : 'woman'}
-      size={16} color="#32325D" style={{ marginTop: 10 }}>
+    return (<Icon name={userInfo.userGender.info === GENDER.Male ? 'gender-male' : 'gender-female'}
+      size={18} color="#32325D" style={{ marginTop: 10 }}>
       {userInfo.userGender.info === GENDER.Male ? GENDER.Male : GENDER.Female}
     </Icon>);
   }
@@ -170,16 +170,27 @@ const Profile = ({ navigation }: StackNavigationProps) => {
     }, [])
   );
   //导航栏
-  React.useLayoutEffect(() => {
+  const [showMenu, setShowMenu] = useState(false)
+    React.useLayoutEffect(() => {
     navigation.setOptions({
       headerRight:() => (
-        <IconButton icon="cog-outline" 
-        style={{marginRight:10}}
-        onPress={() =>{navigation.navigate('BlackList')}}
-        />
+        <Menu
+          visible={showMenu}
+          style={{top:90}}
+          onDismiss={()=>{setShowMenu(false)}}
+          anchor={<IconButton icon="dots-horizontal"
+                onPress={()=>setShowMenu(true)}
+                style={{marginRight:10}}
+          />}>
+          <Menu.Item onPress={() => {}} 
+          title={<Icon style={{fontSize:17}} name="file-document-edit-outline">草稿箱</Icon>} />
+          <Divider />
+          <Menu.Item onPress={() => {}} 
+          title={<Icon style={{fontSize:17}} name="account-off-outline">黑名单</Icon>} />
+        </Menu>
       )
     });
-  }, [navigation]);
+  }, [navigation, showMenu]);
   return (
     <View style={{ flex: 1, marginBottom: bottom }}>
       <View style={{ flex: 1 }}>
@@ -238,7 +249,7 @@ const Profile = ({ navigation }: StackNavigationProps) => {
                       textColor="#3B5998"
                       onPress={editProfile}
                     >
-                      <Icon size={16} name="edit">edit your profile</Icon>
+                      <Icon size={16} name="pencil">edit your profile</Icon>
                     </Button>
                   </Block>
                 </Block>
@@ -297,7 +308,7 @@ const Profile = ({ navigation }: StackNavigationProps) => {
                 <Text bold size={16} color="#525F7F" style={{ marginTop: 12, marginLeft: 12 }}>
                   Moments
                 </Text>
-                <MomentsList navigation={navigation} userID={userId}/>
+                <MomentsList navigation={navigation} userId={userId}/>
               </Block>
             </Block>
             {/* eslint-disable-next-line max-len */}
