@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, Image } from 'react-native';
-import { StackNavigationProps } from '../App';
+import { StackNavigationProps } from '../../App';
 
 const WaitingPage = ({ route, navigation }: StackNavigationProps) => {
   return (
@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   indicatorContainer: {
-    marginTop: 40, // 增加图像和加载动画之间的距离
+    marginTop: 40, 
   },
   text: {
     marginTop: 10,

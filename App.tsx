@@ -43,7 +43,8 @@ import NoticeDetailScreen from "./pages/noticeManage/NoticeDetail";
 
 import ChatDetail from './pages/ChatManage/ChatDetail'
 import CreatePage from "./pages/roomManage/CreateRoom";
-import WaitingPage from "./pages/WaitingPage";
+import WaitingPage from "./pages/MatchManage/WaitingPage";
+import MatchHomePage from "./pages/MatchManage/Match";
 
 //房间
 import RoomInside from "./pages/roomManage/RoomInside";
@@ -82,6 +83,7 @@ type RootStackParamList = {
   CreateRoom:undefined;
   EditRoom:undefined;
   WaitingPage: { userId: string, avatar: string } | undefined;
+  MatchHomePage:undefined;
 };
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -298,6 +300,11 @@ const App = () => {
           <Stack.Screen
             name="WaitingPage"
             component={WaitingPage}
+            options={{ headerBackTitle: "Back" }}
+          />
+          <Stack.Screen
+            name="MatchHomePage"
+            component={MatchHomePage}
             options={{ headerBackTitle: "Back" }}
           />
         </Stack.Navigator>

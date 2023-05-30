@@ -105,7 +105,7 @@ function ChatRoom(roomId:string, navigation:StackNavigationProps['navigation']) 
   async function fetchOrigin(){
     let CurMessages: ChatMessage[] = []
 
-    const resAllMessages = await requestApi('get', `/chat//receiveRoomMessage?roomId=${roomId}`, null, true, 'Get All Messages failed');
+    const resAllMessages = await requestApi('get', `/receiveRoomMessage?roomId=${roomId}`, null, true, 'Get All Messages failed');
 
     setIUser(await getUser(userId));
     
@@ -213,46 +213,7 @@ function ChatRoom(roomId:string, navigation:StackNavigationProps['navigation']) 
     
     setIsTimerEnabled(true);
   }
-  
-  
-  // async function getUnreadMessages() {
-  //   const resUnreadMessages = await requestApi('get', `/chat/receiveUnreadMessages?userId=${ChatUser}`, null, true, 'Get Unread Messages failed');
-  //   let unreadMessage: ChatMessage[] = []
-  //   for (let i = 0; i < resUnreadMessages.data.length; ++i) {
-  //     if(resUnreadMessages.data[i].image==''){
-  //       unreadMessage.unshift(
-  //         {
-  //           _id: resUnreadMessages.data[i].id,
-  //           text: resUnreadMessages.data[i].text,
-  //           createdAt: resUnreadMessages.data[i].time,
-  //           user: UUser,
-  //           isRevoke: resUnreadMessages.data[i].isRecall,
-  //         }
-  //       )
-  //     }
-  //     else{
-  //       unreadMessage.unshift(
-  //         {
-  //           _id: resUnreadMessages.data[i].id,
-  //           text: '',
-  //           createdAt: resUnreadMessages.data[i].time,
-  //           user: UUser,
-  //           image: resUnreadMessages.data[i].image,
-  //           isRevoke: false,
-  //         }
-  //       )
-  //     }
-  //     setMessages(previousMessages =>
-  //       GiftedChat.append(previousMessages, unreadMessage)
-  //     );
 
-  //     alreadyRead();
-  //   }
-  // }
-
-  // async function alreadyRead() {
-  //   const res = await requestApi('post', '/chat/readMessageInfo', { userId: ChatUser }, true, '已读失败');
-  // }
 
   useEffect(() => {
     fetchOrigin()
