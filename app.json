@@ -29,9 +29,20 @@
     },
     "extra": {
       "eas": {
-        "projectId": "ce062628-adee-41b5-b6b8-d35ac71a6967"
+        "projectId": "a26600bc-7646-4718-b6b1-9cb93ea2738e"
       }
     },
-    "owner": "peanutpuff"
+    "plugins": [
+      ["expo-build-properties",
+      {
+        "android": {
+          "minSdkVersion": 24
+        },
+        "ios": {
+          "deploymentTarget": "13.0"
+        }
+      }],
+      ["@config-plugins/react-native-webrtc"]
+    ]
   }
 }
