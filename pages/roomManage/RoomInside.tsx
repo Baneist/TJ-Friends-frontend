@@ -245,6 +245,16 @@ const MemberList = (props:MemberListProps) => {
 }
 const RoomInside = ({route, navigation}:StackNavigationProps) => {
   const [roomInfo, setRoomInfo] = useState(defaultRoom)
+  async function fetchData(){
+    const res = await requestApi('post','/joinRoom',{
+      'roomId':route.params?.roomId,
+      'roomPwd':route.params?.roomPwd
+    }, true, '房间密码错误')
+    
+  }
+  useEffect(() => {
+    //fetchData()
+  }, [])
   //导航栏
   React.useLayoutEffect(() => {
     navigation.setOptions({
@@ -264,9 +274,6 @@ const RoomInside = ({route, navigation}:StackNavigationProps) => {
         <ChatRoom />
     </View>
   )
-  useEffect(() => {
-    // fetchData()
-  }, [])
 }
 
 const styles = StyleSheet.create({

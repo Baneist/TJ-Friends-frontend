@@ -44,7 +44,7 @@ const MyVideoPlayer = (props:PlayerProps) => {
           },
           ref: refVideo2,
         }}
-        playbackCallback = {(status: AVPlaybackStatus)=>{console.log(status)}}
+        playbackCallback = {(status: AVPlaybackStatus)=>{}}
         fullscreen={{
           inFullscreen: inFullscreen,
           enterFullscreen: fullScreenCallBack,

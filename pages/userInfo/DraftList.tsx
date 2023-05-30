@@ -12,10 +12,12 @@ import { StackNavigationProps } from '../../App';
 const { width, height } = Dimensions.get('screen');
 
 interface draftProps{
-    postPhoto:string,
-    postTime:string,
-    postText:string,
-    draftId:string
+    photoUrl:string [],
+    time:string,
+    content:string,
+    draftId:string,
+    isAnonymous:number,
+    pms:number
 }
 
 const defaultDraft = [
