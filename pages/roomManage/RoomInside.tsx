@@ -250,10 +250,9 @@ const RoomInside = ({route, navigation}:StackNavigationProps) => {
       'roomId':route.params?.roomId,
       'roomPwd':route.params?.roomPwd
     }, true, '房间密码错误')
-    
   }
   useEffect(() => {
-    //fetchData()
+    fetchData()
   }, [])
   //导航栏
   React.useLayoutEffect(() => {
