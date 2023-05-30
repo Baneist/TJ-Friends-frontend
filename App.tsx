@@ -26,6 +26,8 @@ import BlackList from "./pages/userInfo/BlackList";
 import ComplaintUser from "./pages/userInfo/Complaint";
 //查看他人主页
 import OthersPage from "./pages/userInfo/OthersPage";
+//草稿箱
+import DraftList from "./pages/userInfo/DraftList";
 
 //编辑资料相关路由
 import { EditProfile } from "./pages/userInfo/EditInfo/EditProfile";
@@ -79,9 +81,10 @@ type RootStackParamList = {
   ChatDetail:  { userId: string } | undefined;
   BlackList:undefined,
   ComplaintUser:{ userId: string };
-  RoomInside:undefined
+  RoomInside:{roomId:string,roomPwd:string}
   CreateRoom:undefined;
-  EditRoom:undefined;
+  EditRoom:{roomId:string};
+  DraftList:undefined;
   WaitingPage: { userId: string, avatar: string } | undefined;
   MatchHomePage:undefined;
 };
@@ -304,7 +307,12 @@ const App = () => {
           />
           <Stack.Screen
             name="MatchHomePage"
-            component={MatchHomePage}
+            component={MatchHomePage} 
+            options={{ headerBackTitle: "Back" }}
+            />
+            <Stack.Screen
+            name="DraftList"
+            component={DraftList}
             options={{ headerBackTitle: "Back" }}
           />
         </Stack.Navigator>

@@ -27,9 +27,13 @@ const styles = StyleSheet.create({
     },
 });
 
-
-const FloatButton = ({ onPressFAB }: { onPressFAB: () => void }) => {
+interface FABProps {
+    onPressFAB: () => void,
+    navigation: any,
+}
+const FloatButton = (props: FABProps) => {
     const [text, setText] = useState('');
+    const [pwd, setPwd] = useState('');
 
     const [visible, setVisible] = useState(false);
     const showDialog = () => {
@@ -42,6 +46,7 @@ const FloatButton = ({ onPressFAB }: { onPressFAB: () => void }) => {
     const toggleMenu = () => {
         setMenuVisible(!MenuVisible);
     };
+
     return (
         <View>
             <FAB
@@ -72,7 +77,19 @@ const FloatButton = ({ onPressFAB }: { onPressFAB: () => void }) => {
                         scrollEnabled={false}
                         autoFocus={false}
                     />
-                    <Button>加入</Button>
+                    <Text style={{ marginLeft: 10, marginTop: 10, fontWeight: 'bold' }}>房间密码</Text>
+                    <TextInput
+                        mode='outlined'
+                        outlineStyle={{ backgroundColor: '#fff', borderColor: 'whitesmoke', borderRadius: 10 }}
+                        style={{
+                            marginHorizontal: 10
+                        }}
+                        value={pwd}
+                        onChangeText={setPwd}
+                        scrollEnabled={false}
+                        autoFocus={false}
+                    />
+                    <Button onPress={props.navigation.navigate('RoomInside', { roomId: text,roonPwd:pwd })}>加入</Button>
                 </View>
             </Modal>}
             {MenuVisible && <Modal
@@ -86,7 +103,7 @@ const FloatButton = ({ onPressFAB }: { onPressFAB: () => void }) => {
                     }>加入房间</Button>
                     <Divider />
                     <Button style={{ height: 50, paddingTop: 5 }} onPress={
-                        () => { toggleMenu(); onPressFAB(); }
+                        () => { toggleMenu(); props.onPressFAB(); }
                     }>创建房间</Button>
                     <Divider />
                     <Button style={{ height: 50, paddingTop: 5 }} onPress={
@@ -147,7 +164,7 @@ const RoomsScreen = ({ navigation }: StackNavigationProps) => {
     let rooms = [] as any[];
     async function fetchData() {
         rooms = []
-        const res = await requestApi('get', '/rooms', null, true, 'getMemories failed')
+        const res = await requestApi('get', '/rooms', null, true, 'getRooms failed')
         if (res.code == 0) {
             for (let index in res.data) {
                 res.data[index].height = Math.random() * 50 + 100;
@@ -164,6 +181,7 @@ const RoomsScreen = ({ navigation }: StackNavigationProps) => {
 
     return (
         <View style={{ flex: 1, marginBottom: bottom }}>
+            <Button onPress={()=>navigation.navigate('RoomInside', {roomId:'6', roomPwd:'1'})}>Jump To</Button>
             <WaterfallFlow
                 data={roomlist}
                 numColumns={2}
@@ -176,7 +194,7 @@ const RoomsScreen = ({ navigation }: StackNavigationProps) => {
                             paddingBottom: 3
                         }}>
                         <CardwithButtons
-                            goToDetail={() => { navigation.navigate('RoomInside') }}
+                            goToDetail={() => { navigation.navigate('RoomInside', { roomId: item.roomId, roomPwd: null }) }}
                             content={item}
                         />
                     </View>)
@@ -186,7 +204,10 @@ const RoomsScreen = ({ navigation }: StackNavigationProps) => {
             {/* -> Set bottom view to allow scrolling to top if you set bottom-bar position absolute */}
             <View style={{ height: 90 }} />
 
-            <FloatButton onPressFAB={() => navigation.navigate('CreateRoom')} />
+            <FloatButton
+                onPressFAB={() => navigation.navigate('CreateRoom')}
+                navigation={navigation}
+            />
             {/* <NoticeManageButton onPressFAB={() => navigation.navigate('NoticeManageScreen')} /> */}
         </View>
     );

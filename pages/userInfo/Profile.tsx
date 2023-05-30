@@ -182,7 +182,7 @@ const Profile = ({ navigation }: StackNavigationProps) => {
                 onPress={()=>setShowMenu(true)}
                 style={{marginRight:10}}
           />}>
-          <Menu.Item onPress={() => {}} 
+          <Menu.Item onPress={() => {navigation.navigate('DraftList')}} 
           title={<Icon style={{fontSize:17}} name="file-document-edit-outline">草稿箱</Icon>} />
           <Divider />
           <Menu.Item onPress={() => {}} 

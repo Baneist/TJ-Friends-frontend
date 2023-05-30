@@ -83,7 +83,12 @@ const defaultMessages = [
   },
 ];
 
-function ChatRoom(roomId:string, navigation:StackNavigationProps['navigation']) {
+interface chatRoomProp{
+  roomId:string,
+  navigation:StackNavigationProps['navigation']
+}
+
+function ChatRoom({roomId,navigation}:chatRoomProp) {
   const userId = global.gUserId;
   const [IUser, setIUser] = useState({
     _id: userId,

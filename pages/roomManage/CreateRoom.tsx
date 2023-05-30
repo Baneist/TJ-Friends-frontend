@@ -12,6 +12,7 @@ const CreatePage = ({ route, navigation }: StackNavigationProps) => {
     const [text1, setText1] = useState('');
     const [text2, setText2] = useState('');
     const [text3, setText3] = useState('');
+    const [pwd, setPwd] = useState('');
     const { width, height } = Dimensions.get("screen");
     const [image, setImage] = useState("");
     const [showPickerOption, setShowPickerOption] = useState(false);
@@ -29,9 +30,9 @@ const CreatePage = ({ route, navigation }: StackNavigationProps) => {
         if (imageRes.code === 0) {
             setImage(BASE_URL + imageRes.data.url);
         }
-        const res = await requestApi('post', '/createRoom', { coverUrl: image, videoUrl: text1, roomName: text2, roomDescription: text3, roomPms: locked }, true, 'post失败')
+        const res = await requestApi('post', '/createRoom', { coverUrl: image, videoUrl: text1, roomName: text2, roomDescription: text3, roomPms: locked,roomPwd: (locked?pwd:null) }, true, 'post失败')
         if (res.code == 0) {
-            navigation.goBack();
+            navigation.navigate('RoomInside',{roomId:res.data.roomId,roomPwd:locked?pwd:null});
         }
         console.log('create');
     }
@@ -128,11 +129,27 @@ const CreatePage = ({ route, navigation }: StackNavigationProps) => {
                     />}
                 />
             </View>
+            {locked! && <View>
+                <Text style={{ marginLeft: 10, marginTop: 15, fontWeight: 'bold' }}>房间密码</Text>
+                <TextInput
+                    mode='outlined'
+                    outlineStyle={{ backgroundColor: '#fff', borderColor: 'whitesmoke', borderRadius: 20 }}
+                    style={{
+                        marginHorizontal: 10
+                    }}
+                    placeholder='房间密码'
+                    placeholderTextColor='lightgrey'
+                    value={pwd}
+                    onChangeText={setPwd}
+                    scrollEnabled={false}
+                    autoFocus={false}
+                />
+            </View>}
             <Button
                 mode='contained'
                 style={{ margin: 20, }}
                 onPress={handleCreate}
-                disabled={image === "" || text1 === "" || text2 === "" || text3 === ""}
+                disabled={image === "" || text1 === "" || text2 === "" || text3 === ""||(locked&&pwd==="")}
             >
                 创建
             </Button>
