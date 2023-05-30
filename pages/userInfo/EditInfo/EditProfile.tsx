@@ -2,18 +2,15 @@ import React, {useState, useRef} from "react";
 import {useSafeAreaInsets} from 'react-native-safe-area-context';
 import {
   View,
-  StyleSheet,
   Dimensions,
   ScrollView,
   Image,
   ImageBackground,
   Pressable,
-  Platform,
-  Alert
-} from "react-native"
+  Platform} from "react-native"
 import {
   Button, Card, TextInput, Switch, Surface,
-  Portal, Provider, IconButton, List, Chip
+  IconButton, List, Chip
 } from 'react-native-paper';
 import {Block, Text} from "galio-framework";
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -22,14 +19,12 @@ import {StackNavigationProps} from '../../../App'
 import Modal from 'react-native-modal';
 import styles from './EditProfile.Style'
 import requestApi from "../../../utils/request";
-import handleAxiosError from "../../../utils/handleError";
 import AvatarPicker from "../../../components/AvatarPicker/AvatarPicker";
 import {userProp, defaultInfo} from "../Profile";
 import {useFocusEffect} from '@react-navigation/native';
 import {GENDER} from "../Profile";
 import {toastConfig} from "../../../components/Toast/Toast";
 import Toast from "react-native-toast-message";
-import mime from "mime";
 import { BASE_URL } from "../../../utils/request";
 import uploadImage from "../../../utils/uploadImage";
 
@@ -42,19 +37,6 @@ const thumbMeasure = (width - 48 - 32) / 3;
 const profileImage = {
   ProfileBackground: require('../../../assets/imgs/profile-screen-bg.png'),
   ProfilePicture: 'https://picsum.photos/700'
-}
-
-export function readFile(file: Blob) {
-  const reader = new FileReader();
-  reader.readAsDataURL(file);
-  return new Promise(function(resolve, reject) {
-    reader.onload = function() {
-      resolve(reader.result);
-    };
-    reader.onerror = function() {
-      reject(reader.error);
-    };
-  });
 }
 
 //资料页面

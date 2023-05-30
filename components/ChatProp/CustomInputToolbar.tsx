@@ -117,15 +117,17 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
+    bottom:0,
     backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     paddingHorizontal: 10,
-    paddingVertical: 5,
+    paddingVertical: 10,
     elevation: 2,
   },
   textInput: {
     flex: 1,
+    height:40,
     backgroundColor: '#F5F5F5',
     borderRadius: 20,
     marginHorizontal: 10,

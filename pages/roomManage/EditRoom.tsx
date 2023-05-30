@@ -4,10 +4,9 @@ import { TextInput, List, Button, IconButton } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import SinglePicker from '../../components/AvatarPicker/SinglePicker';
 import uploadImage from '../../utils/uploadImage';
-import requestApi, { BASE_URL } from '../../utils/request';
-import { StackNavigationProps } from '../../App';
+import { BASE_URL } from '../../utils/request';
 
-const CreatePage = ({ route, navigation }: StackNavigationProps) => {
+const EditPage = () => {
     const [locked, setLocked] = useState(false);
     const [text1, setText1] = useState('');
     const [text2, setText2] = useState('');
@@ -23,16 +22,11 @@ const CreatePage = ({ route, navigation }: StackNavigationProps) => {
     function changeImage(uri: string) {
         setImage(uri)
     }
-
     async function handleCreate() {
-        const imageRes = await uploadImage(image);
-        if (imageRes.code === 0) {
-            setImage(BASE_URL + imageRes.data.url);
-        }
-        const res = await requestApi('post', '/createRoom', { coverUrl: image, videoUrl: text1, roomName: text2, roomDescription: text3, roomPms: locked }, true, 'post失败')
-        if (res.code == 0) {
-            navigation.goBack();
-        }
+        // const imageRes = await uploadImage(image);
+        // if (imageRes.code === 0) {
+        //     setImage(BASE_URL + imageRes.data.url);
+        // }
         console.log('create');
     }
     return (
@@ -132,12 +126,13 @@ const CreatePage = ({ route, navigation }: StackNavigationProps) => {
                 mode='contained'
                 style={{ margin: 20, }}
                 onPress={handleCreate}
-                disabled={image === "" || text1 === "" || text2 === "" || text3 === ""}
+                disabled={text1===""||text2===""}
             >
-                创建
+                更改设置
             </Button>
             <SinglePicker showPickerOption={showPickerOption} onBackdropPress={cancelPickerOption} setImage={changeImage} />
+
         </View>
     );
 }
-export default CreatePage;
+export default EditPage;

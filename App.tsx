@@ -44,6 +44,10 @@ import MatchDetailScreen from "./pages/matchManage/matchDetail";
 import ChatDetail from './pages/ChatDetail'
 import CreatePage from "./pages/roomManage/CreateRoom";
 
+//房间
+import RoomInside from "./pages/roomManage/RoomInside";
+import EditPage from "./pages/roomManage/EditRoom";
+
 const GetUrl = "https://1.tongji.edu.cn/api/ssoservice/system/loginIn";
 const TargetUrl = "https://1.tongji.edu.cn/ssologin";
 const PostUrl = "https://1.tongji.edu.cn/api/sessionservice/session/login";
@@ -55,7 +59,7 @@ type RootStackParamList = {
   Login: undefined;
   Signup: undefined;
   ChangePassword: undefined;
-  Profile: undefined;
+  Profile: { userId: string } | undefined;
   Comment: { postId: string } | undefined;
   Memories: undefined;
   Post: undefined;
@@ -73,8 +77,10 @@ type RootStackParamList = {
   ChatDetail:  { userId: string } | undefined;
   BlackList:undefined,
   ComplaintUser:{ userId: string };
+  RoomInside:undefined
   CreateRoom:undefined;
   MatchDetailScreen: { userId: string };
+  EditRoom:undefined;
 };
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -266,6 +272,11 @@ const App = () => {
             component={ChatDetail}
             options={{ headerBackTitle: "Back" }}
           />
+          <Stack.Screen
+            name="RoomInside"
+            component={RoomInside}
+            options={{ headerBackTitle: "Back" }}
+          />
           <Stack.Screen name="NoticeManageScreen" component={NoticeManageScreen} options={{ headerBackTitle: 'Back' }} />
           <Stack.Screen name="NoticeDetailScreen" component={NoticeDetailScreen} options={{ headerBackTitle: 'Back',title:'Notice' }} />
           <Stack.Screen
@@ -276,6 +287,15 @@ const App = () => {
           <Stack.Screen
             name="MatchDetailScreen"
             component={MatchDetailScreen}
+          />
+          <Stack.Screen
+            name="EditRoom"
+            component={EditPage}
+            options={{ headerBackTitle: "Back" }}
+          />
+          <Stack.Screen
+            name="BlackList"
+            component={BlackList}
             options={{ headerBackTitle: "Back" }}
           />
         </Stack.Navigator>
