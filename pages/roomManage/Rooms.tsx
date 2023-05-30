@@ -89,7 +89,7 @@ const FloatButton = (props: FABProps) => {
                         scrollEnabled={false}
                         autoFocus={false}
                     />
-                    <Button onPress={props.navigation.navigate('RoomInside', { roomId: text,roonPwd:pwd })}>加入</Button>
+                    <Button onPress={()=>{props.navigation.navigate('RoomInside', { roomId: text,roonPwd:pwd });hideDialog();}}>加入</Button>
                 </View>
             </Modal>}
             {MenuVisible && <Modal

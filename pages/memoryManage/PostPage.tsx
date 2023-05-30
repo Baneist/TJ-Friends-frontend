@@ -114,6 +114,7 @@ const PostPage = ({ route, navigation }: StackNavigationProps) => {
 			}
 		}
 		const res = await requestApi('post', '/createDraft', { postContent: text, photoUrl: image, pms: pmskey, isAnonymous: anonymous }, true, 'post失败')
+		return res;
 	}
 	React.useEffect(
 		() => {
@@ -140,9 +141,11 @@ const PostPage = ({ route, navigation }: StackNavigationProps) => {
 						{
 							text: '保存',
 							style: 'cancel',
-							onPress: () => { 
-								handleSave();
-								navigation.dispatch(e.data.action) ;
+							onPress: () => {
+								const res = handleSave();
+								if (res.code == 0) {
+									navigation.dispatch(e.data.action);
+								}
 							},
 						},
 					]

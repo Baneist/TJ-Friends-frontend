@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Platform, StyleSheet, Image, Switch, View, Text, Dimensions, Pressable } from 'react-native';
+import { Platform, StyleSheet, Image, Switch, View, Text, Dimensions, Pressable, ScrollView } from 'react-native';
 import { TextInput, List, Button, IconButton } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import SinglePicker from '../../components/AvatarPicker/SinglePicker';
@@ -51,7 +51,7 @@ const EditPage = ({ route, navigation }: StackNavigationProps) => {
         fetchData()
     }, [])
     return (
-        <View style={{ backgroundColor: 'white', height: height - 100 }}>
+        <ScrollView style={{ backgroundColor: 'white', height: height - 100 }}>
             <View>
                 <Text style={{ marginLeft: 10, marginTop: 15, fontWeight: 'bold' }}>房间封面</Text>
                 {image != "" && <View style={{ marginVertical: 6 }}>
@@ -169,7 +169,7 @@ const EditPage = ({ route, navigation }: StackNavigationProps) => {
             </Button>
             <SinglePicker showPickerOption={showPickerOption} onBackdropPress={cancelPickerOption} setImage={changeImage} />
 
-        </View>
+        </ScrollView>
     );
 }
 export default EditPage;
