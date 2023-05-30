@@ -26,6 +26,8 @@ import BlackList from "./pages/userInfo/BlackList";
 import ComplaintUser from "./pages/userInfo/Complaint";
 //查看他人主页
 import OthersPage from "./pages/userInfo/OthersPage";
+//草稿箱
+import DraftList from "./pages/userInfo/DraftList";
 
 //编辑资料相关路由
 import { EditProfile } from "./pages/userInfo/EditInfo/EditProfile";
@@ -41,8 +43,9 @@ import EditPost from "./pages/memoryManage/EditPost";
 import NoticeManageScreen from './pages/noticeManage/NoticeManage';
 import NoticeDetailScreen from "./pages/noticeManage/NoticeDetail";
 
-import ChatDetail from './pages/ChatDetail'
+import ChatDetail from './pages/ChatManage/ChatDetail'
 import CreatePage from "./pages/roomManage/CreateRoom";
+import WaitingPage from "./pages/WaitingPage";
 
 //房间
 import RoomInside from "./pages/roomManage/RoomInside";
@@ -77,9 +80,11 @@ type RootStackParamList = {
   ChatDetail:  { userId: string } | undefined;
   BlackList:undefined,
   ComplaintUser:{ userId: string };
-  RoomInside:{roomId:string,roomPwd:any}
+  RoomInside:{roomId:string,roomPwd:string}
   CreateRoom:undefined;
   EditRoom:{roomId:string};
+  DraftList:undefined;
+  WaitingPage: { userId: string, avatar: string } | undefined;
 };
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -291,6 +296,16 @@ const App = () => {
           <Stack.Screen
             name="BlackList"
             component={BlackList}
+            options={{ headerBackTitle: "Back" }}
+          />
+          <Stack.Screen
+            name="WaitingPage"
+            component={WaitingPage}
+            options={{ headerBackTitle: "Back" }}
+          />
+          <Stack.Screen
+            name="DraftList"
+            component={DraftList}
             options={{ headerBackTitle: "Back" }}
           />
         </Stack.Navigator>

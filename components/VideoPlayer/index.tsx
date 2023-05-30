@@ -1,6 +1,6 @@
 import * as ScreenOrientation from 'expo-screen-orientation'
 import { Dimensions, ScrollView, StyleSheet, Text } from 'react-native'
-import { ResizeMode } from 'expo-av'
+import { AVPlaybackStatus, ResizeMode } from 'expo-av'
 import { Button, IconButton} from 'react-native-paper';
 import React, { useRef, useState } from 'react'
 import VideoPlayer from 'expo-video-player'
@@ -34,9 +34,14 @@ const MyVideoPlayer = (props:PlayerProps) => {
           setInFullsreen(!inFullscreen)
       }
   }
+  //视频播放同步
+  function SynchronizeVideo(status:AVPlaybackStatus){
+
+  }
   return (
       <VideoPlayer
         videoProps={{
+          positionMillis:1000000,
           shouldPlay: true,
           resizeMode: ResizeMode.CONTAIN,
           source: {
@@ -44,6 +49,7 @@ const MyVideoPlayer = (props:PlayerProps) => {
           },
           ref: refVideo2,
         }}
+        playbackCallback = {(status: AVPlaybackStatus)=> SynchronizeVideo(status)}
         fullscreen={{
           inFullscreen: inFullscreen,
           enterFullscreen: fullScreenCallBack,

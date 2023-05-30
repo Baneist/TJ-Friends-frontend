@@ -1,11 +1,11 @@
-import { View, Image, StyleSheet, Text, Dimensions, KeyboardAvoidingView, Platform, ImageBackground, Pressable } from 'react-native'
-import { Button, IconButton, Avatar, List, Card} from 'react-native-paper';
+import { View, Image, StyleSheet, Text, Dimensions, KeyboardAvoidingView, Platform, ImageBackground, Pressable, Alert } from 'react-native'
+import { Button, IconButton, Avatar, List, Card, TextInput} from 'react-native-paper';
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { StackNavigationProps } from '../../App'
 import MyVideoPlayer from '../../components/VideoPlayer';
 import Icon from 'react-native-vector-icons/AntDesign';
 import ChatRoom from '../../components/ChatRoom';
-import requestApi from '../../utils/request';
+import requestApi, { requestApiForMockTest } from '../../utils/request';
 import { AxiosResponse } from 'axios';
 import Modal from 'react-native-modal';
 import { defaultInfo, profileImage, userProp } from '../userInfo/Profile';
@@ -13,10 +13,12 @@ import { profileStyles } from '../userInfo/Profile.style';
 
 const {width, height} = Dimensions.get("screen");
 interface RoomProps {
-  roomId:number,
+  roomId:string,
   roomName:string,
   videoUrl:string,
-  ownerId:string
+  members:string[],
+  roomPwd:string,
+  creatorId:string
 }
 
 interface MemberInfoProp {
@@ -33,11 +35,12 @@ const defaultMember = {
   isFollowing:false
 }
 const defaultRoom = {
-  roomId:1,
+  roomId:'1',
   roomName:'一起来玩吧',
   videoUrl:'https://vip.ffzy-play6.com/20221127/8802_3816a20c/2000k/hls/index.m3u8',
-  members:['2052909','2052333','2052732'],
-  ownerId:'2052909'
+  members:[],
+  roomPwd:'',
+  creatorId:'2052909'
 }
 
 interface detailProps{
@@ -127,8 +130,17 @@ const UserDetail = (props:detailProps) => {
   )
 }
 
-const InviteFriend = () => {
+interface inviteProps{
+  roomId:string,
+  roomPwd:string,
+  roomName:string
+}
+const InviteFriend = (props:inviteProps) => {
   const [dialogVis, setDialogVis] = useState(false);
+  const [stuId, setStuId]=useState('');
+  function invite(){
+    setDialogVis(!dialogVis)
+  }
   return(
     <View>
       <Pressable onPress={()=>setDialogVis(!dialogVis)}>
@@ -138,11 +150,33 @@ const InviteFriend = () => {
         <Card>
           <Card.Title 
             left={(props) => <List.Icon {...props} icon="account-plus-outline" />}
-            title="邀请好友"
+            title="邀请成员"
           />
           <Card.Content>
-            
+            <TextInput
+              label="学号"
+              value={stuId}
+              maxLength={7}
+              mode='outlined'
+              keyboardType='number-pad'
+              onChangeText={text => setStuId(text)}
+            />
+            <View style={{marginTop:10,backgroundColor:'white',borderRadius:20, borderColor:'#32325D', borderWidth:1, paddingVertical:10}}>
+              <Text style={{fontSize:18, marginHorizontal:10, color:'#525F7F'}}>
+                加入房间“{props.roomName}”，和我们一起玩吧！
+              </Text>
+              <Text style={{fontSize:18, marginHorizontal:10, color:'#525F7F'}}>
+                房间码：{props.roomId}
+              </Text>
+              <Text style={{fontSize:18, marginHorizontal:10, color:'#525F7F'}}>
+                房间密码：{props.roomPwd}
+              </Text>
+            </View>
           </Card.Content>
+          <Card.Actions>
+            <Button onPress={()=>setDialogVis(!dialogVis)}>取消</Button>
+            <Button onPress={invite}>确定</Button>
+          </Card.Actions>
         </Card>
       </Modal>
     </View>
@@ -150,22 +184,25 @@ const InviteFriend = () => {
 }
 
 interface MemberListProps{
-  ownerId:string,
-  members:string [],
+  roomInfo:RoomProps,
   navigation:StackNavigationProps['navigation']
 }
 const MemberList = (props:MemberListProps) => {
   //成员列表
   const [MemberInfo, setMemberInfo] = useState([] as MemberInfoProp[])
+  //成员个数 为了渲染搞一个
+  const [memberNum, setMemberNum] = useState(0);
   //查看
   const [viewMember, setViewMember] = useState(false);
   const [member, setMember] = useState(defaultMember)
 
   async function fetchData(){
+    console.log(props.roomInfo.members)
+    setMemberNum(props.roomInfo.members.length)
     let reqList: Promise<AxiosResponse>[] = [];
-    for (let i = 0; i < props.members.length; ++i) {
+    for (let i = 0; i < props.roomInfo.members.length; ++i) {
       reqList.push(new Promise((resolve, reject) => {
-        resolve(requestApi('get', `/profile/${props.members[i]}`, null, true, 'get profile failed(In room)'))
+        resolve(requestApi('get', `/profile/${props.roomInfo.members[i]}`, null, true, 'get profile failed(In room)'))
       }))
     }
     Promise.all(reqList).then((values) => {
@@ -183,15 +220,16 @@ const MemberList = (props:MemberListProps) => {
   }
 
   useEffect(()=>{
+    console.log('m',props.roomInfo)
     fetchData()
-  },[])
+  },[props])
 
   return(
     <View style={{borderRadius:0, paddingBottom:20, backgroundColor:'white'}}>
       <Card.Title
         style={{marginBottom:0}}
         title="房间成员"
-        subtitle={"当前"+props.members.length+"人"}
+        subtitle={"当前"+memberNum+"人"}
         left={(props) => <List.Icon icon="account-group"/>}
       />
       <View style={styles.memberListContainer}>
@@ -206,40 +244,72 @@ const MemberList = (props:MemberListProps) => {
           showDetial={viewMember} 
           onBackdropPress={()=> setViewMember(false)} 
           navigation={props.navigation}
-          ownerId={props.ownerId}
+          ownerId={props.roomInfo.creatorId}
           userInfo={member}
           />
           </View>
         ))}
-        <InviteFriend />
+        <InviteFriend roomId={props.roomInfo.roomId} roomName={props.roomInfo.roomName} roomPwd={props.roomInfo.roomPwd}/>
       </View>
     </View>
   )
 }
 const RoomInside = ({route, navigation}:StackNavigationProps) => {
   const [roomInfo, setRoomInfo] = useState(defaultRoom)
+  async function fetchData(){
+    const res = await requestApi('post','/joinRoom',{
+      'roomId':route.params?.roomId,
+      'roomPwd':route.params?.roomPwd
+    }, true, '房间密码错误')
+    setRoomInfo(res.data)
+  }
+  useEffect(() => {
+    const onbackpage = navigation.addListener('beforeRemove', (e) => {
+      // Prevent default behavior of leaving the screen
+      e.preventDefault();
+      // Prompt the user before leaving the screen
+      Alert.alert(
+        '提示',
+        '是否离开该房间？',
+        [
+          {
+            text: "是",
+            style: 'destructive',
+            // This will continue the action that had triggered the removal of the screen
+            onPress: () => navigation.dispatch(e.data.action)
+          },
+          {
+            text: '取消',
+            style: 'cancel',
+          },
+        ]
+      );
+    });
+    fetchData()
+    return onbackpage;
+  }, [])
   //导航栏
   React.useLayoutEffect(() => {
+    console.log('l',roomInfo)
     navigation.setOptions({
     headerTitle:'房间：'+ roomInfo.roomName,
-    headerRight:() => ( roomInfo.ownerId == global.gUserId &&
+    headerRight:() => ( roomInfo.creatorId == global.gUserId &&
       <IconButton icon="cog-outline" 
       style={{marginRight:10}}
-      onPress={() =>{navigation.navigate('EditRoom')}}
+      onPress={() =>{navigation.navigate('EditRoom', {roomId:roomInfo.roomId})}}
       />
     )
   });
-  }, [navigation]);
+  }, [navigation, roomInfo]);
+  //离开房间
+
   return (
     <View style={{height:Dimensions.get('screen').height-110}}>
         <MyVideoPlayer navigation={navigation} videoUri={roomInfo.videoUrl}/>
-        <MemberList members={roomInfo.members} ownerId={roomInfo.ownerId} navigation={navigation}/>
-        <ChatRoom />
+        <MemberList roomInfo={roomInfo} navigation={navigation}/>
+        {/* <ChatRoom roomId={roomInfo.roomId} navigation={navigation}/> */}
     </View>
   )
-  useEffect(() => {
-    // fetchData()
-  }, [])
 }
 
 const styles = StyleSheet.create({
