@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Platform, StyleSheet, Image, Switch, View, Text, Dimensions, Pressable, ScrollView, Alert } from 'react-native';
+import { Platform, StyleSheet, Image, Switch, View, Text, Dimensions, Pressable, ScrollView, Alert, Linking } from 'react-native';
 import { TextInput, List, Button, IconButton } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import SinglePicker from '../../components/AvatarPicker/SinglePicker';
@@ -149,10 +149,10 @@ const EditPage = ({ route, navigation }: StackNavigationProps) => {
                     <Button
                         mode='text'
                         onPress={() => { }}
-                    ><Text style={{ textDecorationLine: 'underline' }}>参考链接1</Text></Button>
-                    <Button
-                        mode='text'
-                    ><Text style={{ textDecorationLine: 'underline' }}>参考链接2</Text></Button>
+                        ><Text style={{ textDecorationLine: 'underline' }} onPress={()=>Linking.openURL('https://www.taopianzy.com/index.html')}>参考链接1</Text></Button>
+                        <Button
+                            mode='text'
+                        ><Text style={{ textDecorationLine: 'underline' }} onPress={()=>Linking.openURL('http://bdyunzy.com/')}>参考链接2</Text></Button>
                 </View>
                 <Text style={{ marginLeft: 10, marginTop: 5, fontWeight: 'bold' }}>房间名称</Text>
                 <TextInput
