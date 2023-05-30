@@ -77,7 +77,7 @@ type RootStackParamList = {
   ChatDetail:  { userId: string } | undefined;
   BlackList:undefined,
   ComplaintUser:{ userId: string };
-  RoomInside:undefined
+  RoomInside:{roomId:string,roomPwd:any}
   CreateRoom:undefined;
   EditRoom:undefined;
 };
