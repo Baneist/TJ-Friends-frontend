@@ -181,7 +181,7 @@ const RoomsScreen = ({ navigation }: StackNavigationProps) => {
 
     return (
         <View style={{ flex: 1, marginBottom: bottom }}>
-            <Button onPress={()=>navigation.navigate('RoomInside', {roomId:'6', roomPwd:'1'})}>Jump To</Button>
+            <Button onPress={()=>navigation.navigate('RoomInside', {roomId:'7', roomPwd:'1'})}>Jump To</Button>
             <WaterfallFlow
                 data={roomlist}
                 numColumns={2}
