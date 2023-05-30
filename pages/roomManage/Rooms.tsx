@@ -84,8 +84,8 @@ const FloatButton = (props: FABProps) => {
                         style={{
                             marginHorizontal: 10
                         }}
-                        value={text}
-                        onChangeText={setText}
+                        value={pwd}
+                        onChangeText={setPwd}
                         scrollEnabled={false}
                         autoFocus={false}
                     />
