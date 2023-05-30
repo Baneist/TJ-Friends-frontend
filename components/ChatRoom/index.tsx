@@ -83,7 +83,12 @@ const defaultMessages = [
   },
 ];
 
-function ChatRoom(roomId:string, navigation:StackNavigationProps['navigation']) {
+interface chatRoomProp{
+  roomId:string,
+  navigation:StackNavigationProps['navigation']
+}
+
+function ChatRoom({roomId,navigation}:chatRoomProp) {
   const userId = global.gUserId;
   const [IUser, setIUser] = useState({
     _id: userId,
@@ -105,7 +110,7 @@ function ChatRoom(roomId:string, navigation:StackNavigationProps['navigation']) 
   async function fetchOrigin(){
     let CurMessages: ChatMessage[] = []
 
-    const resAllMessages = await requestApi('get', `/chat//receiveRoomMessage?roomId=${roomId}`, null, true, 'Get All Messages failed');
+    const resAllMessages = await requestApi('get', `/chat/receiveRoomMessage?roomId=${roomId}`, null, true, 'Get All Messages failed');
 
     setIUser(await getUser(userId));
     

@@ -36,7 +36,7 @@ const EditPage = ({ route, navigation }: StackNavigationProps) => {
         console.log('edit');
     }
     async function fetchData() {
-        console.log(route.params?.roomId)
+        console.log('editRoom',route.params?.roomId)
         const res = await requestApi('get', `/getRoomInfo?roomId=${route.params?.roomId}`, null, true, 'get room失败');
         if (res.code == 0) {
             setImage(res.data.coverUrl)
