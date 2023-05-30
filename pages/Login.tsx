@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import {
   Text,
   View,
@@ -7,7 +7,6 @@ import {
   SafeAreaView,
   TouchableOpacity,
 } from "react-native";
-import { Alert } from "react-native";
 /**
  * ? Local Imports
  */
@@ -15,8 +14,7 @@ import styles from "./Login.style";
 import TextField from "../components/TextField/TextField";
 import SocialButton from "../components/LoginSocialButton/SocialButton";
 import requestApi from "../utils/request";
-import {NavigationProps} from "../App";
-import handleAxiosError from "../utils/handleError";
+import { StackNavigationProps } from "../App";
 
 // ? Assets
 const googleLogo = require("../assets/google-logo.png");
@@ -64,13 +62,13 @@ export interface ISocialLoginProps {
   onDiscordLoginPress?: () => void;
   onSignUpPress: () => void;
   onRepasswordChangeText?: (text: string) => void;
-  navigation: NavigationProps["navigation"];
+  navigation: StackNavigationProps["navigation"];
 }
 
 const Login = (props: ISocialLoginProps) => {
   const [isSignUp, setIsSignUp] = useState(false);
-  const [username, setUsername] = React.useState("");
-  const [password, setPassword] = React.useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   const renderHeader = () => {
     const {
@@ -161,16 +159,12 @@ const Login = (props: ISocialLoginProps) => {
   };
 
   const onHandleLoginPress = async () => {
-    try {
-      const data = (await requestApi('post', '/login', { username, password }, false)).data;
-      if (data.code === 0) {
-        props.navigation.replace('Main');
-      } else {
-        props.navigation.replace('Login');
-        Alert.alert('登录失败', data.msg);
-      }
-    } catch (error) {
-      handleAxiosError(error, '登录失败');
+    const data = await requestApi('post', '/login', { username, password }, false, '登录失败');
+    if (data.code === 0) {
+      global.gUserId = username;
+      props.navigation.replace('Main', {
+        userId: username
+      });
     }
   }
 
@@ -198,14 +192,7 @@ const Login = (props: ISocialLoginProps) => {
     );
   };
 
-  const onAppleLoginPress = async () => {
-    try {
-      const res = await requestApi('get', '/profile/2053186', null, true);
-      Alert.alert('用户信息', JSON.stringify(res.data));
-    } catch (error) {
-      handleAxiosError(error);
-    }
-  }
+  const onAppleLoginPress = async () => { }
 
   const renderAppleLoginButton = () => {
     const {

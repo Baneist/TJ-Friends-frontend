@@ -3,9 +3,12 @@ import { StyleSheet, View, Image, Alert } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import { ImageEditor } from "expo-image-editor";
 import Modal from 'react-native-modal';
-import { Button, Divider } from 'react-native-paper';
+import {
+  Button, Card, TextInput, Dialog, Surface,
+  Portal, Provider, Snackbar, IconButton, List, Divider
+} from 'react-native-paper';
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   modalFromBottom: {
     justifyContent: 'flex-end',
     margin: 0,
@@ -21,16 +24,10 @@ const styles = StyleSheet.create({
 });
 
 
-<<<<<<< Updated upstream
-interface AvatarPickerProps{
-    showAvatarOption:boolean,
-    onBackdropPress:()=>void,
-=======
 interface AvatarPickerProps {
   showAvatarOption: boolean,
   onBackdropPress: () => void,
-  onSubmit: (uri: string) => void,
->>>>>>> Stashed changes
+  onSubmit: (url: string) => void,
 }
 
 
@@ -48,6 +45,7 @@ export default function AvatarPicker(props: AvatarPickerProps) {
       const pickerResult = await ImagePicker.launchImageLibraryAsync();
       // Check they didn't cancel the picking
       if (!pickerResult.canceled) {
+        console.log('type', typeof (pickerResult.assets[0]))
         console.log(pickerResult.assets[0].uri)
         launchEditor(pickerResult.assets[0].uri);
       }
@@ -101,28 +99,6 @@ export default function AvatarPicker(props: AvatarPickerProps) {
         <Divider />
         <Button style={styles.avatarBtn}
           onPress={props.onBackdropPress}>取消</Button>
-<<<<<<< Updated upstream
-        </View>
-          <ImageEditor
-          visible={editorVisible}
-          onCloseEditor={() => setEditorVisible(false)}
-          imageUri={imageUri}
-          fixedCropAspectRatio={1 / 1}
-          lockAspectRatio={true}
-          minimumCropDimensions={{
-            width: 100,
-            height: 100,
-          }}
-          onEditingComplete={(result) => {
-              console.log(result);
-              props.onBackdropPress();
-          }}
-          mode="full"
-        />
-      </Modal>
-    );
-  }
-=======
       </View>
       <ImageEditor
         visible={editorVisible}
@@ -130,12 +106,8 @@ export default function AvatarPicker(props: AvatarPickerProps) {
         imageUri={imageUri}
         fixedCropAspectRatio={1 / 1}
         lockAspectRatio={true}
-        minimumCropDimensions={{
-          width: 400,
-          height: 400,
-        }}
         onEditingComplete={(result) => {
-          console.log(result);
+          console.log(typeof (result.uri));
           props.onSubmit(result.uri);
           props.onBackdropPress();
         }}
@@ -144,4 +116,3 @@ export default function AvatarPicker(props: AvatarPickerProps) {
     </Modal>
   );
 }
->>>>>>> Stashed changes

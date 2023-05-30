@@ -1,13 +1,30 @@
-import React, { useEffect } from 'react';
-import { View, Switch, Pressable } from 'react-native';
-import { Provider as PaperProvider, TextInput } from 'react-native-paper';
+import React from 'react';
+import { View, Switch } from 'react-native';
 import Icon from 'react-native-vector-icons/AntDesign';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Text, Block } from "galio-framework";
+import { createBottomTabNavigator, BottomTabNavigationProp } from '@react-navigation/bottom-tabs';
+import { Text } from "galio-framework";
 import { BottomFabBar } from 'rn-wave-bottom-bar';
-import MemoriesScreen from './Memories';
+import MemoriesScreen from './memoryManage/Memories';
 import Profile from './userInfo/Profile'
+import NoticeManageScreen from './noticeManage/NoticeManage';import { IconButton, Provider } from 'react-native-paper';
+import { StackNavigationProps } from '../App';
+import RoomsScreen from './roomManage/Rooms';
+import { color } from 'react-native-reanimated';
 
+type RootTabParamList = {
+  Home: undefined;
+  Meh: undefined;
+  Memories: undefined;
+  Trophy: undefined;
+  Profile: { userId: string, postId: string } | undefined;
+};
+
+const Tab = createBottomTabNavigator<RootTabParamList>();
+
+export type TabNavigationProp = BottomTabNavigationProp<
+  RootTabParamList,
+  keyof RootTabParamList
+>;
 
 const generateScreen = (screen: string) => () => {
   return (
@@ -24,7 +41,6 @@ const generateScreen = (screen: string) => () => {
   );
 };
 
-const Tab = createBottomTabNavigator();
 const tabBarIcon =
   (name: string) =>
     ({
@@ -37,12 +53,7 @@ const tabBarIcon =
       size: number;
     }) =>
       <Icon name={name} size={28} color={focused ? 'white' : 'white'} />;
-
-export interface IMainProps {
-  onCommentPress: () => void;
-  onPressFAB: () => void;
-}
-const MainScreen = () => {
+const MainScreen = ({route, navigation}:StackNavigationProps) => {
   const [showLabel, setShowLabel] = React.useState(false);
   const [enableSquare, setEnableSquare] = React.useState(false);
   const [isRtl, setIsRtl] = React.useState(false);
@@ -66,6 +77,7 @@ const MainScreen = () => {
 
 
   return (
+    <Provider>
     <Tab.Navigator
       screenOptions={{
         tabBarActiveTintColor: '#5F0B65',
@@ -118,12 +130,13 @@ const MainScreen = () => {
         component={Home}
       />
       <Tab.Screen
-        name="Meh"
         options={{
-          tabBarIcon: tabBarIcon('meh'),
+          tabBarIcon: tabBarIcon('youtube'),
+          tabBarIconStyle:{},
           tabBarLabel: showLabel ? 'Meh' : undefined,
         }}
-        component={generateScreen('Meh')}
+        name="Rooms"
+        component={RoomsScreen}
       />
       <Tab.Screen
         options={{
@@ -131,17 +144,18 @@ const MainScreen = () => {
           tabBarActiveBackgroundColor: '#45014A',
           tabBarActiveTintColor: 'purple',
           tabBarLabel: showLabel ? 'Memories' : undefined,
+          headerShown:true
         }}
         name="Memories"
         component={MemoriesScreen}
       />
       <Tab.Screen
         options={{
-          tabBarIcon: tabBarIcon('Trophy'),
-          tabBarLabel: showLabel ? 'Trophy' : undefined,
+          tabBarIcon: tabBarIcon('notification'),
+          tabBarLabel: showLabel ? 'NoticeManageScreen' : undefined,
         }}
-        name="Trophy"
-        component={generateScreen('Trophy')}
+        name="    通知管理"
+        component={NoticeManageScreen}
       />
       <Tab.Screen
         options={{
@@ -152,6 +166,7 @@ const MainScreen = () => {
         component={Profile}
       />
     </Tab.Navigator>
+    </Provider>
   );
 };
 export default MainScreen;

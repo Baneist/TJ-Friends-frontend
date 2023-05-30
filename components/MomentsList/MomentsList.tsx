@@ -1,27 +1,66 @@
-import React from 'react';
-import { Pressable, ScrollView, View, Image, StyleSheet } from 'react-native';
-import { Button, Card, IconButton, Divider, FAB } from 'react-native-paper';
+import React,{useState,useEffect} from 'react';
+import { ScrollView, View,Text } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import Icon from 'react-native-vector-icons/AntDesign';
-import { useState } from 'react';
-import Modal from 'react-native-modal';
-import { NavigationProps } from '../../App';
-import { CardwithButtons } from '../../pages/Memories';
+import { CardwithButtons } from '../../pages/memoryManage/Memories';
+import requestApi from '../../utils/request';
+import { StackNavigationProps } from '../../App';
+import { useFocusEffect } from '@react-navigation/native';
+import { AxiosResponse } from 'axios';
 
-export const MomentsList=({onCommentPress}:{onCommentPress:()=>void}) => {
+export interface PostsProps{
+  navigation:StackNavigationProps["navigation"],
+  userId:string,
+}
+const MomentsList=(props: PostsProps) => {
   const { bottom } = useSafeAreaInsets();
-  const array = [1, 2, 3, 4, 5];
-  return(
+  const onCommentPress = (postID: string) => {
+    props.navigation.navigate('Comment', { postId: postID });
+  }
+
+  function clickAvatar() {
+    props.navigation.navigate('OthersPage',{userId:props.userId});
+  }
+
+  const [list, setlist] = useState([] as any[]);
+  async function fetchData() {
+    const res = await requestApi('get', `/getUserMemories/${props.userId}`,null, true, 'get user memories faild')
+    if(res.code === 0){
+      setlist(res.data)
+      console.log(props.userId,list)
+    }
+    else{
+      console.log('get user memories faild', res.code)
+      console.log(res.msg)
+      console.log(props.userId)
+    }
+  }
+
+  
+  useFocusEffect(
+    React.useCallback(() => {
+      console.log(props.userId)
+      fetchData()
+      return () => {
+      };
+    }, [])
+  );
+
+  return (
     <View style={{ flex: 1, marginBottom: bottom }}>
-      <ScrollView>
         <View>
-          {array.map((item,idx) => 
-          <CardwithButtons key={idx} onCommentPress={onCommentPress}/>)}
+          {list.map((item, index) =>
+            <CardwithButtons
+              key={index}
+              content={item}
+              onCommentPress={() => onCommentPress(item.postId)}
+              navigation={props.navigation}
+            />)}
+          {list.length===0 && 
+            <View style={{flex:1, alignItems:'center'}}>
+              <Text style={{color:'#525F7F', marginTop:20}}>---暂无更多---</Text>
+            </View>
+          }
         </View>
-        {/* eslint-disable-next-line max-len */}
-        {/* -> Set bottom view to allow scrolling to top if you set bottom-bar position absolute */}
-        <View style={{ height: 90 }} />
-      </ScrollView>
     </View>
   );
 }

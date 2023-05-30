@@ -3,30 +3,15 @@ import { StyleSheet, View, Image, Alert } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import Modal from 'react-native-modal';
 import {Button, Divider } from 'react-native-paper';
+import {styles} from './AvatarPicker'
 
-const styles = StyleSheet.create({
-    modalFromBottom: {
-        justifyContent: 'flex-end',
-        margin: 0,
-      },
-      avatarBtn:{
-        height:50,
-        marginTop:10
-      },
-      contentContainer:{
-        backgroundColor: 'white',
-        paddingTop:15
-      },
-});
-
-
-interface AvatarPickerProps{
-    showAvatarOption:boolean,
+interface MultiPickerProps{
+    showPickerOption:boolean,
     onBackdropPress:()=>void,
     setImage:(uri:string[])=>void
 }
 
-export default function AvatarPicker(props:AvatarPickerProps) {
+export default function MultiPicker(props:MultiPickerProps) {
   const [imageUri, setImageUri] = useState('');
 
   const [editorVisible, setEditorVisible] = useState(false);
@@ -72,7 +57,7 @@ export default function AvatarPicker(props:AvatarPickerProps) {
 
   return(
       <Modal
-      isVisible={props.showAvatarOption}
+      isVisible={props.showPickerOption}
       onBackdropPress={props.onBackdropPress}
       style={styles.modalFromBottom}
       >

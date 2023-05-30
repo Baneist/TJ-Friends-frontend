@@ -1,8 +1,7 @@
-import React, { forwardRef, useImperativeHandle } from "react";
+import React from "react";
 import {
   Image,
   ImageStyle,
-  StatusBar,
   SafeAreaView,
   StyleProp,
   Text,
@@ -27,11 +26,6 @@ const usernameValidator = (username: string) => {
 };
 
 const dummyFunction = () => { };
-
-export interface ITextRef {
-  getParams: () => { username: string, password: string };
-}
-
 export interface ILoginScreenProps {
   signupText?: string;
   disableDivider?: boolean;
@@ -97,8 +91,6 @@ const Signin = ({
   onSignupPress,
   onUsernameChange,
   onPasswordChange,
-  onFacebookPress = dummyFunction,
-  onTwitterPress = dummyFunction,
   onApplePress = dummyFunction,
   onGooglePress = dummyFunction,
   usernamePlaceholder = "Username",
