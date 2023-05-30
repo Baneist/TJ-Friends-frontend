@@ -50,6 +50,7 @@ import WaitingPage from "./pages/WaitingPage";
 //房间
 import RoomInside from "./pages/roomManage/RoomInside";
 import EditPage from "./pages/roomManage/EditRoom";
+import EditDraft from "./pages/memoryManage/EditDraft";
 
 const GetUrl = "https://1.tongji.edu.cn/api/ssoservice/system/loginIn";
 const TargetUrl = "https://1.tongji.edu.cn/ssologin";
@@ -67,6 +68,7 @@ type RootStackParamList = {
   Memories: undefined;
   Post: undefined;
   EditPost: { postId: string };
+  EditDraft: { draftId: string };
   EditProfile: { userId: string } | undefined;
   EditNickName: { userId: string } | undefined;
   EditInterest: { userId: string } | undefined;
@@ -224,6 +226,11 @@ const App = () => {
           <Stack.Screen
             name="EditPost"
             component={EditPost}
+            options={{ headerBackTitle: "Back" }}
+          />
+          <Stack.Screen
+            name="EditDraft"
+            component={EditDraft}
             options={{ headerBackTitle: "Back" }}
           />
           <Stack.Screen
