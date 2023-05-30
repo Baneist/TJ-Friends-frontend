@@ -8,7 +8,7 @@ import requestApi, { BASE_URL } from '../../utils/request';
 import { StackNavigationProps } from '../../App';
 
 const EditPage = ({ route, navigation }: StackNavigationProps) => {
-  const [locked, setLocked] = useState(false);
+  const [locked, setLocked] = useState(true);
   const [text1, setText1] = useState('');
   const [text2, setText2] = useState('');
   const [text3, setText3] = useState('');
@@ -17,7 +17,7 @@ const EditPage = ({ route, navigation }: StackNavigationProps) => {
   const [image, setImage] = useState("");
   const [showPickerOption, setShowPickerOption] = useState(false);
 
-  const [olocked, setoLocked] = useState(false);
+  const [olocked, setoLocked] = useState(true);
   const [otext1, setoText1] = useState('');
   const [otext2, setoText2] = useState('');
   const [otext3, setoText3] = useState('');
@@ -189,12 +189,12 @@ const EditPage = ({ route, navigation }: StackNavigationProps) => {
           left={() => <Icon name='lock' size={24} style={{ marginLeft: 15 }} />}
           right={() => <Switch
             style={{ marginTop: Platform.OS == 'ios' ? -3 : -10, marginBottom: Platform.OS == 'ios' ? -3 : -10 }}
-            value={locked}
+            value={!locked}
             onValueChange={() => setLocked(!locked)}
           />}
         />
       </View>
-      {locked! && <View>
+      {locked && <View>
         <Text style={{ marginLeft: 10, marginTop: 15, fontWeight: 'bold' }}>房间密码</Text>
         <TextInput
           mode='outlined'
