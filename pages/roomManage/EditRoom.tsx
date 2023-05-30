@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Platform, StyleSheet, Image, Switch, View, Text, Dimensions, Pressable, ScrollView } from 'react-native';
+import { Platform, StyleSheet, Image, Switch, View, Text, Dimensions, Pressable, ScrollView, Alert } from 'react-native';
 import { TextInput, List, Button, IconButton } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import SinglePicker from '../../components/AvatarPicker/SinglePicker';
@@ -16,6 +16,15 @@ const EditPage = ({ route, navigation }: StackNavigationProps) => {
     const { width, height } = Dimensions.get("screen");
     const [image, setImage] = useState("");
     const [showPickerOption, setShowPickerOption] = useState(false);
+
+    const [olocked, setoLocked] = useState(false);
+    const [otext1, setoText1] = useState('');
+    const [otext2, setoText2] = useState('');
+    const [otext3, setoText3] = useState('');
+    const [opwd, setoPwd] = useState('');
+    const [oimage, setoImage] = useState("");
+    const [clicked,setClick]=useState(false);
+
     function cancelPickerOption() {
         return (
             setShowPickerOption(false)
@@ -45,11 +54,53 @@ const EditPage = ({ route, navigation }: StackNavigationProps) => {
             setText3(res.data.roomDescription);
             setLocked(res.data.roomPms);
             setPwd(res.data.roomPwd);
+
+            setoImage(res.data.coverUrl)
+            setoText1(res.data.vidoeUrl);
+            setoText2(res.data.roomName);
+            setoText3(res.data.roomDescription);
+            setoLocked(res.data.roomPms);
+            setoPwd(res.data.roomPwd);
         }
     }
     useEffect(() => {
         fetchData()
     }, [])
+
+    const hasUnsavedChanges = !(text1===otext1&&text2===otext2&&text3===otext3&&image===oimage&&locked===olocked&&pwd===opwd);
+
+    React.useEffect(
+        () =>{
+          const onbackpage = navigation.addListener('beforeRemove', (e) => {
+            if (!hasUnsavedChanges||clicked) {
+              // If we don't have unsaved changes, then we don't need to do anything
+              return;
+            }
+    
+            // Prevent default behavior of leaving the screen
+            e.preventDefault();
+    
+            // Prompt the user before leaving the screen
+            Alert.alert(
+              '',
+              '放弃此次编辑?',
+              [
+                {
+                  text: "放弃",
+                  style: 'destructive',
+                  // This will continue the action that had triggered the removal of the screen
+                  onPress: () => navigation.dispatch(e.data.action)
+                },
+                {
+                  text: '取消',
+                  style: 'cancel',
+                },
+              ]
+            );
+          });
+          return onbackpage;
+        },[navigation, hasUnsavedChanges,clicked]
+      );
     return (
         <ScrollView style={{ backgroundColor: 'white', height: height - 100 }}>
             <View>
@@ -162,7 +213,7 @@ const EditPage = ({ route, navigation }: StackNavigationProps) => {
             <Button
                 mode='contained'
                 style={{ margin: 20, }}
-                onPress={Update}
+                onPress={()=>{setClick(true);Update();}}
                 disabled={image === "" || text1 === "" || text2 === "" || text3 === "" || (locked && pwd === "")}
             >
                 更改设置
