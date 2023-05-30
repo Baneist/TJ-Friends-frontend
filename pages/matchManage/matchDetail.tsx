@@ -6,177 +6,201 @@ import { View, Text,Image, StyleSheet, Dimensions, Alert, TouchableOpacity, Flat
 import { NoticeCard } from '../../components/NoticeManage/NoticeCard';
 import { useFocusEffect } from '@react-navigation/native';
 import requestApi, { requestApiForMockTest } from '../../utils/request';
-import { TwilioVideo, TwilioVideoLocalView, TwilioVideoParticipantView} from 'react-native-twilio-video-webrtc';
 import { Button } from 'react-native-elements';
+import {io, Socket} from 'socket.io-client';
+import Peer from 'react-native-peerjs';
 
-const styles = StyleSheet.create({
-  container: {},
-  welcome: {},
-  input: {},
-  button: {},
-  callContainer: {},
-  remoteGrid: {},
-  remoteVideo: {},
-  optionsContainer: {},
-  optionButton: {},
-  localVideo: {},
-});
+import {
+  ScreenCapturePickerView,
+  RTCPeerConnection,
+  RTCIceCandidate,
+  RTCSessionDescription,
+  RTCView,
+  MediaStream,
+  MediaStreamTrack,
+  mediaDevices,
+} from 'react-native-webrtc';
+import { set } from 'react-native-reanimated';
 
-const Example = (props) => {
-  const [isAudioEnabled, setIsAudioEnabled] = useState(true);
-  const [isVideoEnabled, setIsVideoEnabled] = useState(true);
-  const [status, setStatus] = useState('disconnected');
-  const [participants, setParticipants] = useState(new Map());
-  const [videoTracks, setVideoTracks] = useState(new Map());
-  const [token, setToken] = useState('');
-  const twilioRef = useRef(null);
+//MainCode <Example></Example> 
+export const MatchDetailScreen = ({ route, navigation }: StackNavigationProps) => {
+  let n_stream = new MediaStream(undefined);
+  const [local_stream, setLSState] = useState(n_stream);
+  const [remote_stream, setRSState] = useState(n_stream);
+  const [localPeer, setLPeerState] = useState(new Peer());
+  const [RemotePeer, setRPeerState] = useState(new Peer());
+  const [remoteId, setRemoteId] = useState('');
+  // 获取本地摄像头
+  const getLocalMedia = async (st: Function) => {
+    let ls = await mediaDevices.getUserMedia({audio: true, video: true,});
+    st(ls);
+  };
+  
+  const endCall = () => {
+    
+  }
 
-  const _onConnectButtonPress = () => {
-    twilioRef.current.connect({ accessToken: token });
-    setStatus('connecting');
+  const createPeer = () => {
+    
   }
   
-  const _onEndButtonPress = () => {
-    twilioRef.current.disconnect();
+  const VideoCall = async () => {
+    setLPeerState(new Peer());
+    setRPeerState(new Peer());
+    console.log('@in:');
+    await getLocalMedia(setLSState);
+    localPeer.on('open', function(id: any){
+      console.log('@local onopen.');
+      //setTimeout(() => {}, 10000);
+    });
+    RemotePeer.on('open', function(id: any){
+      console.log('@remote onopen.');
+      setRemoteId(id);
+    });
+    RemotePeer.on('connection', function(conn: any) {
+      console.log('@remote onconnection.');
+    });
+    RemotePeer.on('call', async (call: any) => {
+      console.log('@remote oncall.');
+      call.on('stream', function(stream) {
+        console.log('@remote stream:' + stream.toURL());
+        setRSState(stream);
+      });
+      setTimeout(() => {
+        call.answer(local_stream);
+      }, 2000);
+    });
+    
   };
 
-  const _onMuteButtonPress = () => {
-    twilioRef.current
-      .setLocalAudioEnabled(!isAudioEnabled)
-      .then(isEnabled => setIsAudioEnabled(isEnabled));
+  /*
+  useFocusEffect(React.useCallback(() => {
+    if(local_stream != n_stream){
+      VideoCall();
+    }
+    return () => {
+    };
+  }, [local_stream]));
+  */
+  //VideoCall();
+  ///*
+
+  useEffect(() => {
+    VideoCall()
+    return () => {
+      endCall()
+    }
+  }, [])
+
+  const OnPress = async () => {
+    localPeer.connect(remoteId);
+    console.log('@local call.');
+        const call = localPeer.call(remoteId, local_stream);
+        call.on('stream', (stream:any ) => {
+          console.log('@local stream:' + stream.toURL());
+          //setRSState(stream);
+        });
+        call.on('data', (data: any) => {
+          console.log('@local data:' + data);
+        });
+        call.on('close', () => {
+          console.log('@local close.');
+        });
+        call.on('error', (err: any) => {
+          console.log('@local error:' + err);
+        });
   };
 
-  const _onFlipButtonPress = () => {
-    twilioRef.current.flipCamera();
-  };
-
-  const _onRoomDidConnect = ({roomName, error}) => {
-    console.log('onRoomDidConnect: ', roomName);
-
-    setStatus('connected');
-  };
-
-  const _onRoomDidDisconnect = ({ roomName, error }) => {
-    console.log('[Disconnect]ERROR: ', error);
-
-    setStatus('disconnected');
-  };
-
-  const _onRoomDidFailToConnect = error => {
-    console.log('[FailToConnect]ERROR: ', error);
-
-    setStatus('disconnected');
-  };
-
-  const _onParticipantAddedVideoTrack = ({ participant, track }) => {
-    console.log('onParticipantAddedVideoTrack: ', participant, track);
-
-    setVideoTracks(
-      new Map([
-        ...videoTracks,
-        [
-          track.trackSid,
-          { participantSid: participant.sid, videoTrackSid: track.trackSid },
-        ],
-      ]),
+  const Player = () => {
+    return (
+      <View>
+        <Button onPress={OnPress} />
+        <Text> 自己： </Text>
+        <RTCView style={{ height: 200, width: 200 }} streamURL={local_stream.toURL()} />
+        <Text> 远程： </Text>
+        <RTCView style={{ height: 200, width: 200 }} streamURL={remote_stream.toURL()} />
+      </View>
     );
   };
 
-  const _onParticipantRemovedVideoTrack = ({ participant, track }) => {
-    console.log('onParticipantRemovedVideoTrack: ', participant, track);
-
-    const videoTracksLocal = videoTracks;
-    videoTracksLocal.delete(track.trackSid);
-
-    setVideoTracks(videoTracksLocal);
-  };
-  
-  return (
-    <View style={styles.container}>
-      {
-        status === 'disconnected' &&
-        <View>
-          <Text style={styles.welcome}>
-            React Native Twilio Video
-          </Text>
-          <TextInput
-            style={styles.input}
-            autoCapitalize='none'
-            value={token}
-            onChangeText={(text) => setToken(text)}>
-          </TextInput>
-          <Button
-            title="Connect"
-            style={styles.button}
-            onPress={_onConnectButtonPress}>
-          </Button>
-        </View>
-      }
-      {
-        (status === 'connected' || status === 'connecting') &&
-          <View style={styles.callContainer}>
-          {
-            status === 'connected' &&
-            <View style={styles.remoteGrid}>
-              {
-                Array.from(videoTracks, ([trackSid, trackIdentifier]) => {
-                  return (
-                    <TwilioVideoParticipantView
-                      style={styles.remoteVideo}
-                      key={trackSid}
-                      trackIdentifier={trackIdentifier}
-                    />
-                  )
-                })
-              }
-            </View>
-          }
-          <View
-            style={styles.optionsContainer}>
-            <TouchableOpacity
-              style={styles.optionButton}
-              onPress={_onEndButtonPress}>
-              <Text style={{fontSize: 12}}>End</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.optionButton}
-              onPress={_onMuteButtonPress}>
-              <Text style={{fontSize: 12}}>{ isAudioEnabled ? "Mute" : "Unmute" }</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.optionButton}
-              onPress={_onFlipButtonPress}>
-              <Text style={{fontSize: 12}}>Flip</Text>
-            </TouchableOpacity>
-            <TwilioVideoLocalView
-              enabled={true}
-              style={styles.localVideo}
-            />
-          </View>
-        </View>
-      }
-
-      <TwilioVideo
-        ref={ twilioRef }
-        onRoomDidConnect={ _onRoomDidConnect }
-        onRoomDidDisconnect={ _onRoomDidDisconnect }
-        onRoomDidFailToConnect= { _onRoomDidFailToConnect }
-        onParticipantAddedVideoTrack={ _onParticipantAddedVideoTrack }
-        onParticipantRemovedVideoTrack= { _onParticipantRemovedVideoTrack }
-      />
-    </View>
-  );
-}
-
-//MainCode <Example></Example>
-export const MatchDetailScreen = ({ route, navigation }: StackNavigationProps) => {
-    
   return (
       <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}> 
-        <Text> 进去了 </Text>
-        <Example />
+        <Player />
       </View>
   );
 };
+
+export const MatchDetailScreen2 = ({ route, navigation }: StackNavigationProps) => {
+  const [loading, setLoading] = useState(true);
+  const [localId, setLocalId] = useState('');
+  const [remoteId, setRemoteId] = useState('');
+  const [messages, setMessages] = useState([]);
+  const [customMsg, setCustomMsg] = useState('');
+  let n_stream = new MediaStream(undefined);
+  const currentCall = useRef();
+  const currentConnection = useRef();
+  const peer = useRef()
+  const localVideo = useRef(n_stream);
+  const remoteVideo = useRef(n_stream);
+
+  useEffect(() => {
+    createPeer()
+    return () => {
+      endCall()
+    }
+  }, [])
+
+  const endCall = () => {
+    if (currentCall.current) {
+      currentCall.current.close()
+    }
+  }
+
+  const createPeer = () => {
+    peer.current = new Peer();
+    peer.current.on("open", (id) => {
+      setLocalId(id)
+      setLoading(false)
+      console.log(id);
+    });
+    peer.current.on('connection', (connection) => {
+      // 接受对方传来的数据
+      connection.on('data', (data) => {
+        
+      })
+      currentConnection.current = connection
+    })
+    // 媒体传输
+    peer.current.on('call', async (call) => {
+      if (window.confirm(`是否接受 ${call.peer}?`)) {
+        // 获取本地流
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+        localVideo.current = stream
+        // 响应
+        call.answer(stream)
+        console.log("call.answer");
+        // 监听视频流，并更新到 remoteVideo 上
+        call.on('stream', (stream) => {
+          remoteVideo.current = stream;
+          console.log("call.stream");
+        })
+        currentCall.current = call
+      } else {
+        call.close()
+        alert('已关闭')
+      }
+    })
+  }
+
+  return (
+    <View>
+          <Text>localId = {localId}</Text>
+          <Text>本地摄像头</Text>
+          <RTCView style={{ height: 200, width: 200 }} streamURL={localVideo.current.toURL()} />
+          <Text>远程摄像头</Text>
+          <RTCView style={{ height: 200, width: 200 }} streamURL={remoteVideo.current.toURL()} />
+    </View>
+  );
+}
 
 export default MatchDetailScreen;
