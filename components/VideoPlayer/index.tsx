@@ -26,7 +26,6 @@ const MyVideoPlayer = (props:PlayerProps) => {
         props.navigation.setOptions({
         headerShown:!inFullscreen
       });
-      console.log(props.videoUri)
     }, [props.navigation,inFullscreen]);
 
     //全屏回调

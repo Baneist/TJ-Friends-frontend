@@ -40,7 +40,7 @@ const defaultRoom = {
   videoUrl:'https://vip.ffzy-play6.com/20221127/8802_3816a20c/2000k/hls/index.m3u8',
   members:[],
   roomPwd:'',
-  creatorId:'2052909'
+  creatorId:''
 }
 
 interface detailProps{
@@ -61,8 +61,6 @@ const UserDetail = (props:detailProps) => {
       await requestApi('post', '/follow', { stuid: props.userInfo.userId }, true, 'follow failed')
     }
     setFollowing(!isfollowing)
-    console.log(isfollowing)
-    console.log(props.userInfo.isFollowing)
   }
   //移除成员
   async function leaveRoom(userId: string){
@@ -73,6 +71,7 @@ const UserDetail = (props:detailProps) => {
     console.log(data)
     await requestApi('post', '/leaveRoom', data, true, '移除成员失败')
     props.onRemoveMember()  //界面更新
+    props.onBackdropPress()
   }
   useEffect(() => {
     setFollowing(props.userInfo.isFollowing)
@@ -209,8 +208,8 @@ const MemberList = (props:MemberListProps) => {
   const [member, setMember] = useState(defaultMember)
 
   async function fetchData(){
-    console.log(props.roomInfo.members)
     setMemberNum(props.roomInfo.members.length)
+    let memberTmp = [] as MemberInfoProp[]  //成员临时变量
     let reqList: Promise<AxiosResponse>[] = [];
     for (let i = 0; i < props.roomInfo.members.length; ++i) {
       reqList.push(new Promise((resolve, reject) => {
@@ -219,20 +218,19 @@ const MemberList = (props:MemberListProps) => {
     }
     Promise.all(reqList).then((values) => {
       for (let i = 0; i < values.length; ++i) {
-        setMemberInfo(current => [...current, 
+        memberTmp.push(
           { 
             userId: values[i].data.userId.info, 
             userNickName: values[i].data.userNickName.info, 
             userAvatar:values[i].data.userAvatar.info,
             isFollowing:values[i].data.isFollowing
-          }
-        ]);
+          })
       }
+      setMemberInfo(memberTmp)
     })
   }
 
   useEffect(()=>{
-    console.log('m',props.roomInfo)
     fetchData()
   },[props])
 
@@ -269,13 +267,28 @@ const MemberList = (props:MemberListProps) => {
 }
 const RoomInside = ({route, navigation}:StackNavigationProps) => {
   const [roomInfo, setRoomInfo] = useState(defaultRoom)
-  async function fetchData(){
+  const isRemoved = useRef(false);
+
+  async function joinRoom(){
     const res = await requestApi('post','/joinRoom',{
       'roomId':route.params?.roomId,
       'roomPwd':route.params?.roomPwd
     }, true, '房间密码错误')
     setRoomInfo(res.data)
-    console.log('res', res.data)
+  }
+  //更新房间信息
+  async function updateRoom() {
+    if(!isRemoved.current){
+      const res = await requestApi('get', 
+    `/getRoomInfo?roomId=${route.params?.roomId}`, null, true, '更新房间信息失败')
+    setRoomInfo(res.data)
+    //检查有没有被移出去
+    if(!res.data.members.includes(global.gUserId))
+        {
+          isRemoved.current = true;
+          navigation.goBack()
+        }
+    }
   }
   //离开房间
   async function leaveRoom(action: any){
@@ -283,39 +296,61 @@ const RoomInside = ({route, navigation}:StackNavigationProps) => {
       userId: global.gUserId,
       roomId:route.params?.roomId
     }
-    console.log(data)
     await requestApi('post', '/leaveRoom', data, true, '离开房间失败')
     navigation.dispatch(action)
   }
   useEffect(() => {
+
+    //提示是否离开房间
     const onbackpage = navigation.addListener('beforeRemove', (e) => {
       // Prevent default behavior of leaving the screen
       e.preventDefault();
       // Prompt the user before leaving the screen
-      Alert.alert(
-        '提示',
-        '是否离开该房间？',
-        [
-          {
-            text: "是",
-            style: 'destructive',
-            // This will continue the action that had triggered the removal of the screen
-            onPress: () => leaveRoom(e.data.action)
-          },
-          {
-            text: '取消',
-            style: 'cancel',
-          },
-        ]
-      );
+      if(!isRemoved.current){
+        Alert.alert(
+          '提示',
+          '是否离开该房间？',
+          [
+            {
+              text: "是",
+              style: 'destructive',
+              // This will continue the action that had triggered the removal of the screen
+              onPress: () => leaveRoom(e.data.action)
+            },
+            {
+              text: '取消',
+              style: 'cancel',
+            },
+          ]
+        );
+      }
+      else{
+        Alert.alert(
+          '提示',
+          '你已被房主移出房间',
+          [{
+            text:'OK',
+            onPress : () => navigation.dispatch(e.data.action)
+          }]
+        )
+      }
     });
-    console.log('ri', route.params)
-    fetchData()
-    return onbackpage;
+
+    //初始加入房间
+    joinRoom()
+
+    //定时器，每2s请求一次，同步成员列表信息
+
+    const intervalId = setInterval(() => {
+      updateRoom();
+    }, 2000);
+    return () => {
+      clearInterval(intervalId);  //定时器结束
+      onbackpage;  //取消监听
+    }
   }, [])
   //导航栏
   React.useLayoutEffect(() => {
-    console.log('l',roomInfo)
     navigation.setOptions({
     headerTitle:'房间：'+ roomInfo.roomName,
     headerRight:() => ( roomInfo.creatorId == global.gUserId &&
@@ -335,8 +370,8 @@ const RoomInside = ({route, navigation}:StackNavigationProps) => {
         roomId={roomInfo.roomId}
         creatorId={roomInfo.creatorId}
         />
-        <MemberList roomInfo={roomInfo} navigation={navigation} onRemoveMember={fetchData}/>
-        <ChatRoom roomId={roomInfo.roomId} navigation={navigation}/>
+        <MemberList roomInfo={roomInfo} navigation={navigation} onRemoveMember={updateRoom}/>
+        {/* <ChatRoom roomId={roomInfo.roomId} navigation={navigation}/> */}
     </View>
   )
 }
