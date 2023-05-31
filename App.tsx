@@ -85,7 +85,7 @@ type RootStackParamList = {
   CreateRoom:undefined;
   EditRoom:{roomId:string};
   DraftList:undefined;
-  WaitingPage: { userId: string, avatar: string } | undefined;
+  WaitingPage: { userId: string, avatar: string, type: string } | undefined;
   MatchHomePage:undefined;
 };
 const Stack = createStackNavigator<RootStackParamList>();

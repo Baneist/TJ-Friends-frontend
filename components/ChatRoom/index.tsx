@@ -108,12 +108,14 @@ function ChatRoom({roomId,navigation}:chatRoomProp) {
   }
 
   async function fetchOrigin(){
+    setIsTimerEnabled(false);
+    console.log('F start')
     let CurMessages: ChatMessage[] = []
 
     const resAllMessages = await requestApi('get', `/receiveRoomMessage?roomId=${roomId}`, null, true, 'Get All Messages failed');
 
     setIUser(await getUser(userId));
-    
+    console.log(resAllMessages.data.length)
     if (resAllMessages.code === 0) {
 
       for (let i = 0; i < resAllMessages.data.length; ++i) {
@@ -146,6 +148,8 @@ function ChatRoom({roomId,navigation}:chatRoomProp) {
     }
 
     setMessages(CurMessages);
+    setIsTimerEnabled(true);
+    console.log('F end')
   }
 
   function onSend(newMessages: ChatMessage[] = []) {
@@ -219,19 +223,23 @@ function ChatRoom({roomId,navigation}:chatRoomProp) {
     setIsTimerEnabled(true);
   }
 
-
   useEffect(() => {
+    console.log('first fecth')
     fetchOrigin()
+    console.log('first fecth end')
 
     if (isTimerEnabled){
       const intervalId = setInterval(() => {
+        console.log('original fecth')
         fetchOrigin()
+        console.log('original fecth end')
       }, 2000);
+      
 
       return () => clearInterval(intervalId);
     }
     
-  }, [isTimerEnabled]);
+  }, []);
 
   return (
     <GiftedChat

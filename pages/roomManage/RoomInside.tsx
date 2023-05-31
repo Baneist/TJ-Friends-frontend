@@ -307,7 +307,7 @@ const RoomInside = ({route, navigation}:StackNavigationProps) => {
     <View style={{height:Dimensions.get('screen').height-110}}>
         <MyVideoPlayer navigation={navigation} videoUri={roomInfo.videoUrl}/>
         <MemberList roomInfo={roomInfo} navigation={navigation}/>
-        {/* <ChatRoom roomId={roomInfo.roomId} navigation={navigation}/> */}
+        <ChatRoom roomId={roomInfo.roomId} navigation={navigation}/>
     </View>
   )
 }

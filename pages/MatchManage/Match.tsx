@@ -1,10 +1,19 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
 
-const MatchHomePage = () => {
+import { StackNavigationProps } from '../../App'
+import requestApi from '../../utils/request';
+
+const MatchHomePage = ({ route, navigation }: StackNavigationProps) => {
   const [soulMatchPressed, setSoulMatchPressed] = useState(false);
   const [voiceMatchPressed, setVoiceMatchPressed] = useState(false);
   const [videoMatchPressed, setVideoMatchPressed] = useState(false);
+  const [userAvatar, setAvatar] = useState('');
+
+  async function getAvatar() {
+    const resProfile = await requestApi('get', `/profile/${global.gUserId}`, null, true, 'get profile failed');
+    setAvatar(resProfile.data.userAvatar.info);
+  }
 
   const handleSoulMatch = () => {
     // 处理灵魂匹配按钮的点击事件
@@ -26,14 +35,20 @@ const MatchHomePage = () => {
 
   const handleSoulMatchRelease = () => {
     setSoulMatchPressed(false);
+    getAvatar();
+    navigation.navigate('WaitingPage', {userId:global.gUserId, avatar: userAvatar, type:'灵魂'})
   };
 
   const handleVoiceMatchRelease = () => {
     setVoiceMatchPressed(false);
+    getAvatar();
+    navigation.navigate('WaitingPage', {userId:global.gUserId, avatar: userAvatar, type:'语音'})
   };
 
   const handleVideoMatchRelease = () => {
     setVideoMatchPressed(false);
+    getAvatar();
+    navigation.navigate('WaitingPage', {userId:global.gUserId, avatar: userAvatar, type:'视频'})
   };
 
   return (
@@ -89,17 +104,17 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   soulMatchButton: {
-    backgroundColor: '#FF3366',
+    backgroundColor: '#9B4F9B',
     marginLeft: 20,
     marginRight: 20,
   },
   voiceMatchButton: {
-    backgroundColor: '#9966FF',
+    backgroundColor: '#FFA500',
     marginLeft: 20,
     marginRight: 10,
   },
   videoMatchButton: {
-    backgroundColor: '#33CCFF',
+    backgroundColor: '#00C5C5',
     marginLeft: 10,
     marginRight: 20,
   },
