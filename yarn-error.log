@@ -1,5 +1,5 @@
 Arguments: 
-  C:\Program Files\nodejs\node.exe C:\Users\ayiri\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js add expo-webview
+  D:\nodejs\node.exe D:\nodejs\node_modules\yarn\bin\yarn.js add date-format
 
 PATH: 
   C:\Python311\Scripts\;C:\Python311\;D:\VMware\VMware Workstation\bin\;C:\Program Files\Python310\Scripts\;C:\Program Files\Python310\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\Users\ayiri\Desktop\HW\22SV\t1\venv\Scripts\;D:\UNIX V6++V1\MinGW\bin;D:\UNIX V6++V1\NASM;C:\Program Files\Docker\Docker\resources\bin;C:\Program Files\Git\cmd;C:\Program Files\dotnet\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\nodejs\;C:\ProgramData\chocolatey\bin;C:\Users\ayiri\AppData\Local\Yarn\Data\global\node_modules\typescript\bin;C:\Program Files\MySQL\MySQL Shell 8.0\bin\;C:\Users\ayiri\AppData\Local\Microsoft\WindowsApps;D:\JetBrains\PyCharm Community Edition 2022.1.3\bin;;C:\ProgramData\Anaconda3;C:\ProgramData\Anaconda3\Scripts;C:\ProgramData\Anaconda3\Library\bin;C:\ProgramData\Anaconda3\Library\mingw-w64\bin;D:\JetBrains\PyCharm 2022.1.4\bin;;C:\Users\ayiri\AppData\Local\Programs\Microsoft VS Code\bin;D:\UNIX V6++V1\MinGW\bin;D:\UNIX V6++V1\NASM;C:\Program Files\CMake\bin;C:\Program Files\Multipass\bin;C:\Users\ayiri\.dotnet\tools;C:\Users\ayiri\AppData\Roaming\npm;C:\Users\ayiri\AppData\Local\GitHubDesktop\bin
@@ -14,17 +14,7 @@ Platform:
   win32 x64
 
 Trace: 
-  Error: https://registry.yarnpkg.com/expo-webview: Not found
-      at params.callback [as _callback] (C:\Users\ayiri\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:66145:18)
-      at self.callback (C:\Users\ayiri\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:140890:22)
-      at Request.emit (node:events:513:28)
-      at Request.<anonymous> (C:\Users\ayiri\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:141862:10)
-      at Request.emit (node:events:513:28)
-      at IncomingMessage.<anonymous> (C:\Users\ayiri\AppData\Roaming\npm\node_modules\yarn\lib\cli.js:141784:12)
-      at Object.onceWrapper (node:events:627:28)
-      at IncomingMessage.emit (node:events:525:35)
-      at endReadableNT (node:internal/streams/readable:1359:12)
-      at process.processTicksAndRejections (node:internal/process/task_queues:82:21)
+  Error: EROFS: read-only file system, lstat 'C:\Users\19086\AppData\Local\Yarn\Cache\v6\npm-react-native-screens-3.20.0-integrity\node_modules\react-native-screens\android\src\main\java\com\swmansion\rnscreens\events\ScreenDisappearEvent.kt'
 
 npm manifest: 
   {

@@ -45,9 +45,10 @@ const defaultRoom = {
 
 interface detailProps{
   userInfo:MemberInfoProp
-  ownerId:string
+  roomInfo:RoomProps
   showDetial:boolean
   onBackdropPress:() => void
+  onRemoveMember: () => void
   navigation:StackNavigationProps['navigation']
 }
 const UserDetail = (props:detailProps) => {
@@ -62,6 +63,16 @@ const UserDetail = (props:detailProps) => {
     setFollowing(!isfollowing)
     console.log(isfollowing)
     console.log(props.userInfo.isFollowing)
+  }
+  //移除成员
+  async function leaveRoom(userId: string){
+    let data = {
+      userId: userId,
+      roomId:props.roomInfo.roomId
+    }
+    console.log(data)
+    await requestApi('post', '/leaveRoom', data, true, '移除成员失败')
+    props.onRemoveMember()  //界面更新
   }
   useEffect(() => {
     setFollowing(props.userInfo.isFollowing)
@@ -107,9 +118,9 @@ const UserDetail = (props:detailProps) => {
               >
                 发私信
               </Button>
-              {global.gUserId === props.ownerId &&
+              {global.gUserId === props.roomInfo.creatorId &&
                <Button mode='contained'
-              onPress={()=>{props.navigation.navigate('ChatDetail',{userId: props.userInfo.userId})}}
+              onPress={()=> leaveRoom(props.userInfo.userId)}
               >
                 移出房间
               </Button>}
@@ -185,6 +196,7 @@ const InviteFriend = (props:inviteProps) => {
 
 interface MemberListProps{
   roomInfo:RoomProps,
+  onRemoveMember: () => void,
   navigation:StackNavigationProps['navigation']
 }
 const MemberList = (props:MemberListProps) => {
@@ -244,7 +256,8 @@ const MemberList = (props:MemberListProps) => {
           showDetial={viewMember} 
           onBackdropPress={()=> setViewMember(false)} 
           navigation={props.navigation}
-          ownerId={props.roomInfo.creatorId}
+          roomInfo={props.roomInfo}
+          onRemoveMember={props.onRemoveMember}
           userInfo={member}
           />
           </View>
@@ -262,6 +275,17 @@ const RoomInside = ({route, navigation}:StackNavigationProps) => {
       'roomPwd':route.params?.roomPwd
     }, true, '房间密码错误')
     setRoomInfo(res.data)
+    console.log('res', res.data)
+  }
+  //离开房间
+  async function leaveRoom(action: any){
+    let data = {
+      userId: global.gUserId,
+      roomId:route.params?.roomId
+    }
+    console.log(data)
+    await requestApi('post', '/leaveRoom', data, true, '离开房间失败')
+    navigation.dispatch(action)
   }
   useEffect(() => {
     const onbackpage = navigation.addListener('beforeRemove', (e) => {
@@ -276,7 +300,7 @@ const RoomInside = ({route, navigation}:StackNavigationProps) => {
             text: "是",
             style: 'destructive',
             // This will continue the action that had triggered the removal of the screen
-            onPress: () => navigation.dispatch(e.data.action)
+            onPress: () => leaveRoom(e.data.action)
           },
           {
             text: '取消',
@@ -285,6 +309,7 @@ const RoomInside = ({route, navigation}:StackNavigationProps) => {
         ]
       );
     });
+    console.log('ri', route.params)
     fetchData()
     return onbackpage;
   }, [])
@@ -305,8 +330,12 @@ const RoomInside = ({route, navigation}:StackNavigationProps) => {
 
   return (
     <View style={{height:Dimensions.get('screen').height-110}}>
-        <MyVideoPlayer navigation={navigation} videoUri={roomInfo.videoUrl}/>
-        <MemberList roomInfo={roomInfo} navigation={navigation}/>
+        <MyVideoPlayer navigation={navigation} 
+        videoUri={roomInfo.videoUrl} 
+        roomId={roomInfo.roomId}
+        creatorId={roomInfo.creatorId}
+        />
+        <MemberList roomInfo={roomInfo} navigation={navigation} onRemoveMember={fetchData}/>
         <ChatRoom roomId={roomInfo.roomId} navigation={navigation}/>
     </View>
   )
