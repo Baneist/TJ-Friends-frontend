@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
 
 import { StackNavigationProps } from '../../App'
@@ -35,21 +35,24 @@ const MatchHomePage = ({ route, navigation }: StackNavigationProps) => {
 
   const handleSoulMatchRelease = () => {
     setSoulMatchPressed(false);
-    getAvatar();
     navigation.navigate('WaitingPage', {userId:global.gUserId, avatar: userAvatar, type:'灵魂'})
   };
 
   const handleVoiceMatchRelease = () => {
     setVoiceMatchPressed(false);
-    getAvatar();
     navigation.navigate('WaitingPage', {userId:global.gUserId, avatar: userAvatar, type:'语音'})
   };
 
   const handleVideoMatchRelease = () => {
     setVideoMatchPressed(false);
-    getAvatar();
     navigation.navigate('WaitingPage', {userId:global.gUserId, avatar: userAvatar, type:'视频'})
   };
+
+  
+
+  useEffect(() => {
+    getAvatar();
+  }, []);
 
   return (
     <View style={styles.container}>
