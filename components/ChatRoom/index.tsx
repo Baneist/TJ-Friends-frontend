@@ -108,14 +108,16 @@ function ChatRoom({roomId,navigation}:chatRoomProp) {
   }
 
   async function fetchOrigin(){
-    setIsTimerEnabled(false);
+    // setIsTimerEnabled(false);
     console.log('F start')
     let CurMessages: ChatMessage[] = []
 
-    const resAllMessages = await requestApi('get', `/receiveRoomMessage?roomId=${roomId}`, null, true, 'Get All Messages failed');
+    const resAllMessages = await requestApi('get', `/receiveAllRoomMessages?roomId=${roomId}`, null, true, 'Get All Messages failed');
 
     setIUser(await getUser(userId));
     console.log(resAllMessages.data.length)
+    console.log('code', resAllMessages.code)
+    console.log('id', roomId)
     if (resAllMessages.code === 0) {
 
       for (let i = 0; i < resAllMessages.data.length; ++i) {
@@ -148,8 +150,44 @@ function ChatRoom({roomId,navigation}:chatRoomProp) {
     }
 
     setMessages(CurMessages);
-    setIsTimerEnabled(true);
-    console.log('F end')
+    // setIsTimerEnabled(true);
+    console.log('F end', isTimerEnabled)
+  }
+
+  async function getUnreadMessages() {
+    console.log('U start')
+    const resUnreadMessages = await requestApi('get', `/receiveRoomMessages?roomId=${roomId}`, null, true, 'Get Unread Messages failed');
+    let unreadMessage: ChatMessage[] = []
+    for (let i = 0; i < resUnreadMessages.data.length; ++i) {
+      if(resUnreadMessages.data[i].image==''){
+        unreadMessage.unshift(
+          {
+            _id: resUnreadMessages.data[i].id,
+            text: resUnreadMessages.data[i].text,
+            createdAt: resUnreadMessages.data[i].time,
+            user: await getUser(resUnreadMessages.data[i].userId),
+            isRevoke: resUnreadMessages.data[i].isRecall,
+          }
+        )
+      }
+      else{
+        unreadMessage.unshift(
+          {
+            _id: resUnreadMessages.data[i].id,
+            text: '',
+            createdAt: resUnreadMessages.data[i].time,
+            user: await getUser(resUnreadMessages.data[i].userId),
+            image: resUnreadMessages.data[i].image,
+            isRevoke: resUnreadMessages.data[i].isRecall,
+          }
+        )
+      }
+      setMessages(previousMessages =>
+        GiftedChat.append(previousMessages, unreadMessage)
+      );
+    }
+
+    console.log('U end')
   }
 
   function onSend(newMessages: ChatMessage[] = []) {
@@ -225,21 +263,21 @@ function ChatRoom({roomId,navigation}:chatRoomProp) {
 
   useEffect(() => {
     console.log('first fecth')
+    console.log('roomid', roomId)
     fetchOrigin()
     console.log('first fecth end')
 
     if (isTimerEnabled){
       const intervalId = setInterval(() => {
-        console.log('original fecth')
-        fetchOrigin()
-        console.log('original fecth end')
+        console.log('normal fecth')
+        getUnreadMessages()
+        console.log('normal fecth end')
       }, 2000);
-      
 
       return () => clearInterval(intervalId);
     }
     
-  }, []);
+  }, [roomId, isTimerEnabled]);
 
   return (
     <GiftedChat

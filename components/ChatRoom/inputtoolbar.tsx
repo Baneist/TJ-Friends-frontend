@@ -20,11 +20,11 @@ function RoomInputToolbar(props) {
       };
       async function sendMessage() {
         const res = await requestApi('post', '/sendRoomMessage', { image: '' , text: message.text , roomId: props.RoomId }, true, '发送失败');
-        message._id = res.data.id;
+        message._id = res.data.messageId;
         console.log(message._id, 'send')
       }
       sendMessage()
-      props.setMessages(GiftedChat.append(props.messages, [message]));
+      //props.setMessages(GiftedChat.append(props.messages, [message]));
       setText('');
     }
   }
