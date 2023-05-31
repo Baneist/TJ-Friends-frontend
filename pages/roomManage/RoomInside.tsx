@@ -237,14 +237,13 @@ const MemberList = (props:MemberListProps) => {
   },[props])
 
   return(
-    <View style={{borderRadius:0, paddingBottom:20, backgroundColor:'white'}}>
-      <Card.Title
-        style={{marginBottom:0}}
-        title="房间成员"
-        subtitle={"当前"+memberNum+"人"}
-        left={(props) => <List.Icon icon="account-group"/>}
-      />
-      <View style={styles.memberListContainer}>
+      <List.Accordion
+      style={{marginBottom:0}}
+      title="房间成员"
+      description={"当前"+memberNum+"人"}
+      left={(props) => <List.Icon icon="account-group"/>}
+      >
+        <View style={styles.memberListContainer}>
         {MemberInfo.map((item, idx) => (
           <View key={idx}>
           <Pressable onPress={()=> {setViewMember(true),setMember(item)}}>
@@ -264,7 +263,7 @@ const MemberList = (props:MemberListProps) => {
         ))}
         <InviteFriend roomId={props.roomInfo.roomId} roomName={props.roomInfo.roomName} roomPwd={props.roomInfo.roomPwd}/>
       </View>
-    </View>
+      </List.Accordion>
   )
 }
 const RoomInside = ({route, navigation}:StackNavigationProps) => {
@@ -373,7 +372,7 @@ const RoomInside = ({route, navigation}:StackNavigationProps) => {
         creatorId={roomInfo.creatorId}
         />
         <MemberList roomInfo={roomInfo} navigation={navigation} onRemoveMember={updateRoom}/>
-        {/* <ChatRoom roomId={roomInfo.roomId} navigation={navigation}/> */}
+        <ChatRoom roomId={roomInfo.roomId} navigation={navigation}/>
     </View>
   )
 }
@@ -382,6 +381,8 @@ const styles = StyleSheet.create({
   memberListContainer:{
     flexDirection: "row",
     flexWrap: 'wrap',
+    backgroundColor:'white',
+    paddingVertical:10
   },
   memberContainer:{
     marginBottom:5,
