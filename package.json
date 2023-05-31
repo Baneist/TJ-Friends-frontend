@@ -80,7 +80,7 @@
     "react-native-vector-icons": "^9.2.0",
     "react-native-waterfall-flow": "^1.1.4",
     "react-native-web": "~0.18.10",
-    "react-native-webrtc": "106.0.0",
+    "react-native-webrtc": "^111.0.1",
     "react-native-webview": "11.26.0",
     "recoil": "^0.7.7",
     "rn-wave-bottom-bar": "^2.2.31",

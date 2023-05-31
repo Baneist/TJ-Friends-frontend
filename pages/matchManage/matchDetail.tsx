@@ -8,7 +8,6 @@ import { useFocusEffect } from '@react-navigation/native';
 import requestApi, { requestApiForMockTest } from '../../utils/request';
 import { Button } from 'react-native-elements';
 import {io, Socket} from 'socket.io-client';
-import Peer from 'react-native-peerjs';
 
 import {
   ScreenCapturePickerView,
@@ -20,187 +19,155 @@ import {
   MediaStreamTrack,
   mediaDevices,
 } from 'react-native-webrtc';
-import { set } from 'react-native-reanimated';
+import { blue100, green100 } from 'react-native-paper/lib/typescript/src/styles/themes/v2/colors';
+
+const styles = StyleSheet.create({
+  container: {},
+  input: {
+    width: '80%',
+    borderColor: 'gray',
+    borderWidth: 1,
+    paddingHorizontal: 10,
+  },
+});
 
 //MainCode <Example></Example> 
 export const MatchDetailScreen = ({ route, navigation }: StackNavigationProps) => {
   let n_stream = new MediaStream(undefined);
   const [local_stream, setLSState] = useState(n_stream);
   const [remote_stream, setRSState] = useState(n_stream);
-  const [localPeer, setLPeerState] = useState(new Peer());
-  const [RemotePeer, setRPeerState] = useState(new Peer());
-  const [remoteId, setRemoteId] = useState('');
+  const [socket, setSocket] = useState<any>(null);
+  const [peer, setPeer] = useState(new RTCPeerConnection(null));
+
+  const [text, setText] = useState('2053302');
+  const handleTextChange = (newText:any) => { setText(newText);};
+
   // 获取本地摄像头
-  const getLocalMedia = async (st: Function) => {
-    let ls = await mediaDevices.getUserMedia({audio: true, video: true,});
-    st(ls);
+  const getLocalMedia = async () => {
+    let ls = await mediaDevices.getUserMedia({audio: true, video: true}); // {facingMode: { exact: 'environment' }}
+    setLSState(ls);
   };
-  
-  const endCall = () => {
-    
-  }
-
-  const createPeer = () => {
-    
-  }
-  
-  const VideoCall = async () => {
-    setLPeerState(new Peer());
-    setRPeerState(new Peer());
-    console.log('@in:');
-    await getLocalMedia(setLSState);
-    localPeer.on('open', function(id: any){
-      console.log('@local onopen.');
-      //setTimeout(() => {}, 10000);
-    });
-    RemotePeer.on('open', function(id: any){
-      console.log('@remote onopen.');
-      setRemoteId(id);
-    });
-    RemotePeer.on('connection', function(conn: any) {
-      console.log('@remote onconnection.');
-    });
-    RemotePeer.on('call', async (call: any) => {
-      console.log('@remote oncall.');
-      call.on('stream', function(stream) {
-        console.log('@remote stream:' + stream.toURL());
-        setRSState(stream);
+const createRTC = async () => {
+  setPeer(new RTCPeerConnection(null));
+  // 2. 将本地视频流添加到实例中
+  local_stream.getTracks().forEach((track) => {
+    peer.addTrack(track, local_stream);
+  });
+  // 3. 接收远程视频流
+  peer.ontrack = async (event:any) => {
+    let [remoteStream] = event.streams;
+    setRSState(remoteStream);
+  };
+};
+const socketInit = async () => {
+  let sock = io(`http://10.80.42.217:9800/webrtc`, { auth: { userid: gUserId, role: 'sender', }, });
+  sock.on('connect', async () => {
+    console.log('连接成功, 上传socket:', sock.id); 
+    const res = await requestApi('post',`/match/uploadSocketId`, {socketId: sock.id}, true, '上传 SocketId 失败');
+  });
+  setSocket(sock);
+};
+const startCall = async (socket_id:any) => {
+  peer.onicecandidate = async (event:any) => {
+    console.log('@sender onicecandidate:', event);
+    if (event.candidate) {
+      socket.emit('candid', {
+        to: socket_id, // 接收端 Socket ID
+        candid: event.candidate,
       });
-      setTimeout(() => {
-        call.answer(local_stream);
-      }, 2000);
+    }
+  const offer = await peer.createOffer(null);
+  await peer.setLocalDescription(offer);
+  socket.emit('offer', {
+    to: socket_id,
+    offer: offer,
+  });
+  };
+};
+const getRemoteIdByUserId = async (usrId: string) => {
+  const res = await requestApi('get', `/match/getSocketId/${usrId}`, null,  true, '获取 SocketId 失败');
+  console.log('getRemoteIdByUserId:', res.data.socketId);
+  return res.data.socketId;
+};
+  useEffect(() => {
+    getLocalMedia().then(() => {
+      socketInit().then(() => {
+        createRTC().then(() => {
+          
+        });
+      });
     });
     
-  };
-
-  /*
-  useFocusEffect(React.useCallback(() => {
-    if(local_stream != n_stream){
-      VideoCall();
-    }
     return () => {
-    };
-  }, [local_stream]));
-  */
-  //VideoCall();
-  ///*
-
-  useEffect(() => {
-    VideoCall()
-    return () => {
-      endCall()
+      
     }
   }, [])
 
-  const OnPress = async () => {
-    localPeer.connect(remoteId);
-    console.log('@local call.');
-        const call = localPeer.call(remoteId, local_stream);
-        call.on('stream', (stream:any ) => {
-          console.log('@local stream:' + stream.toURL());
-          //setRSState(stream);
-        });
-        call.on('data', (data: any) => {
-          console.log('@local data:' + data);
-        });
-        call.on('close', () => {
-          console.log('@local close.');
-        });
-        call.on('error', (err: any) => {
-          console.log('@local error:' + err);
-        });
+  const OnPressA = async () => {
+    const transMedia = async (data: any) => {
+      const offer = new RTCSessionDescription(data.offer);
+      socket.on('offer', (data: any) => {
+        console.log('@receiver offer!', data);
+        transMedia(data);
+      });
+      socket.on('candid', (data:any) => {
+        console.log('@receiver candid!', data);
+        const candid = new RTCIceCandidate(data.candid);
+        peer.addIceCandidate(candid);
+      });
+      await peer.setRemoteDescription(offer);
+      const answer = await peer.createAnswer();
+      socket.emit('answer', {
+        to: data.from, // 呼叫端 Socket ID
+        answer,
+      });
+      await peer.setLocalDescription(answer);
+      // 发送 candidate
+      peer.onicecandidate = (event:any) => {
+        if (event.candidate) {
+          socket.emit('candid', {
+            to: data.from, // 呼叫端 Socket ID
+            candid: event.candidate,
+          });
+        }
+      };
+    };
+  };
+  
+  const OnPressB = async () => {
+    const remote_socket_id = await getRemoteIdByUserId(text);
+    socket.on('answer', (data:any) => {
+      console.log('@sender get answer!', data);
+      let answer = new RTCSessionDescription(data.answer);
+      peer.setRemoteDescription(answer);
+    });
+    socket.on('candid', (data:any) => {
+      console.log('@sender get candid!', data);
+      let candid = new RTCIceCandidate(data.candid);
+      peer.addIceCandidate(candid);
+    });
+    console.log('@sender start link:', remote_socket_id);
+    startCall(remote_socket_id);
   };
 
   const Player = () => {
     return (
       <View>
-        <Button onPress={OnPress} />
+        <Button onPress={OnPressA} style={{borderColor: '#0000ff'}} />
         <Text> 自己： </Text>
-        <RTCView style={{ height: 200, width: 200 }} streamURL={local_stream.toURL()} />
-        <Text> 远程： </Text>
-        <RTCView style={{ height: 200, width: 200 }} streamURL={remote_stream.toURL()} />
+        <RTCView style={{ height: 300, width: 400}} streamURL={local_stream.toURL()} />
+        <TextInput style={styles.input} onChangeText={handleTextChange} value={text}/>
+        <Button onPress={OnPressB} style={{backgroundColor: '#ff0000'}} />
+        <Text> 对方： </Text>
+        <RTCView style={{ height: 300, width: 400 }} streamURL={remote_stream.toURL()} />
       </View>
     );
   };
 
   return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}> 
+      <View style={{ flex: 1, alignItems: 'center' }}> 
         <Player />
       </View>
   );
 };
-
-export const MatchDetailScreen2 = ({ route, navigation }: StackNavigationProps) => {
-  const [loading, setLoading] = useState(true);
-  const [localId, setLocalId] = useState('');
-  const [remoteId, setRemoteId] = useState('');
-  const [messages, setMessages] = useState([]);
-  const [customMsg, setCustomMsg] = useState('');
-  let n_stream = new MediaStream(undefined);
-  const currentCall = useRef();
-  const currentConnection = useRef();
-  const peer = useRef()
-  const localVideo = useRef(n_stream);
-  const remoteVideo = useRef(n_stream);
-
-  useEffect(() => {
-    createPeer()
-    return () => {
-      endCall()
-    }
-  }, [])
-
-  const endCall = () => {
-    if (currentCall.current) {
-      currentCall.current.close()
-    }
-  }
-
-  const createPeer = () => {
-    peer.current = new Peer();
-    peer.current.on("open", (id) => {
-      setLocalId(id)
-      setLoading(false)
-      console.log(id);
-    });
-    peer.current.on('connection', (connection) => {
-      // 接受对方传来的数据
-      connection.on('data', (data) => {
-        
-      })
-      currentConnection.current = connection
-    })
-    // 媒体传输
-    peer.current.on('call', async (call) => {
-      if (window.confirm(`是否接受 ${call.peer}?`)) {
-        // 获取本地流
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
-        localVideo.current = stream
-        // 响应
-        call.answer(stream)
-        console.log("call.answer");
-        // 监听视频流，并更新到 remoteVideo 上
-        call.on('stream', (stream) => {
-          remoteVideo.current = stream;
-          console.log("call.stream");
-        })
-        currentCall.current = call
-      } else {
-        call.close()
-        alert('已关闭')
-      }
-    })
-  }
-
-  return (
-    <View>
-          <Text>localId = {localId}</Text>
-          <Text>本地摄像头</Text>
-          <RTCView style={{ height: 200, width: 200 }} streamURL={localVideo.current.toURL()} />
-          <Text>远程摄像头</Text>
-          <RTCView style={{ height: 200, width: 200 }} streamURL={remoteVideo.current.toURL()} />
-    </View>
-  );
-}
-
 export default MatchDetailScreen;
