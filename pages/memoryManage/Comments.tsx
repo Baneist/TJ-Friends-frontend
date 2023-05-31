@@ -36,7 +36,7 @@ function Like(props: CardProps) {
   }, [props.content.likeNum, props.content.isLiked]);
 
   async function handleClick() {
-    const res = await requestApi('get', `/updateLikeMemory/${props.id}`, null, true, 'like失败');
+    const res = await requestApi('get', `/updateLikeMemory/${props.id}`, null, true, '动态点赞失败');
     if (res.code === 0) {
       setLike(res.data.likeNum);
       setIsLiked(res.data.isLiked);
@@ -62,7 +62,7 @@ function Thumb(props: CardProps) {
   }, [props.content.likeNum, props.content.isLiked]);
 
   async function handleClick() {
-    const res = await requestApi('get', `/updateLikeComment/${props.content.commentId}`, null, true, 'thumb失败');
+    const res = await requestApi('get', `/updateLikeComment/${props.content.commentId}`, null, true, '评论点赞失败');
     if (res.code == 0) {
       setLike(res.data.likeNum);
       setIsLiked(res.data.isLiked);
@@ -138,7 +138,7 @@ function Comment({ route, navigation }: StackNavigationProps) {
   };
 
   async function onMemoryDelete() {
-    const res = await requestApi('get', `/deleteMemory/${id}`, null, true, '删除失败');
+    const res = await requestApi('get', `/deleteMemory/${id}`, null, true, '动态删除失败');
     if (res.code === 0)
       navigation.goBack();
   };
@@ -169,7 +169,7 @@ function Comment({ route, navigation }: StackNavigationProps) {
   const [urls, setUrls] = useState([] as IImageInfo[]);
   const [fullview, setFullview] = useState(false);
   async function fetchData() {
-    const res = await requestApi('get', `/Memories/${id}`, null, true, 'get memories失败');
+    const res = await requestApi('get', `/Memories/${id}`, null, true, '获取动态失败');
     if (res.code == 0) {
       setDetail(res.data);
       setList(res.data.comments);
@@ -192,7 +192,7 @@ function Comment({ route, navigation }: StackNavigationProps) {
   }, [state]))
   function onDelete(commentID: number) {
     async function deleteComment() {
-      const res = await requestApi('post', '/deleteComment', { comment_id: commentID }, true, '删除失败');
+      const res = await requestApi('post', '/deleteComment', { comment_id: commentID }, true, '评论删除失败');
       if (res.code === 0) {
         setState(state + 1);
       }
@@ -201,7 +201,7 @@ function Comment({ route, navigation }: StackNavigationProps) {
   };
 
   async function postComment() {
-    const res = await requestApi('post', `/postComment`, { postId: id, content: text }, true, 'post comment失败');
+    const res = await requestApi('post', `/postComment`, { postId: id, content: text }, true, '评论发布失败');
     Keyboard.dismiss;
     if (res.code == 0) {
       setText('');

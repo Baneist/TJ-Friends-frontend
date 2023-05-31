@@ -164,7 +164,7 @@ const RoomsScreen = ({ navigation }: StackNavigationProps) => {
   let rooms = [] as any[];
   async function fetchData() {
     rooms = []
-    const res = await requestApi('get', '/rooms', null, true, 'getRooms failed')
+    const res = await requestApi('get', '/rooms', null, true, '房间广场加载失败')
     if (res.code == 0) {
       for (let index in res.data) {
         res.data[index].height = Math.random() * 50 + 100;
