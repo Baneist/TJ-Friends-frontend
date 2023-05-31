@@ -2,13 +2,13 @@ Arguments:
   D:\nodejs\node.exe D:\nodejs\node_modules\yarn\bin\yarn.js add date-format
 
 PATH: 
-  F:\Program_Files\VMware\bin\;D:\Program File\CMake\bin;D:\Program File\MinGW-w64\mingw64\bin;D:\Program File\Java\java8\jdk1.8.0_341\bin;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;D:\Program File\SPSS\JRE\bin;D:\Program File\graphviz\bin;E:\Program files\Matlab\bin;E:\Program files\texlive\texlive\2022\bin\win32;D:\Tomcat\apache-tomcat-10.0.20\bin;D:\Program File\Git\cmd;D:\nvm;D:\nodejs;E:\Program files\TortoiseGit\bin;C:\Users\19086\AppData\Local\Yarn\Data\global;D:\Program File\Java\java8\jdk1.8.0_341\jre\bin;C:\Program Files\Docker\Docker\resources\bin;D:\Anaconda;D:\Anaconda\Library\mingw-w64\bin;D:\Anaconda\Library\usr\bin;D:\Anaconda\Library\bin;D:\Anaconda\Scripts;C:\Program Files\MySQL\MySQL Shell 8.0\bin\;D:\Program File\python\Scripts\;D:\Program File\python\;C:\Users\19086\AppData\Local\Microsoft\WindowsApps;C:\Program Files (x86)\IDM Computer Solutions\UltraEdit\;D:\Program File\ModelSim\win32pe;D:\Modelsim\win32pe;D:\Program File\Microsoft VS Code\bin;C:\Program Files\MySQL\MySQL Server 8.0\bin;D:\nvm;D:\nodejs;D:\Program File\UNIX V6++\MinGW\bin;D:\Program File\UNIX V6++\NASM;D:\Program_File\Android_SDK\platform-tools;D:\Program_File\Android_SDK\emulator;D:\Program_File\Android_SDK\tools;D:\Program_File\Android_SDK\tools\bin;C:\Users\19086\AppData\Local\GitHubDesktop\bin
+  C:\Python311\Scripts\;C:\Python311\;D:\VMware\VMware Workstation\bin\;C:\Program Files\Python310\Scripts\;C:\Program Files\Python310\;C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\Windows\System32\OpenSSH\;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\Users\ayiri\Desktop\HW\22SV\t1\venv\Scripts\;D:\UNIX V6++V1\MinGW\bin;D:\UNIX V6++V1\NASM;C:\Program Files\Docker\Docker\resources\bin;C:\Program Files\Git\cmd;C:\Program Files\dotnet\;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\nodejs\;C:\ProgramData\chocolatey\bin;C:\Users\ayiri\AppData\Local\Yarn\Data\global\node_modules\typescript\bin;C:\Program Files\MySQL\MySQL Shell 8.0\bin\;C:\Users\ayiri\AppData\Local\Microsoft\WindowsApps;D:\JetBrains\PyCharm Community Edition 2022.1.3\bin;;C:\ProgramData\Anaconda3;C:\ProgramData\Anaconda3\Scripts;C:\ProgramData\Anaconda3\Library\bin;C:\ProgramData\Anaconda3\Library\mingw-w64\bin;D:\JetBrains\PyCharm 2022.1.4\bin;;C:\Users\ayiri\AppData\Local\Programs\Microsoft VS Code\bin;D:\UNIX V6++V1\MinGW\bin;D:\UNIX V6++V1\NASM;C:\Program Files\CMake\bin;C:\Program Files\Multipass\bin;C:\Users\ayiri\.dotnet\tools;C:\Users\ayiri\AppData\Roaming\npm;C:\Users\ayiri\AppData\Local\GitHubDesktop\bin
 
 Yarn version: 
   1.22.19
 
 Node version: 
-  16.13.0
+  18.15.0
 
 Platform: 
   win32 x64

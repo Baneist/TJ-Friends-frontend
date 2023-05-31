@@ -108,12 +108,14 @@ function ChatRoom({roomId,navigation}:chatRoomProp) {
   }
 
   async function fetchOrigin(){
+    setIsTimerEnabled(false);
+    console.log('F start')
     let CurMessages: ChatMessage[] = []
 
-    const resAllMessages = await requestApi('get', `/chat/receiveRoomMessage?roomId=${roomId}`, null, true, 'Get All Messages failed');
+    const resAllMessages = await requestApi('get', `/receiveRoomMessage?roomId=${roomId}`, null, true, 'Get All Messages failed');
 
     setIUser(await getUser(userId));
-    
+    console.log(resAllMessages.data.length)
     if (resAllMessages.code === 0) {
 
       for (let i = 0; i < resAllMessages.data.length; ++i) {
@@ -146,6 +148,8 @@ function ChatRoom({roomId,navigation}:chatRoomProp) {
     }
 
     setMessages(CurMessages);
+    setIsTimerEnabled(true);
+    console.log('F end')
   }
 
   function onSend(newMessages: ChatMessage[] = []) {
@@ -218,59 +222,24 @@ function ChatRoom({roomId,navigation}:chatRoomProp) {
     
     setIsTimerEnabled(true);
   }
-  
-  
-  // async function getUnreadMessages() {
-  //   const resUnreadMessages = await requestApi('get', `/chat/receiveUnreadMessages?userId=${ChatUser}`, null, true, 'Get Unread Messages failed');
-  //   let unreadMessage: ChatMessage[] = []
-  //   for (let i = 0; i < resUnreadMessages.data.length; ++i) {
-  //     if(resUnreadMessages.data[i].image==''){
-  //       unreadMessage.unshift(
-  //         {
-  //           _id: resUnreadMessages.data[i].id,
-  //           text: resUnreadMessages.data[i].text,
-  //           createdAt: resUnreadMessages.data[i].time,
-  //           user: UUser,
-  //           isRevoke: resUnreadMessages.data[i].isRecall,
-  //         }
-  //       )
-  //     }
-  //     else{
-  //       unreadMessage.unshift(
-  //         {
-  //           _id: resUnreadMessages.data[i].id,
-  //           text: '',
-  //           createdAt: resUnreadMessages.data[i].time,
-  //           user: UUser,
-  //           image: resUnreadMessages.data[i].image,
-  //           isRevoke: false,
-  //         }
-  //       )
-  //     }
-  //     setMessages(previousMessages =>
-  //       GiftedChat.append(previousMessages, unreadMessage)
-  //     );
-
-  //     alreadyRead();
-  //   }
-  // }
-
-  // async function alreadyRead() {
-  //   const res = await requestApi('post', '/chat/readMessageInfo', { userId: ChatUser }, true, '已读失败');
-  // }
 
   useEffect(() => {
+    console.log('first fecth')
     fetchOrigin()
+    console.log('first fecth end')
 
     if (isTimerEnabled){
       const intervalId = setInterval(() => {
+        console.log('original fecth')
         fetchOrigin()
+        console.log('original fecth end')
       }, 2000);
+      
 
       return () => clearInterval(intervalId);
     }
     
-  }, [isTimerEnabled]);
+  }, []);
 
   return (
     <GiftedChat

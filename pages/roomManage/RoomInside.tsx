@@ -336,7 +336,7 @@ const RoomInside = ({route, navigation}:StackNavigationProps) => {
         creatorId={roomInfo.creatorId}
         />
         <MemberList roomInfo={roomInfo} navigation={navigation} onRemoveMember={fetchData}/>
-        {/* <ChatRoom roomId={roomInfo.roomId} navigation={navigation}/> */}
+        <ChatRoom roomId={roomInfo.roomId} navigation={navigation}/>
     </View>
   )
 }

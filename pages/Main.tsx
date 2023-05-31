@@ -9,6 +9,7 @@ import Profile from './userInfo/Profile'
 import NoticeManageScreen from './noticeManage/NoticeManage';import { IconButton, Provider } from 'react-native-paper';
 import { StackNavigationProps } from '../App';
 import RoomsScreen from './roomManage/Rooms';
+import MatchHomePage from './MatchManage/Match';
 import { color } from 'react-native-reanimated';
 
 type RootTabParamList = {
@@ -123,11 +124,11 @@ const MainScreen = ({route, navigation}:StackNavigationProps) => {
     >
       <Tab.Screen
         options={{
-          tabBarIcon: tabBarIcon('aliwangwang-o1'),
-          tabBarLabel: showLabel ? 'Home' : undefined,
+          tabBarIcon: tabBarIcon('smileo'),
+          tabBarLabel: showLabel ? 'name' : undefined,
         }}
-        name="Home"
-        component={Home}
+        name="Match"
+        component={MatchHomePage}
       />
       <Tab.Screen
         options={{
@@ -154,7 +155,7 @@ const MainScreen = ({route, navigation}:StackNavigationProps) => {
           tabBarIcon: tabBarIcon('notification'),
           tabBarLabel: showLabel ? 'NoticeManageScreen' : undefined,
         }}
-        name="    通知管理"
+        name="Notice"
         component={NoticeManageScreen}
       />
       <Tab.Screen
