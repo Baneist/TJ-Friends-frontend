@@ -24,7 +24,7 @@ const PostPage = ({ route, navigation }: StackNavigationProps) => {
 				image[index] = BASE_URL + imageRes.data.url;
 			}
 		}
-		const res = await requestApi('post', '/Post', { postContent: text, photoUrl: image, pms: pmskey, isAnonymous: anonymous }, true, 'post失败')
+		const res = await requestApi('post', '/Post', { postContent: text, photoUrl: image, pms: pmskey, isAnonymous: anonymous }, true, '发布失败')
 		if (res.code == 0) {
 			navigation.goBack();
 		}
@@ -113,7 +113,7 @@ const PostPage = ({ route, navigation }: StackNavigationProps) => {
 				image[index] = BASE_URL + imageRes.data.url;
 			}
 		}
-		const res = await requestApi('post', '/createDraft', { postContent: text, photoUrl: image, pms: pmskey, isAnonymous: anonymous }, true, 'post失败')
+		const res = await requestApi('post', '/createDraft', { postContent: text, photoUrl: image, pms: pmskey, isAnonymous: anonymous }, true, '草稿保存失败')
 		return res;
 	}
 	React.useEffect(

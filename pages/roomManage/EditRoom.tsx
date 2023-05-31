@@ -38,7 +38,7 @@ const EditPage = ({ route, navigation }: StackNavigationProps) => {
     if (imageRes.code === 0) {
       setImage(BASE_URL + imageRes.data.url);
     }
-    const res = await requestApi('put', '/editRoom', { coverUrl: image, videoUrl: text1, roomName: text2, roomDescription: text3, roomPms: locked, roomPwd: (locked ? pwd : null) }, true, 'post失败')
+    const res = await requestApi('put', '/editRoom', { coverUrl: image, videoUrl: text1, roomName: text2, roomDescription: text3, roomPms: locked, roomPwd: (locked ? pwd : null) }, true, '房间信息编辑失败')
     if (res.code == 0) {
       navigation.goBack();
     }
@@ -46,7 +46,7 @@ const EditPage = ({ route, navigation }: StackNavigationProps) => {
   }
   async function fetchData() {
     console.log(route.params?.roomId)
-    const res = await requestApi('get', `/getRoomInfo?roomId=${route.params?.roomId}`, null, true, 'get room失败');
+    const res = await requestApi('get', `/getRoomInfo?roomId=${route.params?.roomId}`, null, true, '房间信息获取失败');
     if (res.code == 0) {
       setImage(res.data.coverUrl)
       setText1(res.data.vidoeUrl);

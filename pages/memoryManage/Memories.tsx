@@ -69,7 +69,7 @@ function Like(props: CardProps) {
 
 
   async function handleClick() {
-    const res = await requestApi('get', `/updateLikeMemory/${props.content.postId}`, null, true, 'update like memory失败')
+    const res = await requestApi('get', `/updateLikeMemory/${props.content.postId}`, null, true, '点赞失败')
     if (res.code == 0) {
       setLike(res.data.likeNum);
       setIsLiked(res.data.isLiked);
@@ -241,7 +241,7 @@ const MemoriesScreen = ({ navigation }: StackNavigationProps) => {
 
   async function fetchData() {
     memorylist = []
-    const res = await requestApi('get', '/Memories', null, true, 'getMemories failed')
+    const res = await requestApi('get', '/Memories', null, true, '动态广场加载失败')
     if (res.code == 0) {
       memorylist = memorylist.concat(res.data);
       setlist(memorylist);
@@ -252,7 +252,7 @@ const MemoriesScreen = ({ navigation }: StackNavigationProps) => {
   function onDelete(postId:string) {
     console.log('d')
     async function deleteMomery() {
-      const res = await requestApi('get', `/deleteMemory/${postId}`, null, true, '删除失败');
+      const res = await requestApi('get', `/deleteMemory/${postId}`, null, true, '动态删除失败');
       if (res.code == 0) {
         console.log(postId)
         setState(!state);
