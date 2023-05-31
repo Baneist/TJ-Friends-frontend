@@ -48,6 +48,7 @@ interface detailProps{
   roomInfo:RoomProps
   showDetial:boolean
   onBackdropPress:() => void
+  onRemoveMember: () => void
   navigation:StackNavigationProps['navigation']
 }
 const UserDetail = (props:detailProps) => {
@@ -71,6 +72,7 @@ const UserDetail = (props:detailProps) => {
     }
     console.log(data)
     await requestApi('post', '/leaveRoom', data, true, '移除成员失败')
+    props.onRemoveMember()  //界面更新
   }
   useEffect(() => {
     setFollowing(props.userInfo.isFollowing)
@@ -194,6 +196,7 @@ const InviteFriend = (props:inviteProps) => {
 
 interface MemberListProps{
   roomInfo:RoomProps,
+  onRemoveMember: () => void,
   navigation:StackNavigationProps['navigation']
 }
 const MemberList = (props:MemberListProps) => {
@@ -254,6 +257,7 @@ const MemberList = (props:MemberListProps) => {
           onBackdropPress={()=> setViewMember(false)} 
           navigation={props.navigation}
           roomInfo={props.roomInfo}
+          onRemoveMember={props.onRemoveMember}
           userInfo={member}
           />
           </View>
@@ -305,6 +309,7 @@ const RoomInside = ({route, navigation}:StackNavigationProps) => {
         ]
       );
     });
+    console.log('ri', route.params)
     fetchData()
     return onbackpage;
   }, [])
@@ -330,7 +335,7 @@ const RoomInside = ({route, navigation}:StackNavigationProps) => {
         roomId={roomInfo.roomId}
         creatorId={roomInfo.creatorId}
         />
-        <MemberList roomInfo={roomInfo} navigation={navigation}/>
+        <MemberList roomInfo={roomInfo} navigation={navigation} onRemoveMember={fetchData}/>
         {/* <ChatRoom roomId={roomInfo.roomId} navigation={navigation}/> */}
     </View>
   )

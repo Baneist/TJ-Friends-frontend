@@ -58,14 +58,14 @@ const MyVideoPlayer = (props:PlayerProps) => {
 
   //获取视频进度
   async function getCurProgress() {
-    console.log(props.roomId)
     const res = await requestApi('get', `/getProgress?roomId=${props.roomId}`,null, true, '获取视频进度失败' )
     setShouldPlay(res.data.shouldPlay)
     let time_before = new Date(res.data.curTime)
     let time_now = new Date()
-    let diff = time_now.getTime() - time_before.getTime();
+    let diff = Math.abs(positionMillis - res.data.positionMillis) + Math.abs(time_now.getTime() - time_before.getTime());
+    let offset = time_now.getTime() - time_before.getTime()
     if(diff >= 10000 && res.data.shouldPlay)
-      setPositionMillis(res.data.positionMillis + diff)
+      setPositionMillis(res.data.positionMillis + offset)
   }
   useEffect(() => {
     if(global.gUserId !== props.creatorId){
@@ -82,7 +82,7 @@ const MyVideoPlayer = (props:PlayerProps) => {
       <VideoPlayer
         videoProps={{
           positionMillis:positionMillis,
-          progressUpdateIntervalMillis:2000,  //进度更新回调频率
+          progressUpdateIntervalMillis:5000,  //进度更新回调频率
           shouldPlay: shouldPlay,
           resizeMode: ResizeMode.CONTAIN,
           source: {
