@@ -48,18 +48,22 @@ export const MatchDetailScreen = ({ route, navigation }: StackNavigationProps) =
     setLSState(ls);
   };
   var turnConf = {
+    configuration: {
+      offerToReceiveAudio: true,
+      offerToReceiveVideo: true
+    },
     iceServers: [
       {
         urls: 'stun:stun1.l.google.com:19302', // 免费的 STUN 服务器
-      }
-    ],
-  };
-  /*
-  ,{
+      },{
         urls: 'turn:10.80.42.229:7100',
         username: 'jmXXDPoe5M',
         credential: '1iqXgvrmQ3',
       }
+    ],
+  };
+  /*
+  
   */
 const createRTC = async () => {
   setPeer(new RTCPeerConnection(turnConf));
@@ -87,7 +91,8 @@ const socketInit = async () => {
 const startCall = async (socket_id:any) => {
   
   const offer = await peer.createOffer({ offerToReceiveAudio: true, offerToReceiveVideo: true });
-  peer.setLocalDescription(offer);
+  //peer.setLocalDescription(offer);
+  setTimeout(() => {peer.setLocalDescription(offer)}, 2000);
   console.log('@sender offer:', offer);
   socket.emit('offer', {
     to: socket_id,
@@ -107,10 +112,9 @@ const startCall = async (socket_id:any) => {
     let answer = new RTCSessionDescription(data.answer);
     peer.setRemoteDescription(answer);
   });
-  
   socket.on('candid', (data:any) => {
-    console.log('@sender get candid!', data);
-    let candid = new RTCIceCandidate(data.candid);
+    console.log('@',gUserId,': candid!', data);
+    const candid = new RTCIceCandidate(data.candid);
     peer.addIceCandidate(candid);
   });
 };
@@ -134,6 +138,11 @@ const getRemoteIdByUserId = async (usrId: string) => {
   }, [])
 
   const OnPressA = async () => {
+    socket.on('candid', (data:any) => {
+      console.log('@',gUserId,': candid!', data);
+      const candid = new RTCIceCandidate(data.candid);
+      peer.addIceCandidate(candid);
+    });
     socket.on('offer', (data:any) => {
       transMedia(data);
     });
@@ -142,13 +151,15 @@ const getRemoteIdByUserId = async (usrId: string) => {
       await peer.setRemoteDescription(offer);
       let answer = await peer.createAnswer();
       //answer.sdp = answer.sdp.replace("IN IP4 127.0.0.1", "IN IP4 192.168.1.104")
-      await peer.setLocalDescription(answer);
+      //peer.setLocalDescription(answer);
+      setTimeout(() => {peer.setLocalDescription(answer)}, 2000);
       console.log('@receiver send answer:', answer);
       socket.emit('answer', {
         to: data.from, // 呼叫端 Socket ID
         answer: answer,
       });
       peer.onicecandidate = (event:any) => {
+        console.log('@receiver onicecandidate:', event);
         if (event.candidate) {
           socket.emit('candid', {
             to: data.from, // 呼叫端 Socket ID
@@ -157,11 +168,6 @@ const getRemoteIdByUserId = async (usrId: string) => {
         }
       };
     };
-    socket.on('candid', (data:any) => {
-      console.log('@receiver candid!', data);
-      const candid = new RTCIceCandidate(data.candid);
-      peer.addIceCandidate(candid);
-    });
     
     // 发送 candidate
     
