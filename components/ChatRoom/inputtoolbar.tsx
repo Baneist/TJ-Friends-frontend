@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { View, StyleSheet, TextInput, TouchableOpacity, KeyboardAvoidingView, TouchableWithoutFeedback, Keyboard, Platform } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import requestApi from '../../utils/request';
@@ -20,11 +20,11 @@ function RoomInputToolbar(props) {
       };
       async function sendMessage() {
         const res = await requestApi('post', '/sendRoomMessage', { image: '' , text: message.text , roomId: props.RoomId }, true, '发送失败');
-        message._id = res.data.id;
+        message._id = res.data.messageId;
         console.log(message._id, 'send')
       }
       sendMessage()
-      props.setMessages(GiftedChat.append(props.messages, [message]));
+      //props.setMessages(GiftedChat.append(props.messages, [message]));
       setText('');
     }
   }
@@ -93,7 +93,7 @@ function RoomInputToolbar(props) {
     <KeyboardAvoidingView style={styles.container} behavior="padding">
       <TouchableOpacity onPress={handlePickImage} style={styles.button}>
         <MaterialIcons name="photo-library" size={24} color="#5A5A5A" />
-      </TouchableOpacity>0
+      </TouchableOpacity>
       <TouchableOpacity onPress={handleTakePhoto} style={styles.button}>
         <MaterialIcons name="photo-camera" size={24} color="#5A5A5A" />
       </TouchableOpacity>
@@ -117,7 +117,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
-    bottom:0,
+    bottom:Platform.OS == 'ios'? -15 :-5,
     backgroundColor: '#FFFFFF',
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,

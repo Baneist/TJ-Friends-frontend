@@ -27,10 +27,11 @@ const CreatePage = ({ route, navigation }: StackNavigationProps) => {
 
   async function handleCreate() {
     const imageRes = await uploadImage(image);
+    let imgTmp;
     if (imageRes.code === 0) {
-      setImage(BASE_URL + imageRes.data.url);
+      imgTmp = BASE_URL + imageRes.data.url;
     }
-    const res = await requestApi('post', '/createRoom', { coverUrl: image, videoUrl: text1, roomName: text2, roomDescription: text3, roomPms: locked, roomPwd: (locked ? pwd : null) }, true, '房间创建失败')
+    const res = await requestApi('post', '/createRoom', { coverUrl: imgTmp, videoUrl: text1, roomName: text2, roomDescription: text3, roomPms: locked, roomPwd: (locked ? pwd : null) }, true, '房间创建失败')
     if (res.code == 0) {
       navigation.navigate('RoomInside', { roomId: res.data.id, roomPwd: locked ? pwd : "" });
     }
@@ -155,6 +156,9 @@ const CreatePage = ({ route, navigation }: StackNavigationProps) => {
         创建
       </Button>
       <SinglePicker showPickerOption={showPickerOption} onBackdropPress={cancelPickerOption} setImage={changeImage} />
+      {/* eslint-disable-next-line max-len */}
+      {/* -> Set bottom view to allow scrolling to top if you set bottom-bar position absolute */}
+      <View style={{ height: 190 }} />
     </ScrollView>
   );
 }
