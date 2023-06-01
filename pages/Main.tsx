@@ -11,7 +11,7 @@ import { StackNavigationProps } from '../App';
 import RoomsScreen from './roomManage/Rooms';
 import MatchHomePage from './matchManage/Match';
 import { color } from 'react-native-reanimated';
-import {MatchDetailScreen} from './MatchManage/MatchDetail';
+import {MatchDetailScreen} from './matchManage/MatchDetail';
 
 type RootTabParamList = {
   Home: undefined;
