@@ -17,7 +17,7 @@
     "ios": {
       "requireFullScreen": true,
       "supportsTablet": true,
-      "bitcode": false
+      "bundleIdentifier": "com.vozeo.tjfriends"
     },
     "android": {
       "adaptiveIcon": {
@@ -38,11 +38,6 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    },
-    "extra": {
-      "eas": {
-        "projectId": "a26600bc-7646-4718-b6b1-9cb93ea2738e"
-      }
     },
     "plugins": [
       [
@@ -65,6 +60,11 @@
           "initialOrientation": "DEFAULT"
         }
       ]
-    ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "d468e573-334e-4936-b650-e634208ac481"
+      }
+    }
   }
 }
