@@ -17,7 +17,8 @@
     "ios": {
       "requireFullScreen": true,
       "supportsTablet": true,
-      "bundleIdentifier": "com.vozeo.tjfriends"
+      "bundleIdentifier": "com.vozeo.tjfriends",
+      "bitcode": false
     },
     "android": {
       "adaptiveIcon": {
@@ -63,7 +64,7 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "d468e573-334e-4936-b650-e634208ac481"
+        "projectId": "32bd82df-bdb8-4213-be1d-da19b4b2e665"
       }
     }
   }
