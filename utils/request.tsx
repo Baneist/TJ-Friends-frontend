@@ -6,7 +6,7 @@ import { Alert } from "react-native";
 
 //mockjs
 //const BASE_URL = 'https://mock.apifox.cn/m1/2609236-0-default'
-export const BASE_URL = 'http://119.3.178.68:8000';
+export const BASE_URL = 'http://119.3.178.68:8111';
 export const SOCKET_SERVER_URL = `http://10.80.42.217:9800/webrtc`;
 const instance = axios.create({
   baseURL: BASE_URL,

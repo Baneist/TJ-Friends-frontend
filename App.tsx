@@ -52,6 +52,7 @@ import MatchHomePage from "./pages/matchManage/Match";
 import RoomInside from "./pages/roomManage/RoomInside";
 import EditPage from "./pages/roomManage/EditRoom";
 import EditDraft from "./pages/memoryManage/EditDraft";
+import SyncStorage from "./components/storage";
 
 const GetUrl = "https://1.tongji.edu.cn/api/ssoservice/system/loginIn";
 const TargetUrl = "https://1.tongji.edu.cn/ssologin";
@@ -107,6 +108,7 @@ if (
 }
 
 const App = () => {
+  SyncStorage.init();
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
 

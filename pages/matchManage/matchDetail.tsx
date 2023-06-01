@@ -19,6 +19,7 @@ import {
   MediaStreamTrack,
   mediaDevices,
 } from 'react-native-webrtc';
+import SyncStorage from '../../components/storage';
 
 const styles = StyleSheet.create({
   container: {},
@@ -39,6 +40,7 @@ export const MatchDetailScreen = ({ route, navigation }: StackNavigationProps) =
   const [local_stream, setLSState] = useState(n_stream);
   const [remote_stream, setRSState] = useState(n_stream);
   let socket: any = gSocket;
+  
   //const [peer, setPeer] = useState(new RTCPeerConnection(undefined));
   var turnConf = {
     configuration: {
@@ -72,14 +74,6 @@ const createRTC = async () => {
   setTimeout(() => {
     console.log('@ end create rtc',gUserId,' RTC:', peer._pcId);
   }, 1000);
-};
-const socketInit = async () => {
-  let sock = io(`http://10.80.42.217:9800/webrtc`, { auth: { userid: gUserId, role: 'sender', }, });
-  sock.on('connect', async () => {
-    console.log('连接成功, 上传socket:', sock.id); 
-    const res = await requestApi('post',`/match/uploadSocketId`, {socketId: sock.id}, true, '上传 SocketId 失败');
-  });
-  socket = sock;
 };
 const startCall = async (socket_id:any) => {
   await local_stream.getTracks().forEach((track) => {
@@ -123,11 +117,6 @@ const startCall = async (socket_id:any) => {
     await peer.addIceCandidate(candid);
   });
 };
-const getRemoteIdByUserId = async (usrId: string) => {
-  const res = await requestApi('get', `/match/getSocketId/${usrId}`, null,  true, '获取 SocketId 失败');
-  console.log('getRemoteIdByUserId:', res.data.socketId);
-  return res.data.socketId;
-};
 
   const OnPressA = async () => {
     console.log('@',gUserId,' RTC:', peer._pcId);
@@ -169,7 +158,7 @@ const getRemoteIdByUserId = async (usrId: string) => {
       peer.onicecandidate = (event:any) => {
         console.log('@receiver onicecandidate:', event);
         if (event.candidate) {
-          setTimeout(() => {
+            setTimeout(() => {
             socket.emit('candid', {
               to: data.from, // 呼叫端 Socket ID
               candid: event.candidate,
@@ -188,7 +177,7 @@ const getRemoteIdByUserId = async (usrId: string) => {
   const OnPressB = async () => {
     console.log('@',gUserId,'PRESSED B');
     console.log('@',gUserId,' RTC:', peer._pcId);
-    const remote_socket_id = await getRemoteIdByUserId(matchedUserId);
+    const remote_socket_id = gSenderSocket;
     startCall(remote_socket_id);
     console.log('@receiver PRESS B end. PCID=', peer._pcId);
   };
@@ -208,12 +197,47 @@ const getRemoteIdByUserId = async (usrId: string) => {
     );
   };
 
+  SyncStorage.setValue('firingOnce', '0');
+  socket.on('press', async (data:any) => {
+    if(SyncStorage.getValue('firingOnce') == '0'){
+      SyncStorage.setValue('firingOnce', '1');
+      console.log('User:', gUserId, ' 收到press:', data);
+      if(data.type == 'A'){
+        console.log('User:', gUserId, ' 收到press A');
+        //await OnPressA();
+      } else {
+        console.log('User:', gUserId, ' 收到press B');
+        //await OnPressB();
+      }
+    }
+  });
+
+  SyncStorage.setValue('firingOnce1', '0');
+  useFocusEffect(()=>{
+    if(SyncStorage.getValue('firingOnce1') == '0'){
+      SyncStorage.setValue('firingOnce1', '1');
+      console.log('User:', gUserId, ' UseFocusEffect:');
+      if(matchedUserId == ''){ //我是接受方
+      
+        //setTimeout(() => {OnPressA();}, 2000);
+      } else { //我是发送方
+        
+        //setTimeout(() => {OnPressB();}, 5000);
+      }
+    }
+  });
   useEffect( () => {
-    getLocalMedia();
-    createRTC();
+    getLocalMedia().then(() => {
+      createRTC().then(() => {
+        OnPressA();
+      })
+    })
+    
     if(matchedUserId == ''){ //我是接受方
+      
       //setTimeout(() => {OnPressA();}, 2000);
     } else { //我是发送方
+      
       //setTimeout(() => {OnPressB();}, 5000);
     }
     return () => {

@@ -29,9 +29,11 @@ const WaitingPage = ({ route, navigation }: StackNavigationProps) => {
         console.log
         savedUserId = data.userId;
         console.log('接受方sayhi:', data.userId);
+        gSenderSocket = data.from;
         socket.emit('sayhi', {
           to: data.from,
           userId: gUserId,
+          type: 'A',
         });
         //然后进入详情匹配页面
         requestApi('post', `/endMatch`, null,  true, '发送结束匹配信息失败');
@@ -43,9 +45,11 @@ const WaitingPage = ({ route, navigation }: StackNavigationProps) => {
       console.log('我是发送方',gUserId);
       const res = await requestApi('get', `/match/getSocketId/${mtUserId}`, null,  true, '获取 SocketId 失败');
       console.log('getRemoteIdByUserId:', res.data.socketId);
+      gSenderSocket = res.data.socketId;
       socket.emit('sayhi', {
         to: res.data.socketId,
         userId: gUserId,
+        type: 'B',
       });
       socket.on('sayhi', (data:any) => {
         //然后进入详情匹配页面
