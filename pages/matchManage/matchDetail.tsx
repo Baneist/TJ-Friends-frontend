@@ -141,7 +141,7 @@ const startCall = async (socket_id:any) => {
       };
       console.log('@receiver get data, startSetRemoteDescription.\n', data.offer);
       await peer.setRemoteDescription(offer).catch(e => console.log(e));;
-      console.log('@receiver SetLocalDescription end.')
+      console.log('@receiver SetRemoteDescription end.')
       await local_stream.getTracks().forEach((track) => {
         console.log('@addTrack:', track);
         peer.addTrack(track, local_stream);
@@ -215,6 +215,14 @@ const startCall = async (socket_id:any) => {
       OnPressB();
     }
   }
+  const OnPressAA = () => {
+    OnPressA().then(() => {
+      console.log('ONPRESS AA');
+      socket.emit('callPress', {
+        to: gSenderSocket
+      })
+    });
+  };
 
   SyncStorage.setValue('firingOnce1', '0');
   useFocusEffect(()=>{
@@ -222,13 +230,7 @@ const startCall = async (socket_id:any) => {
       SyncStorage.setValue('firingOnce1', '1');
       console.log('User:', gUserId, ' UseFocusEffect:');
       if(matchedUserId == ''){ //我是接受方
-        const waitForA = () => {
-          if (init_end == true) {
-            
-          } else setTimeout(waitForA, 500); 
-          
-        }
-        setTimeout(() => {OnPressA();}, 5000);
+        setTimeout(() => {OnPressAA();}, 3000);
       } else { //我是发送方
         
         //setTimeout(() => {OnPressB();}, 10000);
@@ -242,14 +244,6 @@ const startCall = async (socket_id:any) => {
         //OnPressA();
       })
     })
-    
-    if(matchedUserId == ''){ //我是接受方
-      
-      //setTimeout(() => {OnPressA();}, 2000);
-    } else { //我是发送方
-      
-      //setTimeout(() => {OnPressB();}, 5000);
-    }
     return () => {
       console.log('@',gUserId,' RTC:', peer._pcId, 'close!')
       peer.close()

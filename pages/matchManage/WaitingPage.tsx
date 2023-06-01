@@ -26,7 +26,6 @@ const WaitingPage = ({ route, navigation }: StackNavigationProps) => {
       //是接收方
       console.log('我是接收方',gUserId);
       socket.on('sayhi', (data:any) => {
-        console.log
         savedUserId = data.userId;
         console.log('接受方sayhi:', data.userId);
         gSenderSocket = data.from;
