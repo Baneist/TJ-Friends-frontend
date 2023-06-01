@@ -161,7 +161,7 @@ const OthersPage = ({route, navigation }: StackNavigationProps) => {
   //投诉
   function onComplaint(){
     setBlockOption(false)
-    navigation.navigate('ComplaintUser', {userId:pageid})
+    navigation.navigate('Complaint')
   }
 
   // 性别

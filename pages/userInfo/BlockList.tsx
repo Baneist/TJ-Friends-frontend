@@ -39,7 +39,7 @@ const ModalOptions = (props:ModalOptionsProps) =>{
 }
 
 
-const BlackList = ({navigation}:StackNavigationProps) => {
+const BlockList = ({navigation}:StackNavigationProps) => {
     //state
     const curUser = global.gUserId;
     //显示选项
@@ -172,4 +172,4 @@ const styles = StyleSheet.create({
     paddingTop:15
     },
   });
-export default BlackList;
+export default BlockList;

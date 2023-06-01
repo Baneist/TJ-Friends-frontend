@@ -153,6 +153,11 @@ const Profile = ({ navigation }: StackNavigationProps) => {
     navigation.navigate("FollowersList",{userId:userId});
   }
 
+  //登出
+  async function logout() {
+    await requestApi('post', '/logout', null, true, '登出失败')
+    navigation.replace('Login')
+  }
 
   // 性别
   const Gender = () => {
@@ -187,6 +192,9 @@ const Profile = ({ navigation }: StackNavigationProps) => {
           <Divider />
           <Menu.Item onPress={() => {}} 
           title={<Icon style={{fontSize:17}} name="account-off-outline">黑名单</Icon>} />
+          <Divider />
+          <Menu.Item onPress={() => logout()} 
+          title={<Icon style={{fontSize:17}} name="logout">登出</Icon>} />
         </Menu>
       )
     });
