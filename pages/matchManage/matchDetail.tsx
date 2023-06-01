@@ -219,7 +219,7 @@ const startCall = async (socket_id:any) => {
       console.log('User:', gUserId, ' UseFocusEffect:');
       if(matchedUserId == ''){ //我是接受方
       
-        //setTimeout(() => {OnPressA();}, 2000);
+        setTimeout(() => {OnPressA();}, 5000);
       } else { //我是发送方
         
         //setTimeout(() => {OnPressB();}, 5000);
