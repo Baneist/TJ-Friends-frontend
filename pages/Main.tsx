@@ -6,12 +6,11 @@ import { Text } from "galio-framework";
 import { BottomFabBar } from 'rn-wave-bottom-bar';
 import MemoriesScreen from './memoryManage/Memories';
 import Profile from './userInfo/Profile'
-import NoticeManageScreen from './noticeManage/NoticeManage';
-import { IconButton, Provider } from 'react-native-paper';
+import NoticeManageScreen from './noticeManage/NoticeManage';import { IconButton, Provider } from 'react-native-paper';
 import { StackNavigationProps } from '../App';
 import RoomsScreen from './roomManage/Rooms';
 import { color } from 'react-native-reanimated';
-import {VideoCall} from './videoManage/Video'
+import {MatchDetailScreen} from './matchManage/matchDetail';
 
 type RootTabParamList = {
   Home: undefined;
@@ -126,10 +125,10 @@ const MainScreen = ({route, navigation}:StackNavigationProps) => {
       <Tab.Screen
         options={{
           tabBarIcon: tabBarIcon('aliwangwang-o1'),
-          tabBarLabel: showLabel ? 'Home' : undefined,
+          tabBarLabel: showLabel ? 'MatchDetailScreen' : undefined,
         }}
-        name="Home"
-        component={VideoCall}
+        name="MatchDetailScreen"
+        component={MatchDetailScreen}
       />
       <Tab.Screen
         options={{

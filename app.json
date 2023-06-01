@@ -16,24 +16,49 @@
     ],
     "ios": {
       "requireFullScreen": true,
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bitcode": false
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.vozeo.tjfriends"
+      "package": "com.vozeo.tjfriends",
+      "permissions": [
+        "android.permission.ACCESS_NETWORK_STATE",
+        "android.permission.BLUETOOTH",
+        "android.permission.CAMERA",
+        "android.permission.INTERNET",
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.SYSTEM_ALERT_WINDOW",
+        "android.permission.WAKE_LOCK"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "ce062628-adee-41b5-b6b8-d35ac71a6967"
+        "projectId": "a26600bc-7646-4718-b6b1-9cb93ea2738e"
       }
     },
     "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "minSdkVersion": 24
+          },
+          "ios": {
+            "deploymentTarget": "13.0"
+          }
+        }
+      ],
+      [
+        "@config-plugins/react-native-webrtc"
+      ],
       [
         "expo-screen-orientation",
         {
@@ -47,7 +72,6 @@
           "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone"
         }
       ]
-    ],
-    "owner": "peanutpuff"
+    ]
   }
 }
