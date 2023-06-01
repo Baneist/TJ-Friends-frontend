@@ -35,7 +35,7 @@ const styles = StyleSheet.create({
 export const MatchDetailScreen = ({ route, navigation }: StackNavigationProps) => {
   const matchType = route.params?.matchType;
   const matchedUserId = route.params?.matchedUserId;
-  const usevideo = matchType == '语音' ? false : true;
+  const usevideo = matchType != '语音';
   let n_stream = new MediaStream(undefined);
   const [local_stream, setLSState] = useState(n_stream);
   const [remote_stream, setRSState] = useState(n_stream);
@@ -166,7 +166,6 @@ const startCall = async (socket_id:any) => {
           }, 600);
         }
       };
-      
     };
     
     // 发送 candidate
@@ -229,7 +228,7 @@ const startCall = async (socket_id:any) => {
   useEffect( () => {
     getLocalMedia().then(() => {
       createRTC().then(() => {
-        OnPressA();
+        OnPressA().then();
       })
     })
     
