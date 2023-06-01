@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import {Button} from 'react-native-paper'
 import { StackNavigationProps } from '../../App';
 import Badge from '../../components/NoticeManage/NoticeBadge';
 import { IconButton } from 'react-native-paper';
@@ -6,7 +7,6 @@ import { View, Text, Image, StyleSheet, Dimensions, Alert, TouchableOpacity, Fla
 import { NoticeCard } from '../../components/NoticeManage/NoticeCard';
 import { useFocusEffect } from '@react-navigation/native';
 import requestApi, { requestApiForMockTest } from '../../utils/request';
-import { Button } from 'react-native-elements';
 import { io, Socket } from 'socket.io-client';
 import Modal from 'react-native-modal';
 
@@ -63,6 +63,15 @@ export const MatchDetailScreen = ({ route, navigation }: StackNavigationProps) =
           animationIn={'fadeIn'}
         >
           <RTCView style={{ height:195, width: 130,  }} streamURL={local_stream.toURL()} />
+        </Modal>
+        <Modal
+          isVisible={true}
+          style={{justifyContent:'center'}}
+          hasBackdrop={false}
+          animationIn={'fadeIn'}
+        >
+          <Button style={{width:80,height:80,margin:10}} mode='contained'>a</Button>
+          <Button style={{width:80,height:80,margin:10}} mode='contained'>b</Button>
         </Modal>
         <RTCView style={{ height: height - 191, width: width }} streamURL={local_stream.toURL()} />
       </View>
