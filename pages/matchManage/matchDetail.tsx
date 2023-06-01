@@ -19,7 +19,6 @@ import {
   MediaStreamTrack,
   mediaDevices,
 } from 'react-native-webrtc';
-import { blue100, green100 } from 'react-native-paper/lib/typescript/src/styles/themes/v2/colors';
 
 const styles = StyleSheet.create({
   container: {},
@@ -67,18 +66,20 @@ export const MatchDetailScreen = ({ route, navigation }: StackNavigationProps) =
   */
 const createRTC = async () => {
   setPeer(new RTCPeerConnection(turnConf));
+  /*
   // 2. 将本地视频流添加到实例中
   await local_stream.getTracks().forEach((track) => {
     console.log('@addTrack:', track);
     peer.addTrack(track, local_stream);
   });
   // 3. 接收远程视频流
+  console.log('@',gUserId,' RTC:', peer)
   peer.ontrack = async (event:any) => {
     console.log('@receiver ontrack:', event);
     let [remoteStream] = event.streams;
     setRSState(remoteStream);
     remote_stream.addTrack(event.track);
-  };
+  };*/
 };
 const socketInit = async () => {
   let sock = io(`http://10.80.42.217:9800/webrtc`, { auth: { userid: gUserId, role: 'sender', }, });
@@ -89,11 +90,15 @@ const socketInit = async () => {
   setSocket(sock);
 };
 const startCall = async (socket_id:any) => {
-  
+  await local_stream.getTracks().forEach((track) => {
+    console.log('@addTrack:', track);
+    peer.addTrack(track, local_stream);
+  });
   const offer = await peer.createOffer({ offerToReceiveAudio: true, offerToReceiveVideo: true });
-  //peer.setLocalDescription(offer);
-  setTimeout(() => {peer.setLocalDescription(offer)}, 2000);
-  console.log('@sender offer:', offer);
+  console.log()
+  console.log('@sender SetLocalDescription start.');
+  await peer.setLocalDescription(offer);
+  console.log('@sender SetLocalDescription end.');
   socket.emit('offer', {
     to: socket_id,
     offer: offer,
@@ -101,21 +106,29 @@ const startCall = async (socket_id:any) => {
   peer.onicecandidate = async (event:any) => {
     console.log('@sender onicecandidate:', event);
     if (event.candidate) {
-      socket.emit('candid', {
-        to: socket_id, // 接收端 Socket ID
-        candid: event.candidate,
-      });
+      setTimeout(() => {
+        socket.emit('candid', {
+          to: socket_id, // 接收端 Socket ID
+          candid: event.candidate,
+        });
+      }, 600);
     }
   };
   socket.on('answer', (data:any) => {
     console.log('@sender get answer!', data);
+    peer.ontrack = async (event:any) => {
+      console.log('@receiver ontrack:', event);
+      let [remoteStream] = event.streams;
+      setRSState(remoteStream);
+      remote_stream.addTrack(event.track);
+    };
     let answer = new RTCSessionDescription(data.answer);
     peer.setRemoteDescription(answer);
   });
-  socket.on('candid', (data:any) => {
+  socket.on('candid', async (data:any) => {
     console.log('@',gUserId,': candid!', data);
     const candid = new RTCIceCandidate(data.candid);
-    peer.addIceCandidate(candid);
+    await peer.addIceCandidate(candid);
   });
 };
 const getRemoteIdByUserId = async (usrId: string) => {
@@ -131,28 +144,42 @@ const getRemoteIdByUserId = async (usrId: string) => {
         });
       });
     });
-    
     return () => {
       
     }
   }, [])
 
   const OnPressA = async () => {
-    socket.on('candid', (data:any) => {
+    console.log('@',gUserId,' RTC:', peer._pcId);
+    socket.on('candid', async (data:any) => {
       console.log('@',gUserId,': candid!', data);
       const candid = new RTCIceCandidate(data.candid);
-      peer.addIceCandidate(candid);
+      await peer.addIceCandidate(candid);
     });
     socket.on('offer', (data:any) => {
       transMedia(data);
     });
     const transMedia = async (data: any) => {
+      console.log('@',gUserId,' RTC:', peer)
       let offer = new RTCSessionDescription(data.offer);
+      peer.ontrack = async (event:any) => {
+        console.log('@receiver ontrack:', event);
+        let [remoteStream] = event.streams;
+        setRSState(remoteStream);
+        remote_stream.addTrack(event.track);
+      };
+      console.log('@receiver get data, startSetRemoteDescription.\n', data.offer);
       await peer.setRemoteDescription(offer);
+      console.log('@receiver SetLocalDescription end.')
+      await local_stream.getTracks().forEach((track) => {
+        console.log('@addTrack:', track);
+        peer.addTrack(track, local_stream);
+      });
       let answer = await peer.createAnswer();
-      //answer.sdp = answer.sdp.replace("IN IP4 127.0.0.1", "IN IP4 192.168.1.104")
-      //peer.setLocalDescription(answer);
-      setTimeout(() => {peer.setLocalDescription(answer)}, 2000);
+      console.log('@receiver SetLocalDescription start.')
+      await peer.setLocalDescription(answer);
+      console.log('@receiver SetLocalDescription end.')
+      //setTimeout(() => {peer.setLocalDescription(answer)}, 2000);
       console.log('@receiver send answer:', answer);
       socket.emit('answer', {
         to: data.from, // 呼叫端 Socket ID
@@ -161,10 +188,12 @@ const getRemoteIdByUserId = async (usrId: string) => {
       peer.onicecandidate = (event:any) => {
         console.log('@receiver onicecandidate:', event);
         if (event.candidate) {
-          socket.emit('candid', {
-            to: data.from, // 呼叫端 Socket ID
-            candid: event.candidate,
-          });
+          setTimeout(() => {
+            socket.emit('candid', {
+              to: data.from, // 呼叫端 Socket ID
+              candid: event.candidate,
+            });
+          }, 600);
         }
       };
     };
@@ -175,6 +204,7 @@ const getRemoteIdByUserId = async (usrId: string) => {
   };
   
   const OnPressB = async () => {
+    console.log('@',gUserId,' RTC:', peer._pcId);
     const remote_socket_id = await getRemoteIdByUserId(text);
     startCall(remote_socket_id);
   };

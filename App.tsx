@@ -79,7 +79,7 @@ type RootStackParamList = {
   ComplaintUser:{ userId: string };
   RoomInside:undefined
   CreateRoom:undefined;
-  MatchDetailScreen: { userId: string };
+  MatchDetailScreen: { userId: string, matchType: string, role:string , socket:any} | undefined;
   EditRoom:undefined;
 };
 const Stack = createStackNavigator<RootStackParamList>();
