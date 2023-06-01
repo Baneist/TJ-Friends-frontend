@@ -18,7 +18,7 @@ interface RoomProps {
   videoUrl:string,
   members:string[],
   roomPwd:string,
-  creatorId:string
+  ownerId:string
 }
 
 interface MemberInfoProp {
@@ -40,7 +40,7 @@ const defaultRoom = {
   videoUrl:'https://vip.ffzy-play6.com/20221127/8802_3816a20c/2000k/hls/index.m3u8',
   members:[],
   roomPwd:'',
-  creatorId:''
+  ownerId:''
 }
 
 interface detailProps{
@@ -113,11 +113,14 @@ const UserDetail = (props:detailProps) => {
                 {isfollowing ? '取消关注' : "关注"}
               </Button>
               <Button mode='contained-tonal'
-              onPress={()=>{props.navigation.navigate('ChatDetail',{userId: props.userInfo.userId})}}
+              onPress={()=>{
+                props.onBackdropPress();
+                props.navigation.navigate('ChatDetail',{userId: props.userInfo.userId})
+              }}
               >
                 发私信
               </Button>
-              {global.gUserId === props.roomInfo.creatorId &&
+              {global.gUserId === props.roomInfo.ownerId &&
                <Button mode='contained'
               onPress={()=> leaveRoom(props.userInfo.userId)}
               >
@@ -237,14 +240,13 @@ const MemberList = (props:MemberListProps) => {
   },[props])
 
   return(
-    <View style={{borderRadius:0, paddingBottom:20, backgroundColor:'white'}}>
-      <Card.Title
-        style={{marginBottom:0}}
-        title="房间成员"
-        subtitle={"当前"+memberNum+"人"}
-        left={(props) => <List.Icon icon="account-group"/>}
-      />
-      <View style={styles.memberListContainer}>
+      <List.Accordion
+      style={{marginBottom:0, paddingLeft:5}}
+      title="房间成员"
+      description={"当前"+memberNum+"人"}
+      left={(props) => <List.Icon icon="account-group"/>}
+      >
+        <View style={styles.memberListContainer}>
         {MemberInfo.map((item, idx) => (
           <View key={idx}>
           <Pressable onPress={()=> {setViewMember(true),setMember(item)}}>
@@ -264,7 +266,7 @@ const MemberList = (props:MemberListProps) => {
         ))}
         <InviteFriend roomId={props.roomInfo.roomId} roomName={props.roomInfo.roomName} roomPwd={props.roomInfo.roomPwd}/>
       </View>
-    </View>
+      </List.Accordion>
   )
 }
 const RoomInside = ({route, navigation}:StackNavigationProps) => {
@@ -355,7 +357,7 @@ const RoomInside = ({route, navigation}:StackNavigationProps) => {
   React.useLayoutEffect(() => {
     navigation.setOptions({
     headerTitle:'房间：'+ roomInfo.roomName,
-    headerRight:() => ( roomInfo.creatorId == global.gUserId &&
+    headerRight:() => ( roomInfo.ownerId == global.gUserId &&
       <IconButton icon="cog-outline" 
       style={{marginRight:10}}
       onPress={() =>{navigation.navigate('EditRoom', {roomId:roomInfo.roomId})}}
@@ -370,10 +372,10 @@ const RoomInside = ({route, navigation}:StackNavigationProps) => {
         <MyVideoPlayer navigation={navigation} 
         videoUri={roomInfo.videoUrl} 
         roomId={roomInfo.roomId}
-        creatorId={roomInfo.creatorId}
+        creatorId={roomInfo.ownerId}
         />
         <MemberList roomInfo={roomInfo} navigation={navigation} onRemoveMember={updateRoom}/>
-        {/* <ChatRoom roomId={roomInfo.roomId} navigation={navigation}/> */}
+        <ChatRoom roomId={roomInfo.roomId} navigation={navigation}/>
     </View>
   )
 }
@@ -382,6 +384,9 @@ const styles = StyleSheet.create({
   memberListContainer:{
     flexDirection: "row",
     flexWrap: 'wrap',
+    backgroundColor:'white',
+    paddingVertical:10,
+    paddingLeft:0
   },
   memberContainer:{
     marginBottom:5,
