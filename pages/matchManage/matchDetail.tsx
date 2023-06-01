@@ -38,9 +38,25 @@ export const MatchDetailScreen = ({ route, navigation }: StackNavigationProps) =
   let n_stream = new MediaStream(undefined);
   const [local_stream, setLSState] = useState(n_stream);
   const [remote_stream, setRSState] = useState(n_stream);
-  let socket:any = gSocket;
-  let peer:any = null;
-
+  let socket: any = gSocket;
+  //const [peer, setPeer] = useState(new RTCPeerConnection(undefined));
+  var turnConf = {
+    configuration: {
+      offerToReceiveAudio: true,
+      offerToReceiveVideo: usevideo
+    },
+    iceServers: [
+      {
+        urls: 'stun:stun1.l.google.com:19302', // 免费的 STUN 服务器
+      },{
+        urls: 'turn:10.80.42.229:7100',
+        username: 'jmXXDPoe5M',
+        credential: '1iqXgvrmQ3',
+      }
+    ],
+  };
+  //let peer: any = null;
+  const [peer, setPeer] = useState(new RTCPeerConnection(turnConf));
   const [text, setText] = useState('2053302');
   const handleTextChange = (newText:any) => { setText(newText);};
 
@@ -49,26 +65,13 @@ export const MatchDetailScreen = ({ route, navigation }: StackNavigationProps) =
     let ls = await mediaDevices.getUserMedia({audio: true, video: usevideo}); // {facingMode: { exact: 'environment' }}
     setLSState(ls);
   };
-  var turnConf = {
-    configuration: {
-      offerToReceiveAudio: true,
-      offerToReceiveVideo: usevideo
-    },
-    iceServers: [
-      
-    ],
-  };
-/*
-{
-        urls: 'stun:stun1.l.google.com:19302', // 免费的 STUN 服务器
-      },{
-        urls: 'turn:10.80.42.229:7100',
-        username: 'jmXXDPoe5M',
-        credential: '1iqXgvrmQ3',
-      }
-*/
 const createRTC = async () => {
-  peer = new RTCPeerConnection(turnConf);
+  //console.log('@ start create rtc',gUserId,' RTC:', peer._pcId);
+  //await setPeer(new RTCPeerConnection(turnConf));
+  //peer = new RTCPeerConnection(turnConf);
+  setTimeout(() => {
+    console.log('@ end create rtc',gUserId,' RTC:', peer._pcId);
+  }, 1000);
 };
 const socketInit = async () => {
   let sock = io(`http://10.80.42.217:9800/webrtc`, { auth: { userid: gUserId, role: 'sender', }, });
@@ -125,25 +128,9 @@ const getRemoteIdByUserId = async (usrId: string) => {
   console.log('getRemoteIdByUserId:', res.data.socketId);
   return res.data.socketId;
 };
-  useEffect(() => {
-    getLocalMedia().then(() => {
-        createRTC().then(() => {
-          if(matchedUserId == ''){ //我是接受方
-            OnPressA();
-          } else { //我是发送方
-            setTimeout(() => {
-              OnPressB();
-            }, 600);
-          }
-        });
-    });
-    return () => {
-      
-    }
-  }, [])
 
   const OnPressA = async () => {
-    console.log('@',gUserId,'PRESSED A');
+    console.log('@',gUserId,' RTC:', peer._pcId);
     console.log('@',gUserId,' RTC:', peer._pcId);
     socket.on('candid', async (data:any) => {
       console.log('@',gUserId,': candid!', data);
@@ -190,18 +177,20 @@ const getRemoteIdByUserId = async (usrId: string) => {
           }, 600);
         }
       };
+      
     };
     
     // 发送 candidate
     
-    
+    console.log('@receiver PRESS A end. PCID=', peer._pcId);
   };
   
   const OnPressB = async () => {
     console.log('@',gUserId,'PRESSED B');
     console.log('@',gUserId,' RTC:', peer._pcId);
-    const remote_socket_id = await getRemoteIdByUserId(text);
+    const remote_socket_id = await getRemoteIdByUserId(matchedUserId);
     startCall(remote_socket_id);
+    console.log('@receiver PRESS B end. PCID=', peer._pcId);
   };
 
   const Player = () => {
@@ -214,9 +203,24 @@ const getRemoteIdByUserId = async (usrId: string) => {
         <Button onPress={OnPressB} style={{backgroundColor: '#ff0000'}} />
         <Text> 对方： </Text>
         <RTCView style={{ height: 300, width: 400 }} streamURL={remote_stream.toURL()} />
+        <Button onPress={()=>{console.log(peer._pcId)}} style={{backgroundColor: '#ff0000'}} />
       </View>
     );
   };
+
+  useEffect( () => {
+    getLocalMedia();
+    createRTC();
+    if(matchedUserId == ''){ //我是接受方
+      //setTimeout(() => {OnPressA();}, 2000);
+    } else { //我是发送方
+      //setTimeout(() => {OnPressB();}, 5000);
+    }
+    return () => {
+      console.log('@',gUserId,' RTC:', peer._pcId, 'close!')
+      peer.close()
+    }
+  }, [])
 
   return (
       <View style={{ flex: 1, alignItems: 'center' }}> 
