@@ -83,11 +83,12 @@ const CreatePage = ({ route, navigation }: StackNavigationProps) => {
         <View style={{ flexDirection: 'row', margin: 10 }}>
           <Button
             mode='text'
-            onPress={() => { }}
-          ><Text style={{ textDecorationLine: 'underline' }} onPress={() => Linking.openURL('https://www.taopianzy.com/index.html')}>参考链接1</Text></Button>
+            onPress={() => Linking.openURL('https://www.taopianzy.com/index.html')}
+          ><Text style={{ textDecorationLine: 'underline' }}>参考链接1</Text></Button>
           <Button
             mode='text'
-          ><Text style={{ textDecorationLine: 'underline' }} onPress={() => Linking.openURL('http://bdyunzy.com/')}>参考链接2</Text></Button>
+            onPress={() => Linking.openURL('http://bdyunzy.com/')}
+          ><Text style={{ textDecorationLine: 'underline' }} >参考链接2</Text></Button>
         </View>
         <Text style={{ marginLeft: 10, marginTop: 5, fontWeight: 'bold' }}>房间名称</Text>
         <TextInput
