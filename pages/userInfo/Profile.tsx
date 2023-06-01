@@ -155,7 +155,6 @@ const Profile = ({ navigation }: StackNavigationProps) => {
 
   //登出
   async function logout() {
-    await requestApi('post', '/logout', null, true, '登出失败')
     navigation.replace('Login')
   }
 
@@ -190,7 +189,7 @@ const Profile = ({ navigation }: StackNavigationProps) => {
           <Menu.Item onPress={() => {navigation.navigate('DraftList')}} 
           title={<Icon style={{fontSize:17}} name="file-document-edit-outline">草稿箱</Icon>} />
           <Divider />
-          <Menu.Item onPress={() => {}} 
+          <Menu.Item onPress={() => {navigation.navigate('BlockList')}} 
           title={<Icon style={{fontSize:17}} name="account-off-outline">黑名单</Icon>} />
           <Divider />
           <Menu.Item onPress={() => logout()} 
