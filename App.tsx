@@ -46,7 +46,7 @@ import MatchDetailScreen from "./pages/matchManage/matchDetail";
 import ChatDetail from './pages/ChatManage/ChatDetail'
 import CreatePage from "./pages/roomManage/CreateRoom";
 import WaitingPage from "./pages/matchManage/WaitingPage";
-import MatchHomePage from "./pages/MatchManage/Match";
+import MatchHomePage from "./pages/matchManage/Match";
 
 //房间
 import RoomInside from "./pages/roomManage/RoomInside";
@@ -85,7 +85,7 @@ type RootStackParamList = {
   ComplaintUser:{ userId: string };
   RoomInside:{roomId:string,roomPwd:string}
   CreateRoom:undefined;
-  MatchDetailScreen: { userId: string, matchType: string, role:string , socket:any} | undefined;
+  MatchDetailScreen: { matchedUserId: string, matchType: string, socket:any} | undefined;
   EditRoom:{roomId:string};
   DraftList:undefined;
   WaitingPage: { userId: string, avatar: string, type: string } | undefined;

@@ -1,8 +1,57 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, ActivityIndicator, Image } from 'react-native';
 import { StackNavigationProps } from '../../App';
+import {io, Socket} from 'socket.io-client';
+import requestApi, { LinkSocket } from '../../utils/request';
 
 const WaitingPage = ({ route, navigation }: StackNavigationProps) => {
+  let socket:any = null;
+  const socketInit = async () => {
+    socket = LinkSocket();
+    await requestApi('post', `/startMatch`, null,  true, '发送匹配信息失败');
+    const res = await requestApi('get', `/queryMatch`, null,  true, '获取匹配信息失败');
+    const mtUserId = res.data.match;
+    console.log('我匹配到的人的mtUserId是:', mtUserId);
+    if(mtUserId == ''){
+      //是接收方
+      console.log('我是接收方',gUserId);
+      socket.on('sayhi', (data:any) => {
+        console.log('结束方sayhi:', data.userId);
+        socket.emit('sayhi', {
+          to: data.from,
+          userId: gUserId,
+        });
+        //然后进入详情匹配页面
+        requestApi('post', `/endMatch`, null,  true, '发送结束匹配信息失败');
+        console.log('进入详情匹配页面:', gUserId, 'type:', route.params?.type);
+        
+      });
+    } else {
+      //是发送方
+      console.log('我是发送方',gUserId);
+      const res = await requestApi('get', `/match/getSocketId/${mtUserId}`, null,  true, '获取 SocketId 失败');
+      console.log('getRemoteIdByUserId:', res.data.socketId);
+      socket.emit('sayhi', {
+        to: res.data.socketId,
+        userId: gUserId,
+      });
+      socket.on('sayhi', (data:any) => {
+        //然后进入详情匹配页面
+        requestApi('post', `/endMatch`, null,  true, '发送结束匹配信息失败');
+        console.log('进入详情匹配页面:', gUserId, route.params?.type);
+
+      });
+    }
+    
+    
+  };
+  useEffect(() => {
+    socketInit();
+    return () => {
+      socket.disconnect();
+      requestApi('post', `/endMatch`, null,  true, '发送结束匹配信息失败');
+    }
+  }, [])
   return (
     <View style={styles.container}>
       <Image source={{ uri: route.params?.avatar }} style={styles.image} />
