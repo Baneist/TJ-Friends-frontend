@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { KeyboardAvoidingView, Platform, Text, View, Image, Dimensions } from 'react-native';
+import { KeyboardAvoidingView, Platform, Text, View, Image, Dimensions, TouchableOpacity } from 'react-native';
+import Clipboard from '@react-native-community/clipboard';
 import { Avatar } from 'react-native-elements';
 import {TextInput, Button} from 'react-native-paper'
 import { GiftedChat } from 'react-native-gifted-chat';
 import { StackNavigationProps } from '../../App';
-import CustomBubble from '../ChatProp/CustomBubble';
-import CustomInputToolbar from '../ChatProp/CustomInputToolbar';
+import CustomBubble from '../../pages/ChatManage/CustomBubble';
+import RoomInputToolbar from './inputtoolbar';
 import requestApi from '../../utils/request';
 import { AxiosResponse } from 'axios';
 import Modal from 'react-native-modal';
 import { ScrollView } from 'react-native-gesture-handler';
 
-export interface ChatMessage {
+interface ChatMessage {
   _id: number;
   text: string;
   createdAt: Date;
@@ -20,6 +21,7 @@ export interface ChatMessage {
     name: string;
     avatar: string;
   };
+  isRevoke: boolean,
   image?: string,
 };
 
@@ -33,6 +35,7 @@ const defaultMessages = [
       name: 'ChatGPT',
       avatar: "https://picsum.photos/700",
     },
+    isRevoke: false,
   },
   {
     _id: 4,
@@ -43,6 +46,7 @@ const defaultMessages = [
       name: 'ME',
       avatar: "https://picsum.photos/700",
     },
+    isRevoke: false,
   },
   {
     _id: 3,
@@ -53,6 +57,7 @@ const defaultMessages = [
       name: 'ChatGPT',
       avatar: "https://picsum.photos/700",
     },
+    isRevoke: true
   },
   {
     _id: 2,
@@ -63,6 +68,7 @@ const defaultMessages = [
       name: 'ChatGPT',
       avatar: "https://picsum.photos/700",
     },
+    isRevoke: false,
   },
   {
     _id: 1,
@@ -73,54 +79,57 @@ const defaultMessages = [
       name: 'ChatGPT',
       avatar: "https://picsum.photos/700",
     },
+    isRevoke: false,
   },
 ];
 
-const ChatRoom = () => {
-  const userId = global.gUserId;
-  const ChatUser = '2052732';
-  
-  const [messages, setMessages] = useState([] as ChatMessage[]);
+interface chatRoomProp{
+  roomId:string,
+  navigation:StackNavigationProps['navigation']
+}
 
-  const IUser = {
+function ChatRoom({roomId,navigation}:chatRoomProp) {
+  const userId = global.gUserId;
+  const [IUser, setIUser] = useState({
     _id: userId,
     name: 'ChatGPT',
     avatar: "https://picsum.photos/700",
-  }
-  const UUser = {
-    _id: ChatUser,
-    name: 'ChatGPT',
-    avatar: "https://picsum.photos/700",
+  });
+  const [messages, setMessages] = useState([] as ChatMessage[]);
+  const [isTimerEnabled, setIsTimerEnabled] = useState(true);
+
+  async function getUser(id_: string) {
+    const resProfile = await requestApi('get', `/profile/${id_}`, null, true, 'get profile failed');
+    return {
+      _id: id_,
+      name: resProfile.data.userNickName.info,
+      avatar: resProfile.data.userAvatar.info,
+    }
   }
 
   async function fetchOrigin(){
+    // setIsTimerEnabled(false);
+    console.log('F start')
     let CurMessages: ChatMessage[] = []
-    
-    const resAllMessages = await requestApi('get', `/chat/receiveAllMessages?userId=${ChatUser}`, null, true, 'Get All Messages failed');
+
+    const resAllMessages = await requestApi('get', `/receiveAllRoomMessages?roomId=${roomId}`, null, true, 'Get All Messages failed');
+
+    setIUser(await getUser(userId));
+    console.log(resAllMessages.data.length)
+    console.log('code', resAllMessages.code)
+    console.log('id', roomId)
     if (resAllMessages.code === 0) {
-      let idlist = [userId,ChatUser]
-      let reqList: Promise<AxiosResponse>[] = [];
-      for (let i = 0; i < idlist.length; ++i) {
-        reqList.push(new Promise((resolve, reject) => {
-          resolve(requestApi('get', `/profile/${idlist[i]}`, null, true, 'get profile failed'))
-        }))
-      }
-      Promise.all(reqList).then((values) => {
-        IUser.name = values[0].data.userNickName.info
-        UUser.name = values[1].data.userNickName.info
-        IUser.avatar = values[0].data.userAvatar.info
-        UUser.avatar = values[1].data.userAvatar.info
-      })
-    }
-    for (let i = 0; i < resAllMessages.data.length; ++i) {
-      if(resAllMessages.data[i].isReceived){
+
+      for (let i = 0; i < resAllMessages.data.length; ++i) {
+        
         if(resAllMessages.data[i].image==''){
           CurMessages.unshift(
             {
               _id: resAllMessages.data[i].id,
               text: resAllMessages.data[i].text,
               createdAt: resAllMessages.data[i].time,
-              user: UUser
+              user: await getUser(resAllMessages.data[i].userId),
+              isRevoke: resAllMessages.data[i].isRecall,
             }
           )
         }
@@ -130,51 +139,24 @@ const ChatRoom = () => {
               _id: resAllMessages.data[i].id,
               text: '',
               createdAt: resAllMessages.data[i].time,
-              user: UUser,
+              user: await getUser(resAllMessages.data[i].userId),
               image: resAllMessages.data[i].image,
+              isRevoke: resAllMessages.data[i].isRecall,
             }
           )
         }
+        
       }
-      else{
-        if(resAllMessages.data[i].image==''){
-          CurMessages.unshift(
-            {
-              _id: resAllMessages.data[i].id,
-              text: resAllMessages.data[i].text,
-              createdAt: resAllMessages.data[i].time,
-              user: IUser
-            }
-          )
-        }
-        else{
-          CurMessages.unshift(
-            {
-              _id: resAllMessages.data[i].id,
-              text: '',
-              createdAt: resAllMessages.data[i].time,
-              user: IUser,
-              image: resAllMessages.data[i].image,
-            }
-          )
-        }
-      }
-      
     }
-    
-    setMessages(previousMessages =>
-      GiftedChat.append(previousMessages, CurMessages)
-    );
+
+    setMessages(CurMessages);
+    // setIsTimerEnabled(true);
+    console.log('F end', isTimerEnabled)
   }
 
-  function onSend(newMessages: ChatMessage[] = []) {
-    setMessages(previousMessages =>
-      GiftedChat.append(previousMessages, newMessages),
-    );
-  }
-  
   async function getUnreadMessages() {
-    const resUnreadMessages = await requestApi('get', `/chat/receiveUnreadMessages?userId=${ChatUser}`, null, true, 'Get Unread Messages failed');
+    console.log('U start')
+    const resUnreadMessages = await requestApi('get', `/receiveRoomMessages?roomId=${roomId}`, null, true, 'Get Unread Messages failed');
     let unreadMessage: ChatMessage[] = []
     for (let i = 0; i < resUnreadMessages.data.length; ++i) {
       if(resUnreadMessages.data[i].image==''){
@@ -183,7 +165,8 @@ const ChatRoom = () => {
             _id: resUnreadMessages.data[i].id,
             text: resUnreadMessages.data[i].text,
             createdAt: resUnreadMessages.data[i].time,
-            user: UUser
+            user: await getUser(resUnreadMessages.data[i].userId),
+            isRevoke: resUnreadMessages.data[i].isRecall,
           }
         )
       }
@@ -193,53 +176,134 @@ const ChatRoom = () => {
             _id: resUnreadMessages.data[i].id,
             text: '',
             createdAt: resUnreadMessages.data[i].time,
-            user: UUser,
+            user: await getUser(resUnreadMessages.data[i].userId),
             image: resUnreadMessages.data[i].image,
+            isRevoke: resUnreadMessages.data[i].isRecall,
           }
         )
       }
       setMessages(previousMessages =>
         GiftedChat.append(previousMessages, unreadMessage)
       );
-
-      alreadyRead();
     }
+
+    console.log('U end')
   }
 
-  async function alreadyRead() {
-    const res = await requestApi('post', '/chat/readMessageInfo', { userId: ChatUser }, true, '已读失败');
+  function onSend(newMessages: ChatMessage[] = []) {
+    setMessages(previousMessages =>
+      GiftedChat.append(previousMessages, newMessages),
+    );
+  }
+
+  function handleLongPress(context, currentMessage) {
+    setIsTimerEnabled(false);
+
+    async function deleteMessage() {
+      const res = await requestApi('post', '/chat/deleteMessage', { messageId: currentMessage._id }, true, '删除失败');
+      fetchOrigin()
+    }
+
+    async function recallMessage() {
+      const res = await requestApi('post', '/chat/recallMessage', { messageId: currentMessage._id }, true, '撤回失败');
+      fetchOrigin()
+    }
+
+    if(currentMessage.user._id===userId){
+      const options = [
+        '复制',
+        '删除',
+        '撤回',
+        '取消',
+      ];
+      const cancelButtonIndex = options.length - 1;
+      context.actionSheet().showActionSheetWithOptions({
+        options,
+        cancelButtonIndex,
+      },
+      (buttonIndex) => {
+        switch (buttonIndex) {
+          case 0:
+            Clipboard.setString(currentMessage.text);
+            break;
+          case 1:
+            deleteMessage();
+            break;
+          case 2:
+            recallMessage();
+            break;
+        }
+      });
+    }
+    else{
+      const options = [
+        '复制',
+        '删除',
+        '取消',
+      ];
+      const cancelButtonIndex = options.length - 1;
+      context.actionSheet().showActionSheetWithOptions({
+        options,
+        cancelButtonIndex,
+      },
+      (buttonIndex) => {
+        switch (buttonIndex) {
+          case 0:
+            Clipboard.setString(currentMessage.text);
+            break;
+          case 1:
+            deleteMessage();
+          break;
+        }
+      });
+    }
+    
+    setIsTimerEnabled(true);
   }
 
   useEffect(() => {
+    console.log('first fecth')
+    console.log('roomid', roomId)
     fetchOrigin()
+    console.log('first fecth end')
 
-    const intervalId = setInterval(() => {
-      getUnreadMessages();
-    }, 2000);
+    if (isTimerEnabled){
+      const intervalId = setInterval(() => {
+        console.log('normal fecth')
+        getUnreadMessages()
+        console.log('normal fecth end')
+      }, 2000);
 
-    return () => clearInterval(intervalId);
-  }, []);
+      return () => clearInterval(intervalId);
+    }
+    
+  }, [roomId, isTimerEnabled]);
 
   return (
     <GiftedChat
-      messages={messages}
-      onSend={onSend}
-      user={{ _id: userId }}
-      showAvatarForEveryMessage={true}
-      alignTop={true}
-      renderBubble={(props)=><CustomBubble {...props}/>}
-      renderInputToolbar={(props) => <CustomInputToolbar {...props} messages={messages} ChatUser={ChatUser}/>}
-      renderAvatar={(props) => (
-        <View style={{ marginLeft: 10 }}>
+    messages={messages}
+    onSend={onSend}
+    onLongPress={handleLongPress}
+    user={IUser}
+    showAvatarForEveryMessage={true}
+    alignTop={true}
+    renderBubble={(props)=><CustomBubble {...props}/>}
+    renderInputToolbar={(props) => <RoomInputToolbar {...props} messages={messages} RoomId={roomId} setMessages={setMessages}/>}
+    renderAvatar={(props) => (
+      !props.currentMessage.isRevoke &&
+      <View style={{ marginLeft: 10 }}>
+        <TouchableOpacity onPress={() => {navigation.navigate('OthersPage', {userId:props.currentMessage.user._id})}}>
           <Avatar
             size={42}
             source={{ uri: props.currentMessage.user.avatar }}
             rounded
           />
-        </View>
-      )}
-    />
+        </TouchableOpacity>
+      </View>
+    )}
+  />
   );
 }
 
 export default ChatRoom;
+

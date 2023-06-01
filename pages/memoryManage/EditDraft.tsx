@@ -10,7 +10,7 @@ import {styles} from './PostPage'
 import Modal from 'react-native-modal';
 import uploadImage from '../../utils/uploadImage';
 
-const EditPost = ({ route, navigation }: StackNavigationProps) => {
+const EditDraft = ({ route, navigation }: StackNavigationProps) => {
   const { width, height } = Dimensions.get("screen");
 
   const [anonymous, setAnonymous] = useState(false);
@@ -25,8 +25,8 @@ const EditPost = ({ route, navigation }: StackNavigationProps) => {
   const[pmskey,setKey]=useState(0);
   const [clicked,setClick]=useState(false);
   async function fetchData(){
-    console.log(route.params?.postId)
-    const res = await requestApi('get', `/Memories/${route.params?.postId}`, null, true, '动态获取失败');
+    console.log(route.params?.draftId)
+    const res = await requestApi('get', '/getDraft', {draftId:route.params?.draftId}, true, '草稿获取失败');
     if (res.code == 0) {
       setText(res.data.postContent);
       setImage(res.data.postPhoto);
@@ -65,7 +65,7 @@ const EditPost = ({ route, navigation }: StackNavigationProps) => {
       image[index]=BASE_URL+imageRes.data.url;
       }
     }
-    const res = await requestApi('put', `/updateMemory/${route.params?.postId}`, { postContent: text, photoUrl: image,pms:pmskey,isAnonymous:anonymous }, true, '动态修改失败')
+    const res = await requestApi('post', '/postDraft', { draftId:route.params?.draftId }, true, '发布失败')
     if (res.code == 0) {
       navigation.goBack();
     }
@@ -148,6 +148,18 @@ const EditPost = ({ route, navigation }: StackNavigationProps) => {
 
   const hasUnsavedChanges = !(text===otext&&image===oimage&&pms===opms&&anonymous==oanony);
 
+  async function handleSave() {
+		// 发送text和image到服务器
+		for (let index in image) {
+			const imageRes = await uploadImage(image[index]);
+			if (imageRes.code === 0) {
+				image[index] = BASE_URL + imageRes.data.url;
+			}
+		}
+		const res = await requestApi('post', '/updateDraft', { postContent: text, photoUrl: image, pms: pmskey, isAnonymous: anonymous,draftId:route.params?.draftId }, true, '编辑失败')
+		return res;
+	}
+
   React.useEffect(
     () =>{
       const onbackpage = navigation.addListener('beforeRemove', (e) => {
@@ -162,7 +174,7 @@ const EditPost = ({ route, navigation }: StackNavigationProps) => {
         // Prompt the user before leaving the screen
         Alert.alert(
           '',
-          '放弃此次编辑?',
+          '保存此次编辑?',
           [
             {
               text: "放弃",
@@ -171,8 +183,14 @@ const EditPost = ({ route, navigation }: StackNavigationProps) => {
               onPress: () => navigation.dispatch(e.data.action)
             },
             {
-              text: '取消',
+              text: '保存',
               style: 'cancel',
+              onPress: () => {
+								const res = handleSave();
+								if (res.code == 0) {
+									navigation.dispatch(e.data.action);
+								}
+							},
             },
           ]
         );
@@ -239,7 +257,7 @@ const EditPost = ({ route, navigation }: StackNavigationProps) => {
           <Divider />
         </View>
       <View style={{paddingBottom: 100}} >
-      <Button disabled={text.length==0&&image.length==0} onPress={()=>{setClick(true);handlePost();}} mode='contained'>重新发送</Button>
+      <Button disabled={text.length==0&&image.length==0} onPress={()=>{setClick(true);handleSave();handlePost();}} mode='contained'>重新发送</Button>
       </View>
       <MultiPicker showPickerOption={showPickerOption} onBackdropPress={cancelPickerOption} setImage={changeImage}/>
     </KeyboardAwareScrollView>
@@ -257,4 +275,4 @@ const EditPost = ({ route, navigation }: StackNavigationProps) => {
   );
 };
 
-export default EditPost;
+export default EditDraft;

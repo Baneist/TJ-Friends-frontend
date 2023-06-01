@@ -26,6 +26,8 @@ import BlackList from "./pages/userInfo/BlackList";
 import ComplaintUser from "./pages/userInfo/Complaint";
 //查看他人主页
 import OthersPage from "./pages/userInfo/OthersPage";
+//草稿箱
+import DraftList from "./pages/userInfo/DraftList";
 
 //编辑资料相关路由
 import { EditProfile } from "./pages/userInfo/EditInfo/EditProfile";
@@ -41,12 +43,15 @@ import EditPost from "./pages/memoryManage/EditPost";
 import NoticeManageScreen from './pages/noticeManage/NoticeManage';
 import NoticeDetailScreen from "./pages/noticeManage/NoticeDetail";
 import MatchDetailScreen from "./pages/matchManage/matchDetail";
-import ChatDetail from './pages/ChatDetail'
+import ChatDetail from './pages/ChatManage/ChatDetail'
 import CreatePage from "./pages/roomManage/CreateRoom";
+import WaitingPage from "./pages/matchManage/WaitingPage";
+import MatchHomePage from "./pages/MatchManage/Match";
 
 //房间
 import RoomInside from "./pages/roomManage/RoomInside";
 import EditPage from "./pages/roomManage/EditRoom";
+import EditDraft from "./pages/memoryManage/EditDraft";
 
 const GetUrl = "https://1.tongji.edu.cn/api/ssoservice/system/loginIn";
 const TargetUrl = "https://1.tongji.edu.cn/ssologin";
@@ -64,6 +69,7 @@ type RootStackParamList = {
   Memories: undefined;
   Post: undefined;
   EditPost: { postId: string };
+  EditDraft: { draftId: string };
   EditProfile: { userId: string } | undefined;
   EditNickName: { userId: string } | undefined;
   EditInterest: { userId: string } | undefined;
@@ -77,10 +83,13 @@ type RootStackParamList = {
   ChatDetail:  { userId: string } | undefined;
   BlackList:undefined,
   ComplaintUser:{ userId: string };
-  RoomInside:undefined
+  RoomInside:{roomId:string,roomPwd:string}
   CreateRoom:undefined;
   MatchDetailScreen: { userId: string, matchType: string, role:string , socket:any} | undefined;
-  EditRoom:undefined;
+  EditRoom:{roomId:string};
+  DraftList:undefined;
+  WaitingPage: { userId: string, avatar: string, type: string } | undefined;
+  MatchHomePage:undefined;
 };
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -223,6 +232,11 @@ const App = () => {
             options={{ headerBackTitle: "Back" }}
           />
           <Stack.Screen
+            name="EditDraft"
+            component={EditDraft}
+            options={{ headerBackTitle: "Back" }}
+          />
+          <Stack.Screen
             name="Main"
             component={MainScreen}
             options={{ headerShown: false }}
@@ -296,6 +310,21 @@ const App = () => {
           <Stack.Screen
             name="BlackList"
             component={BlackList}
+            options={{ headerBackTitle: "Back" }}
+          />
+          <Stack.Screen
+            name="WaitingPage"
+            component={WaitingPage}
+            options={{ headerBackTitle: "Back" }}
+          />
+          <Stack.Screen
+            name="MatchHomePage"
+            component={MatchHomePage} 
+            options={{ headerBackTitle: "Back" }}
+            />
+            <Stack.Screen
+            name="DraftList"
+            component={DraftList}
             options={{ headerBackTitle: "Back" }}
           />
         </Stack.Navigator>

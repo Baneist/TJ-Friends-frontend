@@ -3,10 +3,10 @@ import { TouchableOpacity, View } from 'react-native';
 import Clipboard from '@react-native-community/clipboard';
 import { Avatar } from 'react-native-elements';
 import { GiftedChat } from 'react-native-gifted-chat';
-import { StackNavigationProps } from '../App'
-import CustomBubble from '../components/ChatProp/CustomBubble';
-import CustomInputToolbar from '../components/ChatProp/CustomInputToolbar';
-import requestApi from '../utils/request';
+import { StackNavigationProps } from '../../App'
+import CustomBubble from './CustomBubble';
+import CustomInputToolbar from './CustomInputToolbar';
+import requestApi from '../../utils/request';
 import { AxiosResponse } from 'axios';
 
 interface ChatMessage {
