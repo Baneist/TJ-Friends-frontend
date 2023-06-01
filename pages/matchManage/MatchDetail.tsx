@@ -42,7 +42,7 @@ export const MatchDetailScreen = ({ route, navigation }: StackNavigationProps) =
   let socket: any = gSocket;
   
   //const [peer, setPeer] = useState(new RTCPeerConnection(undefined));
-  var turnConf = {
+  const turnConf = {
     configuration: {
       offerToReceiveAudio: true,
       offerToReceiveVideo: usevideo
@@ -50,7 +50,7 @@ export const MatchDetailScreen = ({ route, navigation }: StackNavigationProps) =
     iceServers: [
       {
         urls: 'stun:stun1.l.google.com:19302', // 免费的 STUN 服务器
-      },{
+      }, {
         urls: 'turn:10.80.42.229:7100',
         username: 'jmXXDPoe5M',
         credential: '1iqXgvrmQ3',
