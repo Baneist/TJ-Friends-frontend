@@ -75,6 +75,7 @@ const createRTC = async () => {
     console.log('@ end create rtc',gUserId,' RTC:', peer._pcId);
   }, 1000);
 };
+let init_end = false;
 const startCall = async (socket_id:any) => {
   await local_stream.getTracks().forEach((track) => {
     console.log('@addTrack:', track);
@@ -109,7 +110,7 @@ const startCall = async (socket_id:any) => {
       remote_stream.addTrack(event.track);
     };
     let answer = new RTCSessionDescription(data.answer);
-    peer.setRemoteDescription(answer);
+    peer.setRemoteDescription(answer).catch(e => console.log(e));;
   });
   socket.on('candid', async (data:any) => {
     console.log('@',gUserId,': candid!', data);
@@ -139,7 +140,7 @@ const startCall = async (socket_id:any) => {
         remote_stream.addTrack(event.track);
       };
       console.log('@receiver get data, startSetRemoteDescription.\n', data.offer);
-      await peer.setRemoteDescription(offer);
+      await peer.setRemoteDescription(offer).catch(e => console.log(e));;
       console.log('@receiver SetLocalDescription end.')
       await local_stream.getTracks().forEach((track) => {
         console.log('@addTrack:', track);
@@ -197,20 +198,24 @@ const startCall = async (socket_id:any) => {
     );
   };
 
-  SyncStorage.setValue('firingOnce', '0');
   socket.on('press', async (data:any) => {
-    if(SyncStorage.getValue('firingOnce') == '0'){
-      SyncStorage.setValue('firingOnce', '1');
       console.log('User:', gUserId, ' 收到press:', data);
       if(data.type == 'A'){
         console.log('User:', gUserId, ' 收到press A');
         //await OnPressA();
       } else {
         console.log('User:', gUserId, ' 收到press B');
-        //await OnPressB();
+        await OnPressB();
       }
-    }
   });
+
+  const OnPressBOnce = async () => {
+    SyncStorage.setValue('firingOnce', '0');
+    if(SyncStorage.getValue('firingOnce') == '0'){
+      SyncStorage.setValue('firingOnce', '1');
+      OnPressB();
+    }
+  }
 
   SyncStorage.setValue('firingOnce1', '0');
   useFocusEffect(()=>{
@@ -218,18 +223,24 @@ const startCall = async (socket_id:any) => {
       SyncStorage.setValue('firingOnce1', '1');
       console.log('User:', gUserId, ' UseFocusEffect:');
       if(matchedUserId == ''){ //我是接受方
-      
+        const waitForA = () => {
+          if (init_end == true) {
+            
+          } else setTimeout(waitForA, 500); 
+          
+        }
         setTimeout(() => {OnPressA();}, 5000);
       } else { //我是发送方
         
-        //setTimeout(() => {OnPressB();}, 5000);
+        //setTimeout(() => {OnPressB();}, 10000);
       }
     }
   });
   useEffect( () => {
     getLocalMedia().then(() => {
       createRTC().then(() => {
-        OnPressA();
+        init_end = true;
+        //OnPressA();
       })
     })
     
