@@ -164,7 +164,8 @@ const EditDraft = ({ route, navigation }: StackNavigationProps) => {
         // Prompt the user before leaving the screen
         Alert.alert(
           '',
-          '保存此次编辑?',
+          // '保存此次编辑?',
+          '放弃此次编辑？',
           [
             {
               text: "放弃",
@@ -173,28 +174,29 @@ const EditDraft = ({ route, navigation }: StackNavigationProps) => {
               onPress: () => navigation.dispatch(e.data.action)
             },
             {
-              text: '保存',
+              // text: '保存',
+              text: '取消',
               style: 'cancel',
-              onPress: async () => {
-                for (let index in image) {
-                  const imageRes = await uploadImage(image[index]);
-                  if (imageRes.code === 0) {
-                    image[index] = BASE_URL + imageRes.data.url;
-                  }
-                }
-                let data = { 
-                  postContent: text, 
-                  photoUrl: image, 
-                  pms: pmskey, 
-                  isAnonymous: anonymous, 
-                  draftId: route.params?.draftId 
-                }
-                console.log( 'edit', data, text, otext)
+              // onPress: async () => {
+              //   for (let index in image) {
+              //     const imageRes = await uploadImage(image[index]);
+              //     if (imageRes.code === 0) {
+              //       image[index] = BASE_URL + imageRes.data.url;
+              //     }
+              //   }
+              //   let data = { 
+              //     postContent: text, 
+              //     photoUrl: image, 
+              //     pms: pmskey, 
+              //     isAnonymous: anonymous, 
+              //     draftId: route.params?.draftId 
+              //   }
+              //   console.log( 'edit', data, text, otext)
                 // const res = await requestApi('post', '/updateDraft', data, true, '编辑失败')
                 // if (res.code == 0) {
                 //   navigation.dispatch(e.data.action);
                 // }
-              },
+              // },
             },
           ]
         );
