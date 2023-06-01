@@ -22,7 +22,7 @@ import Comment from "./pages/memoryManage/Comments";
 //查看关注列表 粉丝列表 黑名单
 import FollowingList from "./pages/userInfo/FollowingList";
 import FollowersList from "./pages/userInfo/FollowersList";
-import BlackList from "./pages/userInfo/BlackList";
+import BlockList from "./pages/userInfo/BlockList";
 import ComplaintUser from "./pages/userInfo/Complaint";
 //查看他人主页
 import OthersPage from "./pages/userInfo/OthersPage";
@@ -81,8 +81,8 @@ type RootStackParamList = {
   NoticeManageScreen: undefined;
   NoticeDetailScreen: { type: string };
   ChatDetail:  { userId: string } | undefined;
-  BlackList:undefined,
-  ComplaintUser:{ userId: string };
+  BlockList:undefined,
+  Complaint: undefined,
   RoomInside:{roomId:string,roomPwd:string}
   CreateRoom:undefined;
   EditRoom:{roomId:string};
@@ -303,8 +303,8 @@ const App = () => {
             options={{ headerBackTitle: "Back" }}
           />
           <Stack.Screen
-            name="BlackList"
-            component={BlackList}
+            name="BlockList"
+            component={BlockList}
             options={{ headerBackTitle: "Back" }}
           />
           <Stack.Screen
@@ -320,6 +320,11 @@ const App = () => {
             <Stack.Screen
             name="DraftList"
             component={DraftList}
+            options={{ headerBackTitle: "Back" }}
+          />
+          <Stack.Screen
+            name="Complaint"
+            component={ComplaintUser}
             options={{ headerBackTitle: "Back" }}
           />
         </Stack.Navigator>

@@ -57,6 +57,12 @@ const DraftList = ({ route, navigation }: StackNavigationProps) => {
     setDrafts(res.data)
   }
 
+  async function deleteDraft(draftId:string){
+    await requestApi('post', '/deleteDraft', {draftId:draftId}, true, "删除草稿失败")
+    //删除回显
+    fetchData()
+  }
+
   useEffect(() => {
     fetchData()
   }, [])
@@ -72,7 +78,7 @@ const DraftList = ({ route, navigation }: StackNavigationProps) => {
                         <Text style={[styles.title,{fontSize:18, fontWeight:'bold'}]}>Moment</Text>
                         <Text style={styles.title}>{item.time}</Text>
                     </View>
-                    <Button>删除</Button>
+                    <Button onPress={() => deleteDraft(item.draftId)}>删除</Button>
                     </View>
                     <List.Item 
                         title={item.content}
