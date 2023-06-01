@@ -26,7 +26,7 @@ const EditDraft = ({ route, navigation }: StackNavigationProps) => {
   const [clicked,setClick]=useState(false);
   async function fetchData(){
     console.log(route.params?.draftId)
-    const res = await requestApi('get', '/getDraft', {draftId:route.params?.draftId}, true, 'get draft失败');
+    const res = await requestApi('get', '/getDraft', {draftId:route.params?.draftId}, true, '草稿获取失败');
     if (res.code == 0) {
       setText(res.data.postContent);
       setImage(res.data.postPhoto);
@@ -156,7 +156,7 @@ const EditDraft = ({ route, navigation }: StackNavigationProps) => {
 				image[index] = BASE_URL + imageRes.data.url;
 			}
 		}
-		const res = await requestApi('post', '/updateDraft', { postContent: text, photoUrl: image, pms: pmskey, isAnonymous: anonymous,draftId:route.params?.draftId }, true, 'post失败')
+		const res = await requestApi('post', '/updateDraft', { postContent: text, photoUrl: image, pms: pmskey, isAnonymous: anonymous,draftId:route.params?.draftId }, true, '编辑失败')
 		return res;
 	}
 

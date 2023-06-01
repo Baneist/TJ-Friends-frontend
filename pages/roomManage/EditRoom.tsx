@@ -35,10 +35,30 @@ const EditPage = ({ route, navigation }: StackNavigationProps) => {
   }
   async function Update() {
     const imageRes = await uploadImage(image);
+    let img_url;
     if (imageRes.code === 0) {
-      setImage(BASE_URL + imageRes.data.url);
+      img_url = BASE_URL + imageRes.data.url;
     }
-    const res = await requestApi('put', '/editRoom', { coverUrl: image, videoUrl: text1, roomName: text2, roomDescription: text3, roomPms: locked, roomPwd: (locked ? pwd : null) }, true, 'post失败')
+    // let data = { 
+    //   roomId:route.params?.roomId, 
+    //   coverUrl: image, 
+    //   videoUrl: text1, 
+    //   roomName: text2, 
+    //   roomDescription: text3, 
+    //   roomPms: locked, 
+    //   roomPwd: (locked ? pwd : null) 
+    // }
+    let data = {
+        coverUrl: img_url,
+        videoUrl: text1,
+        roomName: text2,
+        roomDescription: text3,
+        roomPms: locked,
+        roomId: route.params?.roomId,
+        roomPwd: (locked ? pwd : '')
+    }
+    console.log('edit',data)
+    const res = await requestApi('put', '/editRoom', data, true, '房间信息编辑失败')
     if (res.code == 0) {
       navigation.goBack();
     }
@@ -46,17 +66,17 @@ const EditPage = ({ route, navigation }: StackNavigationProps) => {
   }
   async function fetchData() {
     console.log(route.params?.roomId)
-    const res = await requestApi('get', `/getRoomInfo?roomId=${route.params?.roomId}`, null, true, 'get room失败');
+    const res = await requestApi('get', `/getRoomInfo?roomId=${route.params?.roomId}`, null, true, '房间信息获取失败');
     if (res.code == 0) {
       setImage(res.data.coverUrl)
-      setText1(res.data.vidoeUrl);
+      setText1(res.data.videoUrl);
       setText2(res.data.roomName);
       setText3(res.data.roomDescription);
       setLocked(res.data.roomPms);
       setPwd(res.data.roomPwd);
 
       setoImage(res.data.coverUrl)
-      setoText1(res.data.vidoeUrl);
+      setoText1(res.data.videoUrl);
       setoText2(res.data.roomName);
       setoText3(res.data.roomDescription);
       setoLocked(res.data.roomPms);
@@ -141,7 +161,7 @@ const EditPage = ({ route, navigation }: StackNavigationProps) => {
           placeholder='请把视频链接粘贴在这里'
           placeholderTextColor='lightgrey'
           value={text1}
-          onChangeText={setText1}
+          onChangeText={(text) => setText1(text)}
           scrollEnabled={false}
           autoFocus={false}
         />

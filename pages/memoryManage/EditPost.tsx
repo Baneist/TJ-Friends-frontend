@@ -26,7 +26,7 @@ const EditPost = ({ route, navigation }: StackNavigationProps) => {
   const [clicked,setClick]=useState(false);
   async function fetchData(){
     console.log(route.params?.postId)
-    const res = await requestApi('get', `/Memories/${route.params?.postId}`, null, true, 'get memories失败');
+    const res = await requestApi('get', `/Memories/${route.params?.postId}`, null, true, '动态获取失败');
     if (res.code == 0) {
       setText(res.data.postContent);
       setImage(res.data.postPhoto);
@@ -65,7 +65,7 @@ const EditPost = ({ route, navigation }: StackNavigationProps) => {
       image[index]=BASE_URL+imageRes.data.url;
       }
     }
-    const res = await requestApi('put', `/updateMemory/${route.params?.postId}`, { postContent: text, photoUrl: image,pms:pmskey,isAnonymous:anonymous }, true, '修改失败')
+    const res = await requestApi('put', `/updateMemory/${route.params?.postId}`, { postContent: text, photoUrl: image,pms:pmskey,isAnonymous:anonymous }, true, '动态修改失败')
     if (res.code == 0) {
       navigation.goBack();
     }
