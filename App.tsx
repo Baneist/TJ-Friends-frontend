@@ -42,11 +42,11 @@ import requestApi from "./utils/request";
 import EditPost from "./pages/memoryManage/EditPost";
 import NoticeManageScreen from './pages/noticeManage/NoticeManage';
 import NoticeDetailScreen from "./pages/noticeManage/NoticeDetail";
-import MatchDetailScreen from "./pages/matchManage/matchDetail";
+import MatchDetailScreen from "./pages/MatchManage/matchDetail";
 import ChatDetail from './pages/ChatManage/ChatDetail'
 import CreatePage from "./pages/roomManage/CreateRoom";
-import WaitingPage from "./pages/matchManage/WaitingPage";
-import MatchHomePage from "./pages/matchManage/Match";
+import WaitingPage from "./pages/MatchManage/WaitingPage";
+import MatchHomePage from "./pages/MatchManage/Match";
 
 //房间
 import RoomInside from "./pages/roomManage/RoomInside";

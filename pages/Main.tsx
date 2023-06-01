@@ -9,9 +9,9 @@ import Profile from './userInfo/Profile'
 import NoticeManageScreen from './noticeManage/NoticeManage';import { IconButton, Provider } from 'react-native-paper';
 import { StackNavigationProps } from '../App';
 import RoomsScreen from './roomManage/Rooms';
-import MatchHomePage from './matchManage/Match';
+import MatchHomePage from './MatchManage/Match';
 import { color } from 'react-native-reanimated';
-import {MatchDetailScreen} from './matchManage/matchDetail';
+import {MatchDetailScreen} from './MatchManage/matchDetail';
 
 type RootTabParamList = {
   Home: undefined;
@@ -129,7 +129,7 @@ const MainScreen = ({route, navigation}:StackNavigationProps) => {
           tabBarLabel: showLabel ? 'name' : undefined,
         }}
         name="Match"
-        component={MatchHomePage}
+        component={MatchDetailScreen}
       />
       <Tab.Screen
         options={{
