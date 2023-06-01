@@ -93,7 +93,7 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
   });
   const [UUser, setUUser] = useState({
     _id: ChatUser,
-    name: 'ChatGPT',
+    name: '',
     avatar: "https://picsum.photos/700",
   });
 
@@ -293,7 +293,8 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
 
   useEffect(() => {
     fetchOrigin()
-
+    navigation.setOptions({
+      headerTitle:UUser.name});
     if (isTimerEnabled){
       const intervalId = setInterval(() => {
         getUnreadMessages();
@@ -302,7 +303,7 @@ function ChatDetail({ route, navigation }: StackNavigationProps) {
       return () => clearInterval(intervalId);
     }
     
-  }, [isTimerEnabled]);
+  }, [isTimerEnabled,UUser.name]);
 
   return (
     <GiftedChat

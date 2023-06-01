@@ -321,7 +321,7 @@ const OthersPage = ({route, navigation }: StackNavigationProps) => {
                 <Text bold size={16} color="#525F7F" style={{ marginTop: 12, marginLeft: 12 }}>
                   Moments
                 </Text>
-                <MomentsList navigation={navigation} userID={pageid}/>
+                <MomentsList navigation={navigation} userId={pageid}/>
               </Block>
             </Block>
             {/* eslint-disable-next-line max-len */}
