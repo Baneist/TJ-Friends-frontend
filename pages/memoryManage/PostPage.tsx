@@ -105,17 +105,7 @@ const PostPage = ({ route, navigation }: StackNavigationProps) => {
 	}
 
 	const hasUnsavedChanges = Boolean(text);
-	async function handleSave() {
-		// 发送text和image到服务器
-		for (let index in image) {
-			const imageRes = await uploadImage(image[index]);
-			if (imageRes.code === 0) {
-				image[index] = BASE_URL + imageRes.data.url;
-			}
-		}
-		const res = await requestApi('post', '/createDraft', { postContent: text, photoUrl: image, pms: pmskey, isAnonymous: anonymous }, true, '草稿保存失败')
-		return res;
-	}
+
 	React.useEffect(
 		() => {
 			const onbackpage = navigation.addListener('beforeRemove', (e) => {
@@ -141,8 +131,14 @@ const PostPage = ({ route, navigation }: StackNavigationProps) => {
 						{
 							text: '保存',
 							style: 'cancel',
-							onPress: () => {
-								const res = handleSave();
+							onPress: async () => {
+								for (let index in image) {
+									const imageRes = await uploadImage(image[index]);
+									if (imageRes.code === 0) {
+										image[index] = BASE_URL + imageRes.data.url;
+									}
+								}
+								const res = await requestApi('post', '/createDraft', { postContent: text, photoUrl: image, pms: pmskey, isAnonymous: anonymous }, true, '草稿保存失败')
 								if (res.code == 0) {
 									navigation.dispatch(e.data.action);
 								}

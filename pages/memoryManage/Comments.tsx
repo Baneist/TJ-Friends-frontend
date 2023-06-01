@@ -308,7 +308,7 @@ function Comment({ route, navigation }: StackNavigationProps) {
               }}>收藏</Button>
               {global.gUserId != detail.userId && <Divider />}
               {global.gUserId != detail.userId && <Button style={{ height: 50, paddingTop: 5 }} onPress={
-                () => {setMenuVisible(!MenuVisible); Alert.alert('', '举报成功', [{ text: '确定'}]);}
+                () => {setMenuVisible(!MenuVisible); navigation.navigate('Complaint');;}
               }>举报</Button>}
               {global.gUserId === detail.userId && <Divider />}
               {global.gUserId === detail.userId && <Button style={{ height: 50, paddingTop: 5 }} onPress={
@@ -356,7 +356,7 @@ function Comment({ route, navigation }: StackNavigationProps) {
               >
                 <View style={styles.menu}>
                   <Button style={{ height: 50, paddingTop: 5 }} onPress={
-                    () => {setMenuVisible1(false);Alert.alert('', '举报成功', [{ text: '确定'}]);}
+                    () => {setMenuVisible1(false);navigation.navigate('Complaint');;}
                     }>举报</Button>
                   <Divider />
                   {/* {global.gUserId === detail.userId && <Button style={{ height: 50, paddingTop: 5 }} onPress={
