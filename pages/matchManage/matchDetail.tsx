@@ -32,54 +32,43 @@ const styles = StyleSheet.create({
 
 //MainCode <Example></Example> 
 export const MatchDetailScreen = ({ route, navigation }: StackNavigationProps) => {
+  const matchType = route.params?.matchType;
+  const matchedUserId = route.params?.matchedUserId;
+  const usevideo = matchType == '语音' ? false : true;
   let n_stream = new MediaStream(undefined);
   const [local_stream, setLSState] = useState(n_stream);
   const [remote_stream, setRSState] = useState(n_stream);
-  const [socket, setSocket] = useState<any>(null);
-  const [peer, setPeer] = useState(new RTCPeerConnection(null));
+  let socket:any = gSocket;
+  let peer:any = null;
 
   const [text, setText] = useState('2053302');
   const handleTextChange = (newText:any) => { setText(newText);};
 
   // 获取本地摄像头
   const getLocalMedia = async () => {
-    let ls = await mediaDevices.getUserMedia({audio: true, video: true}); // {facingMode: { exact: 'environment' }}
+    let ls = await mediaDevices.getUserMedia({audio: true, video: usevideo}); // {facingMode: { exact: 'environment' }}
     setLSState(ls);
   };
   var turnConf = {
     configuration: {
       offerToReceiveAudio: true,
-      offerToReceiveVideo: true
+      offerToReceiveVideo: usevideo
     },
     iceServers: [
-      {
+      
+    ],
+  };
+/*
+{
         urls: 'stun:stun1.l.google.com:19302', // 免费的 STUN 服务器
       },{
         urls: 'turn:10.80.42.229:7100',
         username: 'jmXXDPoe5M',
         credential: '1iqXgvrmQ3',
       }
-    ],
-  };
-  /*
-  
-  */
+*/
 const createRTC = async () => {
-  setPeer(new RTCPeerConnection(turnConf));
-  /*
-  // 2. 将本地视频流添加到实例中
-  await local_stream.getTracks().forEach((track) => {
-    console.log('@addTrack:', track);
-    peer.addTrack(track, local_stream);
-  });
-  // 3. 接收远程视频流
-  console.log('@',gUserId,' RTC:', peer)
-  peer.ontrack = async (event:any) => {
-    console.log('@receiver ontrack:', event);
-    let [remoteStream] = event.streams;
-    setRSState(remoteStream);
-    remote_stream.addTrack(event.track);
-  };*/
+  peer = new RTCPeerConnection(turnConf);
 };
 const socketInit = async () => {
   let sock = io(`http://10.80.42.217:9800/webrtc`, { auth: { userid: gUserId, role: 'sender', }, });
@@ -87,14 +76,14 @@ const socketInit = async () => {
     console.log('连接成功, 上传socket:', sock.id); 
     const res = await requestApi('post',`/match/uploadSocketId`, {socketId: sock.id}, true, '上传 SocketId 失败');
   });
-  setSocket(sock);
+  socket = sock;
 };
 const startCall = async (socket_id:any) => {
   await local_stream.getTracks().forEach((track) => {
     console.log('@addTrack:', track);
     peer.addTrack(track, local_stream);
   });
-  const offer = await peer.createOffer({ offerToReceiveAudio: true, offerToReceiveVideo: true });
+  const offer = await peer.createOffer({ offerToReceiveAudio: true, offerToReceiveVideo: usevideo });
   console.log()
   console.log('@sender SetLocalDescription start.');
   await peer.setLocalDescription(offer);
@@ -138,11 +127,15 @@ const getRemoteIdByUserId = async (usrId: string) => {
 };
   useEffect(() => {
     getLocalMedia().then(() => {
-      socketInit().then(() => {
         createRTC().then(() => {
-          
+          if(matchedUserId == ''){ //我是接受方
+            OnPressA();
+          } else { //我是发送方
+            setTimeout(() => {
+              OnPressB();
+            }, 600);
+          }
         });
-      });
     });
     return () => {
       
@@ -150,6 +143,7 @@ const getRemoteIdByUserId = async (usrId: string) => {
   }, [])
 
   const OnPressA = async () => {
+    console.log('@',gUserId,'PRESSED A');
     console.log('@',gUserId,' RTC:', peer._pcId);
     socket.on('candid', async (data:any) => {
       console.log('@',gUserId,': candid!', data);
@@ -204,6 +198,7 @@ const getRemoteIdByUserId = async (usrId: string) => {
   };
   
   const OnPressB = async () => {
+    console.log('@',gUserId,'PRESSED B');
     console.log('@',gUserId,' RTC:', peer._pcId);
     const remote_socket_id = await getRemoteIdByUserId(text);
     startCall(remote_socket_id);

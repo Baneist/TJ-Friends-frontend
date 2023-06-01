@@ -5,18 +5,30 @@ import {io, Socket} from 'socket.io-client';
 import requestApi, { LinkSocket } from '../../utils/request';
 
 const WaitingPage = ({ route, navigation }: StackNavigationProps) => {
+  let savedUserId = '';
   let socket:any = null;
+  const turnInPage = (matchedUserId:any, matchType:any, socket:any) => {
+    gSocket = socket;
+    if(matchType == '灵魂'){
+      navigation.navigate('ChatDetail', {userId: savedUserId});
+    } else {
+      navigation.navigate('MatchDetailScreen', {matchedUserId: matchedUserId, matchType:matchType});
+    }
+  };
   const socketInit = async () => {
     socket = LinkSocket();
     await requestApi('post', `/startMatch`, null,  true, '发送匹配信息失败');
     const res = await requestApi('get', `/queryMatch`, null,  true, '获取匹配信息失败');
     const mtUserId = res.data.match;
+    savedUserId = mtUserId;
     console.log('我匹配到的人的mtUserId是:', mtUserId);
     if(mtUserId == ''){
       //是接收方
       console.log('我是接收方',gUserId);
       socket.on('sayhi', (data:any) => {
-        console.log('结束方sayhi:', data.userId);
+        console.log
+        savedUserId = data.userId;
+        console.log('接受方sayhi:', data.userId);
         socket.emit('sayhi', {
           to: data.from,
           userId: gUserId,
@@ -24,7 +36,7 @@ const WaitingPage = ({ route, navigation }: StackNavigationProps) => {
         //然后进入详情匹配页面
         requestApi('post', `/endMatch`, null,  true, '发送结束匹配信息失败');
         console.log('进入详情匹配页面:', gUserId, 'type:', route.params?.type);
-        
+        turnInPage(mtUserId, route.params?.type, socket);
       });
     } else {
       //是发送方
@@ -38,8 +50,8 @@ const WaitingPage = ({ route, navigation }: StackNavigationProps) => {
       socket.on('sayhi', (data:any) => {
         //然后进入详情匹配页面
         requestApi('post', `/endMatch`, null,  true, '发送结束匹配信息失败');
-        console.log('进入详情匹配页面:', gUserId, route.params?.type);
-
+        console.log('进入详情匹配页面:', gUserId, 'type:', route.params?.type);
+        turnInPage(mtUserId, route.params?.type, socket);
       });
     }
     

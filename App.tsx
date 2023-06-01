@@ -85,7 +85,7 @@ type RootStackParamList = {
   ComplaintUser:{ userId: string };
   RoomInside:{roomId:string,roomPwd:string}
   CreateRoom:undefined;
-  MatchDetailScreen: { matchedUserId: string, matchType: string, socket:any} | undefined;
+  MatchDetailScreen: { matchedUserId: string, matchType: string} | undefined;
   EditRoom:{roomId:string};
   DraftList:undefined;
   WaitingPage: { userId: string, avatar: string, type: string } | undefined;
