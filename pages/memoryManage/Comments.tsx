@@ -307,8 +307,9 @@ function Comment({ route, navigation }: StackNavigationProps) {
               <Button style={{ height: 50, paddingTop: 5 }} onPress={() => {
               }}>收藏</Button>
               {global.gUserId != detail.userId && <Divider />}
-              {global.gUserId != detail.userId && <Button style={{ height: 50, paddingTop: 5 }} onPress={() => {
-              }}>举报</Button>}
+              {global.gUserId != detail.userId && <Button style={{ height: 50, paddingTop: 5 }} onPress={
+                () => {setMenuVisible(!MenuVisible); Alert.alert('', '举报成功', [{ text: '确定'}]);}
+              }>举报</Button>}
               {global.gUserId === detail.userId && <Divider />}
               {global.gUserId === detail.userId && <Button style={{ height: 50, paddingTop: 5 }} onPress={
                 () => { setMenuVisible(!MenuVisible); Alert.alert('', '确定删除这条动态吗?', [{ text: '确定', onPress: onMemoryDelete }, { text: '取消' }]); }
@@ -354,8 +355,14 @@ function Comment({ route, navigation }: StackNavigationProps) {
                 style={styles.modal}
               >
                 <View style={styles.menu}>
-                  <Button style={{ height: 50, paddingTop: 5 }} onPress={() => setMenuVisible1(false)}>举报</Button>
+                  <Button style={{ height: 50, paddingTop: 5 }} onPress={
+                    () => {setMenuVisible1(false);Alert.alert('', '举报成功', [{ text: '确定'}]);}
+                    }>举报</Button>
                   <Divider />
+                  {/* {global.gUserId === detail.userId && <Button style={{ height: 50, paddingTop: 5 }} onPress={
+                    () => { setMenuVisible1(!MenuVisible1); Alert.alert('', '确定删除这条评论吗?', [{ text: '确定', onPress: ()=>onDelete(cid) }, { text: '取消' }]); }
+                  }>删除</Button>}
+                  <Divider /> */}
                   <Button style={{ height: 50, paddingTop: 5 }} onPress={() => setMenuVisible1(false)}>取消</Button>
                 </View>
               </Modal>
