@@ -70,9 +70,11 @@ const EditDraft = ({ route, navigation }: StackNavigationProps) => {
       navigation.goBack();
     }
   };
+
   useEffect(() => {
     fetchData()
   }, [])
+  
   function cancelPickerOption() {
     return (
       setShowPickerOption(false)
@@ -180,10 +182,11 @@ const EditDraft = ({ route, navigation }: StackNavigationProps) => {
                     image[index] = BASE_URL + imageRes.data.url;
                   }
                 }
-                const res = await requestApi('post', '/updateDraft', { postContent: text, photoUrl: image, pms: pmskey, isAnonymous: anonymous, draftId: route.params?.draftId }, true, '编辑失败')
-                if (res.code == 0) {
-                  navigation.dispatch(e.data.action);
-                }
+                console.log(text);
+                // const res = await requestApi('post', '/updateDraft', { postContent: text, photoUrl: image, pms: pmskey, isAnonymous: anonymous, draftId: route.params?.draftId }, true, '编辑失败')
+                // if (res.code == 0) {
+                //   navigation.dispatch(e.data.action);
+                // }
               },
             },
           ]
