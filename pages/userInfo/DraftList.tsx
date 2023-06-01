@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Dimensions, ScrollView, Image, Pressable } from 'react-native';
+import { View, StyleSheet, Dimensions, ScrollView, Image, Pressable, Alert } from 'react-native';
 import { Block, Text } from 'galio-framework';
 import { Avatar, Button, List } from 'react-native-paper';
 import requestApi, { requestApiForMockTest } from '../../utils/request';
@@ -7,6 +7,7 @@ import { userProp, defaultInfo } from './Profile';
 import { AxiosResponse } from 'axios';
 import { followProp } from './FollowingList';
 import { StackNavigationProps } from '../../App';
+import { useFocusEffect } from '@react-navigation/native';
 
 // 获取屏幕宽高
 const { width, height } = Dimensions.get('screen');
@@ -22,26 +23,10 @@ interface draftProps{
 
 const defaultDraft = [
     {
-        photoUrl:['https://picsum.photos/700'],
-        time:'2022-12-12 13:13:13',
-        content:'纯净，温暖，有力量。任世俗纷纷扰扰，星光熠熠不掩其芒。寻觅点点痕迹，描摹心心相印，戴伊晗只想和你漫步云端，带你一起《卷ToTheMorning》。',
+        photoUrl:[''],
+        time:'',
+        content:'',
         draftId:'1',
-        isAnonymous:1,
-        pms:1
-    },
-    {
-        photoUrl:['https://picsum.photos/700'],
-        time:'2022-12-12 13:13:13',
-        content:'纯净，温暖，有力量。任世俗纷纷扰扰，星光熠熠不掩其芒。寻觅点点痕迹，描摹心心相印，戴伊晗只想和你漫步云端，带你一起《卷ToTheMorning》。',
-        draftId:'2',
-        isAnonymous:1,
-        pms:1
-    },
-    {
-        photoUrl:['https://picsum.photos/700'],
-        time:'2022-12-12 13:13:13',
-        content:'晴时灼灼，天色茫茫，光辉熠熠。约好了林深海蓝，梦醒时分便去见你。戴伊晗EP《卷ToTheMorning》5月29日正式上线，这是专属于你的罗曼史。',
-        draftId:'3',
         isAnonymous:1,
         pms:1
     },
@@ -54,24 +39,46 @@ const DraftList = ({ route, navigation }: StackNavigationProps) => {
   const [drafts, setDrafts] = useState(defaultDraft);
   async function fetchData() {
     const res = await requestApi('get', '/drafts', null, true, 'get drafts failed.')
+    console.log(res.data)
     setDrafts(res.data)
   }
 
   async function deleteDraft(draftId:string){
-    await requestApi('post', '/deleteDraft', {draftId:draftId}, true, "删除草稿失败")
-    //删除回显
-    fetchData()
+    Alert.alert(
+        '提示',
+        '确定要删除这条草稿吗？',
+        [
+          {
+            text: "是",
+            style: 'destructive',
+            // This will continue the action that had triggered the removal of the screen
+            onPress: async () => {
+                await requestApi('post', '/deleteDraft', {draftId:draftId}, true, "删除草稿失败")
+                //删除回显
+                fetchData()
+            }
+          },
+          {
+            text: '取消',
+            style: 'cancel',
+          },
+        ]
+      );
   }
 
-  useEffect(() => {
-    fetchData()
-  }, [])
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchData()
+      return () => {
+      };
+    }, [])
+  );
 
   return (
     <View style={{ flex: 1 }}>
       <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={false}>
         {drafts.map((item, idx) => (
-            <Pressable key={idx}>
+            <Pressable key={idx} onPress={() => navigation.navigate('EditDraft',{draftId:item.draftId})}>
                 <View style={styles.container}>
                     <View style={{flexDirection:'row', justifyContent:'space-between'}}>
                     <View>

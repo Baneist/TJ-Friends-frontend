@@ -26,12 +26,12 @@ const EditDraft = ({ route, navigation }: StackNavigationProps) => {
   const [clicked, setClick] = useState(false);
   async function fetchData() {
     console.log(route.params?.draftId)
-    const res = await requestApi('get', '/getDraft', { draftId: route.params?.draftId }, true, '草稿获取失败');
+    const res = await requestApi('get', `/getDraft?draftId=${route.params?.draftId}`, null, true, '草稿获取失败');
     if (res.code == 0) {
-      setText(res.data.postContent);
-      setImage(res.data.postPhoto);
-      setoText(res.data.postContent);
-      setoImage(res.data.postPhoto);
+      setText(res.data.content);
+      setImage(res.data.photoUrl);
+      setoText(res.data.content);
+      setoImage(res.data.photoUrl);
       setKey(res.data.pms);
       setoAnony(res.data.isAnonymous)
       setAnonymous(res.data.isAnonymous);
@@ -180,10 +180,18 @@ const EditDraft = ({ route, navigation }: StackNavigationProps) => {
                     image[index] = BASE_URL + imageRes.data.url;
                   }
                 }
-                const res = await requestApi('post', '/updateDraft', { postContent: text, photoUrl: image, pms: pmskey, isAnonymous: anonymous, draftId: route.params?.draftId }, true, '编辑失败')
-                if (res.code == 0) {
-                  navigation.dispatch(e.data.action);
+                let data = { 
+                  postContent: text, 
+                  photoUrl: image, 
+                  pms: pmskey, 
+                  isAnonymous: anonymous, 
+                  draftId: route.params?.draftId 
                 }
+                console.log( 'edit', data, text, otext)
+                // const res = await requestApi('post', '/updateDraft', data, true, '编辑失败')
+                // if (res.code == 0) {
+                //   navigation.dispatch(e.data.action);
+                // }
               },
             },
           ]
@@ -200,7 +208,7 @@ const EditDraft = ({ route, navigation }: StackNavigationProps) => {
           style={styles.input}
           placeholder="说点什么吧..."
           value={text}
-          onChangeText={setText}
+          onChangeText={(t) => setText(t)}
           multiline
           scrollEnabled={false}
           autoFocus={false}

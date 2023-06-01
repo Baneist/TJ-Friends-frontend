@@ -50,8 +50,9 @@ const BlockList = ({navigation}:StackNavigationProps) => {
     const[uid,setuid]=useState('');
 
     //移除
-    function onDetatch(userId:string){
+    async function onDetatch(userId:string){
         //删除回显
+        await requestApi('post', '/cancelBlock', {userId:userId}, true, '取消屏蔽失败')
         setlist((blackList) => blackList.filter(item => item.userId.info !== userId))
         setShow(false);
     }
@@ -65,13 +66,10 @@ const BlockList = ({navigation}:StackNavigationProps) => {
     }
     async function fetchData(){
         //获取拉黑列表
-        // let idlist : string [];
-        // const res = await requestApi('get', `/profile/${curUser}/blacklist`, null, true, 'Get blackList failed');
-        // idlist = res.data.followers;
-        let idlist = [
-            '2052333',
-            '2052732'
-        ]
+        let idlist = [] as string [];
+        const res = await requestApi('get', `/getBlockList`, null, true, 'Get blockList failed');
+        for(let i=0;i<res.data.length;++i)
+          idlist.push(res.data[i].blocked)
         let reqList: Promise<AxiosResponse>[] = [];
         for (let i = 0; i < idlist.length; ++i) {
         reqList.push(new Promise((resolve, reject) => {
@@ -112,6 +110,11 @@ const BlockList = ({navigation}:StackNavigationProps) => {
                 />
                 </View>
                 ))}
+                {!blackList.length &&
+                  <View style={{flex:1, alignItems:'center'}}>
+                  <Text style={{color:'#525F7F', marginTop:20}}>---暂无更多---</Text>
+                </View>
+                }
             </ScrollView>
         </View>
     )
