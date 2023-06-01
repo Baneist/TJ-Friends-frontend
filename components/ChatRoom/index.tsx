@@ -128,7 +128,11 @@ function ChatRoom({roomId,navigation}:chatRoomProp) {
               _id: resAllMessages.data[i].id,
               text: resAllMessages.data[i].text,
               createdAt: resAllMessages.data[i].time,
-              user: await getUser(resAllMessages.data[i].userId),
+              user: {
+                _id: resAllMessages.data[i].userId,
+                name: resAllMessages.data[i].userNickName,
+                avatar: resAllMessages.data[i].userAvatar,
+              },
               isRevoke: resAllMessages.data[i].isRecall,
             }
           )
@@ -139,7 +143,11 @@ function ChatRoom({roomId,navigation}:chatRoomProp) {
               _id: resAllMessages.data[i].id,
               text: '',
               createdAt: resAllMessages.data[i].time,
-              user: await getUser(resAllMessages.data[i].userId),
+              user: {
+                _id: resAllMessages.data[i].userId,
+                name: resAllMessages.data[i].userNickName,
+                avatar: resAllMessages.data[i].userAvatar,
+              },
               image: resAllMessages.data[i].image,
               isRevoke: resAllMessages.data[i].isRecall,
             }
@@ -165,7 +173,11 @@ function ChatRoom({roomId,navigation}:chatRoomProp) {
             _id: resUnreadMessages.data[i].id,
             text: resUnreadMessages.data[i].text,
             createdAt: resUnreadMessages.data[i].time,
-            user: await getUser(resUnreadMessages.data[i].userId),
+            user: {
+              _id: resUnreadMessages.data[i].userId,
+              name: resUnreadMessages.data[i].userNickName,
+              avatar: resUnreadMessages.data[i].userAvatar,
+            },
             isRevoke: resUnreadMessages.data[i].isRecall,
           }
         )
@@ -176,7 +188,11 @@ function ChatRoom({roomId,navigation}:chatRoomProp) {
             _id: resUnreadMessages.data[i].id,
             text: '',
             createdAt: resUnreadMessages.data[i].time,
-            user: await getUser(resUnreadMessages.data[i].userId),
+            user: {
+              _id: resUnreadMessages.data[i].userId,
+              name: resUnreadMessages.data[i].userNickName,
+              avatar: resUnreadMessages.data[i].userAvatar,
+            },
             image: resUnreadMessages.data[i].image,
             isRevoke: resUnreadMessages.data[i].isRecall,
           }
