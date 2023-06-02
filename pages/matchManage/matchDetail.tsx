@@ -108,7 +108,6 @@ export const MatchDetailScreen = ({ route, navigation }: StackNavigationProps) =
           }}>
             <Image source={{ uri: "https://picsum.photos/400" }} style={styles.userphoto} />
             <Text>username</Text>
-            {/* <Button style={{ marginLeft: -15, borderWidth: 5 }} onPress={postComment}>Send</Button> */}
           </View>
       </Modal>
     </View>
