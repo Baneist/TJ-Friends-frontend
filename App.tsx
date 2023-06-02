@@ -305,7 +305,7 @@ const App = () => {
           <Stack.Screen
             name="MatchDetailScreen"
             component={MatchDetailScreen}
-            options={{ headerShown:false}}
+            options={{ headerBackTitle: "Back" }}
           />
           <Stack.Screen
             name="EditRoom"
