@@ -10,9 +10,11 @@ const WaitingPage = ({ route, navigation }: StackNavigationProps) => {
   const turnInPage = (matchedUserId:any, matchType:any, socket:any) => {
     gSocket = socket;
     if(matchType == '灵魂'){
-      navigation.navigate('ChatDetail', {userId: savedUserId});
+      gSocket.close();
+      gSocket = null;
+      navigation.replace('ChatDetail', {userId: savedUserId});
     } else {
-      navigation.navigate('MatchDetailScreen', {matchedUserId: matchedUserId, matchType:matchType});
+      navigation.replace('MatchDetailScreen', {matchedUserId: matchedUserId, matchType:matchType});
     }
   };
   const socketInit = async () => {
@@ -63,7 +65,7 @@ const WaitingPage = ({ route, navigation }: StackNavigationProps) => {
   useEffect(() => {
     socketInit();
     return () => {
-      socket.disconnect();
+      if(gSocket != null) gSocket.close();
       requestApi('post', `/endMatch`, null,  true, '发送结束匹配信息失败');
     }
   }, [])

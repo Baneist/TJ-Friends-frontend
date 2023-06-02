@@ -191,7 +191,7 @@ const startCall = async (socket_id:any) => {
     console.log('@receiver PRESS B end. PCID=', peer._pcId);
   };
 
-  const Player = () => {
+  const VideoPlayer = () => {
     return (
       <View >
         <Modal
@@ -208,13 +208,16 @@ const startCall = async (socket_id:any) => {
           hasBackdrop={false}
           animationIn={'fadeIn'}
         >
-          <Button style={{width:80,height:80,margin:10}} mode='contained'>a</Button>
-          <Button style={{width:80,height:80,margin:10}} mode='contained'>b</Button>
+
         </Modal>
         <RTCView style={{ height: height - 191, width: width }} streamURL={local_stream.toURL()} />
       </View>
     );
   };
+  /*
+          <Button style={{width:80,height:80,margin:10}} mode='contained'>a</Button>
+          <Button style={{width:80,height:80,margin:10}} mode='contained'>b</Button>
+  */
 
   socket.on('press', async (data:any) => {
       console.log('User:', gUserId, ' 收到press:', data);
@@ -266,12 +269,24 @@ const startCall = async (socket_id:any) => {
     return () => {
       console.log('@',gUserId,' RTC:', peer._pcId, 'close!')
       peer.close()
+      if(local_stream){
+        local_stream.getTracks().forEach((track) => {
+          track.stop();
+        });
+      }
+      if(remote_stream){
+        remote_stream.getTracks().forEach((track) => {
+          track.stop();
+        });
+      }
+      gSocket.close();
+      gSocket = null;
     }
   }, [])
 
   return (
     <View style={{ flex: 1 }}>
-      <Player/>
+      <VideoPlayer/>
     </View>
   );
 };
