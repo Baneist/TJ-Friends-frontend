@@ -13,7 +13,6 @@ const ComplaintUser = ({ route, navigation }: StackNavigationProps) => {
 
   //提交修改
   async function submit() {
-    console.log('1')
     navigation.goBack()
   }
 

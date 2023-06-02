@@ -91,9 +91,8 @@ const UserDetail = (props:detailProps) => {
           <View style={[profileStyles.avatarContainer, {alignItems:'center'}]}>
             <Pressable onPress={()=>{
               props.onBackdropPress();
-              props.navigation.navigate(
-              global.gUserId === props.userInfo.userId?'Profile':'OthersPage',
-              {userId:props.userInfo.userId})}}
+              if (global.gUserId !== props.userInfo.userId)
+                props.navigation.navigate('OthersPage',{userId:props.userInfo.userId})}}
             >
             <Image
               source={{ uri: props.userInfo.userAvatar}}

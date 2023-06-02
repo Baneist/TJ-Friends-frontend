@@ -142,14 +142,27 @@ const OthersPage = ({route, navigation }: StackNavigationProps) => {
     setFollowing(!isfollowing)
   }
   //拉黑
+  async function handleBlock(){
+    //先获取拉黑列表
+    const res = await requestApi('get', `/getBlockList`, null, true, 'Get blockList failed');
+    for (let index in res.data){
+      if(res.data[index].blocked == pageid)
+      {
+        Alert.alert('提示','你已拉黑该用户！')
+        return;
+      }
+    }
+    await requestApi('post', '/block',{userId:pageid}, true, '拉黑失败')
+    setBlockOption(false)
+  }
   function onBlock(){
     Alert.alert(
       "提示",
       "是否确定拉黑该用户？",
       [
         {
-          text:'OK',
-          onPress:() =>{setBlockOption(false)}
+          text:'确定',
+          onPress:() => handleBlock()
         },
         {
           text:'Cancel',

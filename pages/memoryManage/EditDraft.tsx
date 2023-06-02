@@ -26,12 +26,12 @@ const EditDraft = ({ route, navigation }: StackNavigationProps) => {
   const [clicked, setClick] = useState(false);
   async function fetchData() {
     console.log(route.params?.draftId)
-    const res = await requestApi('get', '/getDraft', { draftId: route.params?.draftId }, true, '草稿获取失败');
+    const res = await requestApi('get', `/getDraft?draftId=${route.params?.draftId}`, null, true, '草稿获取失败');
     if (res.code == 0) {
-      setText(res.data.postContent);
-      setImage(res.data.postPhoto);
-      setoText(res.data.postContent);
-      setoImage(res.data.postPhoto);
+      setText(res.data.content);
+      setImage(res.data.photoUrl);
+      setoText(res.data.content);
+      setoImage(res.data.photoUrl);
       setKey(res.data.pms);
       setoAnony(res.data.isAnonymous)
       setAnonymous(res.data.isAnonymous);
@@ -70,9 +70,11 @@ const EditDraft = ({ route, navigation }: StackNavigationProps) => {
       navigation.goBack();
     }
   };
+
   useEffect(() => {
     fetchData()
   }, [])
+  
   function cancelPickerOption() {
     return (
       setShowPickerOption(false)
@@ -162,7 +164,8 @@ const EditDraft = ({ route, navigation }: StackNavigationProps) => {
         // Prompt the user before leaving the screen
         Alert.alert(
           '',
-          '保存此次编辑?',
+          // '保存此次编辑?',
+          '放弃此次编辑？',
           [
             {
               text: "放弃",
@@ -171,20 +174,29 @@ const EditDraft = ({ route, navigation }: StackNavigationProps) => {
               onPress: () => navigation.dispatch(e.data.action)
             },
             {
-              text: '保存',
+              // text: '保存',
+              text: '取消',
               style: 'cancel',
-              onPress: async () => {
-                for (let index in image) {
-                  const imageRes = await uploadImage(image[index]);
-                  if (imageRes.code === 0) {
-                    image[index] = BASE_URL + imageRes.data.url;
-                  }
-                }
-                const res = await requestApi('post', '/updateDraft', { postContent: text, photoUrl: image, pms: pmskey, isAnonymous: anonymous, draftId: route.params?.draftId }, true, '编辑失败')
-                if (res.code == 0) {
-                  navigation.dispatch(e.data.action);
-                }
-              },
+              // onPress: async () => {
+              //   for (let index in image) {
+              //     const imageRes = await uploadImage(image[index]);
+              //     if (imageRes.code === 0) {
+              //       image[index] = BASE_URL + imageRes.data.url;
+              //     }
+              //   }
+              //   let data = { 
+              //     postContent: text, 
+              //     photoUrl: image, 
+              //     pms: pmskey, 
+              //     isAnonymous: anonymous, 
+              //     draftId: route.params?.draftId 
+              //   }
+              //   console.log( 'edit', data, text, otext)
+                // const res = await requestApi('post', '/updateDraft', data, true, '编辑失败')
+                // if (res.code == 0) {
+                //   navigation.dispatch(e.data.action);
+                // }
+              // },
             },
           ]
         );
@@ -200,7 +212,7 @@ const EditDraft = ({ route, navigation }: StackNavigationProps) => {
           style={styles.input}
           placeholder="说点什么吧..."
           value={text}
-          onChangeText={setText}
+          onChangeText={(t) => setText(t)}
           multiline
           scrollEnabled={false}
           autoFocus={false}
