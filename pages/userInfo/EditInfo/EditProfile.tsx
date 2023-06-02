@@ -486,7 +486,7 @@ export function EditProfile({route, navigation}: StackNavigationProps) {
                   </Block>
                 </Surface>
                 {/* 手机号码 */}
-                <Surface elevation={1} mode='flat' style={{marginTop: 10}}>
+                {/* <Surface elevation={1} mode='flat' style={{marginTop: 10}}>
                   <Block flex>
                     <Card.Title
                       title='手机号码'
@@ -504,7 +504,7 @@ export function EditProfile({route, navigation}: StackNavigationProps) {
                       </Surface>
                     </List.Section>
                   </Block>
-                </Surface>
+                </Surface> */}
                 {/* 隐私 */}
                 <Surface elevation={1} mode='flat' style={{marginTop: 10}}>
                   <Block flex>

@@ -63,7 +63,7 @@ const MyVideoPlayer = (props:PlayerProps) => {
     let time_now = new Date()
     let diff = Math.abs(positionMillis - res.data.positionMillis) + Math.abs(time_now.getTime() - time_before.getTime());
     let offset = time_now.getTime() - time_before.getTime()
-    if(diff >= 10000 && res.data.shouldPlay)
+    if(diff >= 5000 && res.data.shouldPlay)
       setPositionMillis(res.data.positionMillis + offset)
   }
   useEffect(() => {
@@ -74,7 +74,7 @@ const MyVideoPlayer = (props:PlayerProps) => {
       if(global.gUserId !== props.creatorId){
         getCurProgress()
       }
-    }, 2000);
+    }, 1000);
     return () => clearInterval(intervalId);
   }, [props]);
   return (
@@ -94,6 +94,9 @@ const MyVideoPlayer = (props:PlayerProps) => {
           inFullscreen: inFullscreen,
           enterFullscreen: fullScreenCallBack,
           exitFullscreen: fullScreenCallBack
+        }}
+        slider={{
+          visible:global.gUserId === props.creatorId
         }}
         icon={{
           fullscreen:<IconButton icon='fullscreen' size={30} iconColor='white'/>,

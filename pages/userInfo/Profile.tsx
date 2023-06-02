@@ -153,6 +153,10 @@ const Profile = ({ navigation }: StackNavigationProps) => {
     navigation.navigate("FollowersList",{userId:userId});
   }
 
+  //登出
+  async function logout() {
+    navigation.replace('Login')
+  }
 
   // 性别
   const Gender = () => {
@@ -185,8 +189,11 @@ const Profile = ({ navigation }: StackNavigationProps) => {
           <Menu.Item onPress={() => {navigation.navigate('DraftList')}} 
           title={<Icon style={{fontSize:17}} name="file-document-edit-outline">草稿箱</Icon>} />
           <Divider />
-          <Menu.Item onPress={() => {}} 
+          <Menu.Item onPress={() => {navigation.navigate('BlockList')}} 
           title={<Icon style={{fontSize:17}} name="account-off-outline">黑名单</Icon>} />
+          <Divider />
+          <Menu.Item onPress={() => logout()} 
+          title={<Icon style={{fontSize:17}} name="logout">登出</Icon>} />
         </Menu>
       )
     });

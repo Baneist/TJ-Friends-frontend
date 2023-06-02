@@ -208,7 +208,7 @@ export const CardwithButtons = (props: CardProps) => {
           }>收藏</Button>
           {global.gUserId != props.content.userId && <Divider />}
           {global.gUserId != props.content.userId && <Button style={{ height: 50, paddingTop: 5 }} onPress={
-            toggleMenu
+            ()=>{toggleMenu();props.navigation.navigate('Complaint');}
           }>举报</Button>}
           {global.gUserId === props.content.userId && <Divider />}
           {global.gUserId === props.content.userId && <Button style={{ height: 50, paddingTop: 5 }} onPress={

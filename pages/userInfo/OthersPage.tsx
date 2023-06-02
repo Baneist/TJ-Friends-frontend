@@ -142,14 +142,27 @@ const OthersPage = ({route, navigation }: StackNavigationProps) => {
     setFollowing(!isfollowing)
   }
   //拉黑
+  async function handleBlock(){
+    //先获取拉黑列表
+    const res = await requestApi('get', `/getBlockList`, null, true, 'Get blockList failed');
+    for (let index in res.data){
+      if(res.data[index].blocked == pageid)
+      {
+        Alert.alert('提示','你已拉黑该用户！')
+        return;
+      }
+    }
+    await requestApi('post', '/block',{userId:pageid}, true, '拉黑失败')
+    setBlockOption(false)
+  }
   function onBlock(){
     Alert.alert(
       "提示",
       "是否确定拉黑该用户？",
       [
         {
-          text:'OK',
-          onPress:() =>{setBlockOption(false)}
+          text:'确定',
+          onPress:() => handleBlock()
         },
         {
           text:'Cancel',
@@ -161,7 +174,7 @@ const OthersPage = ({route, navigation }: StackNavigationProps) => {
   //投诉
   function onComplaint(){
     setBlockOption(false)
-    navigation.navigate('ComplaintUser', {userId:pageid})
+    navigation.navigate('Complaint')
   }
 
   // 性别
@@ -321,7 +334,7 @@ const OthersPage = ({route, navigation }: StackNavigationProps) => {
                 <Text bold size={16} color="#525F7F" style={{ marginTop: 12, marginLeft: 12 }}>
                   Moments
                 </Text>
-                <MomentsList navigation={navigation} userID={pageid}/>
+                <MomentsList navigation={navigation} userId={pageid}/>
               </Block>
             </Block>
             {/* eslint-disable-next-line max-len */}

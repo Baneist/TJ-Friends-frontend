@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Pressable, View, StyleSheet, Text } from 'react-native';
+import { Pressable, View, StyleSheet, Text, Alert } from 'react-native';
 import { Button, Card, Divider, FAB, TextInput } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Modal from 'react-native-modal';
@@ -145,7 +145,7 @@ export const CardwithButtons = (props: CardProps) => {
       >
         <View style={styles.menu}>
           <Button style={{ height: 50, paddingTop: 5 }} onPress={
-            toggleMenu
+            ()=>{toggleMenu();props.navigation.navigate('Complaint');;}
           }>举报</Button>
           <Divider />
           <Button style={{ height: 50, paddingTop: 5 }} onPress={
@@ -153,7 +153,6 @@ export const CardwithButtons = (props: CardProps) => {
           }>取消</Button>
         </View>
       </Modal>
-
     </View>
   );
 };
@@ -195,6 +194,7 @@ const RoomsScreen = ({ navigation }: StackNavigationProps) => {
             <CardwithButtons
               goToDetail={() => { navigation.navigate('RoomInside', { roomId: item.roomId, roomPwd: "" }) }}
               content={item}
+              navigation={navigation}
             />
           </View>)
         }}

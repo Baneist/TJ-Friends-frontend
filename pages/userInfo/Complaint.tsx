@@ -13,7 +13,7 @@ const ComplaintUser = ({ route, navigation }: StackNavigationProps) => {
 
   //提交修改
   async function submit() {
-    console.log('1')
+    navigation.goBack()
   }
 
   return (
@@ -34,7 +34,7 @@ const ComplaintUser = ({ route, navigation }: StackNavigationProps) => {
         <Button onPress={() => {
           navigation.goBack()
         }}>取消</Button>
-        <Button onPress={submit}>保存</Button>
+        <Button onPress={submit}>举报</Button>
       </Card.Actions>
     </Card>
   )

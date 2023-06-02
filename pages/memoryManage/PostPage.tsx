@@ -8,6 +8,7 @@ import requestApi, { BASE_URL } from '../../utils/request';
 import { StackNavigationProps } from '../../App';
 import Modal from 'react-native-modal';
 import uploadImage from '../../utils/uploadImage';
+import { AxiosResponse } from 'axios';
 
 const PostPage = ({ route, navigation }: StackNavigationProps) => {
 	//获取屏幕宽高
@@ -105,17 +106,7 @@ const PostPage = ({ route, navigation }: StackNavigationProps) => {
 	}
 
 	const hasUnsavedChanges = Boolean(text);
-	async function handleSave() {
-		// 发送text和image到服务器
-		for (let index in image) {
-			const imageRes = await uploadImage(image[index]);
-			if (imageRes.code === 0) {
-				image[index] = BASE_URL + imageRes.data.url;
-			}
-		}
-		const res = await requestApi('post', '/createDraft', { postContent: text, photoUrl: image, pms: pmskey, isAnonymous: anonymous }, true, '草稿保存失败')
-		return res;
-	}
+
 	React.useEffect(
 		() => {
 			const onbackpage = navigation.addListener('beforeRemove', (e) => {
@@ -141,8 +132,26 @@ const PostPage = ({ route, navigation }: StackNavigationProps) => {
 						{
 							text: '保存',
 							style: 'cancel',
-							onPress: () => {
-								const res = handleSave();
+							onPress: async () => {
+								let reqList: Promise<AxiosResponse>[] = [];
+								for (let index in image){
+									reqList.push(new Promise((resolve, reject) => {
+										resolve(uploadImage(image[index]))
+									}))
+								}
+								await Promise.all(reqList).then((values) =>{
+									for(let index in values){
+										image[index] = BASE_URL + values[index].data.url;
+									}
+								})
+								let data = { 
+									postContent: text, 
+									photoUrl: image, 
+									pms: pmskey, 
+									isAnonymous: anonymous 
+								}
+								console.log(data)
+								const res = await requestApi('post', '/createDraft', data, true, '草稿保存失败')
 								if (res.code == 0) {
 									navigation.dispatch(e.data.action);
 								}
