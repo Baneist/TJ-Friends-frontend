@@ -42,18 +42,17 @@ import requestApi from "./utils/request";
 import EditPost from "./pages/memoryManage/EditPost";
 import NoticeManageScreen from './pages/noticeManage/NoticeManage';
 import NoticeDetailScreen from "./pages/noticeManage/NoticeDetail";
-import MatchDetailScreen from "./pages/matchManage/MatchDetail";
-import ChatDetail from './pages/chatManage/ChatDetail'
+
+import ChatDetail from './pages/ChatManage/ChatDetail'
 import CreatePage from "./pages/roomManage/CreateRoom";
-import WaitingPage from "./pages/matchManage/WaitingPage";
-import MatchHomePage from "./pages/matchManage/Match";
-import CallScreen from "./pages/matchManage/VoiceMatch";
+import WaitingPage from "./pages/MatchManage/WaitingPage";
+import MatchHomePage from "./pages/MatchManage/Match";
+import CallScreen from "./pages/MatchManage/VoiceMatch";
 
 //房间
 import RoomInside from "./pages/roomManage/RoomInside";
 import EditPage from "./pages/roomManage/EditRoom";
 import EditDraft from "./pages/memoryManage/EditDraft";
-import SyncStorage from "./components/storage";
 
 const GetUrl = "https://1.tongji.edu.cn/api/ssoservice/system/loginIn";
 const TargetUrl = "https://1.tongji.edu.cn/ssologin";
@@ -87,7 +86,6 @@ type RootStackParamList = {
   Complaint: undefined,
   RoomInside:{roomId:string,roomPwd:string}
   CreateRoom:undefined;
-  MatchDetailScreen: { matchedUserId: string, matchType: string} | undefined;
   EditRoom:{roomId:string};
   DraftList:undefined;
   WaitingPage: { userId: string, avatar: string, type: string } | undefined;
@@ -110,7 +108,6 @@ if (
 }
 
 const App = () => {
-  SyncStorage.init();
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
 
@@ -301,11 +298,6 @@ const App = () => {
             name="CreateRoom"
             component={CreatePage}
             options={{ headerBackTitle: "Back" }}
-          />
-          <Stack.Screen
-            name="MatchDetailScreen"
-            component={MatchDetailScreen}
-            options={{ headerShown:false}}
           />
           <Stack.Screen
             name="EditRoom"
