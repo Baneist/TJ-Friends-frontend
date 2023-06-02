@@ -300,9 +300,9 @@ const startCall = async (socket_id:any) => {
 
   const initUserInfo = async () => {
     const res = await requestApi('get', `/profile/${gOtherUserId}`, null, true, '获取对方UserInfo失败');
-    setUserA({username: res.data.userName.info, userAvatar: res.data.userAvatar.info});
+    setUserA({username: res.data.userNickName.info, userAvatar: res.data.userAvatar.info});
     const res2 = await requestApi('get', `/profile/${gUserId}`, null, true, '获取自己UserInfo失败');
-    setUserB({username: res2.data.userName.info, userAvatar: res2.data.userAvatar.info});
+    setUserB({username: res2.data.userNickName.info, userAvatar: res2.data.userAvatar.info});
   };
 
   SyncStorage.setValue('firingOnce1', '0');
