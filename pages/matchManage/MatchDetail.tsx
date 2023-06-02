@@ -1,13 +1,14 @@
-import React, { useState, useEffect, useRef }  from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import {Button} from 'react-native-paper'
 import { StackNavigationProps } from '../../App';
 import Badge from '../../components/NoticeManage/NoticeBadge';
-import {IconButton} from 'react-native-paper';
-import { View, Text,Image, StyleSheet, Dimensions, Alert, TouchableOpacity, FlatList, RefreshControl, ScrollView, TextInput} from 'react-native';
+import { IconButton } from 'react-native-paper';
+import { View, Text, Image, StyleSheet, Dimensions, Alert, TouchableOpacity, FlatList, RefreshControl, ScrollView, TextInput } from 'react-native';
 import { NoticeCard } from '../../components/NoticeManage/NoticeCard';
 import { useFocusEffect } from '@react-navigation/native';
 import requestApi, { requestApiForMockTest } from '../../utils/request';
-import { Button } from 'react-native-elements';
-import {io, Socket} from 'socket.io-client';
+import { io, Socket } from 'socket.io-client';
+import Modal from 'react-native-modal';
 
 import {
   ScreenCapturePickerView,
@@ -20,6 +21,7 @@ import {
   mediaDevices,
 } from 'react-native-webrtc';
 import SyncStorage from '../../components/storage';
+import { transparent } from 'react-native-paper/lib/typescript/src/styles/themes/v2/colors';
 
 const styles = StyleSheet.create({
   container: {},
@@ -29,10 +31,16 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     paddingHorizontal: 10,
   },
+  modal: {
+    alignItems: 'flex-start',
+    justifyContent: 'flex-start',
+    top: 50
+  }
 });
 
 //MainCode <Example></Example> 
 export const MatchDetailScreen = ({ route, navigation }: StackNavigationProps) => {
+  const { width, height } = Dimensions.get("screen");
   const matchType = route.params?.matchType;
   const matchedUserId = route.params?.matchedUserId;
   const usevideo = matchType != '语音';
@@ -64,7 +72,8 @@ export const MatchDetailScreen = ({ route, navigation }: StackNavigationProps) =
 
   // 获取本地摄像头
   const getLocalMedia = async () => {
-    let ls = await mediaDevices.getUserMedia({audio: true, video: usevideo}); // {facingMode: { exact: 'environment' }}
+    console.log('1234')
+    let ls = await mediaDevices.getUserMedia({ audio: true, video: true}); // {facingMode: { exact: 'environment' }}
     setLSState(ls);
   };
 const createRTC = async () => {
@@ -184,15 +193,25 @@ const startCall = async (socket_id:any) => {
 
   const Player = () => {
     return (
-      <View>
-        <Button onPress={OnPressA} style={{borderColor: '#0000ff'}} />
-        <Text> 自己： </Text>
-        <RTCView style={{ height: 300, width: 400}} streamURL={local_stream.toURL()} />
-        <TextInput style={styles.input} onChangeText={handleTextChange} value={text}/>
-        <Button onPress={OnPressB} style={{backgroundColor: '#ff0000'}} />
-        <Text> 对方： </Text>
-        <RTCView style={{ height: 300, width: 400 }} streamURL={remote_stream.toURL()} />
-        <Button onPress={()=>{console.log(peer._pcId)}} style={{backgroundColor: '#ff0000'}} />
+      <View >
+        <Modal
+          isVisible={true}
+          style={styles.modal}
+          hasBackdrop={false}
+          animationIn={'fadeIn'}
+        >
+          <RTCView style={{ height:195, width: 130,  }} streamURL={local_stream.toURL()} />
+        </Modal>
+        <Modal
+          isVisible={true}
+          style={{justifyContent:'center'}}
+          hasBackdrop={false}
+          animationIn={'fadeIn'}
+        >
+          <Button style={{width:80,height:80,margin:10}} mode='contained'>a</Button>
+          <Button style={{width:80,height:80,margin:10}} mode='contained'>b</Button>
+        </Modal>
+        <RTCView style={{ height: height - 191, width: width }} streamURL={local_stream.toURL()} />
       </View>
     );
   };
@@ -201,7 +220,7 @@ const startCall = async (socket_id:any) => {
       console.log('User:', gUserId, ' 收到press:', data);
       if(data.type == 'A'){
         console.log('User:', gUserId, ' 收到press A');
-        //await OnPressA();
+        //await OnPressA(); 
       } else {
         console.log('User:', gUserId, ' 收到press B');
         await OnPressB();
@@ -251,9 +270,9 @@ const startCall = async (socket_id:any) => {
   }, [])
 
   return (
-      <View style={{ flex: 1, alignItems: 'center' }}> 
-        <Player />
-      </View>
+    <View style={{ flex: 1 }}>
+      <Player/>
+    </View>
   );
 };
 export default MatchDetailScreen;
