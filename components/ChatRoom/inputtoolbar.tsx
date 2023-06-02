@@ -15,7 +15,7 @@ function RoomInputToolbar(props) {
     if (text.length > 0) {
       
       async function sendMessage() {
-        const res = await requestApi('post', '/chat/sendMessage', { image: '' , text: text.trim() , userId: props.ChatUser }, true, '发送失败');
+        const res = await requestApi('post', '/sendRoomMessage', { image: '' , text: text.trim() , roomId: props.RoomId }, true, '发送失败');
         const message = {
           _id: res.data.id,
           text: text.trim(),
@@ -23,7 +23,6 @@ function RoomInputToolbar(props) {
           user: props.user,
           isRevoke: false,
         };
-        props.setMessages(GiftedChat.append(props.messages, [message]));
         console.log(message._id, 'send')
       }
       sendMessage()
@@ -50,7 +49,7 @@ function RoomInputToolbar(props) {
       async function sendMessage() {
         const imageRes = await uploadImage(image);
         console.log(BASE_URL + imageRes.data.urle, '2')
-        const res = await requestApi('post', '/chat/sendMessage', { image: BASE_URL + imageRes.data.url , text: '' , userId: props.ChatUser }, true, '发送失败');
+        const res = await requestApi('post', '/sendRoomMessage', { image: BASE_URL + imageRes.data.url , text: '' , roomId: props.RoomId }, true, '发送失败');
         const message = {
           _id: res.data.id,
           text: '',
@@ -59,7 +58,6 @@ function RoomInputToolbar(props) {
           user: props.user,
           isRevoke: false,
         };
-        props.setMessages(GiftedChat.append(props.messages, [message]));
       }
       sendMessage()
     }
@@ -83,7 +81,7 @@ function RoomInputToolbar(props) {
         async function sendMessage() {
           const imageRes = await uploadImage(image);
           console.log(BASE_URL + imageRes.data.urle, '2')
-          const res = await requestApi('post', '/chat/sendMessage', { image: BASE_URL + imageRes.data.urle , text: '' , userId: props.ChatUser }, true, '发送失败');
+          const res = await requestApi('post', '/sendRoomMessage', { image: BASE_URL + imageRes.data.urle , text: '' , roomId: props.RoomId }, true, '发送失败');
           const message = {
             _id: res.data.id,
             text: '',
@@ -92,7 +90,6 @@ function RoomInputToolbar(props) {
             user: props.user,
             isRevoke: false,
           };
-          props.setMessages(GiftedChat.append(props.messages, [message]));
         }
         sendMessage()
       }
