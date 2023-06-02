@@ -130,6 +130,27 @@ export function EditProfile({route, navigation}: StackNavigationProps) {
       }
     }
 
+    async function handleChange(event, date){
+      if(Platform.OS == "android"){
+        if(event.type === "set"){
+          setShowDatePicker(false);
+          let newuser = {...refInfo.current};
+          console.log('new birth', newuser)
+          newuser.userBirthDate.info = formatDate(date);
+          const res = await requestApi('put', '/updateUserInfo', newuser, true, '更新生日失败');
+          if (res.code === 0) {
+            console.log('生日', userInfo)
+            setUserInfo(newuser)
+            refInfo.current = newuser
+          }
+        }
+        else if (event.type === "dismissed"){
+          setShowDatePicker(false);
+        }
+      }
+      setbirthday(date || new Date())
+    }
+
     return (
       <Modal
         isVisible={showDatePicker}
@@ -150,7 +171,7 @@ export function EditProfile({route, navigation}: StackNavigationProps) {
         <View style={styles.contentContainer}>
           <DateTimePicker
             value={birthday}
-            onChange={(event, date) => setbirthday(date || new Date())}
+            onChange={(event, date) => handleChange(event, date)}
             mode='date'
             display="spinner"
             themeVariant="light"

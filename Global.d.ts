@@ -1,3 +1,3 @@
 declare module globalThis {
-  var gUserId: string;
+  let gUserId: string;
 }
