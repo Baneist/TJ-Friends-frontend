@@ -65,7 +65,7 @@ const WaitingPage = ({ route, navigation }: StackNavigationProps) => {
   useEffect(() => {
     socketInit();
     return () => {
-      if(gSocket != null) gSocket.close();
+      //if(gSocket != null) gSocket.close();
       requestApi('post', `/endMatch`, null,  true, '发送结束匹配信息失败');
     }
   }, [])

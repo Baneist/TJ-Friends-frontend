@@ -56,15 +56,18 @@ export const MatchDetailScreen = ({ route, navigation }: StackNavigationProps) =
       offerToReceiveVideo: usevideo
     },
     iceServers: [
-      {
+      
+    ],
+  };
+  /*
+  {
         urls: 'stun:stun1.l.google.com:19302', // 免费的 STUN 服务器
       }, {
         urls: 'turn:10.80.42.229:7100',
         username: 'jmXXDPoe5M',
         credential: '1iqXgvrmQ3',
       }
-    ],
-  };
+  */
   //let peer: any = null;
   const [peer, setPeer] = useState(new RTCPeerConnection(turnConf));
   const [text, setText] = useState('2053302');
@@ -208,15 +211,22 @@ const startCall = async (socket_id:any) => {
           hasBackdrop={false}
           animationIn={'fadeIn'}
         >
-
+          <Button style={{width:80,height:40,margin:2}} mode='contained' onPress={testA}>退出</Button>
         </Modal>
-        <RTCView style={{ height: height - 191, width: width }} streamURL={local_stream.toURL()} />
+        <RTCView style={{ height: height - 191, width: width }} streamURL={remote_stream.toURL()} />
       </View>
     );
   };
+  const testA = () => {
+    console.log('return');
+    socket.emit('return', {
+      to: gSenderSocket
+    });
+    navigation.pop();
+  };
   /*
-          <Button style={{width:80,height:80,margin:10}} mode='contained'>a</Button>
-          <Button style={{width:80,height:80,margin:10}} mode='contained'>b</Button>
+    const testB = () => {};
+    <Button style={{width:80,height:80,margin:10}} mode='contained' onPress={testB}>b</Button>
   */
 
   socket.on('press', async (data:any) => {
@@ -229,6 +239,10 @@ const startCall = async (socket_id:any) => {
         await OnPressB();
       }
   });
+  socket.on('return', async (data:any) => {
+    alert('对方已挂断');
+    navigation.pop();
+});
 
   const OnPressBOnce = async () => {
     SyncStorage.setValue('firingOnce', '0');
