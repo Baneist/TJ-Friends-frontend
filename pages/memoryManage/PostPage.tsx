@@ -26,6 +26,7 @@ const PostPage = ({ route, navigation }: StackNavigationProps) => {
 			}
 		}
 		const res = await requestApi('post', '/Post', { postContent: text, photoUrl: image, pms: pmskey, isAnonymous: anonymous }, true, '发布失败')
+		console.log(1)
 		if (res.code == 0) {
 			navigation.goBack();
 		}
@@ -110,7 +111,9 @@ const PostPage = ({ route, navigation }: StackNavigationProps) => {
 	React.useEffect(
 		() => {
 			const onbackpage = navigation.addListener('beforeRemove', (e) => {
-				if (!hasUnsavedChanges || clicked) {
+				console.log(!Boolean(text))
+				if (!Boolean(text) || clicked) {
+					console.log(1)
 					// If we don't have unsaved changes, then we don't need to do anything
 					return;
 				}
@@ -133,17 +136,12 @@ const PostPage = ({ route, navigation }: StackNavigationProps) => {
 							text: '保存',
 							style: 'cancel',
 							onPress: async () => {
-								let reqList: Promise<AxiosResponse>[] = [];
-								for (let index in image){
-									reqList.push(new Promise((resolve, reject) => {
-										resolve(uploadImage(image[index]))
-									}))
-								}
-								await Promise.all(reqList).then((values) =>{
-									for(let index in values){
-										image[index] = BASE_URL + values[index].data.url;
+								for (let index in image) {
+									const imageRes = await uploadImage(image[index]);
+									if (imageRes.code === 0) {
+										image[index] = BASE_URL + imageRes.data.url;
 									}
-								})
+								}
 								let data = { 
 									postContent: text, 
 									photoUrl: image, 
@@ -161,7 +159,7 @@ const PostPage = ({ route, navigation }: StackNavigationProps) => {
 				);
 			});
 			return onbackpage;
-		}, [navigation, hasUnsavedChanges, clicked]
+		}, [navigation, text, image, clicked]
 	);
 
 	return (
@@ -177,8 +175,8 @@ const PostPage = ({ route, navigation }: StackNavigationProps) => {
 					autoFocus={false}
 				/>
 				<View style={{ flexDirection: 'row', flexWrap: 'wrap', position: 'relative', paddingBottom: 10 }}>
-					{image.length != 0 && image.map((item) =>
-						<View>
+					{image.length != 0 && image.map((item, idx) =>
+						<View key={idx}>
 							<Image source={{ uri: item }} style={styles.image} />
 							<Pressable
 								style={{ position: 'absolute', top: 5, right: 5, margin: 0 }}

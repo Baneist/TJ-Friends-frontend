@@ -35,6 +35,13 @@ const MomentsList=(props: PostsProps) => {
     }
   }
 
+  async function deleteMomery(postId: string) {
+    const res = await requestApi('get', `/deleteMemory/${postId}`, null, true, '动态删除失败');
+    if (res.code == 0) {
+      console.log(postId)
+      fetchData()
+    }
+  };
   
   useFocusEffect(
     React.useCallback(() => {
@@ -53,6 +60,7 @@ const MomentsList=(props: PostsProps) => {
               key={index}
               content={item}
               onCommentPress={() => onCommentPress(item.postId)}
+              onDelete = {() => deleteMomery(item.postId)}
               navigation={props.navigation}
             />)}
           {list.length===0 && 
