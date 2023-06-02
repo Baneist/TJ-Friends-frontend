@@ -11,7 +11,7 @@ import requestApi from "../../utils/request";
 import { profileStyles } from "./Profile.style";
 import { GENDER } from "./Profile";
 import MomentsList from "../../components/MomentsList/MomentsList";
-import ChatDetail from "../chatManage/ChatDetail";
+import ChatDetail from "../ChatManage/ChatDetail";
 import { useFocusEffect } from '@react-navigation/native';
 import Modal from 'react-native-modal';
 

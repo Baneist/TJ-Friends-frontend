@@ -16,45 +16,24 @@
     ],
     "ios": {
       "requireFullScreen": true,
-      "supportsTablet": true,
-      "bundleIdentifier": "com.vozeo.tjfriends",
-      "bitcode": false
+      "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.vozeo.tjfriends",
-      "permissions": [
-        "android.permission.ACCESS_NETWORK_STATE",
-        "android.permission.BLUETOOTH",
-        "android.permission.CAMERA",
-        "android.permission.INTERNET",
-        "android.permission.MODIFY_AUDIO_SETTINGS",
-        "android.permission.RECORD_AUDIO",
-        "android.permission.SYSTEM_ALERT_WINDOW",
-        "android.permission.WAKE_LOCK"
-      ]
+      "package": "com.vozeo.tjfriends"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
+    "extra": {
+      "eas": {
+        "projectId": "ce062628-adee-41b5-b6b8-d35ac71a6967"
+      }
+    },
     "plugins": [
-      [
-        "expo-build-properties",
-        {
-          "android": {
-            "minSdkVersion": 24
-          },
-          "ios": {
-            "deploymentTarget": "13.0"
-          }
-        }
-      ],
-      [
-        "@config-plugins/react-native-webrtc"
-      ],
       [
         "expo-screen-orientation",
         {
@@ -62,10 +41,6 @@
         }
       ]
     ],
-    "extra": {
-      "eas": {
-        "projectId": "32bd82df-bdb8-4213-be1d-da19b4b2e665"
-      }
-    }
+    "owner": "peanutpuff"
   }
 }
