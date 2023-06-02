@@ -2,9 +2,9 @@
   "expo": {
     "name": "TJFriends",
     "slug": "tjfriends",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "default",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/logo.jpg",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
