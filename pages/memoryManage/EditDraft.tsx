@@ -164,45 +164,45 @@ const EditDraft = ({ route, navigation }: StackNavigationProps) => {
         // Prompt the user before leaving the screen
         Alert.alert(
           '',
-          // '保存此次编辑?',
-          '放弃此次编辑？',
+          '保存此次编辑?',
+          //'放弃此次编辑？',
           [
             {
-              text: "放弃",
+              text: "取消",
               style: 'destructive',
               // This will continue the action that had triggered the removal of the screen
               onPress: () => navigation.dispatch(e.data.action)
             },
             {
-              // text: '保存',
-              text: '取消',
+              text: '保存',
+              //text: '取消',
               style: 'cancel',
-              // onPress: async () => {
-              //   for (let index in image) {
-              //     const imageRes = await uploadImage(image[index]);
-              //     if (imageRes.code === 0) {
-              //       image[index] = BASE_URL + imageRes.data.url;
-              //     }
-              //   }
-              //   let data = { 
-              //     postContent: text, 
-              //     photoUrl: image, 
-              //     pms: pmskey, 
-              //     isAnonymous: anonymous, 
-              //     draftId: route.params?.draftId 
-              //   }
-              //   console.log( 'edit', data, text, otext)
-                // const res = await requestApi('post', '/updateDraft', data, true, '编辑失败')
-                // if (res.code == 0) {
-                //   navigation.dispatch(e.data.action);
-                // }
-              // },
+              onPress: async () => {
+                for (let index in image) {
+                  const imageRes = await uploadImage(image[index]);
+                  if (imageRes.code === 0) {
+                    image[index] = BASE_URL + imageRes.data.url;
+                  }
+                }
+                let data = { 
+                  postContent: text, 
+                  photoUrl: image, 
+                  pms: pmskey, 
+                  isAnonymous: anonymous, 
+                  draftId: route.params?.draftId 
+                }
+                console.log( 'edit', data, text, otext)
+                const res = await requestApi('post', '/updateDraft', data, true, '编辑失败')
+                if (res.code == 0) {
+                  navigation.dispatch(e.data.action);
+                }
+              },
             },
           ]
         );
       });
       return onbackpage;
-    }, [navigation, hasUnsavedChanges, clicked]
+    }, [navigation, hasUnsavedChanges, clicked, image, text]
   );
 
   return (
@@ -263,7 +263,7 @@ const EditDraft = ({ route, navigation }: StackNavigationProps) => {
           <Divider />
         </View>
         <View style={{ paddingBottom: 100 }} >
-          <Button disabled={text.length == 0 && image.length == 0} onPress={() => { setClick(true); handleSave(); handlePost(); }} mode='contained'>重新发送</Button>
+          <Button disabled={text.length == 0 && image.length == 0} onPress={() => { setClick(true); handlePost(); }} mode='contained'>重新发送</Button>
         </View>
         <MultiPicker showPickerOption={showPickerOption} onBackdropPress={cancelPickerOption} setImage={changeImage} />
       </KeyboardAwareScrollView>

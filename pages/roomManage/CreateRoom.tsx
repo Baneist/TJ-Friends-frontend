@@ -33,7 +33,7 @@ const CreatePage = ({ route, navigation }: StackNavigationProps) => {
     }
     const res = await requestApi('post', '/createRoom', { coverUrl: imgTmp, videoUrl: text1, roomName: text2, roomDescription: text3, roomPms: locked, roomPwd: (locked ? pwd : null) }, true, '房间创建失败')
     if (res.code == 0) {
-      navigation.navigate('RoomInside', { roomId: res.data.id, roomPwd: locked ? pwd : "" });
+      navigation.replace('RoomInside', { roomId: res.data.id, roomPwd: locked ? pwd : "" });
     }
     console.log('create');
   }
