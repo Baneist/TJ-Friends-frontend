@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
   modal: {
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
-    top: 0,
+    top: 40,
   },
   userphoto: {
     width: 45,
@@ -61,17 +61,7 @@ export const MatchDetailScreen = ({ route, navigation }: StackNavigationProps) =
   const Player = () => {
     return (
       <View >
-
-        {/* <Modal
-          isVisible={true}
-          style={{justifyContent:'center',height:100,width:100}}
-          hasBackdrop={false}
-          animationIn={'fadeIn'}
-        >
-          <Button style={{width:80,height:80,margin:10}} mode='contained' onPress={()=>navigation.goBack()}>a</Button>
-          <Button style={{width:80,height:80,margin:10}} mode='contained'>b</Button>
-        </Modal> */}
-        <RTCView style={{ height: height - 191, width: width }} streamURL={local_stream.toURL()} />
+        <RTCView style={{ height: height - 91, width: width }} streamURL={local_stream.toURL()} />
         <Modal
           isVisible={true}
           style={styles.modal}
@@ -95,19 +85,25 @@ export const MatchDetailScreen = ({ route, navigation }: StackNavigationProps) =
       <Modal
         isVisible={true}
         style={{justifyContent:'flex-end',margin:0}}
-        coverScreen={false}
         hasBackdrop={false}
       >
           <View style={{
             flexDirection: 'row',
             justifyContent: 'space-evenly',
-            height: 80,
+            height: 90,
             backgroundColor: '#fff',
             alignItems: 'center',
-            paddingBottom: 15
+            paddingBottom: 15,
+            paddingTop:10
           }}>
             <Image source={{ uri: "https://picsum.photos/400" }} style={styles.userphoto} />
             <Text>username</Text>
+            <Button onPress={()=>navigation.goBack()} 
+            mode='contained' 
+            style={{
+              backgroundColor:'#ef0000'
+            }}
+            >结束通话</Button>
           </View>
       </Modal>
     </View>
