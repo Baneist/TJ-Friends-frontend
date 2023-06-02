@@ -5,7 +5,7 @@ import { Avatar } from 'react-native-elements';
 import {TextInput, Button} from 'react-native-paper'
 import { GiftedChat } from 'react-native-gifted-chat';
 import { StackNavigationProps } from '../../App';
-import CustomBubble from '../../pages/ChatManage/CustomBubble';
+import CustomBubble from '../../pages/chatManage/CustomBubble';
 import RoomInputToolbar from './inputtoolbar';
 import requestApi from '../../utils/request';
 import { AxiosResponse } from 'axios';
