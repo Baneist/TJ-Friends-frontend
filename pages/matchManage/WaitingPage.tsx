@@ -7,6 +7,7 @@ import requestApi, { LinkSocket } from '../../utils/request';
 const WaitingPage = ({ route, navigation }: StackNavigationProps) => {
   let savedUserId = '';
   let socket:any = null;
+  let sayhitime = 0;
   const turnInPage = (matchedUserId:any, matchType:any, socket:any) => {
     gSocket = socket;
     if(matchType == '灵魂'){
@@ -28,6 +29,7 @@ const WaitingPage = ({ route, navigation }: StackNavigationProps) => {
       //是接收方
       console.log('我是接收方',gUserId);
       socket.on('sayhi', (data:any) => {
+        sayhitime += 1;
         savedUserId = data.userId;
         console.log('接受方sayhi:', data.userId);
         gSenderSocket = data.from;
@@ -44,6 +46,7 @@ const WaitingPage = ({ route, navigation }: StackNavigationProps) => {
     } else {
       //是发送方
       console.log('我是发送方',gUserId);
+      sayhitime += 1;
       const res = await requestApi('get', `/match/getSocketId/${mtUserId}`, null,  true, '获取 SocketId 失败');
       console.log('getRemoteIdByUserId:', res.data.socketId);
       gSenderSocket = res.data.socketId;
@@ -60,12 +63,14 @@ const WaitingPage = ({ route, navigation }: StackNavigationProps) => {
       });
     }
     
-    
   };
   useEffect(() => {
     socketInit();
     return () => {
-      //if(gSocket != null) gSocket.close();
+      if(sayhitime == 0 && gSocket && gSocket != null){
+        console.log(gUserId,'没匹配上,回收socket');
+        gSocket.close();
+      }
       requestApi('post', `/endMatch`, null,  true, '发送结束匹配信息失败');
     }
   }, [])
