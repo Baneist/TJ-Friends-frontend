@@ -61,7 +61,7 @@ export const VoicePlayer = (vprop: VoiceProps) => {
       <View style={styles.content}>
         <Image source={{ uri: vprop.userA.userAvatar }} style={styles.avatar} />
         <Text style={styles.callerName}> {vprop.userA.username}</Text>
-        <Text style={styles.callTime}>{formatTime(callTime)}</Text>
+        <Text style={styles.callTime}>{vprop.isCallActive ? formatTime(callTime) : '正在连接中'}</Text>
         <Image source={{ uri: vprop.userB.userAvatar }} style={styles.avatar} />
         <Text style={styles.callerName}> {vprop.userB.username}</Text>
       </View>
