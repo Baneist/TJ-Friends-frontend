@@ -90,9 +90,9 @@ const DraftList = ({ route, navigation }: StackNavigationProps) => {
                     <List.Item 
                         title={item.content}
                         titleNumberOfLines={3}
-                        left={props => item.photoUrl.length &&
+                        left={props => 
                             <Image  
-                            source={{uri:item.photoUrl[0]}}
+                            source={{uri:item.photoUrl.length? item.photoUrl[0]: "https://picsum.photos/700"}}
                             style={{width:100, height:100}}
                             />
                         }
