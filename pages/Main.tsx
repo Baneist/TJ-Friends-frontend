@@ -6,7 +6,7 @@ import { Text } from "galio-framework";
 import { BottomFabBar } from 'rn-wave-bottom-bar';
 import MemoriesScreen from './memoryManage/Memories';
 import Profile from './userInfo/Profile'
-import NoticeManageScreen from './noticeManage/NoticeManage';import { IconButton, Provider } from 'react-native-paper';
+import NoticeManageScreen from './noticeManage/NoticeManage';import { Button, IconButton, Provider } from 'react-native-paper';
 import { StackNavigationProps } from '../App';
 import RoomsScreen from './roomManage/Rooms';
 import MatchHomePage from './MatchManage/Match';
@@ -74,6 +74,7 @@ const MainScreen = ({route, navigation}:StackNavigationProps) => {
       />
       <Text>Enable RTL</Text>
       <Switch value={isRtl} onValueChange={() => setIsRtl(!isRtl)} />
+      <Button onPress={()=>navigation.navigate('MatchDetailScreen')}>11</Button>
     </View>
   );
 
@@ -128,8 +129,8 @@ const MainScreen = ({route, navigation}:StackNavigationProps) => {
           tabBarIcon: tabBarIcon('smileo'),
           tabBarLabel: showLabel ? 'name' : undefined,
         }}
-        name="Match"
-        component={MatchDetailScreen}
+        name="Home"
+        component={Home}
       />
       <Tab.Screen
         options={{

@@ -34,8 +34,13 @@ const styles = StyleSheet.create({
   modal: {
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
-    top: 50
-  }
+    top: 0,
+  },
+  userphoto: {
+    width: 45,
+    height: 45,
+    borderRadius: 22,
+  },
 });
 
 //MainCode <Example></Example> 
@@ -56,24 +61,26 @@ export const MatchDetailScreen = ({ route, navigation }: StackNavigationProps) =
   const Player = () => {
     return (
       <View >
+
+        {/* <Modal
+          isVisible={true}
+          style={{justifyContent:'center',height:100,width:100}}
+          hasBackdrop={false}
+          animationIn={'fadeIn'}
+        >
+          <Button style={{width:80,height:80,margin:10}} mode='contained' onPress={()=>navigation.goBack()}>a</Button>
+          <Button style={{width:80,height:80,margin:10}} mode='contained'>b</Button>
+        </Modal> */}
+        <RTCView style={{ height: height - 191, width: width }} streamURL={local_stream.toURL()} />
         <Modal
           isVisible={true}
           style={styles.modal}
           hasBackdrop={false}
           animationIn={'fadeIn'}
+          coverScreen={false}
         >
           <RTCView style={{ height:195, width: 130,  }} streamURL={local_stream.toURL()} />
         </Modal>
-        <Modal
-          isVisible={true}
-          style={{justifyContent:'center'}}
-          hasBackdrop={false}
-          animationIn={'fadeIn'}
-        >
-          <Button style={{width:80,height:80,margin:10}} mode='contained'>a</Button>
-          <Button style={{width:80,height:80,margin:10}} mode='contained'>b</Button>
-        </Modal>
-        <RTCView style={{ height: height - 191, width: width }} streamURL={local_stream.toURL()} />
       </View>
     );
   };
@@ -83,8 +90,27 @@ export const MatchDetailScreen = ({ route, navigation }: StackNavigationProps) =
   }, [])
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1,backgroundColor:'white' }}>
       <Player/>
+      <Modal
+        isVisible={true}
+        style={{justifyContent:'flex-end',margin:0}}
+        coverScreen={false}
+        hasBackdrop={false}
+      >
+          <View style={{
+            flexDirection: 'row',
+            justifyContent: 'space-evenly',
+            height: 80,
+            backgroundColor: '#fff',
+            alignItems: 'center',
+            paddingBottom: 15
+          }}>
+            <Image source={{ uri: "https://picsum.photos/400" }} style={styles.userphoto} />
+            <Text>username</Text>
+            {/* <Button style={{ marginLeft: -15, borderWidth: 5 }} onPress={postComment}>Send</Button> */}
+          </View>
+      </Modal>
     </View>
   );
 };
