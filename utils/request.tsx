@@ -5,9 +5,10 @@ import handleAxiosError from "./handleError";
 import { Alert } from "react-native";
 
 //mockjs
-//export const BASE_URL = 'https://mock.apifox.cn/m1/2539601-0-default'
+//const BASE_URL = 'https://mock.apifox.cn/m1/2609236-0-default'
 export const BASE_URL = 'http://119.3.178.68:8888';
-
+export const SOCKET_SERVER_URL = `http://10.80.42.217:9800/webrtc`;
+//export const SOCKET_SERVER_URL = `http://119.3.178.68:9800/webrtc`;
 const instance = axios.create({
   baseURL: BASE_URL,
 } as const);
@@ -95,3 +96,13 @@ export const requestApiForMockTest = async (method: string, url: string, data: a
     return { 'code': -1, msg: 'error', data: {} };
   }
 };
+
+import io from 'socket.io-client';
+export const LinkSocket = () => {
+  let sock = io(SOCKET_SERVER_URL, { auth: { userid: gUserId, role: 'sender', }, });
+    sock.on('connect', async () => {
+      console.log('连接成功, 上传socket:', sock.id); 
+      await requestApi('post',`/match/uploadSocketId`, {socketId: sock.id}, true, '上传 SocketId 失败');
+    });
+    return sock;
+}

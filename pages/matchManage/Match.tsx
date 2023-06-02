@@ -4,7 +4,7 @@ import { View, StyleSheet, Text, TouchableOpacity, Image } from 'react-native';
 import { StackNavigationProps } from '../../App'
 import requestApi from '../../utils/request';
 
-const MatchHomePage = ({ route, navigation }: StackNavigationProps) => {
+export const MatchHomePage = ({ route, navigation }: StackNavigationProps) => {
   const [soulMatchPressed, setSoulMatchPressed] = useState(false);
   const [voiceMatchPressed, setVoiceMatchPressed] = useState(false);
   const [videoMatchPressed, setVideoMatchPressed] = useState(false);
