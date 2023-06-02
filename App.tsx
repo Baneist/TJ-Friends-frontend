@@ -47,6 +47,7 @@ import ChatDetail from './pages/ChatManage/ChatDetail'
 import CreatePage from "./pages/roomManage/CreateRoom";
 import WaitingPage from "./pages/MatchManage/WaitingPage";
 import MatchHomePage from "./pages/MatchManage/Match";
+import CallScreen from "./pages/MatchManage/VoiceMatch";
 
 //房间
 import RoomInside from "./pages/roomManage/RoomInside";
@@ -89,6 +90,7 @@ type RootStackParamList = {
   DraftList:undefined;
   WaitingPage: { userId: string, avatar: string, type: string } | undefined;
   MatchHomePage:undefined;
+  CallScreen: { otherAvatar: string, otherName: string, myName: string, myAvatar: string} | undefined;
 };
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -317,7 +319,7 @@ const App = () => {
             component={MatchHomePage} 
             options={{ headerBackTitle: "Back" }}
             />
-            <Stack.Screen
+          <Stack.Screen
             name="DraftList"
             component={DraftList}
             options={{ headerBackTitle: "Back" }}
@@ -325,6 +327,11 @@ const App = () => {
           <Stack.Screen
             name="Complaint"
             component={ComplaintUser}
+            options={{ headerBackTitle: "Back" }}
+          />
+          <Stack.Screen
+            name="CallScreen"
+            component={CallScreen}
             options={{ headerBackTitle: "Back" }}
           />
         </Stack.Navigator>
