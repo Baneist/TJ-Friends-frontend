@@ -9,7 +9,6 @@ import { useFocusEffect } from '@react-navigation/native';
 import requestApi, { requestApiForMockTest } from '../../utils/request';
 import { io, Socket } from 'socket.io-client';
 import Modal from 'react-native-modal';
-
 import {
   ScreenCapturePickerView,
   RTCPeerConnection,
@@ -22,6 +21,9 @@ import {
 } from 'react-native-webrtc';
 import SyncStorage from '../../components/storage';
 import { transparent } from 'react-native-paper/lib/typescript/src/styles/themes/v2/colors';
+import { VoicePlayer } from './VoiceMatch';
+
+
 
 const styles = StyleSheet.create({
   container: {},
@@ -40,15 +42,22 @@ const styles = StyleSheet.create({
 
 //MainCode <Example></Example> 
 export const MatchDetailScreen = ({ route, navigation }: StackNavigationProps) => {
+  SyncStorage.setValue('firingOnceReturn', '0');
+  const matchUserInfoDemo = {
+    username: '匹配用户',
+    userAvatar: 'https://img2.baidu.com/it/u=2186443610,2577257885&fm=26&fmt=auto&gp=0.jpg',
+  }
   const { width, height } = Dimensions.get("screen");
   const matchType = route.params?.matchType;
   const matchedUserId = route.params?.matchedUserId;
-  const usevideo = matchType != '语音';
+  const usevideo = matchType == '视频';
   let n_stream = new MediaStream(undefined);
   const [local_stream, setLSState] = useState(n_stream);
   const [remote_stream, setRSState] = useState(n_stream);
   let socket: any = gSocket;
-  
+  const [userA, setUserA] = useState(matchUserInfoDemo);
+  const [userB, setUserB] = useState(matchUserInfoDemo);
+
   //const [peer, setPeer] = useState(new RTCPeerConnection(undefined));
   const turnConf = {
     configuration: {
@@ -56,17 +65,17 @@ export const MatchDetailScreen = ({ route, navigation }: StackNavigationProps) =
       offerToReceiveVideo: usevideo
     },
     iceServers: [
-      
-    ],
-  };
-  /*
-  {
+      {
         urls: 'stun:stun1.l.google.com:19302', // 免费的 STUN 服务器
       }, {
         urls: 'turn:10.80.42.229:7100',
         username: 'jmXXDPoe5M',
         credential: '1iqXgvrmQ3',
       }
+    ],
+  };
+  /*
+  
   */
   //let peer: any = null;
   const [peer, setPeer] = useState(new RTCPeerConnection(turnConf));
@@ -79,14 +88,11 @@ export const MatchDetailScreen = ({ route, navigation }: StackNavigationProps) =
     let ls = await mediaDevices.getUserMedia({ audio: true, video: true}); // {facingMode: { exact: 'environment' }}
     setLSState(ls);
   };
-const createRTC = async () => {
-  //console.log('@ start create rtc',gUserId,' RTC:', peer._pcId);
-  //await setPeer(new RTCPeerConnection(turnConf));
-  //peer = new RTCPeerConnection(turnConf);
-  setTimeout(() => {
-    console.log('@ end create rtc',gUserId,' RTC:', peer._pcId);
-  }, 1000);
-};
+  const createRTC = async () => {
+    setTimeout(() => {
+      console.log('@ end create rtc',gUserId,' RTC:', peer._pcId);
+    }, 1000);
+  };
 let init_end = false;
 const startCall = async (socket_id:any) => {
   await local_stream.getTracks().forEach((track) => {
@@ -197,13 +203,15 @@ const startCall = async (socket_id:any) => {
   const VideoPlayer = () => {
     return (
       <View >
+        <RTCView style={{ height: height - 191, width: width }} streamURL={remote_stream.toURL()} />
         <Modal
           isVisible={true}
           style={styles.modal}
           hasBackdrop={false}
           animationIn={'fadeIn'}
+          
         >
-          <RTCView style={{ height:195, width: 130,  }} streamURL={local_stream.toURL()} />
+          <RTCView style={{ height:195, width: 130 }} streamURL={local_stream.toURL()} />
         </Modal>
         <Modal
           isVisible={true}
@@ -211,12 +219,14 @@ const startCall = async (socket_id:any) => {
           hasBackdrop={false}
           animationIn={'fadeIn'}
         >
-          <Button style={{width:80,height:40,margin:2}} mode='contained' onPress={testA}>退出</Button>
+          <Button style={{width:80, height:40, margin:2}} mode='contained' onPress={testA}>退出</Button>
         </Modal>
-        <RTCView style={{ height: height - 191, width: width }} streamURL={remote_stream.toURL()} />
+        
       </View>
     );
   };
+  //coverScreen={false}
+
   const testA = () => {
     console.log('return');
     socket.emit('return', {
@@ -236,12 +246,19 @@ const startCall = async (socket_id:any) => {
         //await OnPressA(); 
       } else {
         console.log('User:', gUserId, ' 收到press B');
+        setIsCallActive(true);
         await OnPressB();
       }
   });
+  
+    
+      
   socket.on('return', async (data:any) => {
-    alert('对方已挂断');
-    navigation.pop();
+    if(SyncStorage.getValue('firingOnceReturn') == '0'){
+      SyncStorage.setValue('firingOnceReturn', '1');
+      alert('对方已挂断');
+      navigation.pop();
+    }
 });
 
   const OnPressBOnce = async () => {
@@ -260,13 +277,20 @@ const startCall = async (socket_id:any) => {
     });
   };
 
+  const initUserInfo = async () => {
+    const res = await requestApi('get', `/profile/${gOtherUserId}`, null, true, '获取对方UserInfo失败');
+    setUserA({username: res.data.userName.info, userAvatar: res.data.userAvatar.info});
+    const res2 = await requestApi('get', `/profile/${gUserId}`, null, true, '获取自己UserInfo失败');
+    setUserB({username: res2.data.userName.info, userAvatar: res2.data.userAvatar.info});
+  };
+
   SyncStorage.setValue('firingOnce1', '0');
   useFocusEffect(()=>{
     if(SyncStorage.getValue('firingOnce1') == '0'){
       SyncStorage.setValue('firingOnce1', '1');
       console.log('User:', gUserId, ' UseFocusEffect:');
       if(matchedUserId == ''){ //我是接受方
-        setTimeout(() => {OnPressAA();}, 3000);
+        setTimeout(() => {OnPressAA(); setIsCallActive(true)}, 3000);
       } else { //我是发送方
         
         //setTimeout(() => {OnPressB();}, 10000);
@@ -274,8 +298,10 @@ const startCall = async (socket_id:any) => {
     }
   });
   useEffect( () => {
+    console.log(gUserId, '我的 matchType:', matchType, ' matchedUserId:', matchedUserId);
     getLocalMedia().then(() => {
       createRTC().then(() => {
+        initUserInfo();
         init_end = true;
         //OnPressA();
       })
@@ -297,10 +323,10 @@ const startCall = async (socket_id:any) => {
       gSocket = null;
     }
   }, [])
-
+  const [isCallActive, setIsCallActive] = useState(false);
   return (
     <View style={{ flex: 1 }}>
-      <VideoPlayer/>
+      {matchType == '视频' ? <VideoPlayer /> : <VoicePlayer local_stream={local_stream} remote_stream={remote_stream} isCallActive={isCallActive} callend={testA} userA={userA} userB={userB}/>}
     </View>
   );
 };

@@ -15,6 +15,7 @@ const WaitingPage = ({ route, navigation }: StackNavigationProps) => {
       gSocket = null;
       navigation.replace('ChatDetail', {userId: savedUserId});
     } else {
+      gOtherUserId = savedUserId;
       navigation.replace('MatchDetailScreen', {matchedUserId: matchedUserId, matchType:matchType});
     }
   };
