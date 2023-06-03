@@ -28,19 +28,18 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "extra": {
-      "eas": {
-        "projectId": "ce062628-adee-41b5-b6b8-d35ac71a6967"
-      }
-    },
     "plugins": [
       [
         "expo-screen-orientation",
-        {
+        {ﬁ
           "initialOrientation": "DEFAULT"
         }
       ]
     ],
-    "owner": "peanutpuff"
+    "extra": {
+      "eas": {
+        "projectId": "a26600bc-7646-4718-b6b1-9cb93ea2738e"
+      }
+    }
   }
 }
