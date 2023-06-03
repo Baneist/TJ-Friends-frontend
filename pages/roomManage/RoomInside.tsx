@@ -152,7 +152,7 @@ const InviteFriend = (props:inviteProps) => {
   const [stuId, setStuId]=useState('');
   async function invite(){
     setDialogVis(!dialogVis)
-    const mes = `加入房间“${props.roomName}”，和我们一起玩吧！\n 房间码：${props.roomId} \n 房间密码：${props.roomPwd}`
+    const mes = `加入房间“${props.roomName}”，和我们一起玩吧！\n 房间码：${props.roomId} \n 房间密码：${props.roomPwd?props.roomPwd:"无"}`
     const res = await requestApi('post', '/chat/sendMessage', { image: '' , text: mes , userId: stuId }, true, '发送失败');
   }
   return(
