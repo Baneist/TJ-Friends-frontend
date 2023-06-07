@@ -9,7 +9,7 @@ import Profile from './userInfo/Profile'
 import NoticeManageScreen from './noticeManage/NoticeManage';import { IconButton, Provider } from 'react-native-paper';
 import { StackNavigationProps } from '../App';
 import RoomsScreen from './roomManage/Rooms';
-import MatchHomePage from './MatchManage/Match';
+import MatchHomePage from './matchManage/Match';
 import { color } from 'react-native-reanimated';
 
 type RootTabParamList = {

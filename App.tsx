@@ -45,9 +45,9 @@ import NoticeDetailScreen from "./pages/noticeManage/NoticeDetail";
 
 import ChatDetail from './pages/ChatManage/ChatDetail'
 import CreatePage from "./pages/roomManage/CreateRoom";
-import WaitingPage from "./pages/MatchManage/WaitingPage";
-import MatchHomePage from "./pages/MatchManage/Match";
-import CallScreen from "./pages/MatchManage/VoiceMatch";
+import WaitingPage from "./pages/matchManage/WaitingPage";
+import MatchHomePage from "./pages/matchManage/Match";
+import CallScreen from "./pages/matchManage/VoiceMatch";
 
 //房间
 import RoomInside from "./pages/roomManage/RoomInside";
