@@ -67,15 +67,18 @@ const MyVideoPlayer = (props:PlayerProps) => {
       setPositionMillis(res.data.positionMillis + offset)
   }
   useEffect(() => {
-    if(global.gUserId !== props.creatorId){
-      getCurProgress()
-    }
-    const intervalId = setInterval(() => {
+    if(props.creatorId !== '')
+    {
       if(global.gUserId !== props.creatorId){
         getCurProgress()
       }
-    }, 1000);
-    return () => clearInterval(intervalId);
+      const intervalId = setInterval(() => {
+        if(global.gUserId !== props.creatorId){
+          getCurProgress()
+        }
+      }, 1000);
+      return () => clearInterval(intervalId);
+    }
   }, [props]);
   return (
       <VideoPlayer
