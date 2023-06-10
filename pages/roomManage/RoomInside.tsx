@@ -35,7 +35,7 @@ const defaultMember = {
   isFollowing:false
 }
 const defaultRoom = {
-  roomId:'1',
+  roomId:'',
   roomName:'一起来玩吧',
   videoUrl:'https://vip.ffzy-play6.com/20221127/8802_3816a20c/2000k/hls/index.m3u8',
   members:[],
