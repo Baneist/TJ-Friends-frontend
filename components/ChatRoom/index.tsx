@@ -109,15 +109,11 @@ function ChatRoom({roomId,navigation}:chatRoomProp) {
 
   async function fetchOrigin(){
     // setIsTimerEnabled(false);
-    console.log('F start')
     let CurMessages: ChatMessage[] = []
 
     const resAllMessages = await requestApi('get', `/receiveAllRoomMessages?roomId=${roomId}`, null, true, 'Get All Messages failed');
 
     setIUser(await getUser(userId));
-    console.log(resAllMessages.data.length)
-    console.log('code', resAllMessages.code)
-    console.log('id', roomId)
     if (resAllMessages.code === 0) {
 
       for (let i = 0; i < resAllMessages.data.length; ++i) {
@@ -159,11 +155,9 @@ function ChatRoom({roomId,navigation}:chatRoomProp) {
 
     setMessages(CurMessages);
     // setIsTimerEnabled(true);
-    console.log('F end', isTimerEnabled)
   }
 
   async function getUnreadMessages() {
-    console.log('U start')
     const resUnreadMessages = await requestApi('get', `/receiveRoomMessages?roomId=${roomId}`, null, true, 'Get Unread Messages failed');
     let unreadMessage: ChatMessage[] = []
     for (let i = 0; i < resUnreadMessages.data.length; ++i) {
@@ -202,8 +196,6 @@ function ChatRoom({roomId,navigation}:chatRoomProp) {
         GiftedChat.append(previousMessages, unreadMessage)
       );
     }
-
-    console.log('U end')
   }
 
   function onSend(newMessages: ChatMessage[] = []) {
@@ -278,19 +270,16 @@ function ChatRoom({roomId,navigation}:chatRoomProp) {
   }
 
   useEffect(() => {
-    console.log('first fecth')
-    console.log('roomid', roomId)
-    fetchOrigin()
-    console.log('first fecth end')
+    if(roomId!==''){
+      fetchOrigin()
 
-    if (isTimerEnabled){
-      const intervalId = setInterval(() => {
-        console.log('normal fecth')
-        getUnreadMessages()
-        console.log('normal fecth end')
-      }, 2000);
-
-      return () => clearInterval(intervalId);
+      if (isTimerEnabled){
+        const intervalId = setInterval(() => {
+          getUnreadMessages()
+        }, 2000);
+  
+        return () => clearInterval(intervalId);
+      }
     }
     
   }, [roomId, isTimerEnabled]);
