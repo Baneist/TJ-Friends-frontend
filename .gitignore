@@ -20,6 +20,7 @@ web-build/
 __tests__/
 .bundle/
 .vscode/
+*.pyc
 android/
 ios/
 vendor/
