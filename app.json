@@ -2,7 +2,7 @@
   "expo": {
     "name": "TJFriends",
     "slug": "tjfriends",
-    "version": "1.0.1",
+    "version": "1.0.3",
     "orientation": "default",
     "icon": "./assets/logo.jpg",
     "userInterfaceStyle": "light",
@@ -64,7 +64,7 @@
     ],
     "extra": {
       "eas": {
-        "projectId": "32bd82df-bdb8-4213-be1d-da19b4b2e665"
+        "projectId": "d468e573-334e-4936-b650-e634208ac481"
       }
     }
   }
