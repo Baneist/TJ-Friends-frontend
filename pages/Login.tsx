@@ -159,7 +159,8 @@ const Login = (props: ISocialLoginProps) => {
   };
 
   const onHandleLoginPress = async () => {
-    const data = await requestApi('post', '/login', { username, password }, false, '登录失败');
+    console.log(username, password);
+    const data = await requestApi('post', '/login', { username: username === "" ? "none" : username, password: password === "" ? "none" : password }, false, '登录失败');
     if (data.code === 0) {
       global.gUserId = username;
       props.navigation.replace('Main', {

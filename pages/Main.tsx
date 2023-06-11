@@ -10,6 +10,7 @@ import NoticeManageScreen from './noticeManage/NoticeManage';import { Button, Ic
 import { StackNavigationProps } from '../App';
 import RoomsScreen from './roomManage/Rooms';
 import MatchHomePage from './matchManage/Match';
+import { color } from 'react-native-reanimated';
 
 type RootTabParamList = {
   Home: undefined;
